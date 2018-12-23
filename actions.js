@@ -4,7 +4,6 @@ var actions = {
         switch (result) {
             case ERR_NOT_IN_RANGE:
                return creep.moveTo(location);
-               break;
             case OK:
             case ERR_BUSY:
             case ERR_FULL:
@@ -25,7 +24,7 @@ var actions = {
     },
     
     withdraw: function(creep, location) {
-      actions.interact(creep, location, () => creep.withdraw(location, RESOURCE_ENERGY));
+      return actions.interact(creep, location, () => creep.withdraw(location, RESOURCE_ENERGY));
     },
 
     harvest: function(creep, target) {
@@ -36,13 +35,13 @@ var actions = {
         var rooms = Game.rooms;
         var targets = _.flatten(_.map(rooms, room => room.find(FIND_DROPPED_RESOURCES)));
         if(targets.length) {
-            actions.interact(creep, targets[0], () => creep.pickup(targets[0]));
+            return actions.interact(creep, targets[0], () => creep.pickup(targets[0]));
         }
     },
 
     upgrade: function(creep) {
       location = creep.room.controller;
-      actions.interact(creep, location, () => creep.upgradeController(location));
+      return actions.interact(creep, location, () => creep.upgradeController(location));
     },
 
     charge: function(creep, location) {
@@ -52,7 +51,7 @@ var actions = {
     build: function(creep) {
       var targets = creep.room.find(FIND_CONSTRUCTION_SITES);
       if(targets.length) {
-        actions.interact(creep, targets[0], () => creep.build(targets[0]));
+        return actions.interact(creep, targets[0], () => creep.build(targets[0]));
       }
     }
 };
