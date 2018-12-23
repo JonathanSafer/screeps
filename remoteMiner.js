@@ -1,5 +1,9 @@
 var a = require('actions');
 var rM = {
+    role: "remoteMiner",
+    type: t.lightMiner,
+    target: 0,
+    limit: 0,
 
     /** @param {Creep} creep **/
     run: function(creep) {
@@ -35,7 +39,7 @@ var rM = {
       var options = _.filter(neighbors, Game.map.isRoomAvailable);
       console.log(options[0]);
       console.log(Game.rooms);
-      var room = options.length ? Game.rooms[options[0]] : creep.room;
+      var room = options.length ? /**Game.rooms[options[0]]**/ creep.room : creep.room;
       console.log(room);
       var sources = room.find(FIND_SOURCES);
       console.log(sources);

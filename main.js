@@ -4,8 +4,8 @@ var rB = require('roleBuilder');
 var rR = require('roleRunner');
 var rF = require('roleFerry');
 var rT = require('roleTransporter');
-var types = require('types');
 var rM = require('remoteMiner');
+var types = require('types');
 var T = require('tower');
 
 
@@ -23,7 +23,7 @@ function makeCreeps(role, type, target) {
 }
 
 module.exports.loop = function () {
-    roles = [rH, rR, rF, rT, rU, rB]; // order for priority
+    roles = [rH, rR, rF, rT, rU, rB, rM]; // order for priority
 
     var workers = _.map(roles, role =>
         _.filter(Game.creeps, creep => creep.memory.role == role.role));
