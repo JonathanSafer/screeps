@@ -4,7 +4,7 @@ var roleUpgrader = {
     role: "Upgrader",
     type: t.normal,
     target: 0,
-    limit: 1,
+    limit: 15,
 
     /** @param {Creep} creep **/
     run: function(creep) {
@@ -14,7 +14,8 @@ var roleUpgrader = {
         creep.memory.upgrading = true;
       }
       var targets = creep.room.find(FIND_STRUCTURES);
-      var location = targets[1];
+      var location = targets[0];
+      
       creep.memory.upgrading ? actions.upgrade(creep) : actions.withdraw(creep, location);
     }
 };

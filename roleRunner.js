@@ -2,7 +2,7 @@ var actions = require('actions');
 
 var rR = {
     role: "runner",
-    type: t.miner,
+    type: t.ferry,
     target: 0,
     limit: 5,
 
@@ -11,12 +11,13 @@ var rR = {
       if (creep.carry.energy < creep.carryCapacity) {
           actions.pickup(creep);
       } else {
-          var rooms = Game.rooms;
-          var targets = _flatten(_.map(rooms, room => room.find(FIND_STRUCTURES)));
-          var bucket = targets[creep.memory.target];
+          // var rooms = Game.rooms;
+          // var targets = _.flatten(_.map(rooms, room => room.find(FIND_STRUCTURES)));         
+          var targets =  creep.room.find(FIND_STRUCTURES);
+          var bucket = targets[/*creep.memory.target*/0];
           actions.charge(creep, bucket);
           if (actions.charge(creep, bucket) == ERR_FULL) {
-              console.log('Container Full')
+              console.log('Container Full');
           rR.flipTarget(creep);
         }
       }

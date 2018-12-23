@@ -31,10 +31,16 @@ var rM = {
     /** pick a target id for creep **/
     nextSource: function(creep) {
       var neighbors = Object.values(Game.map.describeExits(creep.room.name));
+      console.log(neighbors);
       var options = _.filter(neighbors, Game.map.isRoomAvailable);
+      console.log(options[0]);
+      console.log(Game.rooms);
       var room = options.length ? Game.rooms[options[0]] : creep.room;
+      console.log(room);
       var sources = room.find(FIND_SOURCES);
+      console.log(sources);
       var source = sources[creep.memory.target]; 
+      console.log(source);
       return source.id;
     },
 

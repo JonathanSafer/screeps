@@ -20,7 +20,7 @@ var actions = {
     
     pickup: function(creep) {
         var rooms = Game.rooms;
-        var targets = _flatten(_.map(rooms, room => room.find(FIND_DROPPED_RESOURCES)));
+        var targets = _.flatten(_.map(rooms, room => room.find(FIND_DROPPED_RESOURCES)));
         if(targets.length) {
             actions.interact(creep, targets[0], () => creep.pickup(targets[0]));
         }

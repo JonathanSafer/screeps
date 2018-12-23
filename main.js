@@ -5,6 +5,9 @@ var rR = require('roleRunner');
 var rF = require('roleFerry');
 var rT = require('roleTransporter');
 var types = require('types');
+var rM = require('remoteMiner');
+var T = require('tower');
+
 
 //Game.spawns['Home'].memory.counter = 0;
 
@@ -18,7 +21,6 @@ function makeCreeps(role, type, target) {
     Game.creeps[name].memory.target = target;
   }
 }
-//spawn.room.energyAvailable
 
 module.exports.loop = function () {
     roles = [rH, rR, rF, rT, rU, rB]; // order for priority
@@ -44,4 +46,8 @@ module.exports.loop = function () {
             }
         }
     }
+    var towers = _.filter(Game.structures, (structure) => structure.structureType == STRUCTURE_TOWER);
+    //var remoteMiners = _.filter(Game.creeps, (creep) => creep.memory.role == 'remoteMiner')
+    //else if(remoteMiners.length < 1) {makeCreeps('remoteMiner', types.lightMiner, 0)}
+    T.run(towers[0]);
 }

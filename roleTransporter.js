@@ -1,6 +1,10 @@
 var actions = require('actions');
 
 var rT = {
+    role: "transporter",
+    type: t.normal,
+    target: 0,
+    limit:2,
 
     /** @param {Creep} creep **/
     run: function(creep) {
@@ -11,7 +15,7 @@ var rT = {
       } else {
           locations = creep.room.find(FIND_STRUCTURES, {
                     filter: (structure) => {
-                        return (structure.structureType == STRUCTURE_EXTENSION) &&
+                        return (structure.structureType == STRUCTURE_EXTENSION || structure.structureType == STRUCTURE_TOWER) &&
                             structure.energy < structure.energyCapacity;
                     }
             });

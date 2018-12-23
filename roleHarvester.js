@@ -4,7 +4,7 @@ var rH = {
     role: "miner",
     type: t.miner,
     target: 1,
-    limit:4,
+    limit:2,
 
     /** @param {Creep} creep **/
     run: function(creep) {
