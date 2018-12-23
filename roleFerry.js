@@ -1,4 +1,5 @@
 var actions = require('actions');
+var t = require('types');
 
 var rF = {
     role: "ferry",

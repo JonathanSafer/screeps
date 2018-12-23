@@ -21,7 +21,7 @@ var rM = {
     },
 
     harvestTarget: function(creep) {
-      var source Game.getObjectById(creep.memory.source);
+      var source = Game.getObjectById(creep.memory.source);
 
       if (a.harvest(creep, source) == ERR_NO_PATH) {
         rM.flipTarget(creep);

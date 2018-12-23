@@ -33,7 +33,7 @@ module.exports.loop = function () {
         if(workers[i].length < roles[i].limit) {
             makeCreeps(roles[i].role, roles[i].type, roles[i].target);
         }
-        printout += " " + roles.role + ": " + workers[i].length;
+        printout += " " + roles[i].role + ": " + workers[i].length;
     }
     
     console.log(printout);

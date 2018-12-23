@@ -1,4 +1,5 @@
 var actions = require('actions');
+var t = require('types');
 
 var rT = {
     role: "transporter",

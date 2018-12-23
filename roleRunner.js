@@ -1,10 +1,11 @@
 var actions = require('actions');
+var t = require('types');
 
 var rR = {
     role: "runner",
     type: t.ferry,
     target: 0,
-    limit: 5,
+    limit: 3,
 
     /** @param {Creep} creep **/
     run: function(creep) {

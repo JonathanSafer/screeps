@@ -4,7 +4,7 @@ var roleUpgrader = {
     role: "Upgrader",
     type: t.normal,
     target: 0,
-    limit: 15,
+    limit: 4,
 
     /** @param {Creep} creep **/
     run: function(creep) {
