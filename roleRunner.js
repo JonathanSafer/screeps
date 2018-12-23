@@ -2,7 +2,7 @@ var actions = require('actions');
 var t = require('types');
 
 var rR = {
-    role: "runner",
+    name: "runner",
     type: t.ferry,
     target: 0,
     limit: 3,

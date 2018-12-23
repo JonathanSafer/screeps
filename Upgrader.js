@@ -1,7 +1,7 @@
 var actions = require('actions');
 var t = require('types');
-var roleUpgrader = {
-    role: "Upgrader",
+var rU = {
+    main: "Upgrader",
     type: t.normal,
     target: 0,
     limit: 4,
@@ -19,4 +19,4 @@ var roleUpgrader = {
       creep.memory.upgrading ? actions.upgrade(creep) : actions.withdraw(creep, location);
     }
 };
-module.exports = roleUpgrader;
+module.exports = rU;

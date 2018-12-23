@@ -1,6 +1,6 @@
 var a = require('actions');
 var rM = {
-    role: "remoteMiner",
+    name: "remoteMiner",
     type: t.lightMiner,
     target: 0,
     limit: 0,

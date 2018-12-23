@@ -1,8 +1,8 @@
 var a = require('actions');
 var t = require('types');
 
-var roleBuilder = {
-    role: "roleBuilder",
+var rB = {
+    name: "roleBuilder",
     type: t.normal,
     target: 0,
     limit: 2,
@@ -20,4 +20,4 @@ var roleBuilder = {
       creep.memory.building ? a.build(creep) : a.withdraw(creep, location);
     }
 };
-module.exports = roleBuilder;
+module.exports = rB;

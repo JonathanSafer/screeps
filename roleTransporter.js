@@ -2,7 +2,7 @@ var actions = require('actions');
 var t = require('types');
 
 var rT = {
-    role: "transporter",
+    name: "transporter",
     type: t.normal,
     target: 0,
     limit:2,

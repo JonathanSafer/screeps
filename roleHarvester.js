@@ -1,7 +1,7 @@
 var a = require('actions');
 var t = require('types');
 var rH = {
-    role: "miner",
+    name: "miner",
     type: t.miner,
     target: 1,
     limit:2,
