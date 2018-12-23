@@ -3,15 +3,15 @@ var t = require('types');
 
 var rT = {
     role: "transporter",
-    type: t.normal,
+    type: t.transporter,
     target: 0,
-    limit:2,
+    limit:1,
 
     /** @param {Creep} creep **/
     run: function(creep) {
       if (creep.carry.energy < creep.carryCapacity) {
           var targets = creep.room.find(FIND_STRUCTURES);
-          var location = targets[0];
+          var location = targets[1];
           actions.withdraw(creep, location);
       } else {
           locations = creep.room.find(FIND_STRUCTURES, {

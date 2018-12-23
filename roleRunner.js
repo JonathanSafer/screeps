@@ -5,7 +5,7 @@ var rR = {
     role: "runner",
     type: t.ferry,
     target: 0,
-    limit: 3,
+    limit: 2,
 
     /** @param {Creep} creep **/
     run: function(creep) {
@@ -15,7 +15,7 @@ var rR = {
           // var rooms = Game.rooms;
           // var targets = _.flatten(_.map(rooms, room => room.find(FIND_STRUCTURES)));         
           var targets =  creep.room.find(FIND_STRUCTURES);
-          var bucket = targets[/*creep.memory.target*/0];
+          var bucket = targets[creep.memory.target];
           actions.charge(creep, bucket);
           if (actions.charge(creep, bucket) == ERR_FULL) {
               console.log('Container Full');

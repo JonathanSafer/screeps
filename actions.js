@@ -1,11 +1,25 @@
 var actions = {
     interact: function(creep, location, fnToTry) {
-      var result = fnToTry();
+       var result = fnToTry();
+        switch (result) {
+            case ERR_NOT_IN_RANGE:
+               return creep.moveTo(location);
+               break;
+            case OK:
+            case ERR_BUSY:
+            case ERR_FULL:
+                return result;
+                break;
+            default:
+                console.log(creep.memory.role + " at " + location.pos.x + "," + location.pos.y + ": " + result.toString());
+                return result;
+      }
+      
       if(result == ERR_NOT_IN_RANGE) {
         return creep.moveTo(location);
       } else if(result == ERR_FULL) {
         return ERR_FULL;  
-      }  else if(result != 0) {
+      } else if(result != 0) {
           console.log(creep.memory.role + " at " + location.id + ": " + result.toString());
       }
     },

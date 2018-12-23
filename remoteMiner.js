@@ -1,4 +1,6 @@
 var a = require('actions');
+var t = require('types');
+
 var rM = {
     role: "remoteMiner",
     type: t.lightMiner,

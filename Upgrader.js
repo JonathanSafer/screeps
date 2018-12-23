@@ -4,7 +4,7 @@ var roleUpgrader = {
     role: "Upgrader",
     type: t.normal,
     target: 0,
-    limit: 4,
+    limit: Game.spawns['Home'].memory.Upgraders,
 
     /** @param {Creep} creep **/
     run: function(creep) {

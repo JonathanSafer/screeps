@@ -2,10 +2,10 @@ var a = require('actions');
 var t = require('types');
 
 var roleBuilder = {
-    role: "roleBuilder",
+    role: "builder",
     type: t.normal,
     target: 0,
-    limit: 2,
+    limit: 0,
 
     /** @param {Creep} creep **/
     run: function(creep) {
