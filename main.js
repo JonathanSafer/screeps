@@ -25,23 +25,20 @@ function makeCreeps(role, type, target) {
 module.exports.loop = function () {
     roles = [rH, rT, rR, rF, rU, rB, rM]; // order for priority
 
-    var workers = _.map(roles, role =>
-        _.filter(Game.creeps, creep => creep.memory.role == role.role));
+    var counts = _.countBy(Game.creeps, creep => creep.memory.role); // lookup table from role to count
 
-    var printout = "";
-    for (i = 0; i < roles.length; i++) {
-        if(workers[i].length < roles[i].limit) {
-            makeCreeps(roles[i].role, roles[i].type, roles[i].target);
-        }
-        printout += " " + roles[i].role + ": " + workers[i].length;
+    var nextRole = _.find(roles, role => counts[role.name] < role.limit);
+    if (nextRole) {
+        makeCreeps(nextRole.name, nextRole.type, nextRole.target);
     }
-    
-    console.log(printout);
+    var printout = _.map(roles, role => role.name + ": " + counts[role.name]);
+    console.log(_.join(printout, ", "));
 
     for(var name in Game.creeps) {
         var creep = Game.creeps[name];
+
         for (i = 0; i < roles.length; i++) {
-            if (creep.memory.role == roles[i].role) {
+            if (creep.memory.role == roles[i].name) {
                 roles[i].run(creep);
             }
         }
@@ -64,3 +61,55 @@ module.exports.loop = function () {
     //else if(remoteMiners.length < 1) {makeCreeps('remoteMiner', types.lightMiner, 0)}
     T.run(towers[0]);
 }
+
+/*
+
+lodash things:
+_.chunk(array, [size=1]) (break array into chunks)
+_.concat(array, 2, [3], [[4]]); (combine things to list)
+_.difference([2, 1], [2, 3]);
+_.flatten
+_.flattenDeep (make list of lists into list)
+_.join(array, [separator=',']) (combine strings)
+_.union (combine sets)
+_.head, _.tail, _.take, _.drop,
+_.uniq (makes array into set)
+_.zip/_.unzip, merge multiple arrays of same length by element, or split
+
+
+_.countBy()
+
+
+
+
+
+
+
+
+
+
+*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
