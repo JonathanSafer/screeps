@@ -1,7 +1,7 @@
 var actions = require('actions');
 var t = require('types');
-var roleUpgrader = {
-    role: "Upgrader",
+var rU = {
+    main: "Upgrader",
     type: t.normal,
     target: 0,
     limit: Game.spawns['Home'].memory.Upgraders,
@@ -21,4 +21,4 @@ var roleUpgrader = {
       };
     }
 };
-module.exports = roleUpgrader;
+module.exports = rU;
