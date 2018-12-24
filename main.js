@@ -21,7 +21,9 @@ function makeCreeps(role, type, target) {
     Game.creeps[name].memory.target = target;
   }
 }
-
+if (_.filter(Game.creeps, creep => creep.memory.role == 'miner') == 0){
+    makeCreeps('miner', types.lightMiner, 1);
+}
 module.exports.loop = function () {
     roles = [rH, rT, rR, rF, rU, rB, rM]; // order for priority
 

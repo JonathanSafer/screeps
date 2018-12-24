@@ -10,6 +10,9 @@ var actions = {
             case ERR_FULL:
                 return result;
                 break;
+            case ERR_NOT_ENOUGH_RESOURCES:
+                return result;
+                break;
             default:
                 console.log(creep.memory.role + " at " + location.pos.x + "," + location.pos.y + ": " + result.toString());
                 return result;

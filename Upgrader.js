@@ -16,7 +16,9 @@ var roleUpgrader = {
       var targets = creep.room.find(FIND_STRUCTURES);
       var location = targets[0];
       
-      creep.memory.upgrading ? actions.upgrade(creep) : actions.withdraw(creep, location);
+      if (creep.memory.upgrading ? actions.upgrade(creep) : actions.withdraw(creep, location) == ERR_NOT_ENOUGH_RESOURCES){
+          creep.memory.role = 'miner';
+      };
     }
 };
 module.exports = roleUpgrader;

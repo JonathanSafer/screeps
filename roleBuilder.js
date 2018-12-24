@@ -5,7 +5,7 @@ var roleBuilder = {
     role: "builder",
     type: t.normal,
     target: 0,
-    limit: 0,
+    limit: 1,
 
     /** @param {Creep} creep **/
     run: function(creep) {
