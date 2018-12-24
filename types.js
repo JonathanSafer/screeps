@@ -1,3 +1,4 @@
+// WORK, CARRY, MOVE, ATTACK, RANGED_ATTACK, HEAL, CLAIM, TOUGH
 
 module.exports = {
     basic: [WORK, CARRY, MOVE],

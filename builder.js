@@ -10,10 +10,10 @@ var rB = {
 
     /** @param {Creep} creep **/
     run: function(creep) {
-      if(creep.memory.building && creep.carry.energy == 0) {
+      if(creep.carry.energy == 0 && creep.memory.building) {
             creep.memory.building = false;
       }
-      if(!creep.memory.building && creep.carry.energy == creep.carryCapacity) {
+      if(creep.carry.energy == creep.carryCapacity && !creep.memory.building) {
           creep.memory.building = true;
       }
       var targets = creep.room.find(FIND_STRUCTURES);
