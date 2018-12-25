@@ -4,7 +4,7 @@ var rH = {
     name: "miner",
     type: t.miner,
     target: 1,
-    limit: 2,
+    limit: 0,
 
     /** @param {Creep} creep **/
     run: function(creep) {

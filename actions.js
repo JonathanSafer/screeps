@@ -34,6 +34,10 @@ var actions = {
         return actions.interact(creep, target, () => creep.dismantle(target));
     },
     
+    attack: function(creep, target){
+        return actions.interact(creep, target, () => creep.attack(target));
+    },
+    
     withdraw: function(creep, location) {
       return actions.interact(creep, location, () => creep.withdraw(location, RESOURCE_ENERGY));
     },
@@ -45,8 +49,7 @@ var actions = {
     pickup: function(creep) {
         var rooms = Game.rooms;
         var drops = _.flatten(_.map(rooms, room => room.find(FIND_DROPPED_RESOURCES)));
-        var targets = _.sortBy(drops, drop => -1*drop.amount + 10*PathFinder.search(creep.pos, drop.pos).cost);
-        var distances = _.map(drops, drop => PathFinder.search(creep.pos, drop.pos).cost);
+        var targets = _.sortBy(drops, drop => -1*drop.amount + 35*PathFinder.search(creep.pos, drop.pos).cost);
         //console.log(_.map(targets, t => -1*t.amount + 20*PathFinder.search(creep.pos, t.pos).cost));
         if(targets.length) {
             return actions.interact(creep, targets[0], () => creep.pickup(targets[0]));

@@ -4,22 +4,15 @@ var t = require('types');
 var rM = {
     name: "remoteMiner",
     type: t.miner,
-    target: 0,
-    limit: 1,
+    target: Game.spawns["Home"].memory.nextSource,
+    limit: Game.spawns["Home"].memory["miner"],
 
     /** @param {Creep} creep **/
     run: function(creep) {
-      if(creep.memory.source == null) {
-        creep.memory.source = rM.nextSource(creep);
-        creep.memory.base = creep.room.id;
-      }
-
-      if(rM.needEnergy(creep)) {
+        if(creep.memory.source == null) {
+            creep.memory.source = rM.nextSource(creep);
+        }
         rM.harvestTarget(creep);
-      } else {
-        location = Game.spawns['Home'];
-        a.charge(creep, location);
-      }
     },
 
     needEnergy: function(creep) {
@@ -29,30 +22,22 @@ var rM = {
     harvestTarget: function(creep) {
       var source = Game.getObjectById(creep.memory.source);
       if (a.harvest(creep, source) == ERR_NO_PATH) {
-        rM.flipTarget(creep);
+          console.log("no path for mining :/");
+        //rM.flipTarget(creep);
       }
     },
 
     /** pick a target id for creep **/
     nextSource: function(creep) {
-      var rooms = Object.values(Game.rooms);
+        var myRooms = _.filter(Game.rooms, room =>  (room.controller && room.controller.reservation && room.controller.reservation.username == "Yoner")
+                                                            || (room.controller && room.controller.my));
+        var sources = _.flatten(_.map(myRooms, room => room.find(FIND_SOURCES)));
       
-      var unownedRooms = _.filter(rooms, room => room.controller && room.controller.reservation && (room.controller.reservation.username == 'Yoner') && (!room.controller.my));
-      console.log(unownedRooms);
-      var targetRoom;
-      if (unownedRooms.length > 0) {
-        targetRoom = unownedRooms[0];
-        console.log(targetRoom);
-      } else {
-          targetRoom = creep.room;
-      }
-      var sources = targetRoom.find(FIND_SOURCES);
-      console.log(sources);
-      return sources[creep.memory.target].id;
-    },
+        Game.spawns["Home"].memory.nextSource = (Game.spawns["Home"].memory.nextSource + 1) % sources.length;
+      
+        console.log(sources);
 
-    flipTarget: function(creep) {
-      creep.memory.target = creep.memory.target == 0 ? 1 : 0;
+        return sources[creep.memory.target].id;
     }
 };
 module.exports = rM;

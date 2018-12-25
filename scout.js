@@ -6,18 +6,20 @@ var rS = {
     name: "scout",
     type: t.scout,
     target: 0,
-    limit: 2,
+    limit: Game.spawns["Home"].memory["scout"],
 
     /** @param {Creep} creep **/
     run: function(creep) {
-        if (creep.room.controller && (!creep.room.controller.owner/* || (creep.room.controller.reservation.username == 'Yoner')*/)) {
-            //a.reserve
-            //console.log(creep.room.controller.my);
-            //console.log(creep.room.controller.reservation.username);
-            var reserving = a.reserve(creep, creep.room.controller);
-            //var middle = new RoomPosition(25, 25, creep.room.name);
-            //var result = creep.moveTo(middle);
-            return; // stake out a new room
+        if (creep.memory.stakingOut) {
+            a.reserve(creep, creep.room.controller);
+            return;
+        } else if (creep.room.controller && (!creep.room.controller.owner)) {
+            var scouts = _.filter(creep.room.find(FIND_CREEPS), creep => creep.memory.role == "scout");
+            if (scouts.length <= 2) {
+                creep.memory.stakingOut = true;
+                a.reserve(creep, creep.room.controller);
+                return;
+            }
         }
         
         var neighbors = Object.values(Game.map.describeExits(creep.room.name));
