@@ -25,7 +25,9 @@ var rT = {
                                 && structure.energy < structure.energyCapacity;
                     }
             });
-            if (locations.length > 0){
+            if (locations.length > 2){
+                actions.charge(creep, locations[Number(creep.name) % 3]);
+            } else {
                 actions.charge(creep, locations[0]);
             }
       }
