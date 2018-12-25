@@ -10,9 +10,11 @@ module.exports = {
     lightMiner: [WORK, WORK, MOVE, MOVE],
     scout: [CLAIM, MOVE, MOVE],
     cost: function(type){
-        var subtotal = type.length ;
-        var works = _.filter (type, skill => skill == WORK).length
-        var claims = _.filter (type, skill => skill == CLAIM).length
-        return (works + subtotal + (claims * 11)) * 50;
+        var type = [WORK, WORK, RANGED_ATTACK];
+        var costs = {'work': 100, 'carry': 50, 'move': 50, 
+                    'attack': 80, 'claim': 600, 'heal': 250, 
+                    'ranged_attack': 150, 'tough': 10};
+        var costList = _.map(type, part => costs[part]);
+        return _.sum(costList);
     }
 };

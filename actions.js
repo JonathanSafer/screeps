@@ -29,6 +29,10 @@ var actions = {
     reserve: function(creep, target){
         return actions.interact(creep, target, () => creep.reserveController(target));
     },
+
+    dismantle: function(creep, target){
+        return actions.interact(creep, target, () => creep.dismantle(target));
+    },
     
     withdraw: function(creep, location) {
       return actions.interact(creep, location, () => creep.withdraw(location, RESOURCE_ENERGY));

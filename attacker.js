@@ -2,21 +2,21 @@ var a = require('actions');
 var t = require('types');
 var u = require('utils');
 
-var rS = {
-    name: "attacker",
-    type: t.attacker,
+var rBr = {
+    name: "breaker",
+    type: t.lightMiner,
     target: 0,
     limit: 0,
 
     /** @param {Creep} creep **/
     run: function(creep) {
-        if (creep.room.controller && (!creep.room.controller.owner || (creep.room.controller.owner == 'Yoner'))) {
-            //a.reserve
-            console.log(creep.room.controller);
-            var reserving = a.reserve(creep, creep.room.controller);
-            //var middle = new RoomPosition(25, 25, creep.room.name);
-            //var result = creep.moveTo(middle);
-            return; // stake out a new room
+        if (creep.room.controller && creep.room.controller.owner && !creep.room.controller.my) {
+            var structures = creep.room.find(FIND_STRUCTURES);
+            var spawns = _.filter(structures, structure => structure.structureType == STRUCTURE_SPAWN);
+            if(spawns.length) {
+                a.dismantle(creep, spawns[0]);
+            }
+            return; // conquer the room
         }
         
         var neighbors = Object.values(Game.map.describeExits(creep.room.name));
@@ -31,4 +31,4 @@ var rS = {
         return (room && room.controller && room.controller.my);
     }
 };
-module.exports = rA;
+module.exports = rBr;
