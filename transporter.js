@@ -1,27 +1,32 @@
 var actions = require('actions');
 var t = require('types');
+var u = require('utils');
 
 var rT = {
     name: "transporter",
     type: t.transporter,
     target: 0,
-    limit:1,
+    limit: 3,
 
     /** @param {Creep} creep **/
     run: function(creep) {
-      if (creep.carry.energy < creep.carryCapacity) {
-          var targets = creep.room.find(FIND_STRUCTURES);
-          var location = targets[1];
-          actions.withdraw(creep, location);
-      } else {
-          locations = creep.room.find(FIND_STRUCTURES, {
+        if (creep.carry.energy == 0) {
+            var targets = u.getWithdrawLocations(creep);
+            var location = targets[creep.memory.target];
+            if (actions.withdraw(creep, location) == ERR_NOT_ENOUGH_RESOURCES){
+                creep.memory.target = u.getNextLocation(creep.memory.target, targets);
+            }
+        } else {
+            locations = creep.room.find(FIND_STRUCTURES, {
                     filter: (structure) => {
-                        return (structure.structureType == STRUCTURE_EXTENSION || structure.structureType == STRUCTURE_TOWER) &&
-                            structure.energy < structure.energyCapacity;
+                        return (structure.structureType == STRUCTURE_EXTENSION 
+                                || structure.structureType == STRUCTURE_TOWER
+                                || structure.structureType == STRUCTURE_SPAWN) 
+                                && structure.energy < structure.energyCapacity;
                     }
             });
             if (locations.length > 0){
-          actions.charge(creep, locations[0]);
+                actions.charge(creep, locations[0]);
             }
       }
     }

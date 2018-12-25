@@ -5,10 +5,13 @@ var rR = require('runner');
 var rF = require('ferry');
 var rT = require('transporter');
 var rM = require('remoteMiner');
+var rS = require('scout');
 var types = require('types');
+var u = require('utils');
 var T = require('tower');
-
-
+const profiler = require('screeps-profiler');
+//Game.profiler.profile(1000);
+//Game.profiler.output();
 //Game.spawns['Home'].memory.counter = 0;
 
 function makeCreeps(role, type, target) {
@@ -24,40 +27,52 @@ function makeCreeps(role, type, target) {
 if (_.filter(Game.creeps, creep => creep.memory.role == 'miner') == 0){
     makeCreeps('miner', types.lightMiner, 1);
 }
+
+profiler.enable();
 module.exports.loop = function () {
-    var roles = [rH, rT, rR, rF, rU, rB, rM]; // order roles for priority
-    var nameToRole = _.keyBy(roles, role => role.name); // map from names to roles
+  profiler.wrap(function() {
+    var roles = [rH, rT, rF, rR, rU, rB, rM, rS]; // order roles for priority
+    var nameToRole = _.groupBy(roles, role => role.name); // map from names to roles
     var counts = _.countBy(Game.creeps, creep => creep.memory.role); // lookup table from role to count
 
     // Get counts for all roles, make first thing that doesn't have enough
-    var nextRole = _.find(roles, role => counts[role.name] < role.limit);
+    _.forEach(_.filter(roles, role => !counts[role.name]), role => counts[role.name] = 0);
+    var nextRole = _.find(roles, role => (typeof counts[role.name] == "undefined" && role.limit) || (counts[role.name] < role.limit));
     if (nextRole) {
         makeCreeps(nextRole.name, nextRole.type, nextRole.target);
     }
 
     // Print out each role & number of workers doing it
     var printout = _.map(roles, role => role.name + ": " + counts[role.name]);
-    console.log(_.join(printout, ", "));
+    console.log(printout.join(', ' ));
 
     // Run all the creeps
-    _.forEach(Game.creeps, (creep, name) => nameToRole[creep.memory.role].run(creep));
+    _.forEach(Game.creeps, (creep, name) => nameToRole[creep.memory.role][0].run(creep));
   
     //Game.spawns['Home'].memory.Upgraders = 2;
     console.log(Game.time);
+    if (Game.time % 20100 === 0) {
+        Game.spawns['Home'].room.controller.activateSafeMode();
+    }
+    
     if (Game.time % 500 === 0){
-        var structures = Game.spawns['Home'].room.find(FIND_STRUCTURES);
-        var banks = _.filter(structures, (structure) => structure.structureType == STRUCTURE_CONTAINER);
+        var banks = u.getWithdrawLocations(Object.values(Game.creeps)[0]);
+        console.log(banks);
         var money = _.sum(_.map(banks, bank => bank.store[RESOURCE_ENERGY]));
-        if(money < (4000 * .75)){
-           Game.spawns['Home'].memory.Upgraders = Game.spawns['Home'].memory.Upgraders - 1; 
+        var capacity = _.sum(_.map(banks, bank => bank.storeCapacity));
+        console.log(money);
+        if(money < (capacity * .25)){
+           Game.spawns['Home'].memory.Upgraders = Math.max(Game.spawns['Home'].memory.Upgraders - 1, 1); 
         }
-        else if (money > (4000 * .90)){
-          Game.spawns['Home'].memory.Upgraders = Game.spawns['Home'].memory.Upgraders + 1;;  
+        else if (money > (capacity * .27)){
+          Game.spawns['Home'].memory.Upgraders = Game.spawns['Home'].memory.Upgraders + 1;
         }
     }
     // Run the tower
     var towers = _.filter(Game.structures, (structure) => structure.structureType == STRUCTURE_TOWER);
     T.run(towers[0]);
+    T.defend(towers[0]);
+  });
 }
 
 /*
@@ -96,27 +111,3 @@ _.flow // sequence of fns
 https://lodash.com/docs/4.17.11
 
 */
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

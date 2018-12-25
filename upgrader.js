@@ -1,7 +1,9 @@
 var actions = require('actions');
 var t = require('types');
+var u = require('utils');
+
 var rU = {
-    main: "Upgrader",
+    name: "Upgrader",
     type: t.normal,
     target: 0,
     limit: Game.spawns['Home'].memory.Upgraders,
@@ -13,11 +15,11 @@ var rU = {
       }else if(!creep.memory.upgrading && creep.carry.energy == creep.carryCapacity) {
         creep.memory.upgrading = true;
       }
-      var targets = creep.room.find(FIND_STRUCTURES);
-      var location = targets[0];
+      var targets = u.getWithdrawLocations(creep);
+      var location = targets[creep.memory.target];
       
       if (creep.memory.upgrading ? actions.upgrade(creep) : actions.withdraw(creep, location) == ERR_NOT_ENOUGH_RESOURCES){
-          creep.memory.role = 'miner';
+          creep.memory.target = u.getNextLocation(creep.memory.target, targets);
       };
     }
 };

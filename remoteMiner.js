@@ -3,15 +3,15 @@ var t = require('types');
 
 var rM = {
     name: "remoteMiner",
-    type: t.lightMiner,
+    type: t.miner,
     target: 0,
-    limit: 0,
+    limit: 1,
 
     /** @param {Creep} creep **/
     run: function(creep) {
-      if(creep.memory.source = null) {
+      if(creep.memory.source == null) {
         creep.memory.source = rM.nextSource(creep);
-        creep.memory.base = creep.memory.room.id;
+        creep.memory.base = creep.room.id;
       }
 
       if(rM.needEnergy(creep)) {
@@ -28,7 +28,6 @@ var rM = {
 
     harvestTarget: function(creep) {
       var source = Game.getObjectById(creep.memory.source);
-
       if (a.harvest(creep, source) == ERR_NO_PATH) {
         rM.flipTarget(creep);
       }
@@ -36,18 +35,20 @@ var rM = {
 
     /** pick a target id for creep **/
     nextSource: function(creep) {
-      var neighbors = Object.values(Game.map.describeExits(creep.room.name));
-      console.log(neighbors);
-      var options = _.filter(neighbors, Game.map.isRoomAvailable);
-      console.log(options[0]);
-      console.log(Game.rooms);
-      var room = options.length ? /**Game.rooms[options[0]]**/ creep.room : creep.room;
-      console.log(room);
-      var sources = room.find(FIND_SOURCES);
+      var rooms = Object.values(Game.rooms);
+      
+      var unownedRooms = _.filter(rooms, room => room.controller && room.controller.reservation && (room.controller.reservation.username == 'Yoner') && (!room.controller.my));
+      console.log(unownedRooms);
+      var targetRoom;
+      if (unownedRooms.length > 0) {
+        targetRoom = unownedRooms[0];
+        console.log(targetRoom);
+      } else {
+          targetRoom = creep.room;
+      }
+      var sources = targetRoom.find(FIND_SOURCES);
       console.log(sources);
-      var source = sources[creep.memory.target]; 
-      console.log(source);
-      return source.id;
+      return sources[creep.memory.target].id;
     },
 
     flipTarget: function(creep) {
