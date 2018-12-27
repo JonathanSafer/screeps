@@ -13,7 +13,17 @@ var rA = {
         var enemies = creep.room.find(FIND_HOSTILE_CREEPS);
         if (enemies.length) {
             a.attack(creep, enemies[0]);
+            return;
         }
+        var enemyStructures = creep.room.find(FIND_HOSTILE_STRUCTURES);
+        var notWalls = _.reject(enemyStructures, structure => structure.structureType == STRUCTURE_WALL);
+        var alsoNotController = _.reject(notWalls, structure => structure.structureType == STRUCTURE_CONTROLLER 
+                                                        || structure.structureType == STRUCTURE_KEEPER_LAIR);
+        if(alsoNotController.length) {
+            a.attack(creep, alsoNotController[0]);
+            return;
+        }
+             
         
         var neighbors = Object.values(Game.map.describeExits(creep.room.name));
         var interests = _.filter(neighbors, roomName => !rA.iOwn(roomName));

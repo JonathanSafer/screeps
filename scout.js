@@ -6,7 +6,7 @@ var rS = {
     name: "scout",
     type: t.scout,
     target: 0,
-    limit: Game.spawns["Home"].memory["scout"],
+    limit: 2/*Game.spawns["Home"].memory["scout"]*/,
 
     /** @param {Creep} creep **/
     run: function(creep) {

@@ -49,7 +49,7 @@ var actions = {
     pickup: function(creep) {
         var rooms = Game.rooms;
         var drops = _.flatten(_.map(rooms, room => room.find(FIND_DROPPED_RESOURCES)));
-        var targets = _.sortBy(drops, drop => -1*drop.amount + 35*PathFinder.search(creep.pos, drop.pos).cost);
+        var targets = _.sortBy(drops, drop => -1*drop.amount + 28*PathFinder.search(creep.pos, drop.pos).cost);
         //console.log(_.map(targets, t => -1*t.amount + 20*PathFinder.search(creep.pos, t.pos).cost));
         if(targets.length) {
             return actions.interact(creep, targets[0], () => creep.pickup(targets[0]));

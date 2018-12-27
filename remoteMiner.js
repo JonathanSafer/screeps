@@ -36,7 +36,9 @@ var rM = {
         Game.spawns["Home"].memory.nextSource = (Game.spawns["Home"].memory.nextSource + 1) % sources.length;
       
         console.log(sources);
-
+        if (sources[creep.memory.target] == undefined){
+            sources[creep.memory.target] = 0;
+        }
         return sources[creep.memory.target].id;
     }
 };

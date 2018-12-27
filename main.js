@@ -26,14 +26,21 @@ function makeCreeps(role, type, target) {
     Game.creeps[name].memory.target = target;
   }
 }
+//emergency reproduction
 if (_.filter(Game.creeps, creep => creep.memory.role == 'remoteMiner') == 0){
     makeCreeps('remoteMiner', types.lightMiner, 1);
+}
+/*else if (_.filter(Game.creeps, creep => creep.memory.role == 'transporter') == 0){
+    makeCreeps('transporter', types.basic, 0);
+} */
+else if (_.filter(Game.creeps, creep => creep.memory.role == 'runner') == 0){
+    makeCreeps('runner', types.erunner, 1);
 }
 
 profiler.enable();
 module.exports.loop = function () {
   profiler.wrap(function() {
-    var roles = [rM, rT, rR, rA, rS, rU, rB, rBr]; // order roles for priority
+    var roles = [rM, rT, rR, /*rA,*/ /*rS,*/ rU, rB, /*rBr*/]; // order roles for priority
     var nameToRole = _.groupBy(roles, role => role.name); // map from names to roles
     var counts = _.countBy(Game.creeps, creep => creep.memory.role); // lookup table from role to count
 
@@ -70,9 +77,12 @@ module.exports.loop = function () {
         else if (money > (capacity * .17)){
           Game.spawns['Home'].memory.Upgraders = Game.spawns['Home'].memory.Upgraders + 1;
         }
+        // automated count for builders
+        var constructionSites = _.flatten(_.map(Game.rooms, room => room.find(FIND_CONSTRUCTION_SITES)));
+        Game.spawns["Home"].memory["builder"] = (constructionSites.length > 0) ? 1 : 0;
         
         // automated count for scouts
-        var proxyRooms = 2;
+        var proxyRooms = 0;
         Game.spawns["Home"].memory["scout"] = 2 * proxyRooms;
     }
     
@@ -81,23 +91,37 @@ module.exports.loop = function () {
         var miners = _.filter(Game.creeps, creep => creep.memory.role == "miner" || creep.memory.role == "remoteMiner");
         var distances = _.map(miners, miner => PathFinder.search(Game.spawns['Home'].pos, miner.pos).cost);
         var totalDistance = _.sum(distances);
-        Game.spawns['Home'].memory["runner"] = Math.ceil(1.0 * totalDistance * 20 / types.carry(types.runner));
+        if (Game.spawns['Home'].room.controller.level < 3){
+            Game.spawns['Home'].memory["runner"] = Math.ceil(1.0 * totalDistance * 10 / types.carry(types.runner));
+        }
+        else Game.spawns['Home'].memory["runner"] = Math.ceil(1.0 * totalDistance * 20 / types.carry(types.runner));
     }
     if (Game.time % 30 == 0) {
         // Automated miner count based on sources
+        var extensions = _.filter(Game.structures, (structure) => structure.structureType == STRUCTURE_EXTENSION).length;
         var myRooms = _.filter(Game.rooms, room =>  (room.controller && room.controller.reservation && room.controller.reservation.username == "Yoner")
                                                             || (room.controller && room.controller.my));
         var sources = _.flatten(_.map(myRooms, room => room.find(FIND_SOURCES)));
-        Game.spawns["Home"].memory["miner"] = sources.length;
+        
+        if (extensions < 5){
+            Game.spawns["Home"].memory["miner"] = sources.length*2;
+        }
+        else Game.spawns["Home"].memory["miner"] = sources.length;
         
         // Automated attacker count for defense
-        var enemyCounts = _.map(Game.rooms, room => room.find(FIND_HOSTILE_CREEPS).length);
+        var enemyCounts = _.map(Game.rooms, room => {
+            var allBadCreeps = room.find(FIND_HOSTILE_CREEPS);
+            var invaders = _.reject(allBadCreeps, creep => creep.owner.username == "Source Keeper");
+            return invaders.length;
+        });
         Game.spawns['Home'].memory["attacker"] = _.sum(enemyCounts);
     }
     // Run the tower
     var towers = _.filter(Game.structures, (structure) => structure.structureType == STRUCTURE_TOWER);
-    T.run(towers[0]);
-    T.defend(towers[0]);
+    if (towers.length){
+        T.run(towers[0]);
+        T.defend(towers[0]);
+    }
   });
 }
 

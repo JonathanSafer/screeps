@@ -15,6 +15,9 @@ var rR = {
       } else {
           var targets =  u.getTransferLocations(creep);
           var bucket = targets[creep.memory.target];
+          if (bucket == undefined) {
+              bucket = Game.spawns['Home'];
+          }
           actions.charge(creep, bucket);
           if (actions.charge(creep, bucket) == ERR_FULL) {
                 console.log('Container Full');

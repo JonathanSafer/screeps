@@ -6,7 +6,7 @@ var rB = {
     name: "builder",
     type: t.normal,
     target: 0,
-    limit: 1,
+    limit: 5/*Game.spawns["Home"].memory["builder"]*/,
 
     /** @param {Creep} creep **/
     run: function(creep) {
@@ -18,7 +18,9 @@ var rB = {
       }
       var targets = u.getWithdrawLocations(creep);
       var location = targets[creep.memory.target];
-      
+      if (location == undefined) {
+          location = Game.spawns['Home'];
+      }
       if (creep.memory.building ? a.build(creep) : a.withdraw(creep, location) == ERR_NOT_ENOUGH_RESOURCES){
           creep.memory.target = u.getNextLocation(creep.memory.target, targets);
       };
