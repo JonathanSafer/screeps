@@ -59,8 +59,8 @@ module.exports.loop = function () {
     _.forEach(Game.creeps, (creep, name) => nameToRole[creep.memory.role][0].run(creep));
   
     //Game.spawns['Home'].memory.Upgraders = 2;
-    console.log(Game.time);
-    if (Game.time % 20100 === 0) {
+    console.log("Time: " + Game.time + ". " + u.getDropTotals() +  " lying on ground.");
+    if (Game.spawns['Home'].room.controller.safeModeAvailable) {
         Game.spawns['Home'].room.controller.activateSafeMode();
     }
     
@@ -114,7 +114,7 @@ module.exports.loop = function () {
         var enemyCounts = _.map(Game.rooms, room => {
             var allBadCreeps = room.find(FIND_HOSTILE_CREEPS);
             var invaders = _.reject(allBadCreeps, creep => creep.owner.username == "Source Keeper");
-            return 0;//invaders.length;
+            return invaders.length;
         });
         Game.spawns['Home'].memory["attacker"] = _.sum(enemyCounts);
     }

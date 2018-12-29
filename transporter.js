@@ -25,7 +25,7 @@ var rT = {
                         return (structure.structureType == STRUCTURE_EXTENSION 
                                 || structure.structureType == STRUCTURE_TOWER
                                 || structure.structureType == STRUCTURE_SPAWN) 
-                                && structure.energy < structure.energyCapacity;
+                                && structure.energy < 0.8 * structure.energyCapacity;
                     }
             });
             if (locations.length > 2){

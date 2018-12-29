@@ -1,3 +1,5 @@
+var u = require("utils");
+
 var actions = {
     interact: function(creep, location, fnToTry) {
         var result = fnToTry();
@@ -69,28 +71,31 @@ var actions = {
     },
     
     pickup: function(creep) {
+        var goodLoads = u.getGoodPickups(creep);
+        
         if(creep.memory.targetId) {
             var target = Game.getObjectById(creep.memory.targetId);
-            //room1 = 
-            result = actions.interact(creep, target, () => creep.pickup(target));
-            switch (result) {
-              case OK:
-              case ERR_INVALID_TARGET:
-                  creep.memory.targetId = null;
-                  break;
-              default:
-                  break;
+            if(_.contains(goodLoads, target)) {
+                result = actions.interact(creep, target, () => creep.pickup(target));
+                switch (result) {
+                  case OK:
+                  case ERR_INVALID_TARGET:
+                      creep.memory.targetId = null;
+                      break;
+                  default:
+                      break;
+                }
+                return result;
             }
-            return result;
         }
         console.log("finding a target");
         
-        var rooms = Game.rooms;
-        var drops = _.flatten(_.map(rooms, room => room.find(FIND_DROPPED_RESOURCES)));
-        targets = _.sortBy(drops, drop => -1*drop.amount + 28*PathFinder.search(creep.pos, drop.pos).cost);
-        creep.memory.targetId = targets[0].id;
+        var newTargets = _.sortBy(goodLoads, drop => -1*drop.amount + 28*PathFinder.search(creep.pos, drop.pos).cost);
+        if (newTargets.length) {
+            creep.memory.targetId = newTargets[0].id;
 
-        return actions.pickup(creep);
+            return actions.pickup(creep);
+        }
     },
 
     upgrade: function(creep) {
@@ -107,6 +112,22 @@ var actions = {
       if(targets.length) {
         return actions.interact(creep, targets[0], () => creep.build(targets[0]));
       }
+    },
+    
+    // Pick up stuff lying next to you as you pass by
+    notice: function(creep) {
+        var tombstones = creep.room.find(FIND_TOMBSTONES);
+        var closeStones = _.filter(tombstones, stone => stone.pos.isNearTo(creep.pos));
+        if (closeStones.length) {
+            // we can only get one thing per turn, success is assumed since we're close
+            return creep.withdraw(closeStones[0]);
+        }
+        var resources = creep.room.find(FIND_DROPPED_RESOURCES);
+        var closeStuff = _.filter(resources, thing => thing.pos.isNearTo(creep.pos));
+        if (closeStuff.length) {
+            // we can only get one thing per turn, success is assumed since we're close
+            return creep.pickup(closeStuff[0]);
+        }
     }
 };
 

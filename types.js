@@ -2,19 +2,6 @@
 
 //starter types
 var extensions = _.filter(Game.structures, (structure) => structure.structureType == STRUCTURE_EXTENSION).length;
-
-/*module.exports = {
-    basic: function(budget) {
-        return [WORK, CARRY, MOVE];
-    },
-    normal: function(budget) {
-        var works = Math.floor((budget / 100) * 8 / 13); 
-        var carries = Math.ceil(works / 2);
-        var moves = Math.ceil((works + carries) / 2);
-    },
-
-}*/
-
 if (extensions < 5){
     module.exports ={
         basic: [WORK, CARRY, MOVE],
@@ -63,7 +50,7 @@ else if(extensions < 20){
         erunner: [CARRY, CARRY, MOVE],
         transporter: [WORK, CARRY, CARRY, CARRY, MOVE, MOVE],
         scout: [CLAIM, MOVE],
-        attacker: [TOUGH, MOVE, MOVE, MOVE, MOVE, MOVE, ATTACK, ATTACK, ATTACK, ATTACK],
+        attacker: [MOVE, MOVE, MOVE, MOVE, ATTACK, ATTACK, ATTACK, ATTACK],
         cost: function(type){
             var costList = _.map(type, part => BODYPART_COST[part]);
             return _.sum(costList);
@@ -77,15 +64,15 @@ else if(extensions < 20){
 
 else module.exports = {
     basic: [WORK, CARRY, MOVE],
-    normal : [WORK, WORK, WORK, WORK, WORK, WORK, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE],
+    normal : [WORK, WORK, WORK, WORK, WORK, WORK, WORK, WORK, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE],
     ferry : [CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE],
-    runner: [CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE],
+    runner: [CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY,CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE,MOVE, MOVE, MOVE],
     transporter: [WORK, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE],
     miner: [WORK, WORK, WORK, WORK, WORK, MOVE, MOVE, MOVE],
     lightMiner: [WORK, WORK, MOVE, MOVE],
     scout: [CLAIM, MOVE],
     erunner: [CARRY, CARRY, MOVE],
-    attacker: [TOUGH, MOVE, MOVE, MOVE, MOVE, MOVE, ATTACK, ATTACK, ATTACK, ATTACK],
+    attacker: [TOUGH, TOUGH, MOVE, MOVE, MOVE, MOVE, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK],
     cost: function(type){
         var costList = _.map(type, part => BODYPART_COST[part]);
         return _.sum(costList);

@@ -14,7 +14,7 @@ var rS = {
             a.reserve(creep, creep.room.controller);
             return;
         } else if (creep.room.controller && (!creep.room.controller.owner)) {
-            var scouts = _.filter(creep.room.find(FIND_CREEPS), creep => creep.memory.role == "scout");
+            var scouts = _.filter(creep.room.find(FIND_MY_CREEPS), creep => creep.memory.role == "scout");
             if (scouts.length <= 2) {
                 creep.memory.stakingOut = true;
                 a.reserve(creep, creep.room.controller);

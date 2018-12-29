@@ -10,7 +10,9 @@ var rR = {
 
     /** @param {Creep} creep **/
     run: function(creep) {
-      if (creep.carry.energy < creep.carryCapacity) {
+       // notice if there's stuff next to you before wandering off!  
+      actions.notice(creep);
+      if (creep.carry.energy < 0.5 * creep.carryCapacity) {
           actions.pickup(creep);
       } else {
           var targets =  u.getTransferLocations(creep);
