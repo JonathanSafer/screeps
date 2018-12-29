@@ -3,7 +3,7 @@ var actions = {
        var result = fnToTry();
         switch (result) {
             case ERR_NOT_IN_RANGE:
-               return creep.moveTo(location, {reusePath: 25});
+               return creep.moveTo(location, {reusePath: 10});
             case OK:
             case ERR_BUSY:
             case ERR_FULL:
@@ -13,7 +13,7 @@ var actions = {
                 return result;
                 break;
             default:
-                console.log(creep.memory.role + " at " + location.pos.x + "," + location.pos.y + ": " + result.toString());
+                console.log(creep.memory.role + " at " + creep.pos.x + "," + creep.pos.y + ": " + result.toString());
                 return result;
       }
       
@@ -47,12 +47,19 @@ var actions = {
     },
     
     pickup: function(creep) {
+        //if (Game.time % 10 === 0){
         var rooms = Game.rooms;
         var drops = _.flatten(_.map(rooms, room => room.find(FIND_DROPPED_RESOURCES)));
-        var targets = _.sortBy(drops, drop => -1*drop.amount + 28*PathFinder.search(creep.pos, drop.pos).cost);
+        targets = _.sortBy(drops, drop => -1*drop.amount + 28*PathFinder.search(creep.pos, drop.pos).cost);
+        creep.memory.target = targets[0]
         //console.log(_.map(targets, t => -1*t.amount + 20*PathFinder.search(creep.pos, t.pos).cost));
-        if(targets.length) {
-            return actions.interact(creep, targets[0], () => creep.pickup(targets[0]));
+        //}
+        //console.log(creep.memory.target);
+        // target = '[resource (energy) ' + creep.memory.target.id + ']';
+         //console.log(target);
+        if(creep.memory.target) {
+            //room1 = 
+            return actions.interact(creep, creep.memory.target, () => creep.pickup(creep.memory.target));
         }
     },
 

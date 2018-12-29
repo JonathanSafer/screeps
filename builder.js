@@ -6,7 +6,8 @@ var rB = {
     name: "builder",
     type: t.normal,
     target: 0,
-    limit: 5/*Game.spawns["Home"].memory["builder"]*/,
+    limit: Game.spawns["Home"].memory.builder,
+    limit: Game.spawns["Home"].memory.builder,
 
     /** @param {Creep} creep **/
     run: function(creep) {

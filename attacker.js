@@ -6,7 +6,8 @@ var rA = {
     name: "attacker",
     type: t.attacker,
     target: 0,
-    limit: Game.spawns["Home"].memory["attacker"],
+    limit: Game.spawns["Home"].memory['attacker'],
+   
 
     /** @param {Creep} creep **/
     run: function(creep) {

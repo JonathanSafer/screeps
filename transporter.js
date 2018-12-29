@@ -6,7 +6,7 @@ var rT = {
     name: "transporter",
     type: t.transporter,
     target: 0,
-    limit: 2,
+    limit: 3,
 
     /** @param {Creep} creep **/
     run: function(creep) {

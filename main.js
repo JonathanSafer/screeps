@@ -30,9 +30,9 @@ function makeCreeps(role, type, target) {
 if (_.filter(Game.creeps, creep => creep.memory.role == 'remoteMiner') == 0){
     makeCreeps('remoteMiner', types.lightMiner, 1);
 }
-/*else if (_.filter(Game.creeps, creep => creep.memory.role == 'transporter') == 0){
+else if (_.filter(Game.creeps, creep => creep.memory.role == 'transporter') == 0){
     makeCreeps('transporter', types.basic, 0);
-} */
+}
 else if (_.filter(Game.creeps, creep => creep.memory.role == 'runner') == 0){
     makeCreeps('runner', types.erunner, 1);
 }
@@ -40,7 +40,7 @@ else if (_.filter(Game.creeps, creep => creep.memory.role == 'runner') == 0){
 profiler.enable();
 module.exports.loop = function () {
   profiler.wrap(function() {
-    var roles = [rM, rT, rR, /*rA,*/ /*rS,*/ rU, rB, /*rBr*/]; // order roles for priority
+    var roles = [rA, rM, rT, rR, rS, rU, rB, rBr]; // order roles for priority
     var nameToRole = _.groupBy(roles, role => role.name); // map from names to roles
     var counts = _.countBy(Game.creeps, creep => creep.memory.role); // lookup table from role to count
 
@@ -71,10 +71,10 @@ module.exports.loop = function () {
         var money = _.sum(_.map(banks, bank => bank.store[RESOURCE_ENERGY]));
         var capacity = _.sum(_.map(banks, bank => bank.storeCapacity));
         console.log('money: ' + money + ', ' + (100*money/capacity));
-        if(money < (capacity * .16)){
+        if(money < (capacity * .18)){
            Game.spawns['Home'].memory.Upgraders = Math.max(Game.spawns['Home'].memory.Upgraders - 1, 1); 
         }
-        else if (money > (capacity * .17)){
+        else if (money > (capacity * .20)){
           Game.spawns['Home'].memory.Upgraders = Game.spawns['Home'].memory.Upgraders + 1;
         }
         // automated count for builders
@@ -82,7 +82,7 @@ module.exports.loop = function () {
         Game.spawns["Home"].memory["builder"] = (constructionSites.length > 0) ? 1 : 0;
         
         // automated count for scouts
-        var proxyRooms = 0;
+        var proxyRooms = 2;
         Game.spawns["Home"].memory["scout"] = 2 * proxyRooms;
     }
     
@@ -91,10 +91,12 @@ module.exports.loop = function () {
         var miners = _.filter(Game.creeps, creep => creep.memory.role == "miner" || creep.memory.role == "remoteMiner");
         var distances = _.map(miners, miner => PathFinder.search(Game.spawns['Home'].pos, miner.pos).cost);
         var totalDistance = _.sum(distances);
-        if (Game.spawns['Home'].room.controller.level < 3){
+        var extensions = _.filter(Game.structures, (structure) => structure.structureType == STRUCTURE_EXTENSION).length;
+        if (extensions < 5){
             Game.spawns['Home'].memory["runner"] = Math.ceil(1.0 * totalDistance * 10 / types.carry(types.runner));
         }
         else Game.spawns['Home'].memory["runner"] = Math.ceil(1.0 * totalDistance * 20 / types.carry(types.runner));
+        console.log('runners needed: ' + Game.spawns['Home'].memory["runner"]);
     }
     if (Game.time % 30 == 0) {
         // Automated miner count based on sources
@@ -121,6 +123,7 @@ module.exports.loop = function () {
     if (towers.length){
         T.run(towers[0]);
         T.defend(towers[0]);
+        T.heal(towers[0]);
     }
   });
 }

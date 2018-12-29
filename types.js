@@ -40,6 +40,27 @@ else if (extensions < 10){
         
     };
 }
+else if(extensions < 20){
+    module.exports ={
+        basic: [WORK, CARRY, MOVE],
+        normal:[WORK, WORK, WORK, WORK, CARRY, CARRY, MOVE, MOVE, MOVE],
+        runner:[CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE],
+        miner:[WORK, WORK, WORK, WORK, WORK, MOVE, MOVE, MOVE],
+        lightMiner: [WORK, WORK, MOVE, MOVE],
+        erunner: [CARRY, CARRY, MOVE],
+        transporter: [WORK, CARRY, CARRY, CARRY, MOVE, MOVE],
+        scout: [CLAIM, MOVE],
+        attacker: [TOUGH, MOVE, MOVE, MOVE, MOVE, MOVE, ATTACK, ATTACK, ATTACK, ATTACK],
+        cost: function(type){
+            var costList = _.map(type, part => BODYPART_COST[part]);
+            return _.sum(costList);
+        },
+        carry: function(type){
+            return _.filter(type, part => part == CARRY).length * CARRY_CAPACITY;
+        }
+        
+    };
+}
 
 else module.exports = {
     basic: [WORK, CARRY, MOVE],

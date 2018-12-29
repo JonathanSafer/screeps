@@ -6,7 +6,7 @@ var rS = {
     name: "scout",
     type: t.scout,
     target: 0,
-    limit: 2/*Game.spawns["Home"].memory["scout"]*/,
+    limit: Game.spawns["Home"].memory['scout'],
 
     /** @param {Creep} creep **/
     run: function(creep) {
@@ -24,7 +24,7 @@ var rS = {
         
         var neighbors = Object.values(Game.map.describeExits(creep.room.name));
         var interests = _.filter(neighbors, roomName => !rS.iOwn(roomName));
-        var target = interests[0];
+        var target = interests[interests.length - 1];
         var middle = new RoomPosition(25, 25, target);
         var result = creep.moveTo(middle);
     },

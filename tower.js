@@ -8,7 +8,18 @@ defend: function(t) {
         t.attack(hostiles[0]);
     }
 },
-    
+heal: function(tower) {
+    targets = tower.room.find(FIND_CREEPS, {filter: (injured) => { 
+                                                return (injured) &&
+                                                    injured.hits <injured.hitsMax;
+                                                                 }
+                                            }
+                                
+    );
+    if (targets.length > 0){
+        tower.heal(targets[0])
+    }
+},    
 run: function(tower) {
     locations = tower.room.find(FIND_STRUCTURES, {
                     filter: (structure) => {
