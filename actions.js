@@ -72,8 +72,13 @@ var actions = {
             var target = Game.getObjectById(creep.memory.targetId);
             //room1 = 
             result = actions.interact(creep, target, () => creep.pickup(target));
-            if (result == OK) {
-                creep.memory.targetId = null;
+            switch (result) {
+              case OK:
+              case ERR_INVALID_TARGET:
+                  creep.memory.targetId = null;
+                  break;
+              default:
+                  break;
             }
             return result;
         }
