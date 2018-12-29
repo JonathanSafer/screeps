@@ -11,7 +11,9 @@ var rR = {
     /** @param {Creep} creep **/
     run: function(creep) {
        // notice if there's stuff next to you before wandering off!  
-      actions.notice(creep); // cost: 
+      if (Game.time % 2) {
+        actions.notice(creep); // cost: 15% when running, so 7% now
+      }
 
       // if there's room for more energy, go find some more
       // else find storage
@@ -20,9 +22,12 @@ var rR = {
       } else {
           // check if we are walking on sidewalk/construction, and adjust as needed.
           var myPos = creep.pos;
-          if (!myPos.lookFor(LOOK_STRUCTURES) && !myPos.lookFor(LOOK_CONSTRUCTION_SITES)) {
+          //console.log(!myPos.lookFor(LOOK_STRUCTURES).length);
+          //console.log(!myPos.lookFor(LOOK_CONSTRUCTION_SITES).length);
+          if (!myPos.lookFor(LOOK_STRUCTURES).length && !myPos.lookFor(LOOK_CONSTRUCTION_SITES).length) {
               // temp
               if(creep.memory.new) {
+                  console.log("new road");
                   myPos.createConstructionSite(STRUCTURE_ROAD); // let's build more road
               }
           }

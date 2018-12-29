@@ -73,10 +73,10 @@ module.exports.loop = function () {
         var capacity = _.sum(_.map(banks, bank => bank.storeCapacity));
         console.log('money: ' + money + ', ' + (100*money/capacity));
         if(money < (capacity * .18)){
-           Game.spawns['Home'].memory.Upgraders = Math.max(Game.spawns['Home'].memory.Upgraders - 1, 1); 
+            Game.spawns['Home'].memory.Upgraders = Math.max(Game.spawns['Home'].memory.Upgraders - 1, 1); 
         }
         else if (money > (capacity * .20)){
-          Game.spawns['Home'].memory.Upgraders = Game.spawns['Home'].memory.Upgraders + 1;
+            Game.spawns['Home'].memory.Upgraders = Math.min(Game.spawns['Home'].memory.Upgraders + 1, 7);
         }
         // automated count for builders
         var constructionSites = _.flatten(_.map(Game.rooms, room => room.find(FIND_CONSTRUCTION_SITES)));
