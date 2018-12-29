@@ -11,10 +11,21 @@ var rR = {
     /** @param {Creep} creep **/
     run: function(creep) {
        // notice if there's stuff next to you before wandering off!  
-      actions.notice(creep);
+      actions.notice(creep); // cost: 
+
+      // if there's room for more energy, go find some more
+      // else find storage
       if (creep.carry.energy < 0.5 * creep.carryCapacity) {
           actions.pickup(creep);
       } else {
+          // check if we are walking on sidewalk/construction, and adjust as needed.
+          var myPos = creep.pos;
+          if (!myPos.lookFor(LOOK_STRUCTURES) && !myPos.lookFor(LOOK_CONSTRUCTION_SITES)) {
+              // temp
+              if(creep.memory.new) {
+                  myPos.createConstructionSite(STRUCTURE_ROAD); // let's build more road
+              }
+          }
           var targets =  u.getTransferLocations(creep);
           var bucket = targets[creep.memory.target];
           if (bucket == undefined) {
@@ -24,7 +35,8 @@ var rR = {
           if (actions.charge(creep, bucket) == ERR_FULL) {
                 console.log('Container Full');
                 rR.flipTarget(creep);
-        }
+          }
+
       }
       
       

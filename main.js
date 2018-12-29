@@ -24,6 +24,7 @@ function makeCreeps(role, type, target) {
     spawn.spawnCreep( type, name);
     Game.creeps[name].memory.role = role;
     Game.creeps[name].memory.target = target;
+    Game.creeps[name].memory.new = true; // TODO temporary for runner change
   }
 }
 //emergency reproduction
