@@ -3,7 +3,7 @@ var actions = {
         var result = fnToTry();
         switch (result) {
             case ERR_NOT_IN_RANGE:
-                if(creep.memory.test) {
+                if(false) {//creep.memory.test) {
                     actions.move(creep, location);
                 } else {
                     creep.moveTo(location, {reusePath: 10});
@@ -34,17 +34,18 @@ var actions = {
                 case ERR_NOT_FOUND:
                     //break; // let's get a new path
                 default:
-                    //console.log(creep.memory.role + " at " + creep.pos.x + "," + creep.pos.y + ": " + result.toString());
+                    console.log(creep.memory.role + " at " + creep.pos.x + "," + creep.pos.y + ": " + result.toString());
                     break;
             }
         }
-        //console.log("need new path");
+        console.log(creep.name)
+        console.log("need new path");
         //console.log(plannedPath);
         // Get here if there's no planned path or plan failed
         var newPath = creep.pos.findPathTo(location);
         //console.log(newPath);
         creep.memory.path = newPath;
-        return creep.moveByPath(plannedPath);
+        return actions.move(creep);
     },
     
     reserve: function(creep, target){
