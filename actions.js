@@ -120,7 +120,7 @@ var actions = {
         var closeStones = _.filter(tombstones, stone => stone.pos.isNearTo(creep.pos));
         if (closeStones.length) {
             // we can only get one thing per turn, success is assumed since we're close
-            return creep.withdraw(closeStones[0]);
+            return creep.withdraw(closeStones[0], RESOURCE_ENERGY);
         }
         var resources = creep.room.find(FIND_DROPPED_RESOURCES);
         var closeStuff = _.filter(resources, thing => thing.pos.isNearTo(creep.pos));
