@@ -5,8 +5,8 @@ var u = require('utils');
 var rT = {
     name: "transporter",
     type: t.transporter,
-    target: 0,
-    limit: 3,
+    target: () => 0,
+    limit: () => 3,
 
     /** @param {Creep} creep **/
     run: function(creep) {

@@ -48,9 +48,9 @@ module.exports.loop = function () {
 
     // Get counts for all roles, make first thing that doesn't have enough
     _.forEach(_.filter(roles, role => !counts[role.name]), role => counts[role.name] = 0);
-    var nextRole = _.find(roles, role => (typeof counts[role.name] == "undefined" && role.limit) || (counts[role.name] < role.limit));
+    var nextRole = _.find(roles, role => (typeof counts[role.name] == "undefined" && role.limit()) || (counts[role.name] < role.limit()));
     if (nextRole) {
-        makeCreeps(nextRole.name, nextRole.type, nextRole.target);
+        makeCreeps(nextRole.name, nextRole.type, nextRole.target());
     }
 
     // Print out each role & number of workers doing it

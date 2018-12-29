@@ -4,8 +4,8 @@ var t = require('types');
 var rM = {
     name: "remoteMiner",
     type: t.miner,
-    target: Game.spawns["Home"].memory.nextSource,
-    limit: Game.spawns["Home"].memory.miner,
+    target: () => Game.spawns["Home"].memory.nextSource,
+    limit: () => Game.spawns["Home"].memory.miner,
 
     /** @param {Creep} creep **/
     run: function(creep) {

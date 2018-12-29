@@ -5,8 +5,8 @@ var u = require('utils');
 var rBr = {
     name: "breaker",
     type: t.lightMiner,
-    target: 0,
-    limit: 0,
+    target: () => 0,
+    limit: () => 0,
 
     /** @param {Creep} creep **/
     run: function(creep) {

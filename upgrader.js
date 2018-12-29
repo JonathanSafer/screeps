@@ -5,9 +5,8 @@ var u = require('utils');
 var rU = {
     name: "Upgrader",
     type: t.normal,
-    target: 0,
-    limit: Game.spawns['Home'].memory.Upgraders,
-    limit: Game.spawns['Home'].memory.Upgraders,
+    target: () => 0,
+    limit: () => Game.spawns['Home'].memory.Upgraders,
 
     /** @param {Creep} creep **/
     run: function(creep) {
