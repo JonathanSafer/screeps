@@ -24,6 +24,7 @@ var actions = {
             var result = creep.moveByPath(plannedPath);
             switch (result) {
                 case OK:
+                case ERR_TIRED: // tired is fine
                     return result;
                 case ERR_NOT_FOUND:
                     break; // let's get a new path
@@ -37,7 +38,7 @@ var actions = {
         var newPath = creep.pos.findPathTo(location);
         creep.memory.path = newPath;
         return creep.moveByPath(plannedPath);
-    }
+    },
     
     reserve: function(creep, target){
         return actions.interact(creep, target, () => creep.reserveController(target));

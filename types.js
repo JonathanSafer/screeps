@@ -2,6 +2,19 @@
 
 //starter types
 var extensions = _.filter(Game.structures, (structure) => structure.structureType == STRUCTURE_EXTENSION).length;
+
+/*module.exports = {
+    basic: function(budget) {
+        return [WORK, CARRY, MOVE];
+    },
+    normal: function(budget) {
+        var works = Math.floor((budget / 100) * 8 / 13); 
+        var carries = Math.ceil(works / 2);
+        var moves = Math.ceil((works + carries) / 2);
+    },
+
+}*/
+
 if (extensions < 5){
     module.exports ={
         basic: [WORK, CARRY, MOVE],
