@@ -23,15 +23,23 @@ var rS = {
         }
         
         var neighbors = Object.values(Game.map.describeExits(creep.room.name));
-        var interests = _.filter(neighbors, roomName => !rS.iOwn(roomName));
-        var target = interests[interests.length - 1];
+        var bestInterests = _.filter(neighbors, roomName => !rS.iReservedOrOwn(roomName));
+        var interests = _.filter(neighbors, roomName => !rS.iReservedOrOwn(roomName));
+        var target = bestInterests.length ? bestInterests[0] : interests[0];
         var middle = new RoomPosition(25, 25, target);
         var result = creep.moveTo(middle);
     },
     
     iOwn: function(roomName) {
         var room = Game.rooms[roomName];
-        return (room && room.controller && room.controller.my);
+        var hasController = room && room.controller;
+        return hasController && room.controller.my;
+    },
+    
+    iReservedOrOwn: function(roomName) {
+        var room = Game.rooms[roomName];
+        var hasController = room && room.controller;
+        return hasController && (room.controller.my || (room.controller.reservation == "Yoner"));
     }
 };
 module.exports = rS;

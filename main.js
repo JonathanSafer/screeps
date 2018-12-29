@@ -19,8 +19,6 @@ const profiler = require('screeps-profiler');
 function makeCreeps(role, type, target) {
   spawn = Game.spawns['Home'];
   name = spawn.memory.counter.toString();
-  //console.log(type);
-  //console.log(types.cost(type));
   if (types.cost(type) <= spawn.room.energyAvailable && !spawn.spawning) {
     spawn.memory.counter++;
     spawn.spawnCreep( type, name);

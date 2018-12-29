@@ -122,8 +122,15 @@ var actions = {
             console.log(closeStones);
             // we can only get one thing per turn, success is assumed since we're close
             result = creep.withdraw(closeStones[0], RESOURCE_ENERGY);
-            console.log(result);
-            return result;
+            switch (result) {
+                case ERR_FULL:
+                    return;
+                case ERR_NOT_ENOUGH_RESOURCES:
+                    break;
+                default:
+                    console.log(result);
+                    return result;
+            }
         }
         var resources = creep.room.find(FIND_DROPPED_RESOURCES);
         var closeStuff = _.filter(resources, thing => thing.pos.isNearTo(creep.pos));
