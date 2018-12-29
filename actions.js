@@ -1,30 +1,43 @@
 var actions = {
     interact: function(creep, location, fnToTry) {
-       var result = fnToTry();
+        var result = fnToTry();
         switch (result) {
             case ERR_NOT_IN_RANGE:
-               return creep.moveTo(location, {reusePath: 10});
+                return actions.move(creep, location);
+                //return creep.moveTo(location, {reusePath: 10});
             case OK:
             case ERR_BUSY:
             case ERR_FULL:
-                return result;
-                break;
             case ERR_NOT_ENOUGH_RESOURCES:
+                creep.memory.path = null;
                 return result;
-                break;
             default:
                 console.log(creep.memory.role + " at " + creep.pos.x + "," + creep.pos.y + ": " + result.toString());
                 return result;
       }
-      
-      if(result == ERR_NOT_IN_RANGE) {
-        return creep.moveTo(location);
-      } else if(result == ERR_FULL) {
-        return ERR_FULL;  
-      } else if(result != 0) {
-          console.log(creep.memory.role + " at " + location.id + ": " + result.toString());
-      }
     },
+
+    move: function(creep, location) {
+        // check if there's a path. try moving along it
+        var plannedPath = creep.memory.path;
+        if (plannedPath) {
+            var result = creep.moveByPath(plannedPath);
+            switch (result) {
+                case OK:
+                    return result;
+                case ERR_NOT_FOUND:
+                    break; // let's get a new path
+                default:
+                    console.log(creep.memory.role + " at " + creep.pos.x + "," + creep.pos.y + ": " + result.toString());
+                    break;
+            }
+        }
+
+        // Get here if there's no planned path or plan failed
+        var newPath = creep.pos.findPathTo(location);
+        creep.memory.path = newPath;
+        return creep.moveByPath(plannedPath);
+    }
     
     reserve: function(creep, target){
         return actions.interact(creep, target, () => creep.reserveController(target));
