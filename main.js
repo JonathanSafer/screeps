@@ -114,7 +114,7 @@ module.exports.loop = function () {
         var enemyCounts = _.map(Game.rooms, room => {
             var allBadCreeps = room.find(FIND_HOSTILE_CREEPS);
             var invaders = _.reject(allBadCreeps, creep => creep.owner.username == "Source Keeper");
-            return invaders.length;
+            return 0;//invaders.length;
         });
         Game.spawns['Home'].memory["attacker"] = _.sum(enemyCounts);
     }

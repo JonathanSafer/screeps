@@ -7,7 +7,6 @@ var rR = {
     type: t.runner,
     target: 0,
     limit: Game.spawns['Home'].memory['runner'],
-    limit: Game.spawns['Home'].memory['runner'],
 
     /** @param {Creep} creep **/
     run: function(creep) {

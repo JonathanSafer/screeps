@@ -4,9 +4,11 @@ var actions = {
         switch (result) {
             case ERR_NOT_IN_RANGE:
                 if(creep.memory.test) {
-                    return actions.move(creep, location);
+                    actions.move(creep, location);
+                } else {
+                    creep.moveTo(location, {reusePath: 10});
                 }
-                return creep.moveTo(location, {reusePath: 10});
+                return result;
             case OK:
             case ERR_BUSY:
             case ERR_FULL:
@@ -23,6 +25,7 @@ var actions = {
         // check if there's a path. try moving along it
         var plannedPath = creep.memory.path;
         if (plannedPath) {
+            //console.log(plannedPath + " Hi");
             var result = creep.moveByPath(plannedPath);
             switch (result) {
                 case OK:
@@ -31,13 +34,15 @@ var actions = {
                 case ERR_NOT_FOUND:
                     //break; // let's get a new path
                 default:
-                    console.log(creep.memory.role + " at " + creep.pos.x + "," + creep.pos.y + ": " + result.toString());
+                    //console.log(creep.memory.role + " at " + creep.pos.x + "," + creep.pos.y + ": " + result.toString());
                     break;
             }
         }
-
+        //console.log("need new path");
+        //console.log(plannedPath);
         // Get here if there's no planned path or plan failed
         var newPath = creep.pos.findPathTo(location);
+        //console.log(newPath);
         creep.memory.path = newPath;
         return creep.moveByPath(plannedPath);
     },
@@ -63,20 +68,23 @@ var actions = {
     },
     
     pickup: function(creep) {
-        //if (Game.time % 10 === 0){
+        if(creep.memory.targetId) {
+            var target = Game.getObjectById(creep.memory.targetId);
+            //room1 = 
+            result = actions.interact(creep, target, () => creep.pickup(target));
+            if (result == OK) {
+                creep.memory.targetId = null;
+            }
+            return result;
+        }
+        console.log("finding a target");
+        
         var rooms = Game.rooms;
         var drops = _.flatten(_.map(rooms, room => room.find(FIND_DROPPED_RESOURCES)));
         targets = _.sortBy(drops, drop => -1*drop.amount + 28*PathFinder.search(creep.pos, drop.pos).cost);
-        creep.memory.target = targets[0]
-        //console.log(_.map(targets, t => -1*t.amount + 20*PathFinder.search(creep.pos, t.pos).cost));
-        //}
-        //console.log(creep.memory.target);
-        // target = '[resource (energy) ' + creep.memory.target.id + ']';
-         //console.log(target);
-        if(creep.memory.target) {
-            //room1 = 
-            return actions.interact(creep, creep.memory.target, () => creep.pickup(creep.memory.target));
-        }
+        creep.memory.targetId = targets[0].id;
+
+        return actions.pickup(creep);
     },
 
     upgrade: function(creep) {
