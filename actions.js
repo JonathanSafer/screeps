@@ -3,8 +3,10 @@ var actions = {
         var result = fnToTry();
         switch (result) {
             case ERR_NOT_IN_RANGE:
-                return actions.move(creep, location);
-                //return creep.moveTo(location, {reusePath: 10});
+                if(creep.memory.test) {
+                    return actions.move(creep, location);
+                }
+                return creep.moveTo(location, {reusePath: 10});
             case OK:
             case ERR_BUSY:
             case ERR_FULL:
@@ -27,7 +29,7 @@ var actions = {
                 case ERR_TIRED: // tired is fine
                     return result;
                 case ERR_NOT_FOUND:
-                    break; // let's get a new path
+                    //break; // let's get a new path
                 default:
                     console.log(creep.memory.role + " at " + creep.pos.x + "," + creep.pos.y + ": " + result.toString());
                     break;
