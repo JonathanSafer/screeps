@@ -9,9 +9,9 @@ defend: function(t) {
     }
 },
 heal: function(tower) {
-    targets = tower.room.find(FIND_CREEPS, {filter: (injured) => { 
+    targets = tower.room.find(FIND_MY_CREEPS, {filter: (injured) => { 
                                                 return (injured) &&
-                                                    injured.hits <injured.hitsMax;
+                                                    injured.hits < injured.hitsMax;
                                                                  }
                                             }
                                 

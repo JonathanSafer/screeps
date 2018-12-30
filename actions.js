@@ -108,7 +108,10 @@ var actions = {
     },
 
     build: function(creep) {
-      var targets = creep.room.find(FIND_CONSTRUCTION_SITES);
+        var myRooms = _.filter(Game.rooms, room =>  (room.controller && room.controller.reservation && room.controller.reservation.username == "Yoner")
+                                                            || (room.controller && room.controller.my));
+        var targets = _.flatten(_.map(myRooms, room => room.find(FIND_CONSTRUCTION_SITES)));
+     //var targets = creep.room.find(FIND_CONSTRUCTION_SITES);
       if(targets.length) {
         return actions.interact(creep, targets[0], () => creep.build(targets[0]));
       }
