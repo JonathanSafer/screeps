@@ -62,7 +62,8 @@ else if(extensions < 20){
     };
 }
 
-else module.exports = {
+else if (extensions < 30){
+ module.exports = {
     basic: [WORK, CARRY, MOVE],
     normal : [WORK, WORK, WORK, WORK, WORK, WORK, WORK, WORK, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE],
     builder: [WORK,WORK, WORK, WORK, WORK,CARRY, CARRY, CARRY, CARRY,CARRY, CARRY, CARRY, CARRY,CARRY,MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE],
@@ -82,3 +83,50 @@ else module.exports = {
         return _.filter(type, part => part == CARRY).length * CARRY_CAPACITY;
     }
 };
+}
+else if (extensions < 40){
+    module.exports = {
+    basic: [WORK, CARRY, MOVE],
+    normal : [WORK, WORK, WORK, WORK, WORK, WORK, WORK, WORK, WORK, WORK, WORK, WORK, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE],
+    builder: [WORK,WORK, WORK, WORK, WORK,CARRY, CARRY, CARRY, CARRY,CARRY, CARRY, CARRY, CARRY,CARRY,MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE],
+    ferry : [CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE],
+    runner: [CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE],
+    transporter: [WORK, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE],
+    miner: [WORK, WORK, WORK, WORK, WORK, MOVE, MOVE, MOVE],
+    lightMiner: [WORK, WORK, MOVE, MOVE],
+    scout: [CLAIM, MOVE],
+    erunner: [CARRY, CARRY, MOVE],
+    attacker: [TOUGH, TOUGH, MOVE, MOVE, MOVE, MOVE, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK],
+    cost: function(type){
+        var costList = _.map(type, part => BODYPART_COST[part]);
+        return _.sum(costList);
+    },
+    carry: function(type){
+        return _.filter(type, part => part == CARRY).length * CARRY_CAPACITY;
+    }
+};  
+}
+else if (extensions < 50){
+    module.exports = {
+    basic: [WORK, CARRY, MOVE],
+    normal : [WORK, WORK, WORK, WORK, WORK, WORK, WORK, WORK, WORK, WORK, WORK, WORK, WORK, WORK, WORK, CARRY, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE],
+    builder: [WORK, WORK, WORK, WORK, WORK, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY,CARRY,MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE],
+    ferry : [CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE],
+    runner: [CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY,
+            CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY,
+            MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE],
+    transporter: [WORK, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE],
+    miner: [WORK, WORK, WORK, WORK, WORK, MOVE, MOVE, MOVE],
+    lightMiner: [WORK, WORK, MOVE, MOVE],
+    scout: [CLAIM, MOVE],
+    erunner: [CARRY, CARRY, MOVE],
+    attacker: [TOUGH, TOUGH, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK],
+    cost: function(type){
+        var costList = _.map(type, part => BODYPART_COST[part]);
+        return _.sum(costList);
+    },
+    carry: function(type){
+        return _.filter(type, part => part == CARRY).length * CARRY_CAPACITY;
+    }
+};    
+}

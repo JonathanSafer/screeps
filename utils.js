@@ -20,7 +20,8 @@ module.exports = {
     getGoodPickups: function(creep) {
         var rooms = Game.rooms;
         var drops = _.flatten(_.map(rooms, room => room.find(FIND_DROPPED_RESOURCES)));
-        var goodLoads = _.filter(drops, drop => drop.amount >= 0.5 * creep.carryCapacity);
+        var goodLoads = _.filter(drops, drop => (drop.amount >= 0.5 * creep.carryCapacity) || (drop == !RESOURCE_ENERGY));
+        //console.log(goodLoads);
         return goodLoads;
     },
     

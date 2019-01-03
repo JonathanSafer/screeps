@@ -28,13 +28,16 @@ function makeCreeps(role, type, target) {
   }
 }
 //emergency reproduction
-if (_.filter(Game.creeps, creep => creep.memory.role == 'remoteMiner') == 0){
+if (_.filter(Game.creeps, creep => creep.memory.role == 'remoteMiner') < 1){
+    console.log('Making Emergency Miner');
     makeCreeps('remoteMiner', types.lightMiner, 1);
 }
-else if (_.filter(Game.creeps, creep => creep.memory.role == 'transporter') == 0){
+if (_.filter(Game.creeps, creep => creep.memory.role == 'transporter') < 1){
+    console.log('Making Emergency Transporter');
     makeCreeps('transporter', types.basic, 0);
 }
-else if (_.filter(Game.creeps, creep => creep.memory.role == 'runner') == 0){
+if (_.filter(Game.creeps, creep => creep.memory.role == 'runner') < 1){
+    console.log('Making Emergnecy Runner')
     makeCreeps('runner', types.erunner, 1);
 }
 
@@ -72,10 +75,10 @@ module.exports.loop = function () {
         var money = _.sum(_.map(banks, bank => bank.store[RESOURCE_ENERGY]));
         var capacity = _.sum(_.map(banks, bank => bank.storeCapacity));
         console.log('money: ' + money + ', ' + (100*money/capacity));
-        if(money < (capacity * .18)){
+        if(money < (capacity * .28)){
             Game.spawns['Home'].memory.Upgraders = Math.max(Game.spawns['Home'].memory.Upgraders - 1, 1); 
         }
-        else if (money > (capacity * .20)){
+        else if (money > (capacity * .30)){
             Game.spawns['Home'].memory.Upgraders = Math.min(Game.spawns['Home'].memory.Upgraders + 1, 7);
         }
         // automated count for builders
@@ -98,6 +101,13 @@ module.exports.loop = function () {
         }
         else Game.spawns['Home'].memory["runner"] = Math.ceil(1.0 * totalDistance * 20 / types.carry(types.runner));
         console.log('runners needed: ' + Game.spawns['Home'].memory["runner"]);
+        //memory clear
+        for(var name in Memory.creeps) {
+            if(!Game.creeps[name]) {
+                delete Memory.creeps[name];
+                console.log('Clearing non-existing creep memory:', name);
+            }
+        }
     }
     if (Game.time % 30 == 0) {
         // Automated miner count based on sources
@@ -122,9 +132,20 @@ module.exports.loop = function () {
     // Run the tower
     var towers = _.filter(Game.structures, (structure) => structure.structureType == STRUCTURE_TOWER);
     if (towers.length){
-        T.run(towers[0]);
-        T.defend(towers[0]);
-        T.heal(towers[0]);
+        var hostiles = Game.spawns['Home'].room.find(FIND_HOSTILE_CREEPS);
+        if(hostiles.length > 0){
+            T.defend(towers[0]);
+        }
+        else {
+            T.run(towers[0]);
+            T.defend(towers[0]);
+            T.heal(towers[0]);
+        }
+    }
+    if (towers.length > 1){
+        T.run(towers[1]);
+        T.defend(towers[1]);
+        T.heal(towers[1]);
     }
   });
 }
