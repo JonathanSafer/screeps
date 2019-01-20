@@ -4,7 +4,7 @@ var u = require('utils');
 
 var rBr = {
     name: "breaker",
-    type: t.lightMiner,
+    type: "lightMiner",
     target: () => 0,
     limit: () => 0,
 

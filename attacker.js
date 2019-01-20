@@ -4,7 +4,7 @@ var u = require('utils');
 
 var rA = {
     name: "attacker",
-    type: t.attacker,
+    type: "attacker",
     target: () => 0,
     limit: () => Game.spawns["Home"].memory['attacker'],
    

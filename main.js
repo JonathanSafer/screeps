@@ -1,3 +1,7 @@
+var rE = require('eye');
+var rRo = require('robber');
+var rF = require('ferry');
+var rMM = require('mineralMiner');
 var rU = require('upgrader');
 var rB = require('builder');
 var rR = require('runner');
@@ -16,35 +20,34 @@ const profiler = require('screeps-profiler');
 //Game.spawns['Home'].memory["runner"] = 5;
 //Game.spawns['Home'].memory["attacker"] = 0;
 
+
 function makeCreeps(role, type, target) {
-  spawn = Game.spawns['Home'];
-  name = spawn.memory.counter.toString();
-  if (types.cost(type) <= spawn.room.energyAvailable && !spawn.spawning) {
-    spawn.memory.counter++;
-    spawn.spawnCreep( type, name);
-    Game.creeps[name].memory.role = role;
-    Game.creeps[name].memory.target = target;
-    Game.creeps[name].memory.new = true; // TODO temporary for runner change
+    var extensions = _.filter(Game.structures, (structure) => structure.structureType == STRUCTURE_EXTENSION).length;
+    var recipe = types.getRecipe(type, extensions);
+    spawn = Game.spawns['Home'];
+    spawn2 = Game.spawns['Home2'];
+    name = spawn.memory.counter.toString();
+    if (types.cost(recipe) <= spawn.room.energyAvailable && !spawn.spawning) {
+        spawn.memory.counter++;
+        spawn.spawnCreep( recipe, name);
+        Game.creeps[name].memory.role = role;
+        Game.creeps[name].memory.target = target;
+        Game.creeps[name].memory.new = true; // TODO temporary for runner change
+    } else if(types.cost(recipe) <= spawn.room.energyAvailable && !spawn2.spawning){
+        spawn.memory.counter++;
+        spawn2.spawnCreep( recipe, name);
+        Game.creeps[name].memory.role = role;
+        Game.creeps[name].memory.target = target;
+        Game.creeps[name].memory.new = true;  
   }
 }
-//emergency reproduction
-if (_.filter(Game.creeps, creep => creep.memory.role == 'remoteMiner') < 1){
-    console.log('Making Emergency Miner');
-    makeCreeps('remoteMiner', types.lightMiner, 1);
-}
-if (_.filter(Game.creeps, creep => creep.memory.role == 'transporter') < 1){
-    console.log('Making Emergency Transporter');
-    makeCreeps('transporter', types.basic, 0);
-}
-if (_.filter(Game.creeps, creep => creep.memory.role == 'runner') < 1){
-    console.log('Making Emergnecy Runner')
-    makeCreeps('runner', types.erunner, 1);
-}
+
+
 
 profiler.enable();
 module.exports.loop = function () {
   profiler.wrap(function() {
-    var roles = [rA, rM, rT, rR, rS, rU, rB, rBr]; // order roles for priority
+    var roles = [rA, rT, rM, rR, rS, rU, rB, rMM, rF, rBr, rE, rRo]; // order roles for priority
     var nameToRole = _.groupBy(roles, role => role.name); // map from names to roles
     var counts = _.countBy(Game.creeps, creep => creep.memory.role); // lookup table from role to count
 
@@ -64,9 +67,9 @@ module.exports.loop = function () {
   
     //Game.spawns['Home'].memory.Upgraders = 2;
     console.log("Time: " + Game.time + ". " + u.getDropTotals() +  " lying on ground.");
-    if (Game.spawns['Home'].room.controller.safeModeAvailable) {
-        Game.spawns['Home'].room.controller.activateSafeMode();
-    }
+    //if (Game.spawns['Home'].room.controller.safeModeAvailable) {
+    //    Game.spawns['Home'].room.controller.activateSafeMode();
+    //}
     
     if (Game.time % 500 === 0){
         // automated upgrader count based on money
@@ -97,9 +100,9 @@ module.exports.loop = function () {
         var totalDistance = _.sum(distances);
         var extensions = _.filter(Game.structures, (structure) => structure.structureType == STRUCTURE_EXTENSION).length;
         if (extensions < 5){
-            Game.spawns['Home'].memory["runner"] = Math.ceil(1.0 * totalDistance * 10 / types.carry(types.runner));
+            Game.spawns['Home'].memory["runner"] = Math.ceil(1.0 * totalDistance * 10 / types.carry("runner"));
         }
-        else Game.spawns['Home'].memory["runner"] = Math.ceil(1.0 * totalDistance * 20 / types.carry(types.runner));
+        else Game.spawns['Home'].memory["runner"] = Math.ceil(1.0 * totalDistance * 20 / types.carry("runner"));
         console.log('runners needed: ' + Game.spawns['Home'].memory["runner"]);
         //memory clear
         for(var name in Memory.creeps) {
@@ -110,6 +113,15 @@ module.exports.loop = function () {
         }
     }
     if (Game.time % 30 == 0) {
+        // Automated mineralMiner creation based on source status
+        var minerals = Game.spawns['Home'].room.find(FIND_MINERALS);
+        if (minerals[0].mineralAmount < 1){
+            Game.spawns["Home"].memory["mineralMiner"] = 0;
+        }
+        else {
+            Game.spawns["Home"].memory["mineralMiner"] = 1;
+        }
+        
         // Automated miner count based on sources
         var extensions = _.filter(Game.structures, (structure) => structure.structureType == STRUCTURE_EXTENSION).length;
         var myRooms = _.filter(Game.rooms, room =>  (room.controller && room.controller.reservation && room.controller.reservation.username == "Yoner")
@@ -146,7 +158,43 @@ module.exports.loop = function () {
         T.run(towers[1]);
         T.defend(towers[1]);
         T.heal(towers[1]);
+        if (towers.length > 2){
+            T.run(towers[2]);
+            T.defend(towers[2]);
+            T.heal(towers[2]);
+        }
     }
+    //market (seems to use about 3 cpu, so we can make this run every few ticks when we start needing cpu)
+    var orders = Game.market.getAllOrders(order => order.resourceType == RESOURCE_UTRIUM &&     order.type == ORDER_BUY &&
+        Game.market.calcTransactionCost(1000, 'W46N42', order.roomName) < 1000 && (order.price > 0.4) );
+    if (orders.length && Game.spawns['Home'].room.terminal.store['U'] > 20000){
+        Game.market.deal(orders[0].id, orders[0].remainingAmount, 'W46N42')
+        console.log('order processed for ' + orders[0].remainingAmount + ' UTRIUM at a price of ' + orders[0].price);
+    }
+    var energyOrders = Game.market.getAllOrders(order => order.resourceType == RESOURCE_ENERGY &&     order.type == ORDER_BUY &&
+            Game.market.calcTransactionCost(1000, 'W46N42', order.roomName) < 500 && (order.price > 0.09) );
+    if (energyOrders.length && (Game.spawns['Home'].room.terminal.store.energy > 70000)){
+        Game.market.deal(energyOrders[0].id, energyOrders[0].remainingAmount, 'W46N42')
+        console.log('order processed for ' + energyOrders[0].remainingAmount + ' ENERGY at a price of ' + energyOrders[0].price);
+    }
+    
+    //emergency reproduction
+    if (Game.time % 50 == 1) {
+        if (_.filter(Game.creeps, creep => creep.memory.role == 'runner') < 1){
+            console.log('Making Emergnecy Runner')
+            makeCreeps('runner', 'erunner', 1);
+        }
+        if (_.filter(Game.creeps, creep => creep.memory.role == 'remoteMiner') < 1){
+            console.log('Making Emergency Miner');
+            makeCreeps('remoteMiner', "lightMiner", 1);
+        }
+
+            if (_.filter(Game.creeps, creep => creep.memory.role == 'transporter') < 1){
+            console.log('Making Emergency Transporter');
+            makeCreeps('transporter', 'basic', 0);
+        }
+    }
+    
   });
 }
 

@@ -4,7 +4,7 @@ var u = require('utils');
 
 var rS = {
     name: "scout",
-    type: t.scout,
+    type: "scout",
     target: () => 0,
     limit: () => Game.spawns["Home"].memory['scout'],
 

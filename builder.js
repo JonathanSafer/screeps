@@ -4,7 +4,7 @@ var u = require('utils');
 
 var rB = {
     name: "builder",
-    type: t.builder,
+    type: "builder",
     target: () => 0,
     limit: () => Game.spawns["Home"].memory.builder,
 

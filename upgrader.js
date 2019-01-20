@@ -4,7 +4,7 @@ var u = require('utils');
 
 var rU = {
     name: "Upgrader",
-    type: t.normal,
+    type: "normal",
     target: () => 0,
     limit: () => Game.spawns['Home'].memory.Upgraders,
 

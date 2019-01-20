@@ -3,7 +3,7 @@ var t = require('types');
 
 var rM = {
     name: "remoteMiner",
-    type: t.miner,
+    type: "miner",
     target: () => Game.spawns["Home"].memory.nextSource,
     limit: () => Game.spawns["Home"].memory.miner,
 

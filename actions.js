@@ -14,6 +14,7 @@ var actions = {
             case OK:
             case ERR_BUSY:
             case ERR_FULL:
+            case ERR_TIRED:
             case ERR_NOT_ENOUGH_RESOURCES:
                 creep.memory.path = null;
                 return result;
@@ -62,8 +63,12 @@ var actions = {
         return actions.interact(creep, target, () => creep.attack(target));
     },
     
-    withdraw: function(creep, location) {
-      return actions.interact(creep, location, () => creep.withdraw(location, RESOURCE_ENERGY));
+    withdraw: function(creep, location, mineral) {
+        if (mineral == undefined){
+            return actions.interact(creep, location, () => creep.withdraw(location, RESOURCE_ENERGY));
+        } else {
+            return actions.interact(creep, location, () => creep.withdraw(location, mineral));
+        }
     },
 
     harvest: function(creep, target) {
@@ -88,7 +93,7 @@ var actions = {
                 return result;
             }
         }
-        console.log("finding a target");
+        //console.log("finding a target");
         
         var newTargets = _.sortBy(goodLoads, drop => -1*drop.amount + 28*PathFinder.search(creep.pos, drop.pos).cost);
         if (newTargets.length) {
@@ -102,9 +107,13 @@ var actions = {
       location = creep.room.controller;
       return actions.interact(creep, location, () => creep.upgradeController(location));
     },
-
+    
     charge: function(creep, location) {
-      return actions.interact(creep, location, () => creep.transfer(location, RESOURCE_ENERGY));
+        if (creep.carry['U'] > 0){
+            return actions.interact(creep, location, () => creep.transfer(location, /*creep.carry[0]*/RESOURCE_UTRIUM));
+        } else{
+            return actions.interact(creep, location, () => creep.transfer(location, /*creep.carry[0]*/RESOURCE_ENERGY));
+        }
     },
 
     build: function(creep) {

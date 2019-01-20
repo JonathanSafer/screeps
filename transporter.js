@@ -4,7 +4,7 @@ var u = require('utils');
 
 var rT = {
     name: "transporter",
-    type: t.transporter,
+    type: "transporter",
     target: () => 0,
     limit: () => 3,
 
