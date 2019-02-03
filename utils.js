@@ -63,13 +63,13 @@ var u = {
     },
 
     getAvailableSpawn: function(spawns) {
-    validSpawns = _.filter(spawns, spawn => spawn.spawning);
-    if (validSpawns.length > 0) {
-        return validSpawns[0];
-    } else {
-        return null;
+        validSpawns = _.filter(spawns, spawn => spawn.spawning);
+        if (validSpawns.length > 0) {
+            return validSpawns[0];
+        } else {
+            return null;
+        }
     }
-}
     
 };
 
