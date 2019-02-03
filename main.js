@@ -15,6 +15,7 @@ var rA = require('attacker');
 var types = require('types');
 var u = require('utils');
 var T = require('tower');
+var m = require('markets');
 const profiler = require('screeps-profiler');
 //Game.profiler.profile(1000);
 //Game.profiler.output();
@@ -254,6 +255,7 @@ function runTowers(city){
     }
 }
 
+
 profiler.enable();
 module.exports.loop = function () {
   profiler.wrap(function() {
@@ -304,15 +306,18 @@ module.exports.loop = function () {
         }
         var energyOrders = Game.market.getAllOrders(order => order.resourceType == RESOURCE_ENERGY &&     order.type == ORDER_BUY &&
                 Game.market.calcTransactionCost(1000, 'W46N42', order.roomName) < 1000 && (order.price > 0.09));
-        if (energyOrders.length && (Game.spawns['Home'].room.terminal.store.energy > 70000)){
-            if (energyOrders[0].remainingAmount > (Game.spawns['Home'].room.terminal.store.energy/2)){
+
+        if (energyOrders.length && (Game.spawns['Home'].room.terminal.store.energy > 70000)){ // we have energy orders and energy to sell
+            sortedOrders = m.sortOrder(energyOrders).reverse();
+
+            if (sortedOrders[0].remainingAmount > (Game.spawns['Home'].room.terminal.store.energy/2)){
                 var store = Game.spawns['Home'].room.terminal.store.energy;
                 var quantity = Math.floor(store/2);
-                var result = Game.market.deal(energyOrders[0].id, quantity, 'W46N42');
-                console.log('order processed for ' + quantity + ' ENERGY at a price of ' + energyOrders[0].price);
+                var result = Game.market.deal(sortedOrders[0].id, quantity, 'W46N42');
+                console.log('order processed for ' + quantity + ' ENERGY at a price of ' + sortedOrders[0].price);
             } else{
-                Game.market.deal(energyOrders[0].id, energyOrders[0].remainingAmount, 'W46N42')
-                console.log('order processed for ' + energyOrders[0].remainingAmount + ' ENERGY at a price of ' + energyOrders[0].price);
+                Game.market.deal(sortedOrders[0].id, sortedOrders[0].remainingAmount, 'W46N42')
+                console.log('order processed for ' + sortedOrders[0].remainingAmount + ' ENERGY at a price of ' + sortedOrders[0].price);
             }
         }
         var sellOrders = Game.market.getAllOrders(order => order.resourceType == RESOURCE_UTRIUM &&     order.type == ORDER_SELL &&
