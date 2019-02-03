@@ -33,34 +33,17 @@ function makeCreeps(role, type, target, city) {
     let spawns = Game.spawns[city].room.find(FIND_MY_SPAWNS);
     let name = Game.spawns['Home'].memory.counter.toString();
     if (types.cost(recipe) <= Game.spawns[city].room.energyAvailable){
-    	if(!spawns[0].spawning){
-    		Game.spawns['Home'].memory.counter++;
-    		spawns[0].spawnCreep(recipe, name);
-    		//console.log(name)
-    		//console.log(recipe)
-    		Game.creeps[name].memory.role = role;
-        	Game.creeps[name].memory.target = target;
-        	Game.creeps[name].memory.city = city;
-        	Game.creeps[name].memory.new = true; // TODO temporary for runner change
-    	} else if (!(spawns[1] == undefined)){
-    		if(!spawns[1].spawning){
-    			Game.spawns['Home'].memory.counter++;
-    			spawns[1].spawnCreep(recipe, name);
-	    		Game.creeps[name].memory.role = role;
-	        	Game.creeps[name].memory.target = target;
-	        	Game.creeps[name].memory.city = city;
-	        	Game.creeps[name].memory.new = true;
-        	} else if (!(spawns[2] == undefined)){
-	    		if(!spawns[2].spawning){
-	    			Game.spawns['Home'].memory.counter++;
-	    			spawns[2].spawnCreep(recipe, name);
-		    		Game.creeps[name].memory.role = role;
-		        	Game.creeps[name].memory.target = target;
-		        	Game.creeps[name].memory.city = city;
-		        	Game.creeps[name].memory.new = true;
-	        	}
-    		}
-		}
+        spawn = u.getAvailableSpawn(spawns);
+
+        if(spawn != null) {
+            Game.spawns['Home'].memory.counter++;
+            spawn.spawnCreep(recipe, name);
+
+            Game.creeps[name].memory.role = role;
+            Game.creeps[name].memory.target = target;
+            Game.creeps[name].memory.city = city;
+            Game.creeps[name].memory.new = true;
+        }
 	}
 }
 //runCity function

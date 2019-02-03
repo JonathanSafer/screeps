@@ -60,7 +60,16 @@ var u = {
 	    var rooms = _.filter(Game.rooms, room => u.iReservedOrOwn(room.name))
 	    //console.log(JSON.stringify(rooms));
 	    return _.groupBy(rooms, room => room.controller.sign.text);
+    },
+
+    getAvailableSpawn: function(spawns) {
+    validSpawns = _.filter(spawns, spawn => spawn.spawning);
+    if (validSpawns.length > 0) {
+        return validSpawns[0];
+    } else {
+        return null;
     }
+}
     
 };
 
