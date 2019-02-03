@@ -6,7 +6,6 @@ var rBr = {
     name: "breaker",
     type: "lightMiner",
     target: () => 0,
-    limit: () => 0,
 
     /** @param {Creep} creep **/
     run: function(creep) {

@@ -6,7 +6,6 @@ var rMM = {
     name: "mineralMiner",
     type: "mineralMiner",
     target: () => 0,
-    limit: () => Game.spawns["Home"].memory.mineralMiner,
 
     /** @param {Creep} creep **/
     run: function(creep) {
@@ -24,7 +23,8 @@ var rMM = {
     },
 
     needEnergy: function(creep) {
-      return (creep.carry['U'] < creep.carryCapacity || creep.carry['U'] == undefined);
+        let carry = _.sum(creep.carry);
+        return (carry < creep.carryCapacity);
     },
 
     harvestTarget: function(creep) {

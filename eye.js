@@ -7,7 +7,6 @@ var rE = {
     name: "eye",
     type: "eye",
     target: () => 0,
-    limit: () => 0,
 
     /** @param {Creep} creep **/
     run: function(creep) {

@@ -21,13 +21,14 @@ heal: function(tower) {
     }
 },    
 run: function(tower) {
-    locations = tower.room.find(FIND_STRUCTURES, {
+    let locations = tower.room.find(FIND_STRUCTURES, {
                     filter: (structure) => {
                         return (structure) &&
-                            structure.hits < structure.hitsMax;
+                            structure.hits < (structure.hitsMax * 0.1);
                     }
         });
-    if(locations.length > 0) {tower.repair(locations[0])}
+    let notWalls = _.reject(locations, location => location.structureType == STRUCTURE_WALL);
+    if(notWalls.length > 0) {tower.repair(notWalls[0])}
     }
 }
 module.exports = T;

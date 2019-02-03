@@ -6,7 +6,6 @@ var rRo = {
     name: "robber",
     type: "runner",
     target: () => 0,
-    limit: () => 0,
 
     /** @param {Creep} creep **/
     run: function(creep) {

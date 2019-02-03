@@ -19,7 +19,7 @@ var actions = {
                 creep.memory.path = null;
                 return result;
             default:
-                console.log(creep.memory.role + " at " + creep.pos.x + "," + creep.pos.y + ": " + result.toString());
+                console.log(creep.memory.role + " at " + creep.pos + ": " + result.toString());
                 return result;
       }
     },
@@ -37,7 +37,7 @@ var actions = {
                 case ERR_NOT_FOUND:
                     //break; // let's get a new path
                 default:
-                    console.log(creep.memory.role + " at " + creep.pos.x + "," + creep.pos.y + ": " + result.toString());
+                    console.log(creep.memory.role + " at " + creep.pos + ": " + result.toString());
                     break;
             }
         }
@@ -52,7 +52,12 @@ var actions = {
     },
     
     reserve: function(creep, target){
-        return actions.interact(creep, target, () => creep.reserveController(target));
+        var city = creep.memory.city
+        if(!creep.room.controller.sign || !(creep.room.controller.sign.text == city)){
+            return actions.interact(creep, target, () => creep.signController(target, city));
+        } else {
+            return actions.interact(creep, target, () => creep.reserveController(target));
+        }
     },
 
     dismantle: function(creep, target){
@@ -109,21 +114,55 @@ var actions = {
     },
     
     charge: function(creep, location) {
-        if (creep.carry['U'] > 0){
-            return actions.interact(creep, location, () => creep.transfer(location, /*creep.carry[0]*/RESOURCE_UTRIUM));
+        let carry = creep.carry;
+        delete carry.energy;
+        let mineral = Object.keys(carry)[0];
+        if (creep.carry.mineral > 0){
+            return actions.interact(creep, location, () => creep.transfer(location, /*creep.carry[0]*/mineral));
         } else{
             return actions.interact(creep, location, () => creep.transfer(location, /*creep.carry[0]*/RESOURCE_ENERGY));
         }
     },
 
-    build: function(creep) {
-        var myRooms = _.filter(Game.rooms, room =>  (room.controller && room.controller.reservation && room.controller.reservation.username == "Yoner")
-                                                            || (room.controller && room.controller.my));
-        var targets = _.flatten(_.map(myRooms, room => room.find(FIND_CONSTRUCTION_SITES)));
-     //var targets = creep.room.find(FIND_CONSTRUCTION_SITES);
-      if(targets.length) {
-        return actions.interact(creep, targets[0], () => creep.build(targets[0]));
-      }
+    // priorities: very damaged structures > construction > mildly damaged structures
+    // stores repair id in memory so it will continue repairing till the structure is at max hp
+	build: function(creep) {
+		if (creep.memory.repair){
+			var target = Game.getObjectById(creep.memory.repair);
+			if(target){
+    			if (target.hits < target.hitsMax){
+    				return actions.repair(creep, target)
+    			}
+			}
+		}
+        let city = creep.memory.city;
+        let myRooms = u.splitRoomsByCity()
+        let buildings = _.flatten(_.map(myRooms[city], room => room.find(FIND_STRUCTURES)));
+        let needRepair = _.filter(buildings, structure => (structure.hits < (0.2*structure.hitsMax)) && (structure.structureType != STRUCTURE_WALL));
+        //console.log(buildings);
+    	if(needRepair.length){
+    		creep.memory.repair = needRepair[0].id
+    		return actions.repair(creep, needRepair[0])
+    		//actions.interact(creep, needRepair[0], () => creep.repair(needRepair[0]));
+    	} else {
+        	var targets = _.flatten(_.map(myRooms[city], room => room.find(FIND_MY_CONSTRUCTION_SITES)));
+     		//var targets = creep.room.find(FIND_CONSTRUCTION_SITES);
+      		if(targets.length) {
+        	return actions.interact(creep, targets[0], () => creep.build(targets[0]));
+      		} else {
+      			var damagedStructures = _.filter(buildings, structure => (structure.hits < (0.4*structure.hitsMax)) && (structure.structureType != STRUCTURE_WALL));
+  				if (damagedStructures.length){
+  					creep.memory.repair = damagedStructures[0].id
+  					return actions.repair(creep, damagedStructures[0])
+  				}
+      		}
+  		}
+    },
+
+    repair: function(creep, target){
+    	return actions.interact(creep, target, () => creep.repair(target));
+
+
     },
     
     // Pick up stuff lying next to you as you pass by
@@ -131,7 +170,7 @@ var actions = {
         var tombstones = creep.room.find(FIND_TOMBSTONES);
         var closeStones = _.filter(tombstones, stone => stone.pos.isNearTo(creep.pos));
         if (closeStones.length) {
-            console.log(closeStones);
+            //console.log(closeStones);
             // we can only get one thing per turn, success is assumed since we're close
             result = creep.withdraw(closeStones[0], RESOURCE_ENERGY);
             switch (result) {
@@ -140,7 +179,7 @@ var actions = {
                 case ERR_NOT_ENOUGH_RESOURCES:
                     break;
                 default:
-                    console.log(result);
+                    //console.log(result);
                     return result;
             }
         }

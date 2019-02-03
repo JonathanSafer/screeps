@@ -6,34 +6,54 @@ var rT = {
     name: "transporter",
     type: "transporter",
     target: () => 0,
-    limit: () => 3,
 
     /** @param {Creep} creep **/
     run: function(creep) {
+        var city = creep.memory.city;
         if (creep.carry.energy == 0) {
             var targets = u.getWithdrawLocations(creep);
             var location = targets[creep.memory.target];
             if (location == undefined) {
-              location = Game.spawns['Home'];
+              location = Game.spawns[city];
+              creep.memory.noContainers = true;
+            } else {
+                creep.memory.noContainers = false;
             }
             if (actions.withdraw(creep, location) == ERR_NOT_ENOUGH_RESOURCES){
                 creep.memory.target = u.getNextLocation(creep.memory.target, targets);
             }
         } else {
-            locations = creep.room.find(FIND_STRUCTURES, {
+            if(creep.memory.noContainers){
+               let locations = creep.room.find(FIND_STRUCTURES, {
                     filter: (structure) => {
                         return (structure.structureType == STRUCTURE_EXTENSION 
-                                || structure.structureType == STRUCTURE_TOWER
-                                || structure.structureType == STRUCTURE_SPAWN) 
+                                || structure.structureType == STRUCTURE_TOWER) 
                                 && structure.energy < structure.energyCapacity;
                     }
-            });
-            if (locations.length > 2){
-                actions.charge(creep, locations[Number(creep.name) % 3]);
-            } else if (locations.length) {
-                actions.charge(creep, locations[0]);
+                });
+                if (locations.length > 2){
+                    actions.charge(creep, locations[Number(creep.name) % 3]);
+                } else if (locations.length) {
+                    actions.charge(creep, locations[0]);
+                } 
+            } else {
+                let locations = creep.room.find(FIND_STRUCTURES, {
+                        filter: (structure) => {
+                            return (structure.structureType == STRUCTURE_EXTENSION 
+                                    || structure.structureType == STRUCTURE_TOWER
+                                    || structure.structureType == STRUCTURE_SPAWN
+                                    || structure.structureType == STRUCTURE_LAB
+                                    || structure.structureType == STRUCTURE_NUKER) 
+                                    && structure.energy < structure.energyCapacity;
+                        }
+                });
+                if (locations.length > 2){
+                    actions.charge(creep, locations[Number(creep.name) % 3]);
+                } else if (locations.length) {
+                    actions.charge(creep, locations[0]);
+                }
             }
-      }
+        }
     }
 };
 module.exports = rT;

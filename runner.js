@@ -6,7 +6,6 @@ var rR = {
     name: "runner",
     type: "runner",
     target: () => 0,
-    limit: () => Game.spawns['Home'].memory['runner'],
 
     /** @param {Creep} creep **/
     run: function(creep) {
@@ -27,14 +26,15 @@ var rR = {
           if (!myPos.lookFor(LOOK_STRUCTURES).length && !myPos.lookFor(LOOK_CONSTRUCTION_SITES).length) {
               // temp
               if(creep.memory.new) {
-                  console.log("new road");
+                  //console.log("new road");
                   myPos.createConstructionSite(STRUCTURE_ROAD); // let's build more road
               }
           }
           var targets =  u.getTransferLocations(creep);
           var bucket = targets[creep.memory.target];
           if (bucket == undefined) {
-              bucket = Game.spawns['Home'];
+              var city = creep.memory.city;
+              bucket = Game.spawns[city];
           }
           actions.charge(creep, bucket);
           if (actions.charge(creep, bucket) == ERR_FULL) {
