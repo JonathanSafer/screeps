@@ -10,22 +10,12 @@ var rM = {
     /** @param {Creep} creep **/
     run: function(creep) {
         if(creep.memory.source == null) {
-            creep.memory.source = rM.nextSource(creep);
+  			rM.nextSource(creep);
+        } else if (Game.getObjectById(creep.memory.source) == null){
+            creep.moveTo(new RoomPosition(25, 25, creep.memory.sourceRoom), {reusePath: 50}); 
+        } else {
+            rM.harvestTarget(creep);
         }
-        //if(creep.memory.source.pos == null) {
-         //   console.log(creep.memory.source);
-        //    creep.memory.source = rM.nextSource(creep);
-       // }
-        if (creep.memory.source == undefined){
-            creep.memory.source = rM.nextSource(creep);
-            
-        }
-        rM.harvestTarget(creep);
-    //    if ((creep.ticksToLive < 5) || (creep.hits/creep.hitsMax < 0.5)){
-     //   var num = creep.memory.target
-    //    n = num.toString();
-    //    Game.spawns['Home'].memory.sources.n = false;    
-   //     }
     },
 
     needEnergy: function(creep) {
@@ -33,34 +23,30 @@ var rM = {
     },
 
     harvestTarget: function(creep) {
-      var source = Game.getObjectById(creep.memory.source);
-      var city = creep.memory.city;
-      if (a.harvest(creep, source) == ERR_NO_PATH) {
-        	console.log("no path for mining :/");
-        //rM.flipTarget(creep);
-      } else if ((Game.time % 2 == 0) && (Game.spawns[city].room.controller.level > 6)){
-      		creep.cancelOrder('harvest');
-      }
+        var source = Game.getObjectById(creep.memory.source);
+        var city = creep.memory.city;
+        if (!((Game.time % 2 == 0) && (Game.spawns[city].room.controller.level > 6) && (creep.pos.isNearTo(source.pos)))){
+            a.harvest(creep, source)
+        }
     },
 
     /** pick a target id for creep **/
     nextSource: function(creep) {
         var city = creep.memory.city;
-        var allRooms = u.splitRoomsByCity();
-        var myRooms = allRooms[city];
-        var sources = _.flatten(_.map(myRooms, room => room.find(FIND_SOURCES)));
-        currentSource = Game.spawns[city].memory.nextSource;
-        tempSource = currentSource + 1;
-        length = sources.length;
-        //console.log(currentSource);
-        Game.spawns[city].memory.nextSource = (currentSource + 1) % length;
-        //console.log(Game.spawns[city].memory.nextSource)
-        console.log(city + ': # of sources: ' + sources.length);
-        var target = sources[currentSource];
-        if (target == undefined){
-            target = sources[0];
+        var miners = _.filter(Game.creeps, creep => creep.memory.role === 'remoteMiner')
+        var occupied = []
+    	_.each(miners, function(minerInfo){
+        		occupied.push(minerInfo.memory.source)
+    	})
+        var sources = Object.keys(Game.spawns[city].memory.sources)
+        var openSources = _.filter(sources, Id => !occupied.includes(Id));
+        //console.log(sources)
+        if (openSources.length){
+        	creep.memory.source = openSources[0]
+        	creep.memory.sourceRoom = Game.spawns[city].memory.sources[openSources[0]].roomName;
+        } else {
+        	console.log(city + ': No sources available')
         }
-        return target.id;
     }
 };
 module.exports = rM;

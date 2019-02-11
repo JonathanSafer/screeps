@@ -27,7 +27,7 @@ function makeCreeps(role, type, target, city) {
     let name = Game.spawns['Home'].memory.counter.toString();
     if (types.cost(recipe) <= Game.spawns[city].room.energyAvailable){
         spawn = u.getAvailableSpawn(spawns);
-
+        //console.log(spawn);
         if(spawn != null) {
             Game.spawns['Home'].memory.counter++;
             spawn.spawnCreep(recipe, name);
@@ -85,12 +85,12 @@ function updateCountsCity(city, localCreeps, localRooms){
                 //console.log(banks);
                 var money = _.sum(_.map(banks, bank => bank.store[RESOURCE_ENERGY]));
                 var capacity = _.sum(_.map(banks, bank => bank.storeCapacity));
-                console.log('money: ' + money + ', ' + (100*money/capacity));
+                //console.log('money: ' + money + ', ' + (100*money/capacity));
                 if(money < (capacity * .5)){
                     Game.spawns[city].memory[rU.name] = Math.max(Game.spawns[city].memory[rU.name] - 1, 1); 
                 }
                 else if (money > (capacity * .52)){
-                    Game.spawns[city].memory[rU.name] = Math.min(Game.spawns[city].memory[rU.name] + 1, 7);
+                    Game.spawns[city].memory[rU.name] = Math.min(Game.spawns[city].memory[rU.name] + 1, 6);
                 } else {
                     Game.spawns[city].memory[rU.name] = 1;
                 }
@@ -100,11 +100,11 @@ function updateCountsCity(city, localCreeps, localRooms){
             var buildings = _.flatten(_.map(localRooms[city], room => room.find(FIND_STRUCTURES)));
             var repairSites = _.filter(buildings, structure => (structure.hits < (structure.hitsMax*0.3)) && (structure.structureType != STRUCTURE_WALL));
             let totalSites = (Math.floor((repairSites.length)/10) + constructionSites.length);
-            //console.log(constructionSites.length)
-            //console.log(buildings)
-            //console.log(repairSites.length + constructionSites.length)
-            //console.log(totalSites)
-            Game.spawns[city].memory[rB.name] = (totalSites > 0) ? 1 : 0;
+            if (totalSites > 0){
+                Game.spawns[city].memory[rB.name] = (totalSites > 10) ? 3 : 1;
+            } else {
+                Game.spawns[city].memory[rB.name] = 0;
+            }
             // automated count for transporters
             var extensions = _.filter(Game.structures, (structure) => (structure.structureType == STRUCTURE_EXTENSION) && (structure.room.controller.sign.text == [city])).length
             if (extensions < 1){
@@ -118,20 +118,11 @@ function updateCountsCity(city, localCreeps, localRooms){
             } else {
                 Game.spawns[city].memory[rT.name] = 2;
             }
-            
-            // automated count for scouts
-            if (Game.spawns[city].room.controller.level < 4){
-                var proxyRooms = 0;
-            } else if (Game.spawns[city].room.controller.level < 5){
-                var proxyRooms = 1;
-            } else if (Game.spawns[city].room.controller.level >= 5){
-                var proxyRooms = 2;
-            }
-            Game.spawns[city].memory[rS.name] = 2 * proxyRooms;
-            
         }
     
         if (Game.time % 50 == 0) {
+            updateMiner(city, localRooms);
+            updateScout(city);
             // automated runner count based on miner distances
             var miners = _.filter(localCreeps[city], creep => creep.memory.role == "miner" || creep.memory.role == "remoteMiner");
             var distances = _.map(miners, miner => PathFinder.search(Game.spawns[city].pos, miner.pos).cost);
@@ -144,7 +135,7 @@ function updateCountsCity(city, localCreeps, localRooms){
             } else {
                 Game.spawns[city].memory[rR.name] = Math.max(Math.ceil(1.0 * totalDistance * 20 / types.carry(types.getRecipe('runner', extensions))), 2);
             }
-            console.log(city + ': runners needed: ' + Game.spawns[city].memory[rR.name]);
+            //console.log(city + ': runners needed: ' + Game.spawns[city].memory[rR.name]);
             //automated ferry count
             //check if we have a terminal
             var terminal = Game.spawns[city].room.terminal
@@ -154,6 +145,10 @@ function updateCountsCity(city, localCreeps, localRooms){
                     Game.spawns[city].memory[rF.name] = 1;
                 } else if (storage.store['Utrium'] > 0){
                     Game.spawns[city].memory[rF.name] = 1;
+                } else if (terminal.store.energy > 155000){
+                    Game.spawns[city].memory[rF.name] = 1;
+                } else {
+                    Game.spawns[city].memory[rF.name] = 0;
                 }
             } else {
                 Game.spawns[city].memory[rF.name] = 0;
@@ -192,16 +187,7 @@ function updateCountsCity(city, localCreeps, localRooms){
             } else {
                 Game.spawns[city].memory[rMM.name] = 0;
             }
-            // Automated miner count based on sources
-            var extensions = _.filter(Game.structures, (structure) => (structure.structureType == STRUCTURE_EXTENSION) && (structure.room.controller.sign.text == [city])).length
-            var sources = _.flatten(_.map(localRooms[city], room => room.find(FIND_SOURCES)));
-            //console.log(JSON.stringify(localRooms[city]));
-            
-            if (extensions < 5){
-                Game.spawns[city].memory[rM.name] = sources.length*2;
-            }
-            else Game.spawns[city].memory[rM.name] = sources.length;
-            
+
             // Automated attacker count for defense
             var enemyCounts = _.map(localRooms[city], room => {
                 var allBadCreeps = room.find(FIND_HOSTILE_CREEPS);
@@ -231,9 +217,54 @@ function runTowers(city){
     }
 }
 
+function updateScout(city){
+	let scouts = 0;
+	_.each(Game.spawns[city].memory.remoteRooms, function(roomInfo, room) {
+		if (roomInfo.reinforceTime < Game.time){
+			scouts++
+		}
+	})
+	if (Game.spawns[city].room.controller.level > 4){
+		if (Object.keys(Game.spawns[city].memory.remoteRooms).length < 1){
+			scouts++
+		}
+	}
+	if (Game.spawns[city].room.controller.level > 5){
+		if (Object.keys(Game.spawns[city].memory.remoteRooms).length < 2){
+			scouts++
+		}
+	}
+	Game.spawns[city].memory[rS.name] = scouts;
+}
+
+function updateMiner(city, localRooms){
+	if (!Game.spawns[city].memory.sources){
+		Game.spawns[city].memory.sources = {};
+	}
+	let miners = 0;
+	let sources = _.flatten(_.map(localRooms[city], room => room.find(FIND_SOURCES)));
+	_.each(sources, function(sourceInfo){
+		let sourceId = sourceInfo.id;
+		let sourcePos = sourceInfo.pos;
+		if (!([sourceId] in Game.spawns[city].memory.sources)){
+                    Game.spawns[city].memory.sources[sourceId] = sourcePos;
+        }
+	})
+	_.each(Game.spawns[city].memory.sources, function(sourceInfo, source){
+	    miners++
+		let room = sourceInfo.roomName;
+		if (Game.rooms[room] && !Game.rooms[room].controller.reservation){
+			//delete(Game.spawns[city].memory.sources[source])\
+			//console.log(Game.spawns[city].memory.sources[source])
+			//this is currently not working
+		}
+	})
+	Game.spawns[city].memory[rM.name] = miners;
+}
 
 module.exports = {
     runCity: runCity,
     updateCountsCity: updateCountsCity,
-    runTowers: runTowers
+    runTowers: runTowers,
+    updateScout: updateScout
 };

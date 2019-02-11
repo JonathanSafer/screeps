@@ -1,6 +1,7 @@
 var u = require('utils');
 var c = require('city');
 var m = require('markets');
+var rS = require('scout');
 const profiler = require('screeps-profiler');
 //Game.profiler.profile(1000);
 //Game.profiler.output();
@@ -17,7 +18,7 @@ module.exports.loop = function () {
     var localRooms = u.splitRoomsByCity();
     var localCreeps = u.splitCreepsByCity();
     var myCities = _.filter(Game.rooms, room => rS.iOwn(room.name))
-    console.log("Time: " + Game.time + ". " + u.getDropTotals() +  " lying on ground.");
+    console.log("Time: " + Game.time);
     //run cities
     for (var i = 0; i < myCities.length; i++){
 	    var city = myCities[i].controller.sign.text;
@@ -49,8 +50,11 @@ module.exports.loop = function () {
     
     //market (seems to use about 3 cpu, so we can make this run every few ticks when we start needing cpu)
     if (Game.time % 10 == 1){
+        if (Game.rooms['W46N42'].storage.store[RESOURCE_ENERGY] > 600000){
+            Game.rooms['W46N42'].terminal.send(RESOURCE_ENERGY, 100000, 'W41N43');
+        }
         var orders = Game.market.getAllOrders(order => order.resourceType == RESOURCE_UTRIUM &&     order.type == ORDER_BUY &&
-            Game.market.calcTransactionCost(1000, 'W46N42', order.roomName) < 1000 && (order.price > 0.30) );
+            Game.market.calcTransactionCost(1000, 'W46N42', order.roomName) < 1000 && (order.price > 0.20) );
         if (orders.length && Game.spawns['Home'].room.terminal.store['U'] > orders[0].remainingAmount){
             Game.market.deal(orders[0].id, orders[0].remainingAmount, 'W46N42')
             console.log('order processed for ' + orders[0].remainingAmount + ' UTRIUM at a price of ' + orders[0].price);
@@ -59,7 +63,7 @@ module.exports.loop = function () {
             console.log('order processed for ' + Game.spawns['Home'].room.terminal.store['U'] + ' UTRIUM at a price of ' + orders[0].price);
         }
         var energyOrders = Game.market.getAllOrders(order => order.resourceType == RESOURCE_ENERGY &&     order.type == ORDER_BUY &&
-                Game.market.calcTransactionCost(1000, 'W46N42', order.roomName) < 1000 && (order.price > 0.09));
+                Game.market.calcTransactionCost(1000, 'W46N42', order.roomName) < 1000 && (order.price > 0.10));
 
         if (energyOrders.length && (Game.spawns['Home'].room.terminal.store.energy > 70000)){ // we have energy orders and energy to sell
             sortedOrders = m.sortOrder(energyOrders).reverse();
@@ -74,13 +78,38 @@ module.exports.loop = function () {
                 console.log('order processed for ' + sortedOrders[0].remainingAmount + ' ENERGY at a price of ' + sortedOrders[0].price);
             }
         }
-        var sellOrders = Game.market.getAllOrders(order => order.resourceType == RESOURCE_UTRIUM &&     order.type == ORDER_SELL &&
-            Game.market.calcTransactionCost(1000, 'W46N42', order.roomName) < 1000 && (order.price < 0.15) );
+        /*var sellOrders = Game.market.getAllOrders(order => order.resourceType == RESOURCE_UTRIUM &&     order.type == ORDER_SELL &&
+            Game.market.calcTransactionCost(1000, 'W46N42', order.roomName) < 1000 && (order.price < 0.05) );
         if (sellOrders.length && Game.spawns['Home'].room.terminal.store['U'] < 50000){
             Game.market.deal(sellOrders[0].id, sellOrders[0].remainingAmount, 'W46N42')
             console.log('order processed for ' + sellOrders[0].remainingAmount + ' UTRIUM at a price of ' + sellOrders[0].price);
-        }
+        }*/
     }
+    //stats
+    if(!Memory.stats){ Memory.stats = {} }
+    Memory.stats['cpu.bucket'] = Game.cpu.bucket
+    Memory.stats['gcl.progress'] = Game.gcl.progress
+    Memory.stats['gcl.progressTotal'] = Game.gcl.progressTotal
+    Memory.stats['gcl.level'] = Game.gcl.level
+    Memory.stats['energy'] = u.getDropTotals()
+    _.forEach(Object.keys(Game.rooms), function(roomName){
+      let room = Game.rooms[roomName]
+      let city = Game.rooms[roomName].controller.sign.text;
+
+      if(room.controller && room.controller.my){
+        Memory.stats['rooms.' + city + '.rcl.level'] = room.controller.level
+        Memory.stats['rooms.' + city + '.rcl.progress'] = room.controller.progress
+        Memory.stats['rooms.' + city + '.rcl.progressTotal'] = room.controller.progressTotal
+
+        Memory.stats['rooms.' + city + '.spawn.energy'] = room.energyAvailable
+        Memory.stats['rooms.' + city + '.spawn.energyTotal'] = room.energyCapacityAvailable
+
+        if(room.storage){
+          Memory.stats['rooms.' + city + '.storage.energy'] = room.storage.store.energy
+        }
+      }
+    })
+    Memory.stats['cpu.getUsed'] = Game.cpu.getUsed()
        
     
     

@@ -8,7 +8,7 @@ var actions = {
                 if(false) {//creep.memory.test) {
                     actions.move(creep, location);
                 } else {
-                    creep.moveTo(location, {reusePath: 10});
+                    creep.moveTo(location, {reusePath: 15});
                 }
                 return result;
             case OK:
@@ -53,7 +53,7 @@ var actions = {
     
     reserve: function(creep, target){
         var city = creep.memory.city
-        if(!creep.room.controller.sign || !(creep.room.controller.sign.text == city)){
+        if(!creep.room.controller.sign || (creep.room.controller.sign.text != city)){
             return actions.interact(creep, target, () => creep.signController(target, city));
         } else {
             return actions.interact(creep, target, () => creep.reserveController(target));
@@ -116,8 +116,8 @@ var actions = {
     charge: function(creep, location) {
         let carry = creep.carry;
         delete carry.energy;
-        let mineral = Object.keys(carry)[0];
-        if (creep.carry.mineral > 0){
+        let mineral = _.keys(carry)[0];
+        if (creep.carry[mineral] > 0){
             return actions.interact(creep, location, () => creep.transfer(location, /*creep.carry[0]*/mineral));
         } else{
             return actions.interact(creep, location, () => creep.transfer(location, /*creep.carry[0]*/RESOURCE_ENERGY));

@@ -23,35 +23,45 @@ var rT = {
                 creep.memory.target = u.getNextLocation(creep.memory.target, targets);
             }
         } else {
-            if(creep.memory.noContainers){
-               let locations = creep.room.find(FIND_STRUCTURES, {
-                    filter: (structure) => {
-                        return (structure.structureType == STRUCTURE_EXTENSION 
-                                || structure.structureType == STRUCTURE_TOWER) 
-                                && structure.energy < structure.energyCapacity;
-                    }
-                });
-                if (locations.length > 2){
-                    actions.charge(creep, locations[Number(creep.name) % 3]);
-                } else if (locations.length) {
-                    actions.charge(creep, locations[0]);
-                } 
-            } else {
-                let locations = creep.room.find(FIND_STRUCTURES, {
-                        filter: (structure) => {
-                            return (structure.structureType == STRUCTURE_EXTENSION 
-                                    || structure.structureType == STRUCTURE_TOWER
-                                    || structure.structureType == STRUCTURE_SPAWN
-                                    || structure.structureType == STRUCTURE_LAB
-                                    || structure.structureType == STRUCTURE_NUKER) 
+            if (creep.memory.targetId){
+                let target = Game.getObjectById(creep.memory.targetId)
+                if (target && target.energy < target.energyCapacity){
+                    actions.charge(creep, target)
+                } else {
+                    if(creep.memory.noContainers){
+                       let locations = creep.room.find(FIND_STRUCTURES, {
+                             filter: (structure) => {
+                                return (structure.structureType == STRUCTURE_EXTENSION 
+                                    || structure.structureType == STRUCTURE_TOWER) 
                                     && structure.energy < structure.energyCapacity;
+                            }
+                        });
+                        if (locations.length > 2){
+                            actions.charge(creep, locations[Number(creep.name) % 3]);
+                        } else if (locations.length) {
+                            actions.charge(creep, locations[0]);
+                        } 
+                    } else {
+                        let locations = creep.room.find(FIND_STRUCTURES, {
+                                filter: (structure) => {
+                                    return (structure.structureType == STRUCTURE_EXTENSION 
+                                            || structure.structureType == STRUCTURE_TOWER
+                                            || structure.structureType == STRUCTURE_SPAWN
+                                            || structure.structureType == STRUCTURE_LAB
+                                            || structure.structureType == STRUCTURE_NUKER) 
+                                            && structure.energy < structure.energyCapacity;
+                                }
+                        });
+                        if (locations.length > 4){
+                            actions.charge(creep, locations[Number(creep.name) % 5]);
+                            creep.memory.targetId = locations[Number(creep.name) % 5].id
+                        } else if (locations.length) {
+                            actions.charge(creep, locations[0]);
                         }
-                });
-                if (locations.length > 2){
-                    actions.charge(creep, locations[Number(creep.name) % 3]);
-                } else if (locations.length) {
-                    actions.charge(creep, locations[0]);
+                    }
                 }
+            } else {
+                creep.memory.targetId = 'new';
             }
         }
     }

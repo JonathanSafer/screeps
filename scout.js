@@ -9,50 +9,41 @@ var rS = {
 
     /** @param {Creep} creep **/
     run: function(creep) {
-        if (creep.memory.stakingOut) {
-            a.reserve(creep, creep.room.controller);
+        if (creep.memory.controllerId && Game.getObjectById(creep.memory.controllerId)) {
+            a.reserve(creep, Game.getObjectById(creep.memory.controllerId));
+            if (Game.time % 100 === 0){
+               rS.updateRoom(creep);
+            }
             return;
         //if room assigned, go to that room and start staking it out
         } else if (creep.memory.roomAssigned){
     		//find the room based on name stored in memory, move to center of that room if unoccupied
-    		var location = _.find(Game.rooms, room => room.name == creep.memory.roomAssigned)
+    		var location = Game.rooms[creep.memory.roomAssigned];
     		if (location){
     		    if(location.controller){
         			a.reserve(creep, location.controller);
-        			if (creep.memory.roomAssigned == creep.room.name){
-        			    //console.log(creep.room);
-        			    //console.log(creep.name)
-        				creep.memory.stakingOut = true;
-        				a.reserve(creep, creep.room.controller);
-        			}
     		    } else {
-    		        let badRooms = Game.spawns['Home'].memory.badRooms;
-    		        let newRoom = creep.room.name;
-    		        console.log(badRooms.push(newRoom));
-    		        Game.spawns['Home'].memory.badRooms = badRooms;
+    		    	//put room oon bad list
+    		        Game.spawns['Home'].memory.badRooms.push(creep.memory.roomAssigned)
     		        creep.suicide()
     		    }
-			}
-			else {
+			} else {
 				creep.moveTo(new RoomPosition(25, 25, creep.memory.roomAssigned), {reusePath: 50});
 			}
         } else {/*find a room to reinforce or do explorer stuff*/
         	var city = creep.memory.city;
-        	var allRooms = u.splitRoomsByCity();
-        	var reservedRooms = _.filter(allRooms[city], room => u.iReserved(room.name));
-        	var allCreeps = u.splitCreepsByCity();
-        	var localScouts = _.find(allRooms[city], room => rS.roomReservers(room.name, city) > 1);
-        	//var scoutRooms = Object.values(localScouts[0]);
-        	//currently only works for 2 or fewer remote rooms per city
-        	var reinforceRooms = _.reject(reservedRooms, room => room == localScouts )
-        	//console.log(localScouts);
-        	//console.log(scoutRooms);
-        	//console.log(doNotReinforceRooms);
-        	//console.log(reservedRooms);
-        	//console.log('reinforcing: ' + reinforceRooms);
+        	var remoteRooms = Object.keys(Game.spawns[city].memory.remoteRooms)
+        	var scouts = _.filter(Game.creeps, creep => creep.memory.role === 'scout')
+        	var occupied = []
+        	_.each(scouts, function(scoutInfo){
+        		occupied.push(scoutInfo.memory.roomAssigned)
+        	})
+        	var reinforceRooms = _.filter(remoteRooms, roomName => !occupied.includes(roomName));
         	if(reinforceRooms.length){
-        		creep.memory.roomAssigned = reinforceRooms[0].name;
-        		console.log('reinforcing: ' + reinforceRooms);
+        		var rooms = _.sortBy(reinforceRooms, room => Game.spawns[city].memory.remoteRooms[room].reinforceTime);
+        		creep.memory.roomAssigned = rooms[0];
+        		creep.memory.controllerId = Game.spawns[city].memory.remoteRooms[rooms[0]].controllerId;
+        		console.log('reinforcing: ' + rooms[0]);
         	} else {
         		//explorer
         		let neighbors = Object.values(Game.map.describeExits(creep.room.name));
@@ -65,12 +56,39 @@ var rS = {
         		} else {
         			console.log(city + ": scout can't find a room")
         		}
-
         	}
-
-
-
         }
+    },
+    
+    updateRoom: function(creep) {
+        var city = creep.memory.city;
+    	if (creep.memory.roomAssigned === creep.room.name){
+    	    if (Game.spawns[city].memory.remoteRooms){
+                if (!([creep.memory.roomAssigned] in Game.spawns[city].memory.remoteRooms)){
+                    var roomAssigned = creep.memory.roomAssigned;
+                    Game.spawns[city].memory.remoteRooms[roomAssigned] = null;
+                }
+            } else {
+                var roomAssigned = creep.memory.roomAssigned;
+                Game.spawns[city].memory.remoteRooms = {};
+            }
+    		if (creep.room.controller.reservation && (creep.room.controller.reservation.ticksToEnd > 0)) {
+    			//let reinforceTime = (Game.time + creep.room.controller.reservation.ticksToEnd - 1000);
+    			Game.spawns[city].memory.remoteRooms[creep.memory.roomAssigned] = {
+        			'roomName': creep.memory.roomAssigned,
+        			'controllerId': creep.room.controller.id,
+        			'reinforceTime': (Game.time + creep.room.controller.reservation.ticksToEnd - 1500)
+        		}
+    		} else {
+        		Game.spawns[city].memory.remoteRooms[creep.memory.roomAssigned] = {
+        			'roomName': creep.memory.roomAssigned,
+        			'controllerId': creep.room.controller.id,
+        			'reinforceTime': 0
+        		}
+    		}
+    		//console.log((Game.time + creep.room.controller.reservation.ticksToEnd - 1000));
+    		//console.log(JSON.stringify(Game.spawns[city].memory.remoteRooms[creep.room.name]));
+    	}
     },
     
     roomReservers: function(roomName, city){
