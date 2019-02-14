@@ -4,42 +4,58 @@ var u = require('utils');
 
 var rBr = {
     name: "breaker",
-    type: "lightMiner",
+    type: "breaker",
     target: () => 0,
+   
 
     /** @param {Creep} creep **/
     run: function(creep) {
-        var structures = creep.room.find(FIND_STRUCTURES);
-        var notWalls = _.reject(structures, structure => structure.structureType == STRUCTURE_WALL);
-        var alsoNotController = _.reject(notWalls, structure => structure.structureType == STRUCTURE_CONTROLLER);
-        if (creep.room.controller && creep.room.controller.owner && !creep.room.controller.my && alsoNotController.length) {
-            var structures = creep.room.find(FIND_STRUCTURES);
-            var notWalls = _.reject(structures, structure => structure.structureType == STRUCTURE_WALL);
-            var alsoNotController = _.reject(notWalls, structure => structure.structureType == STRUCTURE_CONTROLLER);
-            var towers = _.filter(structures, structure => structure.structureType == STRUCTURE_TOWER);
-            var spawns = _.filter(structures, structure => structure.structureType == STRUCTURE_SPAWN);
-            if(towers.length) {
-                a.dismantle(creep, towers[0]);
-            } else if(spawns.length) {
-                a.dismantle(creep, spawns[0]);
-            } else {
-                a.dismantle(creep, alsoNotController[0]);
-                console.log(alsoNotController[0]);
-            }
-            
-            return; // conquer the room
-        }
-        
-        var neighbors = Object.values(Game.map.describeExits(creep.room.name));
-        var interests = _.filter(neighbors, roomName => !rBr.iOwn(roomName));
-        var target = interests[0];
-        var middle = new RoomPosition(25, 25, target);
-        var result = creep.moveTo(middle);
-    },
-    
-    iOwn: function(roomName) {
-        var room = Game.rooms[roomName];
-        return (room && room.controller && room.controller.my);
+    	if (!creep.memory.medic){
+    		creep.memory.medic = 'empty'
+    	}
+    	var medic = Game.getObjectById(creep.memory.medic);
+    	if (medic){
+    	    //console.log(!creep.pos.isNearTo(medic.pos) && !creep.memory.attack)
+    		if (!creep.pos.isNearTo(medic.pos) && !(creep.pos.x == 0 || creep.pos.x == 49 || creep.pos.y == 0 || creep.pos.y == 49) && !(medic.fatigue > 0)){
+    			return;
+    		}
+    	} else {
+    		//look for medics
+    		var allCreeps = u.splitCreepsByCity();
+    		var medicSearch = _.find(allCreeps[creep.memory.city], creep => creep.memory.role === 'medic');
+    		if (medicSearch){
+    			creep.memory.medic = medicSearch.id;
+    		}
+    		return;
+    	}
+    	var target = Game.getObjectById(creep.memory.target);
+    	if (target){
+    		return a.dismantle(creep, target);
+    	}
+    	var city = creep.memory.city;
+    	var flagName = city + 'break';
+    	if(Game.flags[flagName]){
+    		if(creep.pos.roomName === Game.flags[flagName].pos.roomName){
+    			//break stuff
+    			var structures = creep.room.find(FIND_HOSTILE_STRUCTURES);
+    			var notController = _.reject(structures, structure => structure.structureType == STRUCTURE_CONTROLLER);
+    			if (notController.length) {
+    				creep.memory.target = notController[0].id
+    				a.dismantle(creep, notController[0]);
+				}
+    		} else {
+    			creep.moveTo(Game.flags[flagName].pos, {reusePath: 30});
+    		}
+    	} else {
+    		//harass
+    		var structures = creep.room.find(FIND_HOSTILE_STRUCTURES);
+    			var notController = _.reject(structures, structure => structure.structureType == STRUCTURE_CONTROLLER);
+			if (notController.length) {
+				creep.memory.target = notController[0].id
+				a.dismantle(creep, notController[0]);
+			}
+    	}
     }
+   
 };
 module.exports = rBr;

@@ -21,7 +21,7 @@ module.exports.loop = function () {
     console.log("Time: " + Game.time);
     //run cities
     for (var i = 0; i < myCities.length; i++){
-	    var city = myCities[i].controller.sign.text;
+	    var city = myCities[i].memory.city;
 	    c.runCity(city, localCreeps)
 	    c.updateCountsCity(city, localCreeps, localRooms)
 	    c.runTowers(city)
@@ -42,8 +42,16 @@ module.exports.loop = function () {
             var result = roadSites[i].remove();
         }
     }
-      
-      
+    //clear rooms
+    if (Game.time % 50000 == 0){
+       for(var name in Memory.rooms) {
+            if(!Memory.rooms[name].city) {
+                delete Memory.rooms[name];
+                console.log('Clearing room memory:', name);
+            }
+        } 
+    }
+     
       
       
       
@@ -54,7 +62,7 @@ module.exports.loop = function () {
             Game.rooms['W46N42'].terminal.send(RESOURCE_ENERGY, 100000, 'W41N43');
         }
         var orders = Game.market.getAllOrders(order => order.resourceType == RESOURCE_UTRIUM &&     order.type == ORDER_BUY &&
-            Game.market.calcTransactionCost(1000, 'W46N42', order.roomName) < 1000 && (order.price > 0.20) );
+            Game.market.calcTransactionCost(1000, 'W46N42', order.roomName) < 1000 && (order.price > 0.15) );
         if (orders.length && Game.spawns['Home'].room.terminal.store['U'] > orders[0].remainingAmount){
             Game.market.deal(orders[0].id, orders[0].remainingAmount, 'W46N42')
             console.log('order processed for ' + orders[0].remainingAmount + ' UTRIUM at a price of ' + orders[0].price);
@@ -63,7 +71,7 @@ module.exports.loop = function () {
             console.log('order processed for ' + Game.spawns['Home'].room.terminal.store['U'] + ' UTRIUM at a price of ' + orders[0].price);
         }
         var energyOrders = Game.market.getAllOrders(order => order.resourceType == RESOURCE_ENERGY &&     order.type == ORDER_BUY &&
-                Game.market.calcTransactionCost(1000, 'W46N42', order.roomName) < 1000 && (order.price > 0.10));
+                Game.market.calcTransactionCost(1000, 'W46N42', order.roomName) < 1000 && (order.price > 0.15));
 
         if (energyOrders.length && (Game.spawns['Home'].room.terminal.store.energy > 70000)){ // we have energy orders and energy to sell
             sortedOrders = m.sortOrder(energyOrders).reverse();
@@ -86,31 +94,33 @@ module.exports.loop = function () {
         }*/
     }
     //stats
-    if(!Memory.stats){ Memory.stats = {} }
-    Memory.stats['cpu.bucket'] = Game.cpu.bucket
-    Memory.stats['gcl.progress'] = Game.gcl.progress
-    Memory.stats['gcl.progressTotal'] = Game.gcl.progressTotal
-    Memory.stats['gcl.level'] = Game.gcl.level
-    Memory.stats['energy'] = u.getDropTotals()
-    _.forEach(Object.keys(Game.rooms), function(roomName){
-      let room = Game.rooms[roomName]
-      let city = Game.rooms[roomName].controller.sign.text;
-
-      if(room.controller && room.controller.my){
-        Memory.stats['rooms.' + city + '.rcl.level'] = room.controller.level
-        Memory.stats['rooms.' + city + '.rcl.progress'] = room.controller.progress
-        Memory.stats['rooms.' + city + '.rcl.progressTotal'] = room.controller.progressTotal
-
-        Memory.stats['rooms.' + city + '.spawn.energy'] = room.energyAvailable
-        Memory.stats['rooms.' + city + '.spawn.energyTotal'] = room.energyCapacityAvailable
-
-        if(room.storage){
-          Memory.stats['rooms.' + city + '.storage.energy'] = room.storage.store.energy
-        }
-      }
-    })
-    Memory.stats['cpu.getUsed'] = Game.cpu.getUsed()
-       
+    if (Game.time % 15 == 2){
+        if(!Memory.stats){ Memory.stats = {} }
+        Memory.stats['cpu.bucket'] = Game.cpu.bucket
+        Memory.stats['gcl.progress'] = Game.gcl.progress
+        Memory.stats['gcl.progressTotal'] = Game.gcl.progressTotal
+        Memory.stats['gcl.level'] = Game.gcl.level
+        Memory.stats['energy'] = u.getDropTotals()
+        _.forEach(Object.keys(Game.rooms), function(roomName){
+          let room = Game.rooms[roomName]
+          let city = Game.rooms[roomName].memory.city;
+    
+          if(room.controller && room.controller.my){
+            Memory.stats['rooms.' + city + '.rcl.level'] = room.controller.level
+            Memory.stats['rooms.' + city + '.rcl.progress'] = room.controller.progress
+            Memory.stats['rooms.' + city + '.rcl.progressTotal'] = room.controller.progressTotal
+    
+            Memory.stats['rooms.' + city + '.spawn.energy'] = room.energyAvailable
+            Memory.stats['rooms.' + city + '.spawn.energyTotal'] = room.energyCapacityAvailable
+    
+            if(room.storage){
+              Memory.stats['rooms.' + city + '.storage.energy'] = room.storage.store.energy
+            }
+          }
+        })
+        Memory.stats['cpu.getUsed'] = Game.cpu.getUsed()
+        Memory.stats['market.credits'] = Game.market.credits
+    }   
     
     
     //test stuff

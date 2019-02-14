@@ -1,3 +1,5 @@
+var rMe = require('medic');
+var rH = require('harasser');
 var rSB = require('spawnBuilder');
 var rC = require('claimer');
 var rE = require('eye');
@@ -18,7 +20,7 @@ var T = require('tower');
 
 
 function makeCreeps(role, type, target, city) {
-    let extensions = _.filter(Game.structures, (structure) => (structure.structureType == STRUCTURE_EXTENSION) && (structure.room.controller.sign.text == [city])).length
+    let extensions = _.filter(Game.structures, (structure) => (structure.structureType == STRUCTURE_EXTENSION) && (structure.room.memory.city == [city])).length
     //console.log(extensions)
     //console.log(types.getRecipe('basic', 2));
     let recipe = types.getRecipe(type, extensions);
@@ -42,7 +44,7 @@ function makeCreeps(role, type, target, city) {
 //runCity function
 function runCity(city, localCreeps){
     if (Game.spawns[city]){
-        var roles = [rA, rT, rM, rR, rS, rU, rB, rMM, rF, rC, rSB, rBr] // order roles for priority
+        var roles = [rA, rT, rM, rR, rS, rU, rB, rMM, rF, rC, rSB, rH, rMe, rBr] // order roles for priority
         var nameToRole = _.groupBy(roles, role => role.name); // map from names to roles
         var counts = _.countBy(localCreeps[city], creep => creep.memory.role); // lookup table from role to count
     
@@ -63,12 +65,31 @@ function runCity(city, localCreeps){
     
         // Run all the creeps in this city
         _.forEach(localCreeps[city], (creep, name) => nameToRole[creep.memory.role][0].run(creep));
+        
+        //run powerSpawn
+        runPowerSpawn(city);
     }
 }
 //updateCountsCity function
 function updateCountsCity(city, localCreeps, localRooms){
     if (Game.spawns[city]){
         if (Game.time % 500 === 0){
+            //harasser
+            let flagName = city + 'harass';
+            if (Game.flags[flagName]){
+                Game.spawns[city].memory[rH.name] = 1;
+            } else {
+                Game.spawns[city].memory[rH.name] = 0;
+            }
+            //breaker and medic
+            let flagName2 = city + 'break';
+            if (Game.flags[flagName]){
+                Game.spawns[city].memory[rBr.name] = 1;
+                Game.spawns[city].memory[rMe.name] = 1;
+            } else {
+                Game.spawns[city].memory[rBr.name] = 0;
+                Game.spawns[city].memory[rMe.name] = 0;;
+            }
             //claimer and spawnBuilder reset
             Game.spawns[city].memory[rSB.name] = 0;
             Game.spawns[city].memory[rC.name] = 0;
@@ -106,7 +127,7 @@ function updateCountsCity(city, localCreeps, localRooms){
                 Game.spawns[city].memory[rB.name] = 0;
             }
             // automated count for transporters
-            var extensions = _.filter(Game.structures, (structure) => (structure.structureType == STRUCTURE_EXTENSION) && (structure.room.controller.sign.text == [city])).length
+            var extensions = _.filter(Game.structures, (structure) => (structure.structureType == STRUCTURE_EXTENSION) && (structure.room.memory.city == [city])).length
             if (extensions < 1){
                 Game.spawns[city].memory[rT.name] = 0;
             } else if (extensions < 10){
@@ -127,7 +148,7 @@ function updateCountsCity(city, localCreeps, localRooms){
             var miners = _.filter(localCreeps[city], creep => creep.memory.role == "miner" || creep.memory.role == "remoteMiner");
             var distances = _.map(miners, miner => PathFinder.search(Game.spawns[city].pos, miner.pos).cost);
             var totalDistance = _.sum(distances);
-            var extensions = _.filter(Game.structures, (structure) => (structure.structureType == STRUCTURE_EXTENSION) && (structure.room.controller.sign.text == [city])).length
+            var extensions = _.filter(Game.structures, (structure) => (structure.structureType == STRUCTURE_EXTENSION) && (structure.room.memory.city == [city])).length
             //console.log(Math.max(Math.ceil(1.0 * totalDistance * 10 / types.carry(types.getRecipe('runner', extensions))), 2));
             if (extensions < 5){
                 var runners = Math.max(Math.ceil(1.0 * totalDistance * 10 / types.carry(types.getRecipe('runner', extensions))), 2);
@@ -143,12 +164,14 @@ function updateCountsCity(city, localCreeps, localRooms){
             if (!(terminal === undefined)){
                 if (terminal.store.energy < 150000){
                     Game.spawns[city].memory[rF.name] = 1;
-                } else if (storage.store['Utrium'] > 0){
+                } else if (Object.keys(storage.store).length > 0){
                     Game.spawns[city].memory[rF.name] = 1;
-                } else if (terminal.store.energy > 155000){
+                } else if (terminal.store.energy > 151000){
+                    Game.spawns[city].memory[rF.name] = 1;
+                } else if (terminal.store.power && storage.store.energy > 150000 && Game.spawns[city].memory.ferryInfo.needPower === true){
                     Game.spawns[city].memory[rF.name] = 1;
                 } else {
-                    Game.spawns[city].memory[rF.name] = 0;
+                    Game.spawns[city].memory[rF.name] = 1;
                 }
             } else {
                 Game.spawns[city].memory[rF.name] = 0;
@@ -202,7 +225,7 @@ function updateCountsCity(city, localCreeps, localRooms){
 // Run the tower function
 function runTowers(city){
     if (Game.spawns[city]){
-        var towers = _.filter(Game.structures, (structure) => structure.structureType == STRUCTURE_TOWER && structure.room.controller.sign.text == city);
+        var towers = _.filter(Game.structures, (structure) => structure.structureType == STRUCTURE_TOWER && structure.room.memory.city == city);
         var hostiles = Game.spawns[city].room.find(FIND_HOSTILE_CREEPS);
         for (i = 0; i < towers.length; i++){
             if(hostiles.length > 0){
@@ -213,6 +236,30 @@ function runTowers(city){
                 T.defend(towers[i]);
                 T.heal(towers[i]);
             }
+        }
+    }
+}
+
+//Run the powerSpawn
+function runPowerSpawn(city){
+    if(Game.spawns[city]){
+        var powerSpawn = _.find(Game.structures, (structure) => structure.structureType == STRUCTURE_POWER_SPAWN && structure.room.memory.city == city)
+        if (Game.time % 20 === 0){
+            if (!Game.spawns[city].memory.ferryInfo){
+                Game.spawns[city].memory.ferryInfo = {}
+            }
+            if(powerSpawn && powerSpawn.power < 30){
+                Game.spawns[city].memory.ferryInfo.needPower = true
+            } else {
+                Game.spawns[city].memory.ferryInfo.needPower = false
+            }
+        }
+        if(powerSpawn && powerSpawn.energy >= 50 && powerSpawn.power > 0/* && powerSpawn.room.storage.energy > 150000*/){
+            powerSpawn.processPower();
+        }
+        //console.log(powerSpawn && powerSpawn.energy >= 50 && powerSpawn.power > 0)
+        if (Game.spawns[city].room.storage){
+            //console.log(Game.spawns[city].room.storage.energy)
         }
     }
 }

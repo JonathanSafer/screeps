@@ -54,6 +54,9 @@ var actions = {
     reserve: function(creep, target){
         var city = creep.memory.city
         if(!creep.room.controller.sign || (creep.room.controller.sign.text != city)){
+            if (creep.pos.roomName == creep.memory.roomAssigned){
+                creep.room.memory.city = city;
+            }
             return actions.interact(creep, target, () => creep.signController(target, city));
         } else {
             return actions.interact(creep, target, () => creep.reserveController(target));
@@ -68,11 +71,26 @@ var actions = {
         return actions.interact(creep, target, () => creep.attack(target));
     },
     
-    withdraw: function(creep, location, mineral) {
+    rangedAttack: function(creep, target){
+        var result = creep.rangedAttack(target);
+        switch(result){
+            case ERR_NOT_IN_RANGE:
+                creep.moveTo(target, {reusePath: 5});
+                break;
+            case OK:
+                creep.moveTo(target, {reusePath: 5});
+            case ERR_NO_BODYPART:
+        }
+        return;
+    },
+    
+    withdraw: function(creep, location, mineral, amount) {
         if (mineral == undefined){
             return actions.interact(creep, location, () => creep.withdraw(location, RESOURCE_ENERGY));
-        } else {
+        } else if (amount == undefined){
             return actions.interact(creep, location, () => creep.withdraw(location, mineral));
+        } else {
+            return actions.interact(creep, location, () => creep.withdraw(location, mineral, amount));
         }
     },
 
@@ -115,10 +133,9 @@ var actions = {
     
     charge: function(creep, location) {
         let carry = creep.carry;
-        delete carry.energy;
-        let mineral = _.keys(carry)[0];
-        if (creep.carry[mineral] > 0){
-            return actions.interact(creep, location, () => creep.transfer(location, /*creep.carry[0]*/mineral));
+        if (Object.keys(carry).length > 1){
+            let mineral = _.keys(carry)[1];
+            return actions.interact(creep, location, () => creep.transfer(location, mineral));
         } else{
             return actions.interact(creep, location, () => creep.transfer(location, /*creep.carry[0]*/RESOURCE_ENERGY));
         }
@@ -172,7 +189,7 @@ var actions = {
         if (closeStones.length) {
             //console.log(closeStones);
             // we can only get one thing per turn, success is assumed since we're close
-            result = creep.withdraw(closeStones[0], RESOURCE_ENERGY);
+            result = creep.withdraw(closeStones[0], _.keys(closeStones[0])[0]);
             switch (result) {
                 case ERR_FULL:
                     return;

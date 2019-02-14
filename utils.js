@@ -59,7 +59,7 @@ var u = {
     splitRoomsByCity: function(){
 	    var rooms = _.filter(Game.rooms, room => u.iReservedOrOwn(room.name))
 	    //console.log(JSON.stringify(rooms));
-	    return _.groupBy(rooms, room => room.controller.sign.text);
+	    return _.groupBy(rooms, room => room.memory.city);
     },
 
     getAvailableSpawn: function(spawns) {
