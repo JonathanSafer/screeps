@@ -24,11 +24,19 @@ var rMe = {
     		return;
     	} else {
     		//moveTo and heal as needed
-    		creep.moveTo(breaker, {reusePath: 5})
-    		if (breaker.hits < (0.75 * breaker.hitMax)){
+    		var breakerTarget = Game.getObjectById(breaker.memory.target)
+    		if (!(breakerTarget && breaker.pos.isNearTo(breakerTarget.pos))){
+    		    creep.moveTo(breaker, {reusePath: 5})
+    		}
+    		if (breaker.hits < (0.75 * breaker.hitsMax)){
     			creep.heal(breaker);
-    		} else {
-    			creep.heal(creep);
+    			return;
+    		} else if (creep.hits < creep.hitsMax){
+		        creep.heal(creep);
+		        return;
+		    } else if (breaker.hits < breaker.hitsMax){
+		       creep.heal(breaker);
+		       return;
     		}
 		}
     }

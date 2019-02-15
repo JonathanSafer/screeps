@@ -21,8 +21,6 @@ var rR = {
       } else {
           // check if we are walking on sidewalk/construction, and adjust as needed.
           var myPos = creep.pos;
-          //console.log(!myPos.lookFor(LOOK_STRUCTURES).length);
-          //console.log(!myPos.lookFor(LOOK_CONSTRUCTION_SITES).length);
           if (!myPos.lookFor(LOOK_STRUCTURES).length && !myPos.lookFor(LOOK_CONSTRUCTION_SITES).length) {
               // temp
               if(creep.memory.new) {
@@ -30,21 +28,35 @@ var rR = {
                   myPos.createConstructionSite(STRUCTURE_ROAD); // let's build more road
               }
           }
-          var targets =  u.getTransferLocations(creep);
-          var bucket = targets[creep.memory.target];
-          if (bucket == undefined) {
-              var city = creep.memory.city;
-              bucket = Game.spawns[city];
+          if (creep.memory.location){
+              var target = Game.getObjectById(creep.memory.location)
+              if (target){
+                  actions.charge(creep, target);
+                  if (actions.charge(creep, target) == ERR_FULL) {
+                        console.log('Container Full');
+                        var locations = u.getTransferLocations(creep)
+                        var nextLocation = u.getNextLocation(creep.memory.target, locations);
+                        if (locations[nextLocation] == undefined){
+                            creep.memory.location = Game.spawns[creep.memory.city].id
+                        } else {
+                            creep.memory.location = locations[nextLocation].id
+                        }
+                  }
+              }
+          } else {
+              var targets =  u.getTransferLocations(creep);
+              var bucket = targets[creep.memory.target];
+              if (bucket == undefined) {
+                  var city = creep.memory.city;
+                  bucket = Game.spawns[city];
+              }
+              creep.memory.location = bucket.id;
+              if (actions.charge(creep, bucket) == ERR_FULL) {
+                    console.log('Container Full');
+                    rR.flipTarget(creep);
+              }
           }
-          actions.charge(creep, bucket);
-          if (actions.charge(creep, bucket) == ERR_FULL) {
-                console.log('Container Full');
-                rR.flipTarget(creep);
-          }
-
       }
-      
-      
     },
     flipTarget: function(creep) {
         creep.memory.target = u.getNextLocation(creep.memory.target, u.getTransferLocations(creep));

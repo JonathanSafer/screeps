@@ -11,16 +11,28 @@ var rT = {
     run: function(creep) {
         var city = creep.memory.city;
         if (creep.carry.energy == 0) {
-            var targets = u.getWithdrawLocations(creep);
-            var location = targets[creep.memory.target];
-            if (location == undefined) {
-              location = Game.spawns[city];
-              creep.memory.noContainers = true;
+            if (creep.memory.location){
+                var bucket = Game.getObjectById(creep.memory.location);
+                if (actions.withdraw(creep, bucket) == ERR_NOT_ENOUGH_RESOURCES){
+                    var targets = u.getWithdrawLocations(creep);
+                    creep.memory.target = u.getNextLocation(creep.memory.target, targets);
+                    if (targets[creep.memory.target]){
+                        creep.memory.location = targets[creep.memory.target]
+                    }
+                }
             } else {
-                creep.memory.noContainers = false;
-            }
-            if (actions.withdraw(creep, location) == ERR_NOT_ENOUGH_RESOURCES){
-                creep.memory.target = u.getNextLocation(creep.memory.target, targets);
+                var targets = u.getWithdrawLocations(creep);
+                var location = targets[creep.memory.target];
+                if (location == undefined) {
+                  location = Game.spawns[city];
+                  creep.memory.noContainers = true;
+                } else {
+                    creep.memory.noContainers = false;
+                }
+                creep.memory.location = location.id;
+                if (actions.withdraw(creep, location) == ERR_NOT_ENOUGH_RESOURCES){
+                    creep.memory.target = u.getNextLocation(creep.memory.target, targets);
+                }
             }
         } else {
             if (creep.memory.targetId){

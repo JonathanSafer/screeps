@@ -83,7 +83,7 @@ function updateCountsCity(city, localCreeps, localRooms){
             }
             //breaker and medic
             let flagName2 = city + 'break';
-            if (Game.flags[flagName]){
+            if (Game.flags[flagName2]){
                 Game.spawns[city].memory[rBr.name] = 1;
                 Game.spawns[city].memory[rMe.name] = 1;
             } else {
@@ -151,10 +151,10 @@ function updateCountsCity(city, localCreeps, localRooms){
             var extensions = _.filter(Game.structures, (structure) => (structure.structureType == STRUCTURE_EXTENSION) && (structure.room.memory.city == [city])).length
             //console.log(Math.max(Math.ceil(1.0 * totalDistance * 10 / types.carry(types.getRecipe('runner', extensions))), 2));
             if (extensions < 5){
-                var runners = Math.max(Math.ceil(1.0 * totalDistance * 10 / types.carry(types.getRecipe('runner', extensions))), 2);
+                var runners = Math.max(Math.ceil(1.0 * totalDistance * 10 / types.carry(types.getRecipe('runner', extensions))), 1);
                 Game.spawns[city].memory[rR.name] = runners;
             } else {
-                Game.spawns[city].memory[rR.name] = Math.max(Math.ceil(1.0 * totalDistance * 20 / types.carry(types.getRecipe('runner', extensions))), 2);
+                Game.spawns[city].memory[rR.name] = Math.max(Math.ceil(1.0 * totalDistance * 20 / types.carry(types.getRecipe('runner', extensions))), 1);
             }
             //console.log(city + ': runners needed: ' + Game.spawns[city].memory[rR.name]);
             //automated ferry count
@@ -164,14 +164,14 @@ function updateCountsCity(city, localCreeps, localRooms){
             if (!(terminal === undefined)){
                 if (terminal.store.energy < 150000){
                     Game.spawns[city].memory[rF.name] = 1;
-                } else if (Object.keys(storage.store).length > 0){
+                } else if (Object.keys(storage.store).length > 1){
                     Game.spawns[city].memory[rF.name] = 1;
                 } else if (terminal.store.energy > 151000){
                     Game.spawns[city].memory[rF.name] = 1;
                 } else if (terminal.store.power && storage.store.energy > 150000 && Game.spawns[city].memory.ferryInfo.needPower === true){
                     Game.spawns[city].memory[rF.name] = 1;
                 } else {
-                    Game.spawns[city].memory[rF.name] = 1;
+                    Game.spawns[city].memory[rF.name] = 0;
                 }
             } else {
                 Game.spawns[city].memory[rF.name] = 0;
@@ -273,12 +273,12 @@ function updateScout(city){
 	})
 	if (Game.spawns[city].room.controller.level > 4){
 		if (Object.keys(Game.spawns[city].memory.remoteRooms).length < 1){
-			scouts++
+			//scouts++
 		}
 	}
 	if (Game.spawns[city].room.controller.level > 5){
 		if (Object.keys(Game.spawns[city].memory.remoteRooms).length < 2){
-			scouts++
+			//scouts++
 		}
 	}
 	Game.spawns[city].memory[rS.name] = scouts;

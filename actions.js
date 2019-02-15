@@ -8,9 +8,8 @@ var actions = {
                 if(false) {//creep.memory.test) {
                     actions.move(creep, location);
                 } else {
-                    creep.moveTo(location, {reusePath: 15});
+                    return creep.moveTo(location, {reusePath: 15});
                 }
-                return result;
             case OK:
             case ERR_BUSY:
             case ERR_FULL:
@@ -107,6 +106,7 @@ var actions = {
                 result = actions.interact(creep, target, () => creep.pickup(target));
                 switch (result) {
                   case OK:
+                      break;
                   case ERR_INVALID_TARGET:
                       creep.memory.targetId = null;
                       break;
@@ -119,6 +119,7 @@ var actions = {
         //console.log("finding a target");
         
         var newTargets = _.sortBy(goodLoads, drop => -1*drop.amount + 28*PathFinder.search(creep.pos, drop.pos).cost);
+        //console.log(newTargets)
         if (newTargets.length) {
             creep.memory.targetId = newTargets[0].id;
 
