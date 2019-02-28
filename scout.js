@@ -10,7 +10,9 @@ var rS = {
     /** @param {Creep} creep **/
     run: function(creep) {
         if (creep.memory.controllerId && Game.getObjectById(creep.memory.controllerId)) {
-            a.reserve(creep, Game.getObjectById(creep.memory.controllerId));
+            //console.log(creep.reserveController(Game.getObjectById(creep.memory.controllerId)))
+            var controller = Game.getObjectById(creep.memory.controllerId)
+            a.reserve(creep, controller);
             if (Game.time % 100 === 0){
                rS.updateRoom(creep);
             }
@@ -22,8 +24,9 @@ var rS = {
     		if (location){
     		    if(location.controller){
         			a.reserve(creep, location.controller);
+        			creep.memory.controllerId = location.controller.id;
     		    } else {
-    		    	//put room oon bad list
+    		    	//put room on bad list
     		        Game.spawns['Home'].memory.badRooms.push(creep.memory.roomAssigned)
     		        creep.suicide()
     		    }
@@ -32,7 +35,10 @@ var rS = {
 			}
         } else {/*find a room to reinforce or do explorer stuff*/
         	var city = creep.memory.city;
-        	var remoteRooms = Object.keys(Game.spawns[city].memory.remoteRooms)
+        	var remoteRooms = [];
+        	if (Game.spawns[city].memory.remoteRooms){
+        	    var remoteRooms = Object.keys(Game.spawns[city].memory.remoteRooms)
+        	}
         	var scouts = _.filter(Game.creeps, creep => creep.memory.role === 'scout')
         	var occupied = []
         	_.each(scouts, function(scoutInfo){

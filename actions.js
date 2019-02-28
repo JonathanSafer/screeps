@@ -52,11 +52,11 @@ var actions = {
     
     reserve: function(creep, target){
         var city = creep.memory.city
-        if(!creep.room.controller.sign || (creep.room.controller.sign.text != city)){
-            if (creep.pos.roomName == creep.memory.roomAssigned){
-                creep.room.memory.city = city;
-            }
+        if (Game.time % 2000 == 0){
             return actions.interact(creep, target, () => creep.signController(target, city));
+        }
+        if(target.room.memory.city != city){
+            creep.room.memory.city = city
         } else {
             return actions.interact(creep, target, () => creep.reserveController(target));
         }
@@ -74,7 +74,9 @@ var actions = {
         var result = creep.rangedAttack(target);
         switch(result){
             case ERR_NOT_IN_RANGE:
-                creep.moveTo(target, {reusePath: 5});
+                if (creep.pos.roomName == target.pos.roomName){
+                    creep.moveTo(target, {reusePath: 5});
+                }
                 break;
             case OK:
                 creep.moveTo(target, {reusePath: 5});

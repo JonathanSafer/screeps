@@ -178,19 +178,21 @@ function updateCountsCity(city, localCreeps, localRooms){
             }
             
             //emergency reproduction
-            if (extensions >= 5){
-                if (_.filter(localCreeps[city], creep => creep.memory.role == 'runner') < 1){
-                    console.log('Making Emergency Runner')
-                    makeCreeps('runner', 'erunner', 1, city);
-                }
-                if (_.filter(localCreeps[city], creep => creep.memory.role == 'remoteMiner') < 1){
-                    console.log('Making Emergency Miner');
-                    makeCreeps('remoteMiner', "lightMiner", 1, city);
-                }
-        
-                    if (_.filter(localCreeps[city], creep => creep.memory.role == 'transporter') < 1){
-                    console.log('Making Emergency Transporter');
-                    makeCreeps('transporter', 'basic', 0, city);
+            if (Game.time % 150 == 0){
+                if (extensions >= 5){
+                    if (_.filter(localCreeps[city], creep => creep.memory.role == 'runner') < 1){
+                        console.log('Making Emergency Runner')
+                        makeCreeps('runner', 'erunner', 1, city);
+                    }
+                    if (_.filter(localCreeps[city], creep => creep.memory.role == 'remoteMiner') < 1){
+                        console.log('Making Emergency Miner');
+                        makeCreeps('remoteMiner', "lightMiner", 1, city);
+                    }
+            
+                        if (_.filter(localCreeps[city], creep => creep.memory.role == 'transporter') < 1){
+                        console.log('Making Emergency Transporter');
+                        makeCreeps('transporter', 'basic', 0, city);
+                    }
                 }
             }
         }
@@ -272,13 +274,13 @@ function updateScout(city){
 		}
 	})
 	if (Game.spawns[city].room.controller.level > 4){
-		if (Object.keys(Game.spawns[city].memory.remoteRooms).length < 1){
-			//scouts++
+		if (!Game.spawns[city].memory.remoteRooms || Object.keys(Game.spawns[city].memory.remoteRooms).length < 1){
+			scouts = 1;
 		}
 	}
 	if (Game.spawns[city].room.controller.level > 5){
-		if (Object.keys(Game.spawns[city].memory.remoteRooms).length < 2){
-			//scouts++
+		if (!Game.spawns[city].memory.remoteRooms || Object.keys(Game.spawns[city].memory.remoteRooms).length < 2){
+			scouts = 2;
 		}
 	}
 	Game.spawns[city].memory[rS.name] = scouts;

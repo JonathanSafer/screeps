@@ -25,7 +25,7 @@ var rMe = {
     	} else {
     		//moveTo and heal as needed
     		var breakerTarget = Game.getObjectById(breaker.memory.target)
-    		if (!(breakerTarget && breaker.pos.isNearTo(breakerTarget.pos))){
+    		if (!(breakerTarget && breaker.pos.isNearTo(breakerTarget.pos)) || !breaker.pos.isNearTo(creep)){
     		    creep.moveTo(breaker, {reusePath: 5})
     		}
     		if (breaker.hits < (0.75 * breaker.hitsMax)){
