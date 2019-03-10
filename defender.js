@@ -10,15 +10,18 @@ var rD = {
 
     /** @param {Creep} creep **/
     run: function(creep) {
+        // attack targets within 3, otherwise recalculate
         var breakerTarget = Game.getObjectById(creep.memory.target)
 		if (breakerTarget && creep.pos.inRangeTo(breakerTarget.pos, 3)){
 		    return a.attack(creep, breakerTarget);
 		} 
     	if (!creep.memory.medic){
+            // undefined causes error, so using null
     		creep.memory.medic = null
     	}
     	var medic = Game.getObjectById(creep.memory.medic);
     	if (medic){
+            // Wait for medic to get closer unless on the border
     	    //console.log(!creep.pos.isNearTo(medic.pos) && !creep.memory.attack)
     		if ((!creep.pos.isNearTo(medic.pos) && !(creep.pos.x == 0 || creep.pos.x == 49 || creep.pos.y == 0 || creep.pos.y == 49)) || (medic.fatigue > 0)){
     			return;
@@ -32,6 +35,7 @@ var rD = {
     		}
     		return;
     	}
+        // Go to rally en route to target
     	var rallyFlag = creep.memory.city + 'defenderRally'
         if (Game.flags[rallyFlag] && !creep.memory.rally){
             creep.moveTo(Game.flags[rallyFlag], {reusePath: 50})
@@ -40,6 +44,7 @@ var rD = {
             }
             return;
         }
+        // attack hostile creeps if within 3, otherwise focus on previous target
     	var target = Game.getObjectById(creep.memory.target);
     	if (target){
 	    	    newTarget = creep.pos.findClosestByRange(FIND_HOSTILE_CREEPS, creep =>  RANGED_ATTACK in creep.body || ATTACK in creep.body);
@@ -51,36 +56,31 @@ var rD = {
 	    	    }	    
     		return;
     	}
+        // If there is a 'defend' flag, move to the flag before attacking. 
     	var city = creep.memory.city;
     	var flagName = city + 'defend';
     	if(Game.flags[flagName]){
     		if(creep.pos.roomName === Game.flags[flagName].pos.roomName){
-    			//find hostile creeps
-    			var enemies = creep.room.find(FIND_HOSTILE_CREEPS, creep =>  RANGED_ATTACK in creep.body || ATTACK in creep.body);
-    			var harmless = creep.room.find(FIND_HOSTILE_CREEPS);
-    			if (enemies.length) {
-    				creep.memory.target = enemies[0].id
-    				a.attack(creep, enemies[0]);
-    			} else if (harmless.length){
-    			    creep.memory.target = harmless[0].id
-    				a.attack(creep, harmless[0]);
-    			}    			
+    			rD.attackNewTarget(creep); 			
     		} else {
     			creep.moveTo(Game.flags[flagName].pos, {reusePath: 50});
     		}
     	} else {
-    		//find hostile creeps
-    		var enemies = creep.room.find(FIND_HOSTILE_CREEPS, creep =>  RANGED_ATTACK in creep.body || ATTACK in creep.body);
-    			var harmless = creep.room.find(FIND_HOSTILE_CREEPS);
-    			if (enemies.length) {
-    				creep.memory.target = enemies[0].id
-    				a.attack(creep, enemies[0]);
-    			} else if (harmless.length){
-    			    creep.memory.target = harmless[0].id
-    				a.attack(creep, harmless[0]);
-    			}
-    	}
+    	   rD.attackNewTarget(creep);
+        }
+    },
+
+    attackNewTarget: function(creep) {
+        // Attack hostiles before harmless creeps
+        var enemies = creep.room.find(FIND_HOSTILE_CREEPS, creep =>  RANGED_ATTACK in creep.body || ATTACK in creep.body);
+        var harmless = creep.room.find(FIND_HOSTILE_CREEPS);
+        if (enemies.length) {
+            creep.memory.target = enemies[0].id
+            a.attack(creep, enemies[0]);
+        } else if (harmless.length){
+            creep.memory.target = harmless[0].id
+            a.attack(creep, harmless[0]);
+        }
     }
-   
 };
 module.exports = rD;
