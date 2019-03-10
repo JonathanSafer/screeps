@@ -222,13 +222,14 @@ var actions = {
             STRUCTURE_EXTRACTOR, STRUCTURE_LAB, STRUCTURE_TERMINAL, STRUCTURE_OBSERVER, STRUCTURE_NUKER, STRUCTURE_STORAGE, 
             STRUCTURE_RAMPART];
  
-        for (var type in targetOrder) {
+        for (var i = 0; i < targetOrder.length; i++) {
+            var type = targetOrder[i];
             var breakThese = structGroups[type];
-            if (breakThese.length) {
+            if (breakThese) {
                 creep.memory.target = breakThese[0].id
                 return actions.dismantle(creep, breakThese[0]);
             }
-        }     
+        }    
     }
 };
 
