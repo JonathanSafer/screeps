@@ -10,9 +10,6 @@ var rD = {
 
     /** @param {Creep} creep **/
     run: function(creep) {
-    	if (!creep.memory.noFear){
-    		creep.memory.noFear = true
-    	}
         var breakerTarget = Game.getObjectById(creep.memory.target)
 		if (breakerTarget && creep.pos.inRangeTo(breakerTarget.pos, 3)){
 		    return a.attack(creep, breakerTarget);
