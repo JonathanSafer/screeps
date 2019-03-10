@@ -27,6 +27,7 @@ var rB = {
         if (location == undefined) {
             location = Game.spawns[creep.memory.city];
         }
+        return location;
     },
 
     decideWhetherToBuild: function(creep) {
