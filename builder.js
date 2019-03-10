@@ -9,21 +9,32 @@ var rB = {
 
     /** @param {Creep} creep **/
     run: function(creep) {
-      var city = creep.memory.city;
-      if(creep.carry.energy == 0 && creep.memory.building) {
+        rB.decideWhetherToBuild(creep);
+        if (creep.memory.building) {
+            a.build(creep);
+        } else {
+            var location = rB.getLocation(creep);
+            if (a.withdraw(creep, location) == ERR_NOT_ENOUGH_RESOURCES) {
+                creep.memory.target = u.getNextLocation(creep.memory.target, targets);
+            }
+        }
+    },
+
+    getLocation: function(creep) {
+        var targets = u.getWithdrawLocations(creep);
+        var location = targets[creep.memory.target];
+        if (location == undefined) {
+            location = Game.spawns[creep.memory.city];
+        }
+    },
+
+    decideWhetherToBuild: function(creep) {
+        if(creep.carry.energy == 0 && creep.memory.building) {
             creep.memory.building = false;
-      }
-      if(creep.carry.energy == creep.carryCapacity && !creep.memory.building) {
-          creep.memory.building = true;
-      }
-      var targets = u.getWithdrawLocations(creep);
-      var location = targets[creep.memory.target];
-      if (location == undefined) {
-          location = Game.spawns[city];
-      }
-      if (creep.memory.building ? a.build(creep) : a.withdraw(creep, location) == ERR_NOT_ENOUGH_RESOURCES){
-          creep.memory.target = u.getNextLocation(creep.memory.target, targets);
-      };
+        }
+        if(creep.carry.energy == creep.carryCapacity && !creep.memory.building) {
+            creep.memory.building = true;
+        }
     }
 };
 module.exports = rB;
