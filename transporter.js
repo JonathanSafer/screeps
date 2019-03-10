@@ -17,7 +17,7 @@ var rT = {
                     var targets = u.getWithdrawLocations(creep);
                     creep.memory.target = u.getNextLocation(creep.memory.target, targets);
                     if (targets[creep.memory.target]){
-                        creep.memory.location = targets[creep.memory.target]
+                        creep.memory.location = targets[creep.memory.target].id
                     }
                 }
             } else {

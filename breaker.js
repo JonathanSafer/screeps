@@ -15,7 +15,7 @@ var rBr = {
 		    return a.dismantle(creep, breakerTarget);
 		} 
     	if (!creep.memory.medic){
-    		creep.memory.medic = 'empty'
+    		creep.memory.medic = null;
     	}
     	var medic = Game.getObjectById(creep.memory.medic);
     	if (medic){
@@ -26,12 +26,20 @@ var rBr = {
     	} else {
     		//look for medics
     		var allCreeps = u.splitCreepsByCity();
-    		var medicSearch = _.find(allCreeps[creep.memory.city], creep => creep.memory.role === 'medic');
+    		var medicSearch = _.find(allCreeps[creep.memory.city], localCreep => localCreep.memory.role === 'medic' && localCreep.pos.isNearTo(creep.pos));
     		if (medicSearch){
     			creep.memory.medic = medicSearch.id;
     		}
     		return;
     	}
+    	var rallyFlag = creep.memory.city + 'breakerRally'
+        if (Game.flags[rallyFlag] && !creep.memory.rally){
+            creep.moveTo(Game.flags[rallyFlag], {reusePath: 50})
+            if (Game.flags[rallyFlag].pos.x == creep.pos.x && Game.flags[rallyFlag].pos.y == creep.pos.y && Game.flags[rallyFlag].pos.roomName == creep.pos.roomName){
+                creep.memory.rally = true
+            }
+            return;
+        }
     	var target = Game.getObjectById(creep.memory.target);
     	//console.log(target)
     	if (target){

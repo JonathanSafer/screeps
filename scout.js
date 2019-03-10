@@ -1,7 +1,7 @@
 var a = require('actions');
 var t = require('types');
 var u = require('utils');
-//can only maintain 2 rooms max. Also only chooses from rooms directly adjacent to city. Does not rule out 'bad' rooms. Will cause errors if room does not have a controller
+
 var rS = {
     name: "scout",
     type: "scout",
@@ -13,6 +13,7 @@ var rS = {
             //console.log(creep.reserveController(Game.getObjectById(creep.memory.controllerId)))
             var controller = Game.getObjectById(creep.memory.controllerId)
             a.reserve(creep, controller);
+            //console.log(creep.moveTo(controller, {reusePath: 15}, {range: 1, maxOps: 5000}))
             if (Game.time % 100 === 0){
                rS.updateRoom(creep);
             }

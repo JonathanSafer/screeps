@@ -23,9 +23,12 @@ var u = {
     
     getGoodPickups: function(creep) {
         var city = creep.memory.city;
-        var allRooms = u.splitRoomsByCity();
-        var rooms = allRooms[city]
-        var drops = _.flatten(_.map(rooms, room => room.find(FIND_DROPPED_RESOURCES)));
+        var localCreeps = u.splitCreepsByCity();
+        var miners = _.filter(localCreeps[city], creep => creep.memory.role == 'remoteMiner')
+        var drops = _.flatten(_.map(miners, miner => miner.room.find(FIND_DROPPED_RESOURCES)));
+        // var allRooms = u.splitRoomsByCity();
+        // var rooms = allRooms[city]
+        // var drops = _.flatten(_.map(rooms, room => room.find(FIND_DROPPED_RESOURCES)));
         var goodLoads = _.filter(drops, drop => (drop.amount >= 0.5 * creep.carryCapacity) || (drop == !RESOURCE_ENERGY));
         //console.log(JSON.stringify(allRooms));
         return goodLoads;

@@ -39,6 +39,7 @@ var rR = {
                         if (locations[nextLocation] == undefined){
                             creep.memory.location = Game.spawns[creep.memory.city].id
                         } else {
+                            creep.memory.target = nextLocation;
                             creep.memory.location = locations[nextLocation].id
                         }
                   }

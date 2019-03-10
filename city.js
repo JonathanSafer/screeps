@@ -17,6 +17,7 @@ var rA = require('attacker');
 var types = require('types');
 var u = require('utils');
 var T = require('tower');
+var rD = require('defender');
 
 
 function makeCreeps(role, type, target, city) {
@@ -44,7 +45,7 @@ function makeCreeps(role, type, target, city) {
 //runCity function
 function runCity(city, localCreeps){
     if (Game.spawns[city]){
-        var roles = [rA, rT, rM, rR, rS, rU, rB, rMM, rF, rC, rSB, rH, rMe, rBr] // order roles for priority
+        var roles = [rA, rT, rM, rR, rU, rB, rS, rMM, rF, rC, rSB, rH, rMe, rD, rBr] // order roles for priority
         var nameToRole = _.groupBy(roles, role => role.name); // map from names to roles
         var counts = _.countBy(localCreeps[city], creep => creep.memory.role); // lookup table from role to count
     
@@ -83,12 +84,17 @@ function updateCountsCity(city, localCreeps, localRooms){
             }
             //breaker and medic
             let flagName2 = city + 'break';
+            Game.spawns[city].memory[rBr.name] = 0;
+            Game.spawns[city].memory[rMe.name] = 0;
             if (Game.flags[flagName2]){
-                Game.spawns[city].memory[rBr.name] = 1;
-                Game.spawns[city].memory[rMe.name] = 1;
-            } else {
-                Game.spawns[city].memory[rBr.name] = 0;
-                Game.spawns[city].memory[rMe.name] = 0;;
+                Game.spawns[city].memory[rBr.name]++;
+                Game.spawns[city].memory[rMe.name]++;
+            }
+            let flagName3 = city + 'defend';
+            Game.spawns[city].memory[rD.name] = 0;
+            if (Game.flags[flagName3]){
+                Game.spawns[city].memory[rD.name]++;
+                Game.spawns[city].memory[rMe.name]++;
             }
             //claimer and spawnBuilder reset
             Game.spawns[city].memory[rSB.name] = 0;
@@ -122,7 +128,7 @@ function updateCountsCity(city, localCreeps, localRooms){
             var repairSites = _.filter(buildings, structure => (structure.hits < (structure.hitsMax*0.3)) && (structure.structureType != STRUCTURE_WALL));
             let totalSites = (Math.floor((repairSites.length)/10) + constructionSites.length);
             if (totalSites > 0){
-                Game.spawns[city].memory[rB.name] = (totalSites > 10) ? 3 : 1;
+                Game.spawns[city].memory[rB.name] = (totalSites > 10 && Game.spawns[city].room.controller.level > 2) ? 3 : 1;
             } else {
                 Game.spawns[city].memory[rB.name] = 0;
             }
@@ -137,7 +143,7 @@ function updateCountsCity(city, localCreeps, localRooms){
             } else if (extensions < 60){
                 Game.spawns[city].memory[rT.name] = 3;
             } else {
-                Game.spawns[city].memory[rT.name] = 2;
+                Game.spawns[city].memory[rT.name] = 4;
             }
         }
     
@@ -151,10 +157,10 @@ function updateCountsCity(city, localCreeps, localRooms){
             var extensions = _.filter(Game.structures, (structure) => (structure.structureType == STRUCTURE_EXTENSION) && (structure.room.memory.city == [city])).length
             //console.log(Math.max(Math.ceil(1.0 * totalDistance * 10 / types.carry(types.getRecipe('runner', extensions))), 2));
             if (extensions < 5){
-                var runners = Math.max(Math.ceil(1.0 * totalDistance * 10 / types.carry(types.getRecipe('runner', extensions))), 1);
+                var runners = Math.min(8, Math.max(Math.ceil(1.0 * totalDistance * 10 / types.carry(types.getRecipe('runner', extensions))), 1));
                 Game.spawns[city].memory[rR.name] = runners;
             } else {
-                Game.spawns[city].memory[rR.name] = Math.max(Math.ceil(1.0 * totalDistance * 20 / types.carry(types.getRecipe('runner', extensions))), 1);
+                Game.spawns[city].memory[rR.name] = Math.min(8, Math.max(Math.ceil(1.0 * totalDistance * 20 / types.carry(types.getRecipe('runner', extensions))), 1));
             }
             //console.log(city + ': runners needed: ' + Game.spawns[city].memory[rR.name]);
             //automated ferry count

@@ -8,7 +8,7 @@ var actions = {
                 if(false) {//creep.memory.test) {
                     actions.move(creep, location);
                 } else {
-                    return creep.moveTo(location, {reusePath: 15});
+                    return creep.moveTo(location, {reusePath: 15, maxOps: 5000});
                 }
             case OK:
             case ERR_BUSY:
@@ -79,8 +79,14 @@ var actions = {
                 }
                 break;
             case OK:
-                creep.moveTo(target, {reusePath: 5});
+                // if(creep.memory.noFear){
+                //     creep.moveTo(target, {reusePath: 5});
+                //     break;
+                // }
+                creep.moveTo(Game.spawns[creep.memory.city], {reusePath: 5});
+                break;
             case ERR_NO_BODYPART:
+                creep.moveTo(Game.spawns[creep.memory.city], {reusePath: 5});
         }
         return;
     },

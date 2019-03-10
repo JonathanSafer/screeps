@@ -22,9 +22,19 @@ module.exports.loop = function () {
     //run cities
     for (var i = 0; i < myCities.length; i++){
 	    var city = myCities[i].memory.city;
-	    c.runCity(city, localCreeps)
-	    c.updateCountsCity(city, localCreeps, localRooms)
-	    c.runTowers(city)
+	    if (myCities[i].memory.hermit == true){
+	        //c.runHermit
+	        //c.updateCountsHermit
+	        //c.runTowers
+	    } else {
+    	    c.runCity(city, localCreeps)
+    	    c.updateCountsCity(city, localCreeps, localRooms)
+    	    c.runTowers(city)
+	    }
+    }
+    //distribute energy
+    if (Game.time % 100 == 0){
+        m.distributeEnergy(myCities);
     }
     //clear old creeps
     if (Game.time % 100 == 0) {
@@ -58,11 +68,17 @@ module.exports.loop = function () {
     
     //market (seems to use about 3 cpu, so we can make this run every few ticks when we start needing cpu)
     if (Game.time % 10 == 1){
-        if (Game.rooms['W46N42'].storage.store[RESOURCE_ENERGY] > 600000){
-            Game.rooms['W46N42'].terminal.send(RESOURCE_ENERGY, 75000, 'W34N41');
-        }
-        if (Game.rooms['W41N43'].storage.store[RESOURCE_ENERGY] > 600000){
-            Game.rooms['W41N43'].terminal.send(RESOURCE_ENERGY, 75000, 'W34N41');
+        var receiver = null;
+        if (receiver){
+            if (Game.rooms['W46N42'].storage.store[RESOURCE_ENERGY] > 600000){
+                Game.rooms['W46N42'].terminal.send(RESOURCE_ENERGY, 75000, receiver);
+            }
+            if (Game.rooms['W41N43'].storage.store[RESOURCE_ENERGY] > 600000){
+                Game.rooms['W41N43'].terminal.send(RESOURCE_ENERGY, 75000, receiver);
+            }
+            // if (Game.rooms['W34N41'].storage.store[RESOURCE_ENERGY] > 600000){
+            //     Game.rooms['W34N41'].terminal.send(RESOURCE_ENERGY, 75000, receiver);
+            // }
         }
         
         var orders = Game.market.getAllOrders(order => order.resourceType == RESOURCE_UTRIUM &&     order.type == ORDER_BUY &&
@@ -75,9 +91,9 @@ module.exports.loop = function () {
             console.log('order processed for ' + Game.spawns['Home'].room.terminal.store['U'] + ' UTRIUM at a price of ' + orders[0].price);
         }
         var energyOrders = Game.market.getAllOrders(order => order.resourceType == RESOURCE_ENERGY &&     order.type == ORDER_BUY &&
-                Game.market.calcTransactionCost(1000, 'W46N42', order.roomName) < 1000 && (order.price > 0.14));
+                Game.market.calcTransactionCost(1000, 'W46N42', order.roomName) < 1000 && (order.price > 0.025));
 
-        if (energyOrders.length && (Game.spawns['Home'].room.terminal.store.energy > 70000)){ // we have energy orders and energy to sell
+        if (energyOrders.length && (Game.spawns['Home'].room.terminal.store.energy > 70000 && Game.spawns['Home'].room.storage.store.energy > 800000)){ // we have energy orders and energy to sell
             sortedOrders = m.sortOrder(energyOrders).reverse();
 
             if (sortedOrders[0].remainingAmount > (Game.spawns['Home'].room.terminal.store.energy/2)){
@@ -89,7 +105,7 @@ module.exports.loop = function () {
                 Game.market.deal(sortedOrders[0].id, sortedOrders[0].remainingAmount, 'W46N42')
                 console.log('order processed for ' + sortedOrders[0].remainingAmount + ' ENERGY at a price of ' + sortedOrders[0].price);
             }
-        } else if (energyOrders.length && (Game.spawns['Jordan'].room.terminal.store.energy > 70000)){
+        } else if (energyOrders.length && (Game.spawns['Jordan'].room.terminal.store.energy > 70000 && Game.spawns['Jordan'].room.storage.store.energy > 800000)){
             sortedOrders = m.sortOrder(energyOrders).reverse();
             if (sortedOrders[0].remainingAmount > (Game.spawns['Jordan'].room.terminal.store.energy/2)){
                 var store = Game.spawns['Jordan'].room.terminal.store.energy;
@@ -100,7 +116,7 @@ module.exports.loop = function () {
                 Game.market.deal(sortedOrders[0].id, sortedOrders[0].remainingAmount, 'W41N43')
                 console.log('order processed for ' + sortedOrders[0].remainingAmount + ' ENERGY at a price of ' + sortedOrders[0].price);
             }
-        } else if (energyOrders.length && (Game.spawns['Yonland'].room.terminal.store.energy > 70000)){
+        } else if (energyOrders.length && (Game.spawns['Yonland'].room.terminal.store.energy > 70000 && Game.spawns['Yonland'].room.storage.store.energy > 800000)){
             sortedOrders = m.sortOrder(energyOrders).reverse();
             if (sortedOrders[0].remainingAmount > (Game.spawns['Yonland'].room.terminal.store.energy/2)){
                 var store = Game.spawns['Yonland'].room.terminal.store.energy;
@@ -111,18 +127,18 @@ module.exports.loop = function () {
                 Game.market.deal(sortedOrders[0].id, sortedOrders[0].remainingAmount, 'W43N42')
                 console.log('order processed for ' + sortedOrders[0].remainingAmount + ' ENERGY at a price of ' + sortedOrders[0].price);
             }
-        } else if (energyOrders.length && (Game.spawns['North_Field'].room.terminal.store.energy > 70000)){
-            sortedOrders = m.sortOrder(energyOrders).reverse();
-            if (sortedOrders[0].remainingAmount > (Game.spawns['North_Field'].room.terminal.store.energy/2)){
-                var store = Game.spawns['North_Field'].room.terminal.store.energy;
-                var quantity = Math.floor(store/2);
-                var result = Game.market.deal(sortedOrders[0].id, quantity, 'W34N41');
-                console.log('order processed for ' + quantity + ' ENERGY at a price of ' + sortedOrders[0].price);
-            } else{
-                Game.market.deal(sortedOrders[0].id, sortedOrders[0].remainingAmount, 'W34N41')
-                console.log('order processed for ' + sortedOrders[0].remainingAmount + ' ENERGY at a price of ' + sortedOrders[0].price);
-            }
-        }
+         }// else if (energyOrders.length && (Game.spawns['North_Field'].room.terminal.store.energy > 70000 && Game.spawns['North_Field'].room.storage.store.energy > 800000)){
+        //     sortedOrders = m.sortOrder(energyOrders).reverse();
+        //     if (sortedOrders[0].remainingAmount > (Game.spawns['North_Field'].room.terminal.store.energy/2)){
+        //         var store = Game.spawns['North_Field'].room.terminal.store.energy;
+        //         var quantity = Math.floor(store/2);
+        //         var result = Game.market.deal(sortedOrders[0].id, quantity, 'W34N41');
+        //         console.log('order processed for ' + quantity + ' ENERGY at a price of ' + sortedOrders[0].price);
+        //     } else{
+        //         Game.market.deal(sortedOrders[0].id, sortedOrders[0].remainingAmount, 'W34N41')
+        //         console.log('order processed for ' + sortedOrders[0].remainingAmount + ' ENERGY at a price of ' + sortedOrders[0].price);
+        //     }
+        // }
         /*var sellOrders = Game.market.getAllOrders(order => order.resourceType == RESOURCE_UTRIUM &&     order.type == ORDER_SELL &&
             Game.market.calcTransactionCost(1000, 'W46N42', order.roomName) < 1000 && (order.price < 0.05) );
         if (sellOrders.length && Game.spawns['Home'].room.terminal.store['U'] < 50000){

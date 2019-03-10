@@ -25,7 +25,7 @@ var rM = {
     harvestTarget: function(creep) {
         var source = Game.getObjectById(creep.memory.source);
         var city = creep.memory.city;
-        if (!((Game.time % 2 == 0) && (Game.spawns[city].room.controller.level > 6) && (creep.pos.isNearTo(source.pos)))){
+        if (!((Game.time % 2 == 0) && (creep.body.length == 15) && (creep.pos.isNearTo(source.pos)))){
             a.harvest(creep, source)
         }
     },
