@@ -67,6 +67,11 @@ var rBr = {
     			if (notController.length) {
     				creep.memory.target = notController[0].id
     				a.dismantle(creep, notController[0]);
+				} else {
+				    if(structures.length){
+				        creep.memory.target = structures[0].id
+    				    a.dismantle(creep, structures[0]);
+				    }
 				}
     		} else {
     			creep.moveTo(Game.flags[flagName].pos, {reusePath: 50});
