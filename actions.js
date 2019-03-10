@@ -187,8 +187,6 @@ var actions = {
 
     repair: function(creep, target){
     	return actions.interact(creep, target, () => creep.repair(target));
-
-
     },
     
     // Pick up stuff lying next to you as you pass by
@@ -215,6 +213,22 @@ var actions = {
             // we can only get one thing per turn, success is assumed since we're close
             return creep.pickup(closeStuff[0]);
         }
+    },
+
+    breakStuff: function(creep) {
+        var structures = creep.room.find(FIND_HOSTILE_STRUCTURES);
+        var structGroups = _.groupBy(structures, structure => structure.structureType);
+        var targetOrder = [STRUCTURE_SPAWN, STRUCTURE_TOWER, STRUCTURE_EXTENSION, STRUCTURE_LINK, STRUCTURE_POWER_SPAWN,
+            STRUCTURE_EXTRACTOR, STRUCTURE_LAB, STRUCTURE_TERMINAL, STRUCTURE_OBSERVER, STRUCTURE_NUKER, STRUCTURE_STORAGE, 
+            STRUCTURE_RAMPART];
+ 
+        for (var type in targetOrder) {
+            var breakThese = structGroups[type];
+            if (breakThese.length) {
+                creep.memory.target = breakThese[0].id
+                return actions.dismantle(creep, breakThese[0]);
+            }
+        }     
     }
 };
 

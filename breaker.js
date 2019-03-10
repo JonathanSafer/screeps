@@ -61,29 +61,12 @@ var rBr = {
     	var flagName = city + 'break';
     	if(Game.flags[flagName]){
     		if(creep.pos.roomName === Game.flags[flagName].pos.roomName){
-    			//break stuff
-    			var structures = creep.room.find(FIND_HOSTILE_STRUCTURES);
-    			var notController = _.reject(structures, structure => structure.structureType == STRUCTURE_CONTROLLER || structure.structureType == STRUCTURE_STORAGE || structure.structureType == STRUCTURE_RAMPART);
-    			if (notController.length) {
-    				creep.memory.target = notController[0].id
-    				a.dismantle(creep, notController[0]);
-				} else {
-				    if(structures.length){
-				        creep.memory.target = structures[0].id
-    				    a.dismantle(creep, structures[0]);
-				    }
-				}
+    			a.breakStuff(creep);
     		} else {
     			creep.moveTo(Game.flags[flagName].pos, {reusePath: 50});
     		}
     	} else {
-    		//harass
-    		var structures = creep.room.find(FIND_HOSTILE_STRUCTURES);
-    			var notController = _.reject(structures, structure => structure.structureType == STRUCTURE_CONTROLLER || structure.structureType == STRUCTURE_STORAGE || structure.structureType == STRUCTURE_RAMPART)
-			if (notController.length) {
-				creep.memory.target = notController[0].id
-				a.dismantle(creep, notController[0]);
-			}
+    		a.breakStuff(creep);
     	}
     }
    
