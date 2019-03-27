@@ -1,3 +1,23 @@
+var rMe = require('medic');
+var rH = require('harasser');
+var rSB = require('spawnBuilder');
+var rC = require('claimer');
+var rE = require('eye');
+var rRo = require('robber');
+var rF = require('ferry');
+var rMM = require('mineralMiner');
+var rU = require('upgrader');
+var rB = require('builder');
+var rR = require('runner');
+var rBr = require('breaker');
+var rT = require('transporter');
+var rM = require('remoteMiner');
+var rS = require('scout');
+var rA = require('attacker');
+var types = require('types');
+var u = require('utils');
+var T = require('tower');
+var rD = require('defender');
 var u = require('utils');
 var c = require('city');
 var m = require('markets');
@@ -11,7 +31,7 @@ const profiler = require('screeps-profiler');
 
 
 
-profiler.enable();
+//profiler.enable();
 module.exports.loop = function () {
   profiler.wrap(function() {
     //new code
@@ -62,92 +82,12 @@ module.exports.loop = function () {
         } 
     }
      
-      
-      
-      
-    
     //market (seems to use about 3 cpu, so we can make this run every few ticks when we start needing cpu)
-    if (Game.time % 10 == 1){
-        var receiver = null;
-        if (receiver){
-            if (Game.rooms['W46N42'].storage.store[RESOURCE_ENERGY] > 600000){
-                Game.rooms['W46N42'].terminal.send(RESOURCE_ENERGY, 75000, receiver);
-            }
-            if (Game.rooms['W41N43'].storage.store[RESOURCE_ENERGY] > 600000){
-                Game.rooms['W41N43'].terminal.send(RESOURCE_ENERGY, 75000, receiver);
-            }
-            // if (Game.rooms['W34N41'].storage.store[RESOURCE_ENERGY] > 600000){
-            //     Game.rooms['W34N41'].terminal.send(RESOURCE_ENERGY, 75000, receiver);
-            // }
-        }
-        
-        var orders = Game.market.getAllOrders(order => order.resourceType == RESOURCE_UTRIUM &&     order.type == ORDER_BUY &&
-            Game.market.calcTransactionCost(1000, 'W46N42', order.roomName) < 1000 && (order.price > 0.12) );
-        if (orders.length && Game.spawns['Home'].room.terminal.store['U'] > orders[0].remainingAmount){
-            Game.market.deal(orders[0].id, orders[0].remainingAmount, 'W46N42')
-            console.log('order processed for ' + orders[0].remainingAmount + ' UTRIUM at a price of ' + orders[0].price);
-        } else if(orders.length && Game.spawns['Home'].room.terminal.store['U'] > 0){
-            Game.market.deal(orders[0].id, Game.spawns['Home'].room.terminal.store['U'], 'W46N42')
-            console.log('order processed for ' + Game.spawns['Home'].room.terminal.store['U'] + ' UTRIUM at a price of ' + orders[0].price);
-        }
-        var energyOrders = Game.market.getAllOrders(order => order.resourceType == RESOURCE_ENERGY &&     order.type == ORDER_BUY &&
-                Game.market.calcTransactionCost(1000, 'W46N42', order.roomName) < 1000 && (order.price > 0.025));
-
-        if (energyOrders.length && (Game.spawns['Home'].room.terminal.store.energy > 70000 && Game.spawns['Home'].room.storage.store.energy > 800000)){ // we have energy orders and energy to sell
-            sortedOrders = m.sortOrder(energyOrders).reverse();
-
-            if (sortedOrders[0].remainingAmount > (Game.spawns['Home'].room.terminal.store.energy/2)){
-                var store = Game.spawns['Home'].room.terminal.store.energy;
-                var quantity = Math.floor(store/2);
-                var result = Game.market.deal(sortedOrders[0].id, quantity, 'W46N42');
-                console.log('order processed for ' + quantity + ' ENERGY at a price of ' + sortedOrders[0].price);
-            } else{
-                Game.market.deal(sortedOrders[0].id, sortedOrders[0].remainingAmount, 'W46N42')
-                console.log('order processed for ' + sortedOrders[0].remainingAmount + ' ENERGY at a price of ' + sortedOrders[0].price);
-            }
-        } else if (energyOrders.length && (Game.spawns['Jordan'].room.terminal.store.energy > 70000 && Game.spawns['Jordan'].room.storage.store.energy > 800000)){
-            sortedOrders = m.sortOrder(energyOrders).reverse();
-            if (sortedOrders[0].remainingAmount > (Game.spawns['Jordan'].room.terminal.store.energy/2)){
-                var store = Game.spawns['Jordan'].room.terminal.store.energy;
-                var quantity = Math.floor(store/2);
-                var result = Game.market.deal(sortedOrders[0].id, quantity, 'W41N43');
-                console.log('order processed for ' + quantity + ' ENERGY at a price of ' + sortedOrders[0].price);
-            } else{
-                Game.market.deal(sortedOrders[0].id, sortedOrders[0].remainingAmount, 'W41N43')
-                console.log('order processed for ' + sortedOrders[0].remainingAmount + ' ENERGY at a price of ' + sortedOrders[0].price);
-            }
-        } else if (energyOrders.length && (Game.spawns['Yonland'].room.terminal.store.energy > 70000 && Game.spawns['Yonland'].room.storage.store.energy > 800000)){
-            sortedOrders = m.sortOrder(energyOrders).reverse();
-            if (sortedOrders[0].remainingAmount > (Game.spawns['Yonland'].room.terminal.store.energy/2)){
-                var store = Game.spawns['Yonland'].room.terminal.store.energy;
-                var quantity = Math.floor(store/2);
-                var result = Game.market.deal(sortedOrders[0].id, quantity, 'W43N42');
-                console.log('order processed for ' + quantity + ' ENERGY at a price of ' + sortedOrders[0].price);
-            } else{
-                Game.market.deal(sortedOrders[0].id, sortedOrders[0].remainingAmount, 'W43N42')
-                console.log('order processed for ' + sortedOrders[0].remainingAmount + ' ENERGY at a price of ' + sortedOrders[0].price);
-            }
-         }// else if (energyOrders.length && (Game.spawns['North_Field'].room.terminal.store.energy > 70000 && Game.spawns['North_Field'].room.storage.store.energy > 800000)){
-        //     sortedOrders = m.sortOrder(energyOrders).reverse();
-        //     if (sortedOrders[0].remainingAmount > (Game.spawns['North_Field'].room.terminal.store.energy/2)){
-        //         var store = Game.spawns['North_Field'].room.terminal.store.energy;
-        //         var quantity = Math.floor(store/2);
-        //         var result = Game.market.deal(sortedOrders[0].id, quantity, 'W34N41');
-        //         console.log('order processed for ' + quantity + ' ENERGY at a price of ' + sortedOrders[0].price);
-        //     } else{
-        //         Game.market.deal(sortedOrders[0].id, sortedOrders[0].remainingAmount, 'W34N41')
-        //         console.log('order processed for ' + sortedOrders[0].remainingAmount + ' ENERGY at a price of ' + sortedOrders[0].price);
-        //     }
-        // }
-        /*var sellOrders = Game.market.getAllOrders(order => order.resourceType == RESOURCE_UTRIUM &&     order.type == ORDER_SELL &&
-            Game.market.calcTransactionCost(1000, 'W46N42', order.roomName) < 1000 && (order.price < 0.05) );
-        if (sellOrders.length && Game.spawns['Home'].room.terminal.store['U'] < 50000){
-            Game.market.deal(sellOrders[0].id, sellOrders[0].remainingAmount, 'W46N42')
-            console.log('order processed for ' + sellOrders[0].remainingAmount + ' UTRIUM at a price of ' + sellOrders[0].price);
-        }*/
+    if (Game.time % 200 == 1){
+        m.manageMarket(myCities);
     }
     //stats
-    if (Game.time % 15 == 2){
+    if (Game.time % 19 == 0){
         if(!Memory.stats){ Memory.stats = {} }
         Memory.stats['cpu.bucket'] = Game.cpu.bucket
         Memory.stats['gcl.progress'] = Game.gcl.progress
@@ -171,6 +111,15 @@ module.exports.loop = function () {
             }
           }
         })
+        var counts = _.countBy(Game.creeps, creep => creep.memory.role);
+        var roles = [rA, rT, rM, rR, rU, rB, rS, rMM, rF, rC, rSB, rH, rMe, rD, rBr] 
+        _.forEach(roles, function(role){
+            if (counts[role.name]){
+                Memory.stats['creeps.' + role.name + '.count'] = counts[role.name]
+            } else {
+                Memory.stats['creeps.' + role.name + '.count'] = 0
+            }
+        });
         Memory.stats['cpu.getUsed'] = Game.cpu.getUsed()
         Memory.stats['market.credits'] = Game.market.credits
     }   

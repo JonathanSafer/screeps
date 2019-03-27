@@ -14,13 +14,45 @@ var rM = {
         } else if (Game.getObjectById(creep.memory.source) == null){
             creep.moveTo(new RoomPosition(25, 25, creep.memory.sourceRoom), {reusePath: 50}); 
         } else {
-            rM.harvestTarget(creep);
+            if (creep.saying != '🔅'){
+                rM.harvestTarget(creep);
+            }
+            if (Game.time % 50 === 0){
+            	if (Game.spawns[creep.memory.city].room.controller.level > 7){
+            		if (!creep.memory.link){
+            			//find link
+            			var source = Game.getObjectById(creep.memory.source);
+            			var structures = creep.room.find(FIND_MY_STRUCTURES)
+            			link = _.find(structures, structure => structure.structureType === STRUCTURE_LINK && structure.pos.inRangeTo(source.pos, 3))
+            			//console.log(link)
+            			if (link){
+            			    creep.memory.link = link.id;
+            			}
+            		}
+            	}
+            }
+            if (creep.memory.link){
+                if (creep.carry.energy == creep.carryCapacity){
+                    let link = Game.getObjectById(creep.memory.link);
+            	    a.charge(creep, link);
+            	    if (link.energy >= link.energyCapacity * .75){
+            	        creep.say('🔅', true);
+            	    }
+                }
+            	if (creep.saying === '🔅'){
+            	    let link = Game.getObjectById(creep.memory.link);
+            		let storageLink = Game.getObjectById(Game.spawns[creep.memory.city].memory.storageLink);
+            		if (storageLink.energy === 0){
+            		    link.transferEnergy(storageLink)
+            		    creep.say('🔆', true);
+            		} else {
+            		    creep.say('🔅', true);
+            		}
+            	}
+            }
         }
     },
 
-    needEnergy: function(creep) {
-      return (creep.carry.energy < creep.carryCapacity) || (creep.carry.energy == 0);
-    },
 
     harvestTarget: function(creep) {
         var source = Game.getObjectById(creep.memory.source);

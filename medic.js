@@ -16,7 +16,8 @@ var rMe = {
     	var breaker = Game.getObjectById(creep.memory.breaker);
     	if (!breaker){
 	   		var allCreeps = u.splitCreepsByCity();
-    		var breakerSearch = _.filter(allCreeps[creep.memory.city], creep => (creep.memory.role == 'breaker' || creep.memory.role == 'defender') && creep.memory.medic == null);
+    		var breakerSearch = _.filter(allCreeps[creep.memory.city], targetCreep => (targetCreep.memory.role == 'breaker' || targetCreep.memory.role == 'defender')
+    		    && (targetCreep.memory.medic == null || targetCreep.memory.medic == creep.id));
     		if (breakerSearch.length){
     			creep.memory.breaker = breakerSearch[0].id;
     		}

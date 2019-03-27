@@ -229,7 +229,7 @@ var actions = {
                 creep.memory.target = breakThese[0].id
                 return actions.dismantle(creep, breakThese[0]);
             }
-        }    
+        }     
     }
 };
 
