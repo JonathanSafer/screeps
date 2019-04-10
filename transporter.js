@@ -9,6 +9,10 @@ var rT = {
 
     /** @param {Creep} creep **/
     run: function(creep) {
+        if (creep.saying > 0){
+            creep.say(creep.saying - 1)
+            return;
+        }
         var city = creep.memory.city;
         if (creep.carry.energy == 0) {
             if (creep.memory.location){
@@ -56,13 +60,14 @@ var rT = {
                     } else {
                         let locations = creep.room.find(FIND_STRUCTURES, {
                                 filter: (structure) => {
-                                    return (structure.structureType == STRUCTURE_EXTENSION 
-                                            || structure.structureType == STRUCTURE_TOWER
+                                    return (((structure.structureType == STRUCTURE_EXTENSION 
                                             || structure.structureType == STRUCTURE_SPAWN
                                             || structure.structureType == STRUCTURE_LAB
-                                            || structure.structureType == STRUCTURE_NUKER
-                                            || structure.structureType == STRUCTURE_POWER_SPAWN) 
-                                            && structure.energy < structure.energyCapacity;
+                                            || structure.structureType == STRUCTURE_NUKER)
+                                            && structure.energy < structure.energyCapacity)
+                                            || (structure.structureType == STRUCTURE_POWER_SPAWN && structure.energy < (structure.energyCapacity - 350))
+                                            || (structure.structureType == STRUCTURE_TOWER && structure.energy < (structure.energyCapacity - 350))
+                                    );
                                 }
                         });
                         if (locations.length > 4){
@@ -70,6 +75,8 @@ var rT = {
                             creep.memory.targetId = locations[Number(creep.name) % 5].id
                         } else if (locations.length) {
                             actions.charge(creep, locations[0]);
+                        } else {
+                            creep.say(20);
                         }
                     }
                 }

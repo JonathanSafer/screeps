@@ -19,6 +19,20 @@ var markets = {
     	}
     },
     
+    distributePower: function distributePower(myCities){
+        var receiver = null
+    	var needPower = _.filter(myCities, city => city.controller.level > 7 && city.terminal && (city.terminal.store.power < 1 || city.terminal.store.power == undefined))
+    	if (needPower.length){
+    		receiver = needPower[0].name
+    		for (var i = 0; i < myCities.length; i++){
+    		    if (myCities[i].terminal && myCities[i].terminal.store.power > 2000){
+    		        myCities[i].terminal.send(RESOURCE_POWER, 560, receiver);
+    		        console.log('Sending power to ' + receiver)
+    		    }
+    		}
+    	}
+    },
+    
     manageMarket: function manageMarket(myCities){
         var buyOrders = _.groupBy(Game.market.getAllOrders(order => order.type == ORDER_BUY), order => order.resourceType)
         for (var i = 0; i < myCities.length; i++){

@@ -14,7 +14,7 @@ var rC = {
         }
         if (Game.flags.claim.pos.x == creep.pos.x && Game.flags.claim.pos.y == creep.pos.y && Game.flags.claim.pos.roomName == creep.pos.roomName) {
             //console.log(Game.flags.Flag.pos);
-        	var newCity = 'sAmalia'
+        	var newCity = 'sAmalia_suburbs'
         	//console.log(newCity);
         	creep.signController(creep.room.controller, newCity)
         	creep.room.memory.city = newCity;

@@ -35,7 +35,7 @@ var rM = {
                 if (creep.carry.energy == creep.carryCapacity){
                     let link = Game.getObjectById(creep.memory.link);
             	    a.charge(creep, link);
-            	    if (link.energy >= link.energyCapacity * .75){
+            	    if (link.energy >= link.energyCapacity * .5){
             	        creep.say('🔅', true);
             	    }
                 }

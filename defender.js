@@ -29,7 +29,8 @@ var rD = {
     	} else {
     		//look for medics
     		var allCreeps = u.splitCreepsByCity();
-    		var medicSearch = _.filter(allCreeps[creep.memory.city], localCreep => localCreep.memory.role === 'medic' && localCreep.pos.isNearTo(creep.pos));
+    		var medicSearch = _.find(allCreeps[creep.memory.city], localCreep => localCreep.memory.role === 'medic' && localCreep.pos.isNearTo(creep.pos) 
+    		                                                                        && localCreep.memory.breaker == creep.id);
     		if (medicSearch.length){
     			creep.memory.medic = medicSearch[0].id;
     		}

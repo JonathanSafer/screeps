@@ -1,4 +1,5 @@
 var rMe = require('medic');
+var rPM = require('powerMiner');
 var rH = require('harasser');
 var rSB = require('spawnBuilder');
 var rC = require('claimer');
@@ -50,11 +51,13 @@ module.exports.loop = function () {
     	    c.runCity(city, localCreeps)
     	    c.updateCountsCity(city, localCreeps, localRooms)
     	    c.runTowers(city)
+    	    c.runObs(city)
 	    }
     }
-    //distribute energy
+    //distribute energy and power
     if (Game.time % 100 == 0){
         m.distributeEnergy(myCities);
+        m.distributePower(myCities);
     }
     //clear old creeps
     if (Game.time % 100 == 0) {
@@ -93,10 +96,15 @@ module.exports.loop = function () {
         Memory.stats['gcl.progress'] = Game.gcl.progress
         Memory.stats['gcl.progressTotal'] = Game.gcl.progressTotal
         Memory.stats['gcl.level'] = Game.gcl.level
+        Memory.stats['gpl.progress'] = Game.gpl.progress
+        Memory.stats['gpl.progressTotal'] = Game.gpl.progressTotal
+        Memory.stats['gpl.level'] = Game.gpl.level
         Memory.stats['energy'] = u.getDropTotals()
+        var cities = [];
         _.forEach(Object.keys(Game.rooms), function(roomName){
           let room = Game.rooms[roomName]
           let city = Game.rooms[roomName].memory.city;
+          cities.push(city);
     
           if(room.controller && room.controller.my){
             Memory.stats['rooms.' + city + '.rcl.level'] = room.controller.level
@@ -112,7 +120,7 @@ module.exports.loop = function () {
           }
         })
         var counts = _.countBy(Game.creeps, creep => creep.memory.role);
-        var roles = [rA, rT, rM, rR, rU, rB, rS, rMM, rF, rC, rSB, rH, rMe, rD, rBr] 
+        var roles = [rA, rT, rM, rR, rU, rB, rS, rMM, rF, rC, rSB, rH, rMe, rD, rBr, rPM] 
         _.forEach(roles, function(role){
             if (counts[role.name]){
                 Memory.stats['creeps.' + role.name + '.count'] = counts[role.name]
@@ -120,22 +128,22 @@ module.exports.loop = function () {
                 Memory.stats['creeps.' + role.name + '.count'] = 0
             }
         });
-        Memory.stats['cpu.getUsed'] = Game.cpu.getUsed()
+        var cityCounts = _.countBy(Game.creeps, creep => creep.memory.city);
+        _.forEach(cities, function(city){
+            if (cityCounts[city]){
+                Memory.stats['cities.' + city + '.count'] = cityCounts[city]
+            } else {
+                Memory.stats['cities.' + city + '.count'] = 0
+            }
+        });
         Memory.stats['market.credits'] = Game.market.credits
+        Memory.stats['cpu.getUsed'] = Game.cpu.getUsed()
     }   
     
     
     //test stuff
-    /*if (Game.time % 10 == 3){
-        var creeps = Game.creeps;
-	    var groupedCreeps = _.groupBy(creeps, creep => creep.memory.role);
-	    //console.log(JSON.stringify(groupedCreeps[0]));
-	    var myCities = _.filter(Game.rooms, room => rS.iOwn(room.name))
-	    var city = myCities[0];
-	    //console.log(JSON.stringify(city.controller.sign));
-	    //console.log(JSON.stringify(Object.values(Game.creeps)[0]));
-    }*/
-    
+   
+
   });
 }
 //Yoni TODO

@@ -26,7 +26,8 @@ var rBr = {
     	} else {
     		//look for medics
     		var allCreeps = u.splitCreepsByCity();
-    		var medicSearch = _.find(allCreeps[creep.memory.city], localCreep => localCreep.memory.role === 'medic' && localCreep.pos.isNearTo(creep.pos));
+    		var medicSearch = _.find(allCreeps[creep.memory.city], localCreep => localCreep.memory.role === 'medic' && localCreep.pos.isNearTo(creep.pos) 
+    		                                                                        && localCreep.memory.breaker == creep.id);
     		if (medicSearch){
     			creep.memory.medic = medicSearch.id;
     		}
@@ -38,6 +39,17 @@ var rBr = {
             if (Game.flags[rallyFlag].pos.x == creep.pos.x && Game.flags[rallyFlag].pos.y == creep.pos.y && Game.flags[rallyFlag].pos.roomName == creep.pos.roomName){
                 creep.memory.rally = true
             }
+            return;
+        }
+        var targetFlag = creep.memory.city + 'breakTarget';
+        if(Game.flags[targetFlag] && creep.pos.roomName === Game.flags[targetFlag].pos.roomName){
+            var found = Game.flags[targetFlag].pos.lookFor(LOOK_STRUCTURES)
+            if(found.length){
+                a.dismantle(creep, found[0])
+                return;
+            }
+        } else if(Game.flags[targetFlag]){
+            creep.moveTo(Game.flags[targetFlag], {reusePath: 50})
             return;
         }
     	var target = Game.getObjectById(creep.memory.target);

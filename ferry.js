@@ -22,7 +22,7 @@ var rF = {
                 if (creep.carry.energy > 0){
                     actions.charge(creep, creep.room.terminal);
                 } else if(creep.room.storage.store.energy > 150000 && creep.room.terminal.store.energy < 150000){
-                	if (Game.time % 10 === 0){
+                	if (Game.time % 10 === 0 || Game.time % 10 === 1){
                 		creep.memory.target = rF.getJob(creep);
                 		break;
                 	}
