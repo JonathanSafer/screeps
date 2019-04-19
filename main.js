@@ -51,7 +51,7 @@ module.exports.loop = function () {
     	    c.runCity(city, localCreeps)
     	    c.updateCountsCity(city, localCreeps, localRooms)
     	    c.runTowers(city)
-    	    c.runObs(city)
+    	    //c.runObs(city)
 	    }
     }
     //distribute energy and power
