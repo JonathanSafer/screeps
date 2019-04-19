@@ -44,11 +44,11 @@ function makeCreeps(role, type, target, city) {
     }
 }
 //runCity function
-function runCity(city, localCreeps){
+function runCity(city, creeps){
     if (Game.spawns[city]){
         var roles = [rA, rT, rM, rR, rU, rB, rS, rMM, rF, rC, rSB, rH, rMe, rD, rBr, rPM] // order roles for priority
         var nameToRole = _.groupBy(roles, role => role.name); // map from names to roles
-        var counts = _.countBy(localCreeps[city], creep => creep.memory.role); // lookup table from role to count
+        var counts = _.countBy(creeps, creep => creep.memory.role); // lookup table from role to count
     
         // Get counts for all roles, make first thing that doesn't have enough
         _.forEach(_.filter(roles, role => !counts[role.name]), role => counts[role.name] = 0);
@@ -66,14 +66,14 @@ function runCity(city, localCreeps){
         //console.log(city + ': ' + printout.join(', ' ));
     
         // Run all the creeps in this city
-        _.forEach(localCreeps[city], (creep, name) => nameToRole[creep.memory.role][0].run(creep));
+        _.forEach(creeps, (creep, name) => nameToRole[creep.memory.role][0].run(creep));
         
         //run powerSpawn
         runPowerSpawn(city);
     }
 }
 //updateCountsCity function
-function updateCountsCity(city, localCreeps, localRooms){
+function updateCountsCity(city, creeps, rooms){
     if (Game.spawns[city]){
     	if (Game.spawns[city].room.controller.level > 7){
     		if (Game.time % 500 === 0){
@@ -175,12 +175,12 @@ function updateCountsCity(city, localCreeps, localRooms){
 	        if (Game.time % 2000 == 0) {
 	            //emergency reproduction
 	            if (extensions >= 5){
-	                if (_.filter(localCreeps[city], creep => creep.memory.role == 'remoteMiner') < 1){
+	                if (_.filter(creeps, creep => creep.memory.role == 'remoteMiner') < 1){
 	                    console.log('Making Emergency Miner');
 	                    makeCreeps('remoteMiner', "lightMiner", 1, city);
 	                }
 	        
-	                    if (_.filter(localCreeps[city], creep => creep.memory.role == 'transporter') < 1){
+	                    if (_.filter(creeps, creep => creep.memory.role == 'transporter') < 1){
 	                    console.log('Making Emergency Transporter');
 	                    makeCreeps('transporter', 'basic', 0, city);
 	                }
@@ -205,7 +205,7 @@ function updateCountsCity(city, localCreeps, localRooms){
 	            }
 
 	            // Automated attacker count for defense
-	            var enemyCounts = _.map(localRooms[city], room => {
+	            var enemyCounts = _.map(rooms, room => {
 	                var allBadCreeps = room.find(FIND_HOSTILE_CREEPS);
 	                var invaders = _.reject(allBadCreeps, creep => creep.owner.username == "Source Keeper");
 	                return invaders.length;
@@ -249,7 +249,7 @@ function updateCountsCity(city, localCreeps, localRooms){
                     Game.spawns[city].memory[rU.name] = 0;
                 }
             } else {
-                var banks = u.getWithdrawLocations(localCreeps[city][0]);
+                var banks = u.getWithdrawLocations(creeps[0]);
                 //console.log(banks);
                 var money = _.sum(_.map(banks, bank => bank.store[RESOURCE_ENERGY]));
                 var capacity = _.sum(_.map(banks, bank => bank.storeCapacity));
@@ -264,8 +264,8 @@ function updateCountsCity(city, localCreeps, localRooms){
                 }
             }
             // automated count for builders Game.rooms.controller.sign.text = city
-            var constructionSites = _.flatten(_.map(localRooms[city], room => room.find(FIND_MY_CONSTRUCTION_SITES)));
-            var buildings = _.flatten(_.map(localRooms[city], room => room.find(FIND_STRUCTURES)));
+            var constructionSites = _.flatten(_.map(rooms, room => room.find(FIND_MY_CONSTRUCTION_SITES)));
+            var buildings = _.flatten(_.map(rooms, room => room.find(FIND_STRUCTURES)));
             var repairSites = _.filter(buildings, structure => (structure.hits < (structure.hitsMax*0.3)) && (structure.structureType != STRUCTURE_WALL));
             let totalSites = (Math.floor((repairSites.length)/10) + constructionSites.length);
             if (totalSites > 0){
@@ -289,10 +289,10 @@ function updateCountsCity(city, localCreeps, localRooms){
         }
     
         if (Game.time % 50 == 0) {
-            updateMiner(city, localRooms);
+            updateMiner(city, rooms);
             updateScout(city);
             // automated runner count based on miner distances
-            var miners = _.filter(localCreeps[city], creep => creep.memory.role == "miner" || creep.memory.role == "remoteMiner");
+            var miners = _.filter(creeps, creep => creep.memory.role == "miner" || creep.memory.role == "remoteMiner");
             var distances = _.map(miners, miner => PathFinder.search(Game.spawns[city].pos, miner.pos).cost);
             var totalDistance = _.sum(distances);
             var extensions = _.filter(Game.structures, (structure) => (structure.structureType == STRUCTURE_EXTENSION) && (structure.room.memory.city == [city])).length
@@ -327,16 +327,16 @@ function updateCountsCity(city, localCreeps, localRooms){
             //emergency reproduction
             if (Game.time % 150 == 0){
                 if (extensions >= 5){
-                    if (_.filter(localCreeps[city], creep => creep.memory.role == 'runner') < 1){
+                    if (_.filter(creeps, creep => creep.memory.role == 'runner') < 1){
                         console.log('Making Emergency Runner')
                         makeCreeps('runner', 'erunner', 1, city);
                     }
-                    if (_.filter(localCreeps[city], creep => creep.memory.role == 'remoteMiner') < 1){
+                    if (_.filter(creeps, creep => creep.memory.role == 'remoteMiner') < 1){
                         console.log('Making Emergency Miner');
                         makeCreeps('remoteMiner', "lightMiner", 1, city);
                     }
             
-                        if (_.filter(localCreeps[city], creep => creep.memory.role == 'transporter') < 1){
+                        if (_.filter(creeps, creep => creep.memory.role == 'transporter') < 1){
                         console.log('Making Emergency Transporter');
                         makeCreeps('transporter', 'basic', 0, city);
                     }
@@ -362,7 +362,7 @@ function updateCountsCity(city, localCreeps, localRooms){
             }
 
             // Automated attacker count for defense
-            var enemyCounts = _.map(localRooms[city], room => {
+            var enemyCounts = _.map(rooms, room => {
                 var allBadCreeps = room.find(FIND_HOSTILE_CREEPS);
                 var invaders = _.reject(allBadCreeps, creep => creep.owner.username == "Source Keeper");
                 return invaders.length;
@@ -445,12 +445,12 @@ function updateScout(city){
 	Game.spawns[city].memory[rS.name] = 0/*scouts*/;
 }
 
-function updateMiner(city, localRooms){
+function updateMiner(city, rooms){
 	if (!Game.spawns[city].memory.sources){
 		Game.spawns[city].memory.sources = {};
 	}
 	let miners = 0;
-	let sources = _.flatten(_.map(localRooms[city], room => room.find(FIND_SOURCES)));
+	let sources = _.flatten(_.map(rooms, room => room.find(FIND_SOURCES)));
 	_.each(sources, function(sourceInfo){
 		let sourceId = sourceInfo.id;
 		let sourcePos = sourceInfo.pos;
