@@ -23,6 +23,7 @@ var u = require('utils');
 var c = require('city');
 var m = require('markets');
 var rS = require('scout');
+var pC = require('powerCreeps')
 const profiler = require('screeps-profiler');
 //Game.profiler.profile(1000);
 //Game.profiler.output();
@@ -48,12 +49,14 @@ module.exports.loop = function () {
 	        //c.updateCountsHermit
 	        //c.runTowers
 	    } else {
-    	    c.runCity(city, localCreeps[city])
-    	    c.updateCountsCity(city, localCreeps[city], localRooms[city])
+    	    c.runCity(city, localCreeps)
+    	    c.updateCountsCity(city, localCreeps, localRooms)
     	    c.runTowers(city)
     	    //c.runObs(city)
 	    }
     }
+    //run power creeps
+    pC.run103207();
     //distribute energy and power
     if (Game.time % 100 == 0){
         m.distributeEnergy(myCities);
