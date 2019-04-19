@@ -49,8 +49,8 @@ module.exports.loop = function () {
 	        //c.updateCountsHermit
 	        //c.runTowers
 	    } else {
-    	    c.runCity(city, localCreeps)
-    	    c.updateCountsCity(city, localCreeps, localRooms)
+    	    c.runCity(city, localCreeps[city])
+    	    c.updateCountsCity(city, localCreeps[city], localRooms[city])
     	    c.runTowers(city)
     	    //c.runObs(city)
 	    }
