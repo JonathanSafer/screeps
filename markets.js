@@ -7,12 +7,12 @@ var markets = {
     
     distributeEnergy: function distributeEnergy(myCities){
         var receiver = null
-    	var needEnergy = _.filter(myCities, city => city.storage && city.storage.store.energy < 550000 && city.terminal)
+    	var needEnergy = _.filter(myCities, city => city.storage && city.storage.store.energy < 350000 && city.terminal)
     	if (needEnergy.length){
     		var sortedCities = _.sortBy(needEnergy, city => city.storage.store.energy)
     		receiver = sortedCities[0].name
     		for (var i = 0; i < myCities.length; i++){
-    		    if (myCities[i].storage && myCities[i].storage.store.energy > 700000){
+    		    if (myCities[i].storage && myCities[i].storage.store.energy > 500000){
     		        myCities[i].terminal.send(RESOURCE_ENERGY, 75000, receiver);
     		    }
     		}
@@ -45,10 +45,19 @@ var markets = {
                 		console.log(Math.min(goodOrders[goodOrders.length - 1].remainingAmount, myCities[i].terminal.store[mineral]) + " " + mineral + " sold for " + goodOrders[goodOrders.length - 1].price)
                 	}
                 }
-                if (myCities[i].storage.store.energy > 800000){
+                if (myCities[i].storage.store.energy > 500000){
                 	var energyOrders = markets.sortOrder(buyOrders[RESOURCE_ENERGY])
-                	if (energyOrders[energyOrders.length - 1].price > 0.03){
+                	if (energyOrders[energyOrders.length - 1].price > 0.2){
                     	Game.market.deal(energyOrders[energyOrders.length - 1].id, Math.min(energyOrders[energyOrders.length - 1].remainingAmount, myCities[i].terminal.store.energy / 2), myCities[i].name)
+                    	console.log(Math.min(energyOrders[energyOrders.length - 1].remainingAmount, myCities[i].terminal.store.energy / 2) + " energy sold for " + energyOrders[energyOrders.length - 1].price)
+                	} else if (myCities[i].storage.store.energy > 600000 && energyOrders[energyOrders.length - 1].price > 0.1){
+                	    Game.market.deal(energyOrders[energyOrders.length - 1].id, Math.min(energyOrders[energyOrders.length - 1].remainingAmount, myCities[i].terminal.store.energy / 2), myCities[i].name)
+                    	console.log(Math.min(energyOrders[energyOrders.length - 1].remainingAmount, myCities[i].terminal.store.energy / 2) + " energy sold for " + energyOrders[energyOrders.length - 1].price)
+                	} else if (myCities[i].storage.store.energy > 700000 && energyOrders[energyOrders.length - 1].price > 0.07){
+                	    Game.market.deal(energyOrders[energyOrders.length - 1].id, Math.min(energyOrders[energyOrders.length - 1].remainingAmount, myCities[i].terminal.store.energy / 2), myCities[i].name)
+                    	console.log(Math.min(energyOrders[energyOrders.length - 1].remainingAmount, myCities[i].terminal.store.energy / 2) + " energy sold for " + energyOrders[energyOrders.length - 1].price)
+                	} else if (myCities[i].storage.store.energy > 800000 && energyOrders[energyOrders.length - 1].price > 0.04){
+                	    Game.market.deal(energyOrders[energyOrders.length - 1].id, Math.min(energyOrders[energyOrders.length - 1].remainingAmount, myCities[i].terminal.store.energy / 2), myCities[i].name)
                     	console.log(Math.min(energyOrders[energyOrders.length - 1].remainingAmount, myCities[i].terminal.store.energy / 2) + " energy sold for " + energyOrders[energyOrders.length - 1].price)
                 	} else if (myCities[i].storage.store.energy > 900000){
                 	    Game.market.deal(energyOrders[energyOrders.length - 1].id, Math.min(energyOrders[energyOrders.length - 1].remainingAmount, myCities[i].terminal.store.energy / 2), myCities[i].name)

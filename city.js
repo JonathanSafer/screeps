@@ -44,11 +44,11 @@ function makeCreeps(role, type, target, city) {
     }
 }
 //runCity function
-function runCity(city, localCreeps){
+function runCity(city, creeps){
     if (Game.spawns[city]){
-        var roles = [rA, rT, rM, rR, rU, rB, rS, rMM, rF, rC, rSB, rH, rMe, rD, rBr, rPM] // order roles for priority
+        var roles = [rF, rA, rT, rM, rR, rU, rB, rS, rMM, rC, rSB, rH, rMe, rD, rBr, rPM] // order roles for priority
         var nameToRole = _.groupBy(roles, role => role.name); // map from names to roles
-        var counts = _.countBy(localCreeps[city], creep => creep.memory.role); // lookup table from role to count
+        var counts = _.countBy(creeps, creep => creep.memory.role); // lookup table from role to count
     
         // Get counts for all roles, make first thing that doesn't have enough
         _.forEach(_.filter(roles, role => !counts[role.name]), role => counts[role.name] = 0);
@@ -66,7 +66,7 @@ function runCity(city, localCreeps){
         //console.log(city + ': ' + printout.join(', ' ));
     
         // Run all the creeps in this city
-        _.forEach(localCreeps[city], (creep, name) => nameToRole[creep.memory.role][0].run(creep));
+        _.forEach(creeps, (creep, name) => nameToRole[creep.memory.role][0].run(creep));
         
         //run powerSpawn
         runPowerSpawn(city);
@@ -97,9 +97,9 @@ function updateCountsCity(city, creeps, rooms) {
                 updateTransporter(extensions, memory);
                 updateMilitary(city, memory);
                 updateColonizers(memory);
-                updateUpgrader(controller, memory, rcl8);
+                updateUpgrader(city, controller, memory, rcl8, creeps);
                 updateBuilder(rcl, memory, spawn, rooms, rcl8);
-                updateMineralMiner(rcl, buildings, spawn, memory);
+                updateMineralMiner(rcl, structures, spawn, memory);
 
                 if (rcl8) {
                     updateStorageLink(spawn, memory, structures);
@@ -136,10 +136,16 @@ function makeEmergencyCreeps(extensions, creeps, city, rcl8) {
 function runTowers(city){
     if (Game.spawns[city]){
         var towers = _.filter(Game.structures, (structure) => structure.structureType == STRUCTURE_TOWER && structure.room.memory.city == city);
-        var hostiles = Game.spawns[city].room.find(FIND_HOSTILE_CREEPS);
-        var injured = Game.spawns[city].room.find(FIND_MY_CREEPS, {filter: (injured) => { 
+        var hostileCreep = Game.spawns[city].room.find(FIND_HOSTILE_CREEPS);
+        var injuredCreep = Game.spawns[city].room.find(FIND_MY_CREEPS, {filter: (injured) => { 
                                                 return (injured) && injured.hits < injured.hitsMax;
                              }});
+        var injuredPower = Game.spawns[city].room.find(FIND_MY_POWER_CREEPS, {filter: (injured) => { 
+                                                return (injured) && injured.hits < injured.hitsMax;
+                             }});
+        var hostilePower = Game.spawns[city].room.find(FIND_HOSTILE_POWER_CREEPS)
+        var hostiles = hostilePower.concat(hostileCreep);
+        var injured = injuredPower.concat(injuredCreep)
         var notWalls = [];
         if (Game.time % 10 === 0) {
             var damaged = Game.spawns[city].room.find(FIND_STRUCTURES, {
@@ -164,7 +170,16 @@ function runTowers(city){
 //Run the powerSpawn
 function runPowerSpawn(city){
     if(Game.spawns[city]){
-        var powerSpawn = _.find(Game.structures, (structure) => structure.structureType == STRUCTURE_POWER_SPAWN && structure.room.memory.city == city)
+        if (!Game.spawns[city].memory.powerSpawn){
+            if (Game.time % 500 == 0){
+                let powerSpawn = _.find(Game.structures, (structure) => structure.structureType == STRUCTURE_POWER_SPAWN && structure.room.memory.city == city);
+                if (powerSpawn){
+                    Game.spawns[city].memory.powerSpawn = powerSpawn.id
+                }
+            }
+            return;
+        }
+        var powerSpawn = Game.getObjectById(Game.spawns[city].memory.powerSpawn)
         if (Game.time % 20 === 0){
             if (!Game.spawns[city].memory.ferryInfo){
                 Game.spawns[city].memory.ferryInfo = {}
@@ -175,12 +190,8 @@ function runPowerSpawn(city){
                 Game.spawns[city].memory.ferryInfo.needPower = false
             }
         }
-        if(powerSpawn && powerSpawn.energy >= 50 && powerSpawn.power > 0 && powerSpawn.room.storage.store.energy > 150000){
+        if(powerSpawn && powerSpawn.energy >= 50 && powerSpawn.power > 0 && powerSpawn.room.storage.store.energy > 520000){
             powerSpawn.processPower();
-        }
-        //console.log(powerSpawn && powerSpawn.energy >= 50 && powerSpawn.power > 0)
-        if (Game.spawns[city].room.storage){
-            //console.log(Game.spawns[city].room.storage.energy)
         }
     }
 }
@@ -189,7 +200,7 @@ function updateMilitary(city, memory) {
     let flags = ['harass', 'break', 'defend', 'powerMine'];
     let updateFns = [updateHarasser, updateBreaker, updateDefender, updatePowerMine];
 
-    for (var i = flags.length - 1; i >= 0; i--) {
+    for (var i = 0; i < flags.length; i++) {
         let flagName = city + flags[i];
         let updateFn = updateFns[i];
         updateFn(Game.flags[flagName], memory);
@@ -242,8 +253,8 @@ function updateMiner(rooms, rcl8, memory, spawn){
 	if (!memory.sources) memory.sources = {};
     if (rcl8 && _.keys(memory.sources).length > 2) memory.sources = {};
 	let miners = 0;
-    let rooms = rcl8 ? [spawn.room] : rooms;
-    let sources = _.flatten(_.map(rooms, room => room.find(FIND_SOURCES)));
+    let miningRooms = rcl8 ? [spawn.room] : rooms;
+    let sources = _.flatten(_.map(miningRooms, room => room.find(FIND_SOURCES)));
 
 	_.each(sources, function(sourceInfo){
 		let sourceId = sourceInfo.id;
@@ -278,7 +289,7 @@ function updateMineralMiner(rcl, buildings, spawn, memory) {
     }
 }
 
-function updateTransporter(extensions) {
+function updateTransporter(extensions, memory) {
     if (extensions < 1){
         memory[rT.name] = 0;
     } else if (extensions < 10){
@@ -292,7 +303,7 @@ function updateTransporter(extensions) {
     }
 }
 
-function updateUpgrader(controller, memory, rcl8) {
+function updateUpgrader(city, controller, memory, rcl8, creeps) {
     if (rcl8){
         var modifier = Math.random() * 2000;
         if (controller.ticksToDowngrade < 100000 || (controller.room.storage.store.energy > 720000 && Game.cpu.bucket > (7500 + modifier))){
@@ -306,10 +317,10 @@ function updateUpgrader(controller, memory, rcl8) {
         var money = _.sum(_.map(banks, bank => bank.store[RESOURCE_ENERGY]));
         var capacity = _.sum(_.map(banks, bank => bank.storeCapacity));
         //console.log('money: ' + money + ', ' + (100*money/capacity));
-        if(money < (capacity * .5)){
+        if(money < (capacity * .3)){
             memory[rU.name] = Math.max(memory[rU.name] - 1, 1); 
         }
-        else if (money > (capacity * .52)){
+        else if (money > (capacity * .32)){
             memory[rU.name] = Math.min(memory[rU.name] + 1, 6);
         } else {
             memory[rU.name] = 1;
@@ -318,10 +329,10 @@ function updateUpgrader(controller, memory, rcl8) {
 }
 
 function updateBuilder(rcl, memory, spawn, rooms, rcl8) {
-    let rooms = rcl8 ? [spawn.room] : rooms;
-    let constructionSites = _.flatten(_.map(rooms, room => room.find(FIND_MY_CONSTRUCTION_SITES)));
+    let buildRooms = rcl8 ? [spawn.room] : rooms;
+    let constructionSites = _.flatten(_.map(buildRooms, room => room.find(FIND_MY_CONSTRUCTION_SITES)));
     if (!rcl8) {
-        let buildings = _.flatten(_.map(rooms, room => room.find(FIND_STRUCTURES)));
+        let buildings = _.flatten(_.map(buildRooms, room => room.find(FIND_STRUCTURES)));
         let repairSites = _.filter(buildings, structure => (structure.hits < (structure.hitsMax*0.3)) && (structure.structureType != STRUCTURE_WALL));
         var totalSites = (Math.floor((repairSites.length)/10) + constructionSites.length);
     } else {
@@ -447,7 +458,7 @@ function runObs(city){
 			let powerBank = _.find(structures, structure => structure.structureType === STRUCTURE_POWER_BANK);
 			let flagName = city + 'powerMine'
 			if (powerBank && Game.cpu.bucket > 6000 && powerBank.ticksToDecay > 2500 && !Game.flags[flagName]
-			    && !PathFinder.search(Game.spawns[city].pos, [{pos: powerBank.pos, range: 1}]).incomplete){
+			    && Game.rooms[roomName].find(FIND_STRUCTURES).length < 10){
 				//put a flag on it
 				Game.rooms[roomName].createFlag(powerBank.pos, flagName)
 				console.log('Power Bank found in: ' + roomName)

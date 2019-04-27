@@ -52,7 +52,7 @@ module.exports.loop = function () {
     	    c.runCity(city, localCreeps[city])
     	    c.updateCountsCity(city, localCreeps[city], localRooms[city])
     	    c.runTowers(city)
-    	    //c.runObs(city)
+    	    c.runObs(city)
 	    }
     }
     //run power creeps

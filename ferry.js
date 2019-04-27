@@ -87,11 +87,11 @@ var rF = {
     	if (creep.room.storage.store.energy > 150000 && creep.room.terminal.store.energy < 150000){
     		return 1;
     	}
-        if(Object.keys(creep.room.storage.store).length > 1){
-    		return 2;
-    	}
     	if (creep.room.terminal.store.energy > 151000){
     		return 3;
+    	}
+        if(Object.keys(creep.room.storage.store).length > 1){
+    		return 2;
     	}
     	if (Game.spawns[creep.memory.city].memory.ferryInfo.needPower === true && Game.spawns[creep.memory.city].room.terminal.store[RESOURCE_POWER] > 0){
     		return 4;
