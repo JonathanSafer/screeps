@@ -38,15 +38,18 @@ var markets = {
         for (var i = 0; i < myCities.length; i++){
             if (myCities[i].terminal){
                 var mineral = myCities[i].find(FIND_MINERALS)[0].mineralType;
-                if (mineral in myCities[i].terminal.store){
+                if (mineral in myCities[i].terminal.store && myCities[i].terminal.store[mineral] > 20000){
                 	var goodOrders = markets.sortOrder(buyOrders[mineral]);
-                	if (goodOrders[goodOrders.length - 1].price > .08 && myCities[i].storage.store.energy > 200000){
-                		Game.market.deal(goodOrders[goodOrders.length - 1].id, Math.min(goodOrders[goodOrders.length - 1].remainingAmount, myCities[i].terminal.store[mineral]), myCities[i].name)
+                	if (goodOrders.length && goodOrders[goodOrders.length - 1].price > .08 && myCities[i].storage.store.energy > 200000){
+                		Game.market.deal(goodOrders[goodOrders.length - 1].id, Math.min(goodOrders[goodOrders.length - 1].remainingAmount,  Math.max(0, myCities[i].terminal.store[mineral] - 20000)), myCities[i].name)
                 		console.log(Math.min(goodOrders[goodOrders.length - 1].remainingAmount, myCities[i].terminal.store[mineral]) + " " + mineral + " sold for " + goodOrders[goodOrders.length - 1].price)
                 	}
                 }
                 if (myCities[i].storage.store.energy > 500000){
                 	var energyOrders = markets.sortOrder(buyOrders[RESOURCE_ENERGY])
+                	if (!energyOrders.length){
+                	    return;
+                	}
                 	if (energyOrders[energyOrders.length - 1].price > 0.2){
                     	Game.market.deal(energyOrders[energyOrders.length - 1].id, Math.min(energyOrders[energyOrders.length - 1].remainingAmount, myCities[i].terminal.store.energy / 2), myCities[i].name)
                     	console.log(Math.min(energyOrders[energyOrders.length - 1].remainingAmount, myCities[i].terminal.store.energy / 2) + " energy sold for " + energyOrders[energyOrders.length - 1].price)

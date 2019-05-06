@@ -12,14 +12,13 @@ var rR = {
         if (Game.spawns[creep.memory.city].room.controller.level > 7){
             //RCL 8 mode
             if (_.sum(creep.carry) > 0){
-                if (creep.memory.location){
-                    var target = Game.getObjectById(creep.memory.location)
-                    if (target){
-                        actions.charge(creep, target)
-                    }
-                    return;
+                if (!creep.memory.location){
+                    creep.memory.location = Game.spawns[creep.memory.city].room.storage.id;
                 }
-                creep.memory.location = Game.spawns[creep.memory.city].room.storage.id;
+                var target = Game.getObjectById(creep.memory.location)
+                if (target){
+                    actions.charge(creep, target)
+                }
                 return;
             }
             //check for flag

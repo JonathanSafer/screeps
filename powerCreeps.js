@@ -33,7 +33,7 @@ var powerCreeps = {
             creep.usePower(PWR_GENERATE_OPS);
         }
         let sources = Object.keys(Game.spawns['sAmalia'].memory.sources)
-        if (Game.time % 300 == 0){
+        if (Game.time % 250 == 0){
             let source = Game.getObjectById(sources[0])
             if (creep.usePower(PWR_REGEN_SOURCE, source) === ERR_NOT_IN_RANGE){
                 creep.moveTo(source, {reusePath: 15})
@@ -41,7 +41,7 @@ var powerCreeps = {
             }
             return;
         }
-        if (Game.time % 300 == 150){
+        if (Game.time % 250 == 125){
             let source = Game.getObjectById(sources[1])
             if (creep.usePower(PWR_REGEN_SOURCE, source) === ERR_NOT_IN_RANGE){
                 creep.moveTo(source, {reusePath: 15})

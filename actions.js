@@ -11,9 +11,11 @@ var actions = {
                     return creep.moveTo(location, {reusePath: 15, maxOps: 5000});
                 }
             case OK:
+                return 1;
             case ERR_BUSY:
             case ERR_FULL:
             case ERR_TIRED:
+                return result;
             case ERR_NOT_ENOUGH_RESOURCES:
                 creep.memory.path = null;
                 return result;
