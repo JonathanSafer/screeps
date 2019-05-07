@@ -42,7 +42,7 @@ var rM = {
             	if (creep.saying === '🔅'){
             	    let link = Game.getObjectById(creep.memory.link);
             		let storageLink = Game.getObjectById(Game.spawns[creep.memory.city].memory.storageLink);
-            		if (storageLink.energy === 0){
+            		if (storageLink.energy === 0 && !link.cooldown){
             		    link.transferEnergy(storageLink)
             		    creep.say('🔆', true);
             		} else {

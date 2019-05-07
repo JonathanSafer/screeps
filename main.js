@@ -145,27 +145,7 @@ module.exports.loop = function () {
     
     
     //test stuff
-    if(Game.time % 2000000 === 5){
-        a = Game.cpu.getUsed()
-        let mineral = RESOURCE_GHODIUM_ALKALIDE
-        let x = 0
-        let ingredients = []
-        _.forEach(Object.keys(REACTIONS), function(key){
-            _.forEach(Object.keys(REACTIONS[key]), function(key2){
-                //console.log(key, key2)
-                if (REACTIONS[key][key2] == mineral){
-                    console.log(key, key2)
-                    ingredients[x] = key;
-                    x++;
-                }
-            });
-        });
-        if (x < 2){
-            console.log(0)
-        }
-        console.log(ingredients)
-        console.log(Game.cpu.getUsed() - a)
-    }
+
     
     
     

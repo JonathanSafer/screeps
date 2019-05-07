@@ -22,23 +22,26 @@ var labs = {
     },
 
     runReaction: function(lab0, lab1, lab2, lab3, lab4, lab5) {
-        let produce = spawn.memory.ferryInfo.labInfo[6]
-        let reactionTime = REACTION_TIME[produce]
-        if (Game.time % reactionTime === 4){
-            if (lab0.mineralAmount > 0 && lab1.mineralAmount > 0){
+        if (lab0.mineralAmount > 0 && lab1.mineralAmount > 0){
+            let produce = REACTIONS[spawn.memory.ferryInfo.labInfo[0][2]][spawn.memory.ferryInfo.labInfo[1][2]]
+            let reactionTime = REACTION_TIME[produce]
+            if (Game.time % reactionTime === 4){
                 lab2.runReaction(lab0, lab1);
                 lab3.runReaction(lab0, lab1);
                 lab4.runReaction(lab0, lab1);
                 lab5.runReaction(lab0, lab1);
-                return 0;
             }
-            return 1;
+            return 0;
         }
+        return 1;
     },
 
     updateLabs: function(lab0, lab1, lab2, lab3, lab4, lab5, spawn) {
+        if(lab5.mineralType === spawn.memory.ferryInfo.labInfo[6]){
+            labs.chooseBoost(spawn.memory.ferryInfo.labInfo[6], spawn)
+        }
         let receivers = [lab2, lab3, lab4, lab5];
-        for (i = 0; i < receivers.length; i++){
+        for (i = 0, i < receivers.length, i++){
             if (receivers[i].mineralAmount >= 750){
                 spawn.memory.ferryInfo.labInfo[i + 2][1] = 1
                 return;
@@ -57,6 +60,17 @@ var labs = {
             spawn.memory.ferryInfo.labInfo[1][1] = 1
             spawn.memory.ferryInfo.labInfo[0][2] = minerals[0]
             spawn.memory.ferryInfo.labInfo[1][2] = minerals[1]
+        }
+    },
+
+    chooseBoost: function(currentBoost, spawn) {
+        let boostsList = ['XKHO2', 'XLHO2', 'XZHO2', 'XGHO2', 'XZH2O']
+        let boostsToMake = boostsList.splice( boostList.indexOf(currentBoost), 1);
+        for(i = 0; i < boostsToMake.length; i++){
+            if(spawn.room.terminal.store[boostsToMake[i]] == undefined || spawn.room.terminal.store[boostsToMake[i]] < 10000){
+                spawn.memory.ferryInfo.labInfo[6] = boostsToMake[i]
+                return;
+            }
         }
     },
 

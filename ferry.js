@@ -92,8 +92,8 @@ var rF = {
                         let total = lab0.mineralAmount + lab1.mineralAmount + (2 * (lab2.mineralAmount + lab3.mineralAmount + lab4.mineralAmount + lab5.mineralAmount))
                         if (total >= 5000 || lab.mineralAmount >= 2000){
                             Game.spawns[creep.memory.city].memory.ferryInfo.labInfo[creep.memory.labNum][1] = 0
-                            creep.memory.target = rF.getJob();
                         }
+                        creep.memory.target = rF.getJob();
                     }
                     break;
                 }
