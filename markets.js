@@ -19,6 +19,35 @@ var markets = {
     	}
     },
     
+    distributeMinerals: function distributeEnergy(myCities){
+        let senders = myCities
+        for (var i = 0; i < myCities.length; i++){
+            let city = myCities[i].memory.city
+            let mineral = Game.spawns[city].memory.ferryInfo.mineralRequest;
+            if(mineral){
+                let x = senders.length
+                for (j = 0; j < senders.length; j++){
+                    if(senders[j].terminal.store[mineral] > 3000){
+                        senders[j].terminal.send(mineral, 3000, myCities[i])
+                        senders = senders.splice(senders.indexOf(senders[j]), 1);
+                        Game.spawns[city].memory.ferryInfo.mineralRequest = null;
+                        break;
+                    }
+                }
+                if(x === senders.length){
+                    //buy mineral
+                    let sellOrders = markets.sortOrder(Game.market.getAllOrders(order => order.type == ORDER_BUY && order.resourceType == mineral && order.amount >= 3000 && order.price < 0.5))
+                    if (sellOrders.length){
+                        Game.market.deal(sellOrders[0].id, 3000, myCities[i].name)
+                        Game.spawns[city].memory.ferryInfo.mineralRequest = null;
+                        break;
+                    }
+                }
+                Game.notify('Problem at distributeMinerals with ' + mineral, 20)
+            }
+        }
+    },
+
     distributePower: function distributePower(myCities){
         var receiver = null
     	var needPower = _.filter(myCities, city => city.controller.level > 7 && city.terminal && (city.terminal.store.power < 1 || city.terminal.store.power == undefined))
@@ -42,7 +71,7 @@ var markets = {
                 	var goodOrders = markets.sortOrder(buyOrders[mineral]);
                 	if (goodOrders.length && goodOrders[goodOrders.length - 1].price > .08 && myCities[i].storage.store.energy > 200000){
                 		Game.market.deal(goodOrders[goodOrders.length - 1].id, Math.min(goodOrders[goodOrders.length - 1].remainingAmount,  Math.max(0, myCities[i].terminal.store[mineral] - 20000)), myCities[i].name)
-                		console.log(Math.min(goodOrders[goodOrders.length - 1].remainingAmount, myCities[i].terminal.store[mineral]) + " " + mineral + " sold for " + goodOrders[goodOrders.length - 1].price)
+                		console.log(Math.min(goodOrders[goodOrders.length - 1].remainingAmount,  Math.max(0, myCities[i].terminal.store[mineral] - 20000)) + " " + mineral + " sold for " + goodOrders[goodOrders.length - 1].price)
                 	}
                 }
                 if (myCities[i].storage.store.energy > 500000){

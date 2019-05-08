@@ -37,7 +37,7 @@ var labs = {
     },
 
     updateLabs: function(lab0, lab1, lab2, lab3, lab4, lab5, spawn) {
-        if(lab5.mineralType === spawn.memory.ferryInfo.labInfo[6]){
+        if(lab5.mineralType == spawn.memory.ferryInfo.labInfo[6]){
             labs.chooseBoost(spawn.memory.ferryInfo.labInfo[6], spawn)
         }
         let receivers = [lab2, lab3, lab4, lab5];
@@ -71,6 +71,8 @@ var labs = {
                 spawn.memory.ferryInfo.labInfo[6] = boostsToMake[i]
                 return;
             }
+            //stop making boost
+            spawn.memory.ferryInfo.labInfo[6] = 'XGH20';
         }
     },
 

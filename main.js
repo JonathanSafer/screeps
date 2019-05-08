@@ -62,6 +62,9 @@ module.exports.loop = function () {
         m.distributeEnergy(myCities);
         m.distributePower(myCities);
     }
+    if(Game.time % 25 == 0){
+        m.distributeMinerals(myCities);
+    }
     //clear old creeps
     if (Game.time % 100 == 0) {
         for(var name in Memory.creeps) {
@@ -89,7 +92,7 @@ module.exports.loop = function () {
     }
      
     //market (seems to use about 3 cpu, so we can make this run every few ticks when we start needing cpu)
-    if (Game.time % 200 == 1){
+    if (Game.time % 200 == 0){
         m.manageMarket(myCities);
     }
     //stats
