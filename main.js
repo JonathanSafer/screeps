@@ -62,7 +62,7 @@ module.exports.loop = function () {
         m.distributeEnergy(myCities);
         m.distributePower(myCities);
     }
-    if(Game.time % 25 == 0){
+    if(Game.time % 50 == 25){
         m.distributeMinerals(myCities);
     }
     //clear old creeps
@@ -148,8 +148,6 @@ module.exports.loop = function () {
     
     
     //test stuff
-
-    
     
     
     

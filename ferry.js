@@ -9,6 +9,10 @@ var rF = {
 
     /** @param {Creep} creep **/
     run: function(creep) {
+        if (creep.saying == '🔄'){
+            creep.memory.target = rF.getJob(creep);
+            return;
+        }
         switch(creep.memory.target){
             case 0:
                 //no jobs available
@@ -93,19 +97,26 @@ var rF = {
                         if (total >= 5000 || lab.mineralAmount >= 2000){
                             Game.spawns[creep.memory.city].memory.ferryInfo.labInfo[creep.memory.labNum][1] = 0
                         }
-                        creep.memory.target = rF.getJob();
+                        creep.say('🔄')
+                        creep.memory.target = rF.getJob(creep);
                     }
                     break;
                 }
-                actions.withdraw(creep, creep.room.terminal, creep.memory.mineral)
+                if (creep.room.terminal.store[creep.memory.mineral]){
+                    actions.withdraw(creep, creep.room.terminal, creep.memory.mineral)
+                } else {
+                    creep.memory.target = rF.getJob(creep)
+                }
                 break;
             case 7:
                 //move mineral from lab to terminal
                 if (_.sum(creep.carry) > 0){
-                    if (actions.charge(creep, creep.room.terminal) == 1){
-                        creep.memory.target = rF.getJob
+                    let result = actions.charge(creep, creep.room.terminal)
+                    if (result == 1){
+                        creep.memory.target = rF.getJob(creep)
                         break;
                     }
+                    break;
                 }
                 let lab = Game.getObjectById(creep.memory.lab)
                 if(actions.withdraw(creep, lab, lab.mineralType) == 1){
@@ -136,9 +147,9 @@ var rF = {
         if (Game.spawns[creep.memory.city].memory.ferryInfo.needPower === true && Game.spawns[creep.memory.city].room.terminal.store[RESOURCE_POWER] > 0){
             return 4;
         }
-        if(Game.time % 3 == 0 && Game.spawns[creep.memory.city].memory.ferryInfo.labInfo){
+        if(Game.spawns[creep.memory.city].memory.ferryInfo.labInfo){
             for (i = 0; i < 2; i++){
-                if(Game.spawns[creep.memory.city].memory.ferryInfo.labInfo[i][1] == 1){
+                if(Game.spawns[creep.memory.city].memory.ferryInfo.labInfo[i][1] == 1 && creep.room.terminal.store[Game.spawns[creep.memory.city].memory.ferryInfo.labInfo[i][2]] >= 1000){
                     creep.memory.lab = Game.spawns[creep.memory.city].memory.ferryInfo.labInfo[i][0]
                     creep.memory.mineral = Game.spawns[creep.memory.city].memory.ferryInfo.labInfo[i][2]
                     creep.memory.labNum = i;

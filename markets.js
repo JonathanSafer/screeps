@@ -28,7 +28,7 @@ var markets = {
                 let x = senders.length
                 for (j = 0; j < senders.length; j++){
                     if(senders[j].terminal.store[mineral] > 3000){
-                        senders[j].terminal.send(mineral, 3000, myCities[i])
+                        let result = senders[j].terminal.send(mineral, 3000, myCities[i].name)
                         senders = senders.splice(senders.indexOf(senders[j]), 1);
                         Game.spawns[city].memory.ferryInfo.mineralRequest = null;
                         break;
@@ -36,14 +36,14 @@ var markets = {
                 }
                 if(x === senders.length){
                     //buy mineral
-                    let sellOrders = markets.sortOrder(Game.market.getAllOrders(order => order.type == ORDER_BUY && order.resourceType == mineral && order.amount >= 3000 && order.price < 0.5))
+                    let sellOrders = markets.sortOrder(Game.market.getAllOrders(order => order.type == ORDER_SELL && order.resourceType == mineral && order.amount >= 3000 && order.price < 0.5))
                     if (sellOrders.length){
                         Game.market.deal(sellOrders[0].id, 3000, myCities[i].name)
                         Game.spawns[city].memory.ferryInfo.mineralRequest = null;
-                        break;
+                    } else {
+                        Game.notify('Problem at distributeMinerals with ' + mineral, 20)
                     }
                 }
-                Game.notify('Problem at distributeMinerals with ' + mineral, 20)
             }
         }
     },

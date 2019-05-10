@@ -19,6 +19,7 @@ var u = require('utils');
 var T = require('tower');
 var rD = require('defender');
 var rPM = require('powerMiner');
+var labs = require('labs');
 
 
 function makeCreeps(role, type, target, city) {
@@ -70,12 +71,12 @@ function runCity(city, creeps){
         
         //run powerSpawn
         runPowerSpawn(city);
+        labs.runLabs(city)
     }
 }
 //updateCountsCity function
 function updateCountsCity(city, creeps, rooms) {
     let spawn = Game.spawns[city];
-
     if (spawn){
         let memory = spawn.memory;
         let controller = spawn.room.controller;
@@ -94,6 +95,7 @@ function updateCountsCity(city, creeps, rooms) {
             updateMiner(rooms, rcl8, memory, spawn);
         
             if (Game.time % 500 === 0) {
+                checkLabs(city)
                 updateTransporter(extensions, memory);
                 updateMilitary(city, memory);
                 updateColonizers(memory);
@@ -192,6 +194,64 @@ function runPowerSpawn(city){
         }
         if(powerSpawn && powerSpawn.energy >= 50 && powerSpawn.power > 0 && powerSpawn.room.storage.store.energy > 520000){
             powerSpawn.processPower();
+        }
+    }
+}
+
+function checkLabs(city){
+    let spawn = Game.spawns[city];
+    let labs = _.filter(spawn.room.find(FIND_MY_STRUCTURES), structure => structure.structureType === STRUCTURE_LAB)
+    if (labs.length < 10){
+        return;
+    }
+    if(spawn.memory.ferryInfo.labInfo){
+        let lab0 = Game.getObjectById(spawn.memory.ferryInfo.labInfo[0][0])
+        let lab1 = Game.getObjectById(spawn.memory.ferryInfo.labInfo[1][0])
+        let lab2 = Game.getObjectById(spawn.memory.ferryInfo.labInfo[2][0])
+        let lab3 = Game.getObjectById(spawn.memory.ferryInfo.labInfo[3][0])
+        let lab4 = Game.getObjectById(spawn.memory.ferryInfo.labInfo[4][0])
+        let lab5 = Game.getObjectById(spawn.memory.ferryInfo.labInfo[5][0])
+        if (lab0 && lab1 && lab2 && lab3 && lab4 && lab5){
+            return;
+        }
+    }
+    let group1 = [];
+    let group2 = [];
+    spawn.memory.ferryInfo.labInfo = [];
+    spawn.memory.ferryInfo.boosterInfo = [];
+    group1.push(labs[0].id)
+    for(i = 1; i < labs.length; i++){
+        if(labs[0].pos.inRangeTo(labs[i].pos, 2)){
+            group1.push(labs[i].id)
+        } else {
+            group2.push(labs[i].id)
+        }
+    }
+    if (group1.length == 6){
+        for (i = 0; i < 6; i++){
+            spawn.memory.ferryInfo.labInfo[i] = [];
+            spawn.memory.ferryInfo.labInfo[i][0] = group1[i]
+            spawn.memory.ferryInfo.labInfo[i][1] = 0
+            spawn.memory.ferryInfo.labInfo[i][2] = null
+        }
+        for (i = 0; i < 4; i++){
+            spawn.memory.ferryInfo.boosterInfo[i] = [];
+            spawn.memory.ferryInfo.boosterInfo[i][0] = group2[i]
+            spawn.memory.ferryInfo.boosterInfo[i][1] = 0
+            spawn.memory.ferryInfo.boosterInfo[i][2] = null
+        }
+    } else {
+        for (i = 0; i < 6; i++){
+            spawn.memory.ferryInfo.labInfo[i] = [];
+            spawn.memory.ferryInfo.labInfo[i][0] = group2[i]
+            spawn.memory.ferryInfo.labInfo[i][1] = 0
+            spawn.memory.ferryInfo.labInfo[i][2] = null
+        }
+        for (i = 0; i < 4; i++){
+            spawn.memory.ferryInfo.boosterInfo[i] = [];
+            spawn.memory.ferryInfo.boosterInfo[i][0] = group1[i]
+            spawn.memory.ferryInfo.boosterInfo[i][1] = 0
+            spawn.memory.ferryInfo.boosterInfo[i][2] = null
         }
     }
 }
