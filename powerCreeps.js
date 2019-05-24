@@ -1,6 +1,9 @@
 var powerCreeps = {
     run103207: function() {
         const creep = Game.powerCreeps['103207']
+        if(creep.spawnCooldownTime > Date.now()){
+            return;
+        }
         if(!(creep.spawnCooldownTime > Date.now()) && !creep.hits) {
             let structures = Game.spawns['sAmalia'].room.find(FIND_MY_STRUCTURES)
             let powerSpawn = _.find(structures, structure => structure.structureType === STRUCTURE_POWER_SPAWN)

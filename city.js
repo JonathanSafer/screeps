@@ -1,4 +1,8 @@
 var rMe = require('medic');
+var rBM = require('bigMedic')
+var rTr = require('trooper')
+var rBT = require('bigTrooper')
+var rBB = require('bigBreaker')
 var rH = require('harasser');
 var rSB = require('spawnBuilder');
 var rC = require('claimer');
@@ -36,7 +40,6 @@ function makeCreeps(role, type, target, city) {
         if(spawn != null) {
             Game.spawns['Home'].memory.counter++;
             spawn.spawnCreep(recipe, name);
-
             Game.creeps[name].memory.role = role;
             Game.creeps[name].memory.target = target;
             Game.creeps[name].memory.city = city;
@@ -47,7 +50,7 @@ function makeCreeps(role, type, target, city) {
 //runCity function
 function runCity(city, creeps){
     if (Game.spawns[city]){
-        var roles = [rF, rA, rT, rM, rR, rU, rB, rS, rMM, rC, rSB, rH, rMe, rD, rBr, rPM] // order roles for priority
+        var roles = [rF, rA, rT, rM, rR, rU, rB, rS, rMM, rC, rSB, rH, rBM, rD, rBB, rBT, rMe, rTr, rBr, rPM] // order roles for priority
         var nameToRole = _.groupBy(roles, role => role.name); // map from names to roles
         var counts = _.countBy(creeps, creep => creep.memory.role); // lookup table from role to count
     
@@ -173,6 +176,9 @@ function runTowers(city){
 function runPowerSpawn(city){
     if(Game.spawns[city]){
         if (!Game.spawns[city].memory.powerSpawn){
+            if (!Game.spawns[city].memory.ferryInfo){
+                Game.spawns[city].memory.ferryInfo = {}
+            }
             if (Game.time % 500 == 0){
                 let powerSpawn = _.find(Game.structures, (structure) => structure.structureType == STRUCTURE_POWER_SPAWN && structure.room.memory.city == city);
                 if (powerSpawn){
@@ -257,13 +263,13 @@ function checkLabs(city){
 }
 
 function updateMilitary(city, memory) {
-    let flags = ['harass', 'break', 'defend', 'powerMine'];
-    let updateFns = [updateHarasser, updateBreaker, updateDefender, updatePowerMine];
+    let flags = ['harass', 'break', 'defend', 'powerMine', 'bigShoot', 'shoot', 'bigBreak'];
+    let updateFns = [updateHarasser, updateBreaker, updateDefender, updatePowerMine, updateBigTrooper, updateTrooper, updateBigBreaker];
 
     for (var i = 0; i < flags.length; i++) {
         let flagName = city + flags[i];
         let updateFn = updateFns[i];
-        updateFn(Game.flags[flagName], memory);
+        updateFn(Game.flags[flagName], memory, city);
     }
 }
 
@@ -453,24 +459,99 @@ function updateStorageLink(spawn, memory, structures) {
     }
 }
 
-function updateHarasser(flag, memory) {
+function updateHarasser(flag, memory, city) {
     memory[rH.name] = flag ? 1 : 0;
 }
 
-function updateBreaker(flag, memory) {
+function updateBreaker(flag, memory, city) {
     memory[rBr.name] = flag ? 1 : 0;
     memory[rMe.name] = flag ? 1 : 0;
 }
 
-function updateDefender(flag, memory) {
+function updateDefender(flag, memory, city) {
     memory[rD.name] = flag ? 1 : 0;
     if (flag) memory[rMe.name]++;
 }
 
-function updatePowerMine(flag, memory) {
+function updatePowerMine(flag, memory, city) {
     memory[rPM.name] = flag ? 2 : 0;
     if (flag) memory[rMe.name] += 2;
     if (flag) memory[rT.name] = 4;
+}
+
+function updateTrooper(flag, memory, city) {
+    memory[rTr.name] = flag ? 1 : 0;
+    if (flag) memory[rMe.name]++;
+}
+
+function updateBigBreaker(flag, memory, city) {
+    if (flag){
+        let spawn = Game.spawns[city]
+        let resources = ['XZHO2', 'XZH2O', 'XLHO2', 'XGHO2']
+        let go = 1;
+        for (var i = 0; i < resources.length; i++){
+            if(spawn.room.terminal.store[resources[i]] < 1000){
+                go = 0
+            }
+        }
+        if(go){
+            for (var i = 0; i < resources.length; i++){
+                let lab = Game.getObjectById(memory.ferryInfo.boosterInfo[i][0])
+                if (lab.mineralAmount < 1000){
+                    memory.ferryInfo.boosterInfo[i][1] = 1
+                    memory.ferryInfo.boosterInfo[i][2] = resources[i]
+                }
+            }
+            memory[rBB.name] = 1
+            memory[rBM.name]++;
+        } else {
+            memory[rBB.name] = 0
+        }
+    }  else {
+        for (let i = 0; i < 4; i++){
+            let lab = Game.getObjectById(memory.ferryInfo.boosterInfo[i][0])
+            if (lab.mineralAmount){
+                memory.ferryInfo.boosterInfo[i][1] = 2
+            }
+        }
+        memory[rBB.name] = 0
+    } 
+}
+
+function updateBigTrooper(flag, memory, city) {
+    if (flag){
+        let spawn = Game.spawns[city]
+        let resources = ['XZHO2', 'XKHO2', 'XLHO2', 'XGHO2']
+        let go = 1;
+        for (var i = 0; i < resources.length; i++){
+            if(spawn.room.terminal.store[resources[i]] < 1000){
+                go = 0
+            }
+        }
+        if(go){
+            for (var i = 0; i < resources.length; i++){
+                let lab = Game.getObjectById(memory.ferryInfo.boosterInfo[i][0])
+                if (lab.mineralAmount < 1000){
+                    memory.ferryInfo.boosterInfo[i][1] = 1
+                    memory.ferryInfo.boosterInfo[i][2] = resources[i]
+                }
+            }
+            memory[rBT.name] = 1
+            memory[rBM.name] = 1;
+        } else {
+            memory[rBT.name] = 0
+            memory[rBM.name] = 0;
+        }
+    }  else {
+        for (let i = 0; i < 4; i++){
+            let lab = Game.getObjectById(memory.ferryInfo.boosterInfo[i][0])
+            if (lab.mineralAmount){
+                memory.ferryInfo.boosterInfo[i][1] = 2
+            }
+        }
+        memory[rBT.name] = 0
+        memory[rBM.name] = 0;
+    } 
 }
 
 function runObs(city){

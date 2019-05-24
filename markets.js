@@ -69,7 +69,7 @@ var markets = {
                 var mineral = myCities[i].find(FIND_MINERALS)[0].mineralType;
                 if (mineral in myCities[i].terminal.store && myCities[i].terminal.store[mineral] > 20000){
                 	var goodOrders = markets.sortOrder(buyOrders[mineral]);
-                	if (goodOrders.length && goodOrders[goodOrders.length - 1].price > .08 && myCities[i].storage.store.energy > 200000){
+                	if (goodOrders.length && goodOrders[goodOrders.length - 1].price > .07 && myCities[i].storage.store.energy > 200000){
                 		Game.market.deal(goodOrders[goodOrders.length - 1].id, Math.min(goodOrders[goodOrders.length - 1].remainingAmount,  Math.max(0, myCities[i].terminal.store[mineral] - 20000)), myCities[i].name)
                 		console.log(Math.min(goodOrders[goodOrders.length - 1].remainingAmount,  Math.max(0, myCities[i].terminal.store[mineral] - 20000)) + " " + mineral + " sold for " + goodOrders[goodOrders.length - 1].price)
                 	}

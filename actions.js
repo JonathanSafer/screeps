@@ -8,7 +8,7 @@ var actions = {
                 if(false) {//creep.memory.test) {
                     actions.move(creep, location);
                 } else {
-                    return creep.moveTo(location, {reusePath: 15, maxOps: 5000});
+                    return creep.moveTo(location, {reusePath: 15, maxOps: 10000});
                 }
             case OK:
                 return 1;
@@ -81,10 +81,10 @@ var actions = {
                 }
                 break;
             case OK:
-                // if(creep.memory.noFear){
-                //     creep.moveTo(target, {reusePath: 5});
-                //     break;
-                // }
+                if(creep.memory.noFear){
+                    creep.moveTo(target, {reusePath: 5});
+                    break;
+                }
                 creep.moveTo(Game.spawns[creep.memory.city], {reusePath: 5});
                 break;
             case ERR_NO_BODYPART:
@@ -215,6 +215,28 @@ var actions = {
             // we can only get one thing per turn, success is assumed since we're close
             return creep.pickup(closeStuff[0]);
         }
+    },
+    
+    getBoosted: function(creep){
+        let boosts = {'move': 'XZHO2', 'tough': 'XGHO2', 'work': 'XZH2O', 'heal': 'XLHO2', 'ranged_attack': 'XKHO2'}
+        for(let i = creep.body.length - 1; i >= 0; i--){
+            if(!creep.body[i].boost){
+                let type = creep.body[i].type;
+                let boost = boosts[type];
+                for(let j = 0; j < 4; j++){
+                    if(Game.spawns[creep.memory.city].memory.ferryInfo.boosterInfo[j][2] == boost){
+                        let lab = Game.getObjectById(Game.spawns[creep.memory.city].memory.ferryInfo.boosterInfo[j][0])
+                        //boost self
+                        if(lab.boostCreep(creep) === ERR_NOT_IN_RANGE){
+                            creep.moveTo(lab)
+                        }
+                        return;
+                    }
+                }
+            }
+        }
+        creep.memory.boosted = true;
+        return;
     },
 
     breakStuff: function(creep) {

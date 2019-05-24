@@ -26,8 +26,15 @@ var rBr = {
     	} else {
     		//look for medics
     		var allCreeps = u.splitCreepsByCity();
-    		var medicSearch = _.find(allCreeps[creep.memory.city], localCreep => localCreep.memory.role === 'medic' && localCreep.pos.isNearTo(creep.pos) 
-    		                                                                        && localCreep.memory.breaker == creep.id);
+    		var status = creep.memory.role.substring(0, 3);
+            var medicSearch = 0
+            if (status == 'big'){
+                medicSearch = _.find(allCreeps[creep.memory.city], localCreep => localCreep.memory.role === 'bigMedic' && localCreep.pos.isNearTo(creep.pos) 
+                                                                                        && localCreep.memory.breaker == creep.id);
+            } else {
+                    medicSearch = _.find(allCreeps[creep.memory.city], localCreep => localCreep.memory.role === 'medic' && localCreep.pos.isNearTo(creep.pos) 
+                                                                                        && localCreep.memory.breaker == creep.id);
+            }                                               
     		if (medicSearch){
     			creep.memory.medic = medicSearch.id;
     		}
@@ -70,7 +77,13 @@ var rBr = {
     		return;
     	}
     	var city = creep.memory.city;
-    	var flagName = city + 'break';
+    	var flagName = 'break'
+        var status = creep.memory.role.substring(0, 3);
+        if(status === 'big'){
+            flagName = city + 'bigBreak'
+        } else {
+            flagName = city + 'break'
+        }
     	if(Game.flags[flagName]){
     		if(creep.pos.roomName === Game.flags[flagName].pos.roomName){
     			a.breakStuff(creep);

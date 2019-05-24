@@ -66,11 +66,13 @@ var labs = {
     },
 
     chooseBoost: function(currentBoost, spawn) {
-        let boostsList = ['XKHO2', 'XLHO2', 'XZHO2', 'XGHO2', 'XZH2O']
-        let boostsToMake = boostsList.splice( boostsList.indexOf(currentBoost), 1);
-        for(i = 0; i < boostsToMake.length; i++){
-            if(spawn.room.terminal.store[boostsToMake[i]] == undefined || spawn.room.terminal.store[boostsToMake[i]] < 10000){
-                spawn.memory.ferryInfo.labInfo[6] = boostsToMake[i]
+        let boostsList = ['XKHO2', 'XLHO2', 'XZHO2', 'XGHO2', 'XZH2O', 'G']
+        if (boostsList.includes(currentBoost)){
+            boostsList.splice(boostsList.indexOf(currentBoost), 1);
+        }
+        for(i = 0; i < boostsList.length; i++){
+            if(spawn.room.terminal.store[boostsList[i]] == undefined || spawn.room.terminal.store[boostsList[i]] < 10000){
+                spawn.memory.ferryInfo.labInfo[6] = boostsList[i]
                 return;
             }
             //stop making boost

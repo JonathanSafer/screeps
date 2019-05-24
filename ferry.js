@@ -18,7 +18,7 @@ var rF = {
                 //no jobs available
                 //console.log('hi')
                 if (Game.time % 10 === 0){
-                    creep.memory.target = rF.getJob(creep);
+                    creep.say('🔄');
                 }
                 break;
             case 1:
@@ -27,12 +27,12 @@ var rF = {
                     actions.charge(creep, creep.room.terminal);
                 } else if(creep.room.storage.store.energy > 150000 && creep.room.terminal.store.energy < 150000){
                     if (Game.time % 10 === 0 || Game.time % 10 === 1){
-                        creep.memory.target = rF.getJob(creep);
+                        creep.say('🔄');
                         break;
                     }
                     actions.withdraw(creep, creep.room.storage, RESOURCE_ENERGY);
                 } else {
-                    creep.memory.target = rF.getJob(creep);
+                    creep.say('🔄');
                 }
                 break;
             case 2:
@@ -45,7 +45,7 @@ var rF = {
                     let mineral =_.keys(creep.room.storage.store)[1];
                     actions.withdraw(creep, creep.room.storage, mineral);
                 } else {
-                    creep.memory.target = rF.getJob(creep);
+                    creep.say('🔄');
                 }
                 break;
             case 3:
@@ -55,7 +55,7 @@ var rF = {
                 } else if(creep.room.terminal.store.energy > 151000){
                     actions.withdraw(creep, creep.room.terminal, RESOURCE_ENERGY);
                 } else {
-                    creep.memory.target = rF.getJob(creep);
+                    creep.say('🔄');
                 }
                 break;
             case 4:
@@ -67,7 +67,7 @@ var rF = {
                 } else if(powerSpawn.power < 30 && creep.room.terminal.store.power){
                     actions.withdraw(creep, creep.room.terminal, RESOURCE_POWER, Math.min(70, creep.room.terminal.store[RESOURCE_POWER]));
                 } else {
-                    creep.memory.target = rF.getJob(creep);
+                    creep.say('🔄');
                 }
                 break;
             case 5:
@@ -78,7 +78,7 @@ var rF = {
                 } else if (link.energy > 0){
                     actions.withdraw(creep, link, RESOURCE_ENERGY);
                 } else {
-                    creep.memory.target = rF.getJob(creep);
+                    creep.say('🔄');
                 }
                 break;
             case 6:
@@ -98,14 +98,13 @@ var rF = {
                             Game.spawns[creep.memory.city].memory.ferryInfo.labInfo[creep.memory.labNum][1] = 0
                         }
                         creep.say('🔄')
-                        creep.memory.target = rF.getJob(creep);
                     }
                     break;
                 }
                 if (creep.room.terminal.store[creep.memory.mineral]){
                     actions.withdraw(creep, creep.room.terminal, creep.memory.mineral)
                 } else {
-                    creep.memory.target = rF.getJob(creep)
+                    creep.say('🔄');
                 }
                 break;
             case 7:
@@ -113,7 +112,7 @@ var rF = {
                 if (_.sum(creep.carry) > 0){
                     let result = actions.charge(creep, creep.room.terminal)
                     if (result == 1){
-                        creep.memory.target = rF.getJob(creep)
+                        creep.say('🔄');
                         break;
                     }
                     break;
@@ -121,6 +120,54 @@ var rF = {
                 let lab = Game.getObjectById(creep.memory.lab)
                 if(actions.withdraw(creep, lab, lab.mineralType) == 1){
                     Game.spawns[creep.memory.city].memory.ferryInfo.labInfo[creep.memory.labNum][1] = 0
+                }
+                break;
+            case 8:
+                //load up the nuker
+                if (_.sum(creep.carry) > 0){
+                    let nuker = Game.getObjectById(creep.memory.nuker);
+                    let result = actions.charge(creep, nuker)
+                    if(result == 1){
+                        creep.say('🔄')
+                    }
+                    break;
+                }
+                if (creep.room.terminal.store['G'] >= 4000){
+                    actions.withdraw(creep, creep.room.terminal, RESOURCE_GHODIUM)
+                } else {
+                    creep.memory.target = rF.getJob(creep)
+                }
+                break;
+            case 9:
+                //move mineral from terminal to booster
+                if (_.sum(creep.carry) > 0){
+                    let lab = Game.getObjectById(creep.memory.lab);
+                    let result = actions.charge(creep, lab)
+                    if(result == 1){
+                        Game.spawns[creep.memory.city].memory.ferryInfo.boosterInfo[creep.memory.labNum][1] = 0
+                        creep.say('🔄')
+                    }
+                    break;
+                }
+                if (creep.room.terminal.store[creep.memory.mineral]){
+                    actions.withdraw(creep, creep.room.terminal, creep.memory.mineral)
+                } else {
+                    creep.say('🔄')
+                }
+                break;
+            case 10:
+                //move mineral from booster to terminal
+                if (_.sum(creep.carry) > 0){
+                    let result = actions.charge(creep, creep.room.terminal)
+                    if (result == 1){
+                        creep.say('🔄')
+                        break;
+                    }
+                    break;
+                }
+                let booster = Game.getObjectById(creep.memory.lab)
+                if(actions.withdraw(creep, booster, booster.mineralType) == 1 && booster.mineralAmount <= 1000){
+                    Game.spawns[creep.memory.city].memory.ferryInfo.boosterInfo[creep.memory.labNum][1] = 0
                 }
                 break;
         }
@@ -148,6 +195,19 @@ var rF = {
             return 4;
         }
         if(Game.spawns[creep.memory.city].memory.ferryInfo.labInfo){
+            for (i = 0; i < 4; i++){
+                if(Game.spawns[creep.memory.city].memory.ferryInfo.boosterInfo[i][1] == 1 && creep.room.terminal.store[Game.spawns[creep.memory.city].memory.ferryInfo.boosterInfo[i][2]] >= 1000){
+                    creep.memory.lab = Game.spawns[creep.memory.city].memory.ferryInfo.boosterInfo[i][0]
+                    creep.memory.mineral = Game.spawns[creep.memory.city].memory.ferryInfo.boosterInfo[i][2]
+                    creep.memory.labNum = i;
+                    return 9;
+                } else if(Game.spawns[creep.memory.city].memory.ferryInfo.boosterInfo[i][1] == 2) {
+                    creep.memory.lab = Game.spawns[creep.memory.city].memory.ferryInfo.boosterInfo[i][0]
+                    creep.memory.mineral = Game.spawns[creep.memory.city].memory.ferryInfo.boosterInfo[i][2]
+                    creep.memory.labNum = i
+                    return 10;
+                }
+            }
             for (i = 0; i < 2; i++){
                 if(Game.spawns[creep.memory.city].memory.ferryInfo.labInfo[i][1] == 1 && creep.room.terminal.store[Game.spawns[creep.memory.city].memory.ferryInfo.labInfo[i][2]] >= 1000){
                     creep.memory.lab = Game.spawns[creep.memory.city].memory.ferryInfo.labInfo[i][0]
@@ -163,6 +223,11 @@ var rF = {
                     return 7;
                 }
             }
+        }
+        let nuker = _.find(creep.room.find(FIND_MY_STRUCTURES), structure => structure.structureType == STRUCTURE_NUKER)
+        if (nuker && nuker.ghodium < nuker.ghodiumCapacity && creep.room.terminal.store['G'] >= 4000){
+            creep.memory.nuker = nuker.id
+            return 8;
         }
         return 0;
     }
