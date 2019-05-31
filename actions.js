@@ -8,7 +8,7 @@ var actions = {
                 if(false) {//creep.memory.test) {
                     actions.move(creep, location);
                 } else {
-                    return creep.moveTo(location, {reusePath: 15, maxOps: 10000});
+                    return creep.moveTo(location, {reusePath: 15, maxOps: 10000, maxRooms: 32});
                 }
             case OK:
                 return 1;
@@ -254,6 +254,17 @@ var actions = {
                 return actions.dismantle(creep, breakThese[0]);
             }
         }     
+    },
+    
+    retreat: function(creep) {
+        let checkpoints = creep.memory.checkpoints;
+        if (checkpoints) {
+            let oldCheckpoint = checkpoints[0];
+            creep.moveTo(oldCheckpoint);
+        }
+        if(Game.time % 20 === 0){
+            creep.memory.retreat = false
+        }
     }
 };
 

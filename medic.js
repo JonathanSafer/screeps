@@ -42,14 +42,14 @@ var rMe = {
     		//moveTo and heal as needed
     		var breakerTarget = Game.getObjectById(breaker.memory.target)
     		creep.moveTo(breaker, {reusePath: 5})
-    		if (breaker.hits < (0.75 * breaker.hitsMax)){
+    		if (breaker.hits < (0.85 * breaker.hitsMax)){
     			creep.heal(breaker);
     			return;
-    		} else if (creep.hits < creep.hitsMax){
-		        creep.heal(creep);
+    		} else if (breaker.hits < breaker.hitsMax && creep.hits === creep.hitsMax){
+		        creep.heal(breaker);
 		        return;
-		    } else if (breaker.hits <= breaker.hitsMax){
-		       creep.heal(breaker);
+		    } else if (creep.hits <= creep.hitsMax){
+		       creep.heal(creep);
 		       return;
     		}
 		}

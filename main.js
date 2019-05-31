@@ -61,6 +61,7 @@ module.exports.loop = function () {
     }
     //run power creeps
     pC.run103207();
+    pC.run138066();
     //distribute energy and power
     if (Game.time % 100 == 0){
         m.distributeEnergy(myCities);
@@ -69,6 +70,29 @@ module.exports.loop = function () {
     if(Game.time % 50 == 25){
         m.distributeMinerals(myCities);
     }
+    //collect taxes
+    if(Game.time % 10000 == 0){
+        let order = Game.market.getOrderById('5ce88792b30b0336207a07f3')
+        if (order.remainingAmount < 1000){
+            Game.market.extendOrder('5ce88792b30b0336207a07f3', 1000 - order.remainingAmount)
+        }
+        let transactions = Game.market.outgoingTransactions
+        for (i = 0; i < transactions.length; i++){
+            let t = transactions[i];
+            if(t.order){
+                if(t.order.id == '5ce88792b30b0336207a07f3'){
+                    let taxee = t.recipient
+                    let payed = (t.order.price * t.amount)
+                    Game.notify('Tax of ' + payed + ' payed by ' + taxee)
+                }
+            }
+        }
+    }
+    
+    // if(Game.time % 100000 === 0){
+    //     Game.market.deal('5ce88792b30b0336207a07f3', amount, [yourRoomName])
+    // }
+    
     //clear old creeps
     if (Game.time % 100 == 0) {
         for(var name in Memory.creeps) {
@@ -130,7 +154,7 @@ module.exports.loop = function () {
           }
         })
         var counts = _.countBy(Game.creeps, creep => creep.memory.role);
-        var roles = [rA, rT, rM, rR, rU, rB, rS, rMM, rF, rC, rSB, rH, rMe, rD, rBr, rPM] 
+        var roles = [rA, rT, rM, rR, rU, rB, rS, rMM, rF, rC, rSB, rH, rMe, rD, rBr, rPM, rRo] 
         _.forEach(roles, function(role){
             if (counts[role.name]){
                 Memory.stats['creeps.' + role.name + '.count'] = counts[role.name]
@@ -150,19 +174,12 @@ module.exports.loop = function () {
         Memory.stats['cpu.getUsed'] = Game.cpu.getUsed()
     }   
     
-    
     //test stuff
-    
-    
     
     
   });
 }
 //Yoni TODO
-//leap frog to W34N41 to conquer W28N37
-// Ferry/lab work
-//save CPU: save pos and id of all sources and remote controllers in memory so creeps can find them w/o vision
-//save CPU: give scouts more claims, only send a scout to a controller when it drops below a certain threshold. store game.time when threshold will be hit in memory
 
 //stolen strats:
 /*the miners mine until the container is full, then they stop

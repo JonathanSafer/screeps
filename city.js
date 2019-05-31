@@ -50,7 +50,7 @@ function makeCreeps(role, type, target, city) {
 //runCity function
 function runCity(city, creeps){
     if (Game.spawns[city]){
-        var roles = [rF, rA, rT, rM, rR, rU, rB, rS, rMM, rC, rSB, rH, rBM, rD, rBB, rBT, rMe, rTr, rBr, rPM] // order roles for priority
+        var roles = [rF, rA, rT, rM, rR, rU, rB, rS, rMM, rC, rSB, rH, rBM, rD, rBB, rBT, rMe, rTr, rBr, rPM, rRo] // order roles for priority
         var nameToRole = _.groupBy(roles, role => role.name); // map from names to roles
         var counts = _.countBy(creeps, creep => creep.memory.role); // lookup table from role to count
     
@@ -70,7 +70,8 @@ function runCity(city, creeps){
         //console.log(city + ': ' + printout.join(', ' ));
     
         // Run all the creeps in this city
-        _.forEach(creeps, (creep, name) => nameToRole[creep.memory.role][0].run(creep));
+        let a = 0
+        _.forEach(creeps, (creep, name) => nameToRole[creep.memory.role][0].run(creep)/* || console.log(creep.memory.role + ' ' + Game.cpu.getUsed())*/);
         
         //run powerSpawn
         runPowerSpawn(city);
@@ -98,6 +99,7 @@ function updateCountsCity(city, creeps, rooms) {
             updateMiner(rooms, rcl8, memory, spawn);
         
             if (Game.time % 500 === 0) {
+                runNuker(city)
                 checkLabs(city)
                 updateTransporter(extensions, memory);
                 updateMilitary(city, memory);
@@ -198,7 +200,7 @@ function runPowerSpawn(city){
                 Game.spawns[city].memory.ferryInfo.needPower = false
             }
         }
-        if(powerSpawn && powerSpawn.energy >= 50 && powerSpawn.power > 0 && powerSpawn.room.storage.store.energy > 520000){
+        if(powerSpawn && powerSpawn.energy >= 50 && powerSpawn.power > 0 && powerSpawn.room.storage.store.energy > 520000 && Game.cpu.bucket > 3000){
             powerSpawn.processPower();
         }
     }
@@ -277,6 +279,7 @@ function updateColonizers(memory) {
     //claimer and spawnBuilder reset
     memory[rSB.name] = 0;
     memory[rC.name] = 0;
+    //memory[rRo.name] = 0;
 }
 
 // Automated attacker count for defense
@@ -528,6 +531,7 @@ function updateBigTrooper(flag, memory, city) {
                 go = 0
             }
         }
+        console.log(go)
         if(go){
             for (var i = 0; i < resources.length; i++){
                 let lab = Game.getObjectById(memory.ferryInfo.boosterInfo[i][0])
@@ -554,6 +558,14 @@ function updateBigTrooper(flag, memory, city) {
     } 
 }
 
+function runNuker(city){
+    let flag = city + 'nuke'
+    if(Game.flags[flag]){
+        let nuker = _.find(Game.spawns[city].room.find(FIND_MY_STRUCTURES), structure => structure.structureType === STRUCTURE_NUKER);
+        nuker.launchNuke(Game.flags[flag].pos);
+        Game.flags[flag].remove();
+    }
+}
 function runObs(city){
 	if(Game.time % 101 == 0){
 		//check for Obs

@@ -9,6 +9,9 @@ var rT = {
 
     /** @param {Creep} creep **/
     run: function(creep) {
+        if(Game.time % 200 === 0){
+            creep.memory.targetId = null;
+        }
         if (creep.saying > 0){
             creep.say(creep.saying - 1)
             return;

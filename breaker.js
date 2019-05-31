@@ -10,6 +10,7 @@ var rBr = {
 
     /** @param {Creep} creep **/
     run: function(creep) {
+        u.updateCheckpoints(creep);
         var breakerTarget = Game.getObjectById(creep.memory.target)
 		if (breakerTarget && creep.pos.isNearTo(breakerTarget.pos)){
 		    return a.dismantle(creep, breakerTarget);
@@ -40,6 +41,21 @@ var rBr = {
     		}
     		return;
     	}
+    	var city = creep.memory.city;
+    	var flagName = 'break'
+        var status = creep.memory.role.substring(0, 3);
+        if(status === 'big'){
+            flagName = city + 'bigBreak'
+        } else {
+            flagName = city + 'break'
+        }
+        if(creep.hits < creep.hitsMax * 0.85){
+            creep.memory.retreat = true
+        }
+        if(creep.memory.retreat) {
+            return a.retreat(creep);
+        }
+        
     	var rallyFlag = creep.memory.city + 'breakerRally'
         if (Game.flags[rallyFlag] && !creep.memory.rally){
             creep.moveTo(Game.flags[rallyFlag], {reusePath: 50})
@@ -62,28 +78,16 @@ var rBr = {
     	var target = Game.getObjectById(creep.memory.target);
     	//console.log(target)
     	if (target){
-    	    if (a.dismantle(creep, target) == ERR_NO_PATH){
-    	        var structures = creep.room.find(FIND_HOSTILE_STRUCTURES);
-    			var ramparts = _.filter(structures, structure => structure.structureType == STRUCTURE_RAMPART);
-    			if (ramparts.length) {
-    			    let num = Math.floor(Math.random() * ramparts.length);
-    			    if(ramparts[num]){
-        				creep.memory.target = ramparts[num].id
-        				a.dismantle(creep, ramparts[num]);
-    			    }
+    	    if (Game.time % 10 === 0 && creep.pos.getRangeTo(target) > 1){
+    			var rampart = creep.pos.findClosestByPath(FIND_HOSTILE_STRUCTURES)
+    			if (rampart) {
+    				creep.memory.target = rampart.id
+    				a.dismantle(creep, rampart);
+    				return;
 				}
     	    }
     	    //console.log(a.dismantle(creep, target))
-    		return;
     	}
-    	var city = creep.memory.city;
-    	var flagName = 'break'
-        var status = creep.memory.role.substring(0, 3);
-        if(status === 'big'){
-            flagName = city + 'bigBreak'
-        } else {
-            flagName = city + 'break'
-        }
     	if(Game.flags[flagName]){
     		if(creep.pos.roomName === Game.flags[flagName].pos.roomName){
     			a.breakStuff(creep);

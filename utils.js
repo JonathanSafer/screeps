@@ -72,6 +72,21 @@ var u = {
         } else {
             return null;
         }
+    },
+    
+    updateCheckpoints: function(creep) {
+        if (Game.time % 50 == 0) {
+            if (creep.hits < creep.hitsMax) {
+                return;
+            }
+            if (!creep.memory.checkpoints) {
+                creep.memory.checkpoints = [];
+            }
+            creep.memory.checkpoints.push(creep.pos);
+            if (creep.memory.checkpoints.length > 2) {
+                creep.memory.checkpoints.shift();
+            }
+        }
     }
     
 };

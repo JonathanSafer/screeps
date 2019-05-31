@@ -9,6 +9,9 @@ var rMM = {
 
     /** @param {Creep} creep **/
     run: function(creep) {
+        if (_.sum(creep.carry) == 0 && creep.ticksToLive < 130){
+            creep.suicide()
+        }
         if (!creep.memory.source){
             var sources = creep.room.find(FIND_MINERALS);
             creep.memory.source = sources[0].id;

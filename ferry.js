@@ -196,16 +196,23 @@ var rF = {
         }
         if(Game.spawns[creep.memory.city].memory.ferryInfo.labInfo){
             for (i = 0; i < 4; i++){
-                if(Game.spawns[creep.memory.city].memory.ferryInfo.boosterInfo[i][1] == 1 && creep.room.terminal.store[Game.spawns[creep.memory.city].memory.ferryInfo.boosterInfo[i][2]] >= 1000){
+                if(Game.spawns[creep.memory.city].memory.ferryInfo.boosterInfo[i][1] === 1 && creep.room.terminal.store[Game.spawns[creep.memory.city].memory.ferryInfo.boosterInfo[i][2]] >= 1000){
                     creep.memory.lab = Game.spawns[creep.memory.city].memory.ferryInfo.boosterInfo[i][0]
                     creep.memory.mineral = Game.spawns[creep.memory.city].memory.ferryInfo.boosterInfo[i][2]
                     creep.memory.labNum = i;
                     return 9;
-                } else if(Game.spawns[creep.memory.city].memory.ferryInfo.boosterInfo[i][1] == 2) {
+                } else if(Game.spawns[creep.memory.city].memory.ferryInfo.boosterInfo[i][1] === 2) {
                     creep.memory.lab = Game.spawns[creep.memory.city].memory.ferryInfo.boosterInfo[i][0]
                     creep.memory.mineral = Game.spawns[creep.memory.city].memory.ferryInfo.boosterInfo[i][2]
                     creep.memory.labNum = i
                     return 10;
+                }
+            }
+            for(i = 2; i < 6; i++){
+                if(Game.spawns[creep.memory.city].memory.ferryInfo.labInfo[i][1] == 1){
+                    creep.memory.lab = Game.spawns[creep.memory.city].memory.ferryInfo.labInfo[i][0]
+                    creep.memory.labNum = i;
+                    return 7;
                 }
             }
             for (i = 0; i < 2; i++){
@@ -214,13 +221,6 @@ var rF = {
                     creep.memory.mineral = Game.spawns[creep.memory.city].memory.ferryInfo.labInfo[i][2]
                     creep.memory.labNum = i;
                     return 6;
-                }
-            }
-            for(i = 2; i < 6; i++){
-                if(Game.spawns[creep.memory.city].memory.ferryInfo.labInfo[i][1] == 1){
-                    creep.memory.lab = Game.spawns[creep.memory.city].memory.ferryInfo.labInfo[i][0]
-                    creep.memory.labNum = i;
-                    return 7;
                 }
             }
         }

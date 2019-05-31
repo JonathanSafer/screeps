@@ -4,36 +4,25 @@ var u = require('utils');
 
 var rRo = {
     name: "robber",
-    type: "runner",
+    type: "robber",
     target: () => 0,
 
     /** @param {Creep} creep **/
     run: function(creep) {
-       // notice if there's stuff next to you before wandering off!  
-      if (Game.time % 2) {
-        actions.notice(creep); // cost: 15% when running, so 7% now
-      }
-
-      // if there's room for more energy, go find some more
-      // else find storage
-      if (creep.carry.energy < 0.5 * creep.carryCapacity) {
-          var target = Game.getObjectById('5c2239769ebc272ce2b1f57a');
-          return actions.interact(creep, target, () => creep.withdraw(target, RESOURCE_ENERGY));
+      if (_.sum(creep.carry) < 0.1 * creep.carryCapacity) {
+          if(creep.ticksToLive < 270){
+              creep.suicide();
+          }
+          var target = Game.getObjectById('5cad9508f10dfb205d9c38db');
+          if (target){
+              return actions.interact(creep, target, () => creep.withdraw(target, RESOURCE_ENERGY));
+          } else {
+              return creep.moveTo(new RoomPosition(25, 25, 'W41N37'), {reusePath: 50})
+          }
 
       } else {
-          // check if we are walking on sidewalk/construction, and adjust as needed.
-         
-          var targets =  u.getTransferLocations(creep);
-          var bucket = targets[creep.memory.target];
-          if (bucket == undefined) {
-              bucket = Game.spawns['Home'];
-          }
-          actions.charge(creep, bucket);
-          if (actions.charge(creep, bucket) == ERR_FULL) {
-                console.log('Container Full');
-                rR.flipTarget(creep);
-          }
-
+          //console.log(creep.moveTo(Game.spawns[creep.memory.city].room.storage, {maxRooms: 32} ))
+          actions.charge(creep, Game.spawns[creep.memory.city].room.storage)
       }
       
       
