@@ -46,6 +46,11 @@ var u = {
         return hasController && ((room.controller.reservation) && (room.controller.reservation.username == "Yoner"));
     },
     
+    enemyOwned: function(room) {
+        var hasController = room.controller;
+        return hasController && room.controller.owner && room.controller.owner.username != "Yoner";
+    },
+    
     getDropTotals: function() {
         var rooms = Game.rooms;
         var drops = _.flatten(_.map(rooms, room => room.find(FIND_DROPPED_RESOURCES)));
@@ -75,7 +80,7 @@ var u = {
     },
     
     updateCheckpoints: function(creep) {
-        if (Game.time % 50 == 0) {
+        if (Game.time % 50 == 0  && !u.enemyOwned(creep.room)) {
             if (creep.hits < creep.hitsMax) {
                 return;
             }

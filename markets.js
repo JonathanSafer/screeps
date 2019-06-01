@@ -23,10 +23,16 @@ var markets = {
         let senders = myCities
         for (var i = 0; i < myCities.length; i++){
             let city = myCities[i].memory.city
+            if(!Game.spawns[city]){
+                continue;
+            }
             let mineral = Game.spawns[city].memory.ferryInfo.mineralRequest;
             if(mineral){
                 let x = senders.length
                 for (j = 0; j < senders.length; j++){
+                    if(!senders[j].terminal){
+                        continue;
+                    }
                     if(senders[j].terminal.store[mineral] > 3000){
                         let result = senders[j].terminal.send(mineral, 3000, myCities[i].name)
                         senders = senders.splice(senders.indexOf(senders[j]), 1);

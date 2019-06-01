@@ -91,50 +91,6 @@ var rTr = {
             return a.retreat(creep);
         }
         
-        
-        /*if(creep.memory.retreat && Game.flags[flagName]){
-            if (creep.pos.roomName != Game.flags[flagName].pos.roomName){
-                creep.moveTo(new RoomPosition(25, 25, creep.pos.roomName), {reusePath: 15})
-                if(Game.time % 20 === 0){
-                    creep.memory.retreat = false
-                }
-                return;
-            }
-            let r = (creep.pos.getRangeTo(Game.flags[flagName].pos) + 20)
-            let path = PathFinder.search(creep.pos, [{pos: Game.flags[flagName].pos, range: r}], {flee: true, 
-                roomCallback: function(roomName) {
-                    let room = Game.rooms[roomName];
-                    // In this example `room` will always exist, but since 
-                    // PathFinder supports searches which span multiple rooms 
-                    // you should be careful!
-                    if (!room) return;
-                    let costs = new PathFinder.CostMatrix;
-                    room.find(FIND_STRUCTURES).forEach(function(struct) {
-                      if (struct.structureType === STRUCTURE_ROAD) {
-                        // Favor roads over plain tiles
-                        costs.set(struct.pos.x, struct.pos.y, 1);
-                      } else if (struct.structureType !== STRUCTURE_CONTAINER &&
-                                 (struct.structureType !== STRUCTURE_RAMPART ||
-                                  !struct.my)) {
-                        // Can't walk through non-walkable buildings
-                        costs.set(struct.pos.x, struct.pos.y, 0xff);
-                      }
-                    });
-            
-                    // Avoid creeps in the room
-                    room.find(FIND_CREEPS).forEach(function(creep) {
-                      costs.set(creep.pos.x, creep.pos.y, 0xff);
-                    });
-            
-                    return costs;
-                },
-            })
-            creep.moveByPath(path.path)
-            if(Game.time % 20 === 0){
-                creep.memory.retreat = false
-            }
-            return;
-        }*/
         if(target){
             creep.moveTo(target);
             return;

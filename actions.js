@@ -155,6 +155,10 @@ var actions = {
     // priorities: very damaged structures > construction > mildly damaged structures
     // stores repair id in memory so it will continue repairing till the structure is at max hp
 	build: function(creep) {
+	    if(Game.time % 200 === 0){
+	        creep.memory.repair = null;
+	        creep.memory.build = null
+	    }
 		if (creep.memory.repair){
 			var target = Game.getObjectById(creep.memory.repair);
 			if(target){
@@ -164,24 +168,30 @@ var actions = {
 			}
 		}
         let city = creep.memory.city;
-        let myRooms = u.splitRoomsByCity()
+        let myRooms = u.splitRoomsByCity();
         let buildings = _.flatten(_.map(myRooms[city], room => room.find(FIND_STRUCTURES)));
-        let needRepair = _.filter(buildings, structure => (structure.hits < (0.2*structure.hitsMax)) && (structure.structureType != STRUCTURE_WALL));
+        let needRepair = _.filter(buildings, structure => (structure.hits < (0.2*structure.hitsMax)) && (structure.structureType != STRUCTURE_WALL) && (structure.structureType != STRUCTURE_RAMPART));
+        let walls = _.filter(buildings, structure => (structure.hits < 100000) && (structure.hits < structure.hitsMax));
         //console.log(buildings);
     	if(needRepair.length){
-    		creep.memory.repair = needRepair[0].id
-    		return actions.repair(creep, needRepair[0])
+    		creep.memory.repair = needRepair[0].id;
+    		return actions.repair(creep, needRepair[0]);
     		//actions.interact(creep, needRepair[0], () => creep.repair(needRepair[0]));
     	} else {
         	var targets = _.flatten(_.map(myRooms[city], room => room.find(FIND_MY_CONSTRUCTION_SITES)));
      		//var targets = creep.room.find(FIND_CONSTRUCTION_SITES);
       		if(targets.length) {
-        	return actions.interact(creep, targets[0], () => creep.build(targets[0]));
+        	    return actions.interact(creep, targets[0], () => creep.build(targets[0]));
       		} else {
-      			var damagedStructures = _.filter(buildings, structure => (structure.hits < (0.4*structure.hitsMax)) && (structure.structureType != STRUCTURE_WALL));
-  				if (damagedStructures.length){
-  					creep.memory.repair = damagedStructures[0].id
-  					return actions.repair(creep, damagedStructures[0])
+      			var damagedStructures = _.filter(buildings, structure => (structure.hits < (0.4*structure.hitsMax)) && (structure.structureType != STRUCTURE_WALL) && (structure.structureType != STRUCTURE_RAMPART));
+  				if (damagedStructures.length) {
+  					creep.memory.repair = damagedStructures[0].id;
+  					return actions.repair(creep, damagedStructures[0]);
+  				}
+  				if (walls.length) {
+  				    let closestWall = creep.pos.findClosestByRange(walls);
+  				    creep.memory.repair = closestWall.id;
+  					return actions.repair(creep, walls[0]);
   				}
       		}
   		}
@@ -257,13 +267,14 @@ var actions = {
     },
     
     retreat: function(creep) {
+        if(Game.time % 20 === 0){
+            creep.memory.retreat = false
+        }
         let checkpoints = creep.memory.checkpoints;
         if (checkpoints) {
             let oldCheckpoint = checkpoints[0];
-            creep.moveTo(oldCheckpoint);
-        }
-        if(Game.time % 20 === 0){
-            creep.memory.retreat = false
+            let o = oldCheckpoint;
+            return creep.moveTo(o.x, o.y, o.roomName);
         }
     }
 };

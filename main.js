@@ -56,12 +56,13 @@ module.exports.loop = function () {
     	    c.runCity(city, localCreeps[city])
     	    c.updateCountsCity(city, localCreeps[city], localRooms[city])
     	    c.runTowers(city)
-    	    c.runObs(city)
+    	    //TODO: obs runs in dead cities
+    	    //c.runObs(city)
 	    }
     }
     //run power creeps
     pC.run103207();
-    pC.run138066();
+    //pC.run138066();
     //distribute energy and power
     if (Game.time % 100 == 0){
         m.distributeEnergy(myCities);
@@ -173,9 +174,6 @@ module.exports.loop = function () {
         Memory.stats['market.credits'] = Game.market.credits
         Memory.stats['cpu.getUsed'] = Game.cpu.getUsed()
     }   
-    
-    //test stuff
-    
     
   });
 }

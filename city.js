@@ -160,7 +160,7 @@ function runTowers(city){
                         return (structure) && structure.hits < (structure.hitsMax * 0.1);
                     }
             });
-            notWalls = _.reject(damaged, location => location.structureType == STRUCTURE_WALL);
+            notWalls = _.reject(damaged, location => location.structureType == STRUCTURE_WALL || location.structureType == STRUCTURE_RAMPART);
         }
         for (i = 0; i < towers.length; i++){
             if(hostiles.length > 0){
@@ -405,7 +405,7 @@ function updateBuilder(rcl, memory, spawn, rooms, rcl8) {
         let repairSites = _.filter(buildings, structure => (structure.hits < (structure.hitsMax*0.3)) && (structure.structureType != STRUCTURE_WALL));
         var totalSites = (Math.floor((repairSites.length)/10) + constructionSites.length);
     } else {
-        var totalSites = constructionSites.length;
+        var totalSites = constructionSites.length + 1;
     }
     if (totalSites > 0){
         memory[rB.name] = (totalSites > 10 && rcl > 2) ? 3 : 1;
