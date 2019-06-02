@@ -61,7 +61,7 @@ module.exports.loop = function () {
 	    }
     }
     //run power creeps
-    pC.run103207();
+    //pC.run103207();
     //pC.run138066();
     //distribute energy and power
     if (Game.time % 100 == 0){
