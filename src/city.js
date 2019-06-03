@@ -282,12 +282,14 @@ function updateMilitary(city, memory) {
 }
 
 function emptyBoosters(memory){
+    if(memory.ferryInfo.boosterInfo){
         for (let i = 0; i < 4; i++){
             let lab = Game.getObjectById(memory.ferryInfo.boosterInfo[i][0])
             if (lab && lab.mineralAmount){
                 memory.ferryInfo.boosterInfo[i][1] = 2
             }
         }
+    }
 }
 
 function updateColonizers(memory) {
