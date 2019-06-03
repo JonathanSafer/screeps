@@ -267,12 +267,27 @@ function checkLabs(city){
 function updateMilitary(city, memory) {
     let flags = ['harass', 'break', 'defend', 'powerMine', 'bigShoot', 'shoot', 'bigBreak'];
     let updateFns = [updateHarasser, updateBreaker, updateDefender, updatePowerMine, updateBigTrooper, updateTrooper, updateBigBreaker];
-
+    let big = 0
     for (var i = 0; i < flags.length; i++) {
         let flagName = city + flags[i];
         let updateFn = updateFns[i];
         updateFn(Game.flags[flagName], memory, city);
+        if(Game.flags[flagName] && flagName.includes('big')){
+            big = 1
+        }
     }
+    if(!big){
+        emptyBoosters(memory);
+    }
+}
+
+function emptyBoosters(memory){
+        for (let i = 0; i < 4; i++){
+            let lab = Game.getObjectById(memory.ferryInfo.boosterInfo[i][0])
+            if (lab && lab.mineralAmount){
+                memory.ferryInfo.boosterInfo[i][1] = 2
+            }
+        }
 }
 
 function updateColonizers(memory) {
@@ -511,12 +526,6 @@ function updateBigBreaker(flag, memory, city) {
             memory[rBB.name] = 0
         }
     }  else {
-        for (let i = 0; i < 4; i++){
-            let lab = Game.getObjectById(memory.ferryInfo.boosterInfo[i][0])
-            if (lab.mineralAmount){
-                memory.ferryInfo.boosterInfo[i][1] = 2
-            }
-        }
         memory[rBB.name] = 0
     } 
 }
@@ -547,12 +556,6 @@ function updateBigTrooper(flag, memory, city) {
             memory[rBM.name] = 0;
         }
     }  else {
-        for (let i = 0; i < 4; i++){
-            let lab = Game.getObjectById(memory.ferryInfo.boosterInfo[i][0])
-            if (lab.mineralAmount){
-                memory.ferryInfo.boosterInfo[i][1] = 2
-            }
-        }
         memory[rBT.name] = 0
         memory[rBM.name] = 0;
     } 
