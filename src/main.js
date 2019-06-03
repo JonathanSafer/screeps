@@ -72,7 +72,7 @@ module.exports.loop = function () {
         m.distributeMinerals(myCities);
     }
     //collect taxes
-    if(Game.time % 10000 == 0){
+    /*if(Game.time % 10000 == 0){
         let order = Game.market.getOrderById('5ce88792b30b0336207a07f3')
         if (order.remainingAmount < 1000){
             Game.market.extendOrder('5ce88792b30b0336207a07f3', 1000 - order.remainingAmount)
@@ -88,7 +88,7 @@ module.exports.loop = function () {
                 }
             }
         }
-    }
+    }*/
     
     // if(Game.time % 100000 === 0){
     //     Game.market.deal('5ce88792b30b0336207a07f3', amount, [yourRoomName])
