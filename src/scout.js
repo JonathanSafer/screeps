@@ -57,6 +57,9 @@ var rS = {
         		let interests = _.filter(neighbors, roomName => !u.iReservedOrOwn(roomName));
         		//console.log(interests)
         		let badRooms = Game.spawns['Home'].memory.badRooms;
+                if(!badRooms){
+                    Game.spawns['Home'].memory.badRooms = [];
+                }
         		let goodRooms = _.filter(interests, roomName => !badRooms.includes(roomName));
         		if (goodRooms.length){
         			creep.memory.roomAssigned = goodRooms[0];
