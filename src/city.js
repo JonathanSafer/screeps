@@ -322,17 +322,17 @@ function updateScout(city, rcl, rcl8, memory){
 			scouts++
 		}
 	})
-	if (rcl > 4){
+	if (rcl > 3){
 		if (!memory.remoteRooms || Object.keys(memory.remoteRooms).length < 1){
 			scouts = 1;
 		}
 	}
-	if (rcl > 5){
+	if (rcl > 4){
 		if (!memory.remoteRooms || Object.keys(memory.remoteRooms).length < 2){
 			scouts = 2;
 		}
 	}
-	memory[rS.name] = 0/*scouts*/;
+	memory[rS.name] = scouts;
 }
 
 function updateMiner(rooms, rcl8, memory, spawn){
