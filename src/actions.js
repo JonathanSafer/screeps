@@ -42,7 +42,7 @@ var actions = {
                     break;
             }
         }
-        console.log(creep.name)
+        console.log(creep.name);
         console.log("need new path");
         //console.log(plannedPath);
         // Get here if there's no planned path or plan failed
@@ -53,12 +53,12 @@ var actions = {
     },
     
     reserve: function(creep, target){
-        var city = creep.memory.city
+        var city = creep.memory.city;
         if (Game.time % 2000 == 0){
             return actions.interact(creep, target, () => creep.signController(target, city));
         }
         if(target.room.memory.city != city){
-            creep.room.memory.city = city
+            creep.room.memory.city = city;
         } else {
             return actions.interact(creep, target, () => creep.reserveController(target));
         }
@@ -157,13 +157,13 @@ var actions = {
 	build: function(creep) {
 	    if(Game.time % 200 === 0){
 	        creep.memory.repair = null;
-	        creep.memory.build = null
+	        creep.memory.build = null;
 	    }
 		if (creep.memory.repair){
 			var target = Game.getObjectById(creep.memory.repair);
 			if(target){
     			if (target.hits < target.hitsMax){
-    				return actions.repair(creep, target)
+    				return actions.repair(creep, target);
     			}
 			}
 		}
@@ -235,10 +235,10 @@ var actions = {
                 let boost = boosts[type];
                 for(let j = 0; j < 4; j++){
                     if(Game.spawns[creep.memory.city].memory.ferryInfo.boosterInfo[j][2] == boost){
-                        let lab = Game.getObjectById(Game.spawns[creep.memory.city].memory.ferryInfo.boosterInfo[j][0])
+                        let lab = Game.getObjectById(Game.spawns[creep.memory.city].memory.ferryInfo.boosterInfo[j][0]);
                         //boost self
-                        if(lab.boostCreep(creep) === ERR_NOT_IN_RANGE){
-                            creep.moveTo(lab)
+                        if (lab.boostCreep(creep) === ERR_NOT_IN_RANGE) {
+                            creep.moveTo(lab);
                         }
                         return;
                     }
@@ -260,7 +260,7 @@ var actions = {
             var type = targetOrder[i];
             var breakThese = structGroups[type];
             if (breakThese) {
-                creep.memory.target = breakThese[0].id
+                creep.memory.target = breakThese[0].id;
                 return actions.dismantle(creep, breakThese[0]);
             }
         }     
@@ -268,7 +268,7 @@ var actions = {
     
     retreat: function(creep) {
         if(Game.time % 20 === 0){
-            creep.memory.retreat = false
+            creep.memory.retreat = false;
         }
         let checkpoints = creep.memory.checkpoints;
         if (checkpoints) {
