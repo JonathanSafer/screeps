@@ -35,7 +35,7 @@ function makeCreeps(role, type, target, city) {
     let spawns = Game.spawns[city].room.find(FIND_MY_SPAWNS);
     let name = Game.spawns['Home'].memory.counter.toString();
     if (types.cost(recipe) <= Game.spawns[city].room.energyAvailable){
-        spawn = u.getAvailableSpawn(spawns);
+        let spawn = u.getAvailableSpawn(spawns);
         //console.log(spawn);
         if(spawn != null) {
             Game.spawns['Home'].memory.counter++;
@@ -57,8 +57,8 @@ function runCity(city, creeps){
         // Get counts for all roles, make first thing that doesn't have enough
         _.forEach(_.filter(roles, role => !counts[role.name]), role => counts[role.name] = 0);
         //console.log(JSON.stringify(roles));
-        let nextRole = _.find(roles, role => (typeof counts[role.name] == "undefined" 
-                    && Game.spawns[city].memory[role.name]) || (counts[role.name] < Game.spawns[city].memory[role.name]));
+        let nextRole = _.find(roles, role => (typeof counts[role.name] == "undefined" && 
+            Game.spawns[city].memory[role.name]) || (counts[role.name] < Game.spawns[city].memory[role.name]));
         // console.log(Game.spawns[city].memory.rM);
         if (nextRole) {
             //console.log(JSON.stringify(nextRole));
@@ -70,8 +70,7 @@ function runCity(city, creeps){
         //console.log(city + ': ' + printout.join(', ' ));
     
         // Run all the creeps in this city
-        let a = 0
-        _.forEach(creeps, (creep, name) => nameToRole[creep.memory.role][0].run(creep)/* || console.log(creep.memory.role + ' ' + Game.cpu.getUsed())*/);
+        _.forEach(creeps, (creep) => nameToRole[creep.memory.role][0].run(creep)/* || console.log(creep.memory.role + ' ' + Game.cpu.getUsed())*/);
         
         //run powerSpawn
         runPowerSpawn(city);
@@ -87,8 +86,8 @@ function updateCountsCity(city, creeps, rooms) {
         let rcl = controller.level;
         let rcl8 = rcl > 7;
         var extensions = _.filter(Game.structures, 
-            (structure) => (structure.structureType == STRUCTURE_EXTENSION) 
-            && (structure.room.memory.city == [city])).length;
+            (structure) => (structure.structureType == STRUCTURE_EXTENSION) &&
+            (structure.room.memory.city == [city])).length;
         var structures = spawn.room.find(FIND_STRUCTURES);
 
         let logisticsTime = rcl8 ? 500 : 50;
@@ -162,7 +161,7 @@ function runTowers(city){
             });
             notWalls = _.reject(damaged, location => location.structureType == STRUCTURE_WALL || location.structureType == STRUCTURE_RAMPART);
         }
-        for (i = 0; i < towers.length; i++){
+        for (let i = 0; i < towers.length; i++){
             if(hostiles.length > 0){
                 towers[i].attack(hostiles[0]);
             } else if (injured.length > 0){
@@ -349,7 +348,7 @@ function updateMiner(rooms, rcl8, memory, spawn){
             memory.sources[sourceId] = sourcePos;
         }
 	});
-	_.each(memory.sources, function(sourceInfo, source){
+	_.each(memory.sources, function(sourceInfo){
 	    miners++;
 		let room = sourceInfo.roomName;
 		//if (Game.rooms[room] && !Game.rooms[room].controller.reservation){
@@ -364,7 +363,6 @@ function updateMiner(rooms, rcl8, memory, spawn){
 function updateMineralMiner(rcl, buildings, spawn, memory) {
     memory[rMM.name] = 0;
     if (rcl > 5){
-        var buildings = spawn.room.find(FIND_STRUCTURES);
         var extractor = _.find(buildings, structure => structure.structureType == STRUCTURE_EXTRACTOR);
         //console.log(extractor)
         if(extractor) {
@@ -417,12 +415,13 @@ function updateUpgrader(city, controller, memory, rcl8, creeps) {
 function updateBuilder(rcl, memory, spawn, rooms, rcl8) {
     let buildRooms = rcl8 ? [spawn.room] : rooms;
     let constructionSites = _.flatten(_.map(buildRooms, room => room.find(FIND_MY_CONSTRUCTION_SITES)));
+    var totalSites;
     if (!rcl8) {
         let buildings = _.flatten(_.map(buildRooms, room => room.find(FIND_STRUCTURES)));
         let repairSites = _.filter(buildings, structure => (structure.hits < (structure.hitsMax*0.3)) && (structure.structureType != STRUCTURE_WALL));
-        var totalSites = (Math.floor((repairSites.length)/10) + constructionSites.length);
+        totalSites = (Math.floor((repairSites.length)/10) + constructionSites.length);
     } else {
-        var totalSites = constructionSites.length + 1;
+        totalSites = constructionSites.length + 1;
     }
     if (totalSites > 0){
         memory[rB.name] = (totalSites > 10 && rcl > 2) ? 3 : 1;
@@ -453,7 +452,7 @@ function updateFerry(spawn, memory, rcl8) {
     //check if we have a terminal
     var terminal = spawn.room.terminal
     var storage = spawn.room.storage;
-    if (!(terminal === undefined)){
+    if (terminal !== undefined) {
         if (terminal.store.energy < 150000){
             memory[rF.name] = 1;
         } else if (Object.keys(storage.store).length > 1){
@@ -479,27 +478,27 @@ function updateStorageLink(spawn, memory, structures) {
     }
 }
 
-function updateHarasser(flag, memory, city) {
+function updateHarasser(flag, memory) {
     memory[rH.name] = flag ? 1 : 0;
 }
 
-function updateBreaker(flag, memory, city) {
+function updateBreaker(flag, memory) {
     memory[rBr.name] = flag ? 1 : 0;
     memory[rMe.name] = flag ? 1 : 0;
 }
 
-function updateDefender(flag, memory, city) {
+function updateDefender(flag, memory) {
     memory[rD.name] = flag ? 1 : 0;
     if (flag) memory[rMe.name]++;
 }
 
-function updatePowerMine(flag, memory, city) {
+function updatePowerMine(flag, memory) {
     memory[rPM.name] = flag ? 2 : 0;
     if (flag) memory[rMe.name] += 2;
     if (flag) memory[rT.name] = 4;
 }
 
-function updateTrooper(flag, memory, city) {
+function updateTrooper(flag, memory) {
     memory[rTr.name] = flag ? 1 : 0;
     if (flag) memory[rMe.name]++;
 }
@@ -509,13 +508,13 @@ function updateBigBreaker(flag, memory, city) {
         let spawn = Game.spawns[city]
         let resources = ['XZHO2', 'XZH2O', 'XLHO2', 'XGHO2']
         let go = 1;
-        for (var i = 0; i < resources.length; i++){
+        for (let i = 0; i < resources.length; i++){
             if(spawn.room.terminal.store[resources[i]] < 1000){
                 go = 0
             }
         }
         if(go){
-            for (var i = 0; i < resources.length; i++){
+            for (let i = 0; i < resources.length; i++){
                 let lab = Game.getObjectById(memory.ferryInfo.boosterInfo[i][0])
                 if (lab.mineralAmount < 1000){
                     memory.ferryInfo.boosterInfo[i][1] = 1
@@ -537,14 +536,14 @@ function updateBigTrooper(flag, memory, city) {
         let spawn = Game.spawns[city]
         let resources = ['XZHO2', 'XKHO2', 'XLHO2', 'XGHO2']
         let go = 1;
-        for (var i = 0; i < resources.length; i++){
+        for (let i = 0; i < resources.length; i++){
             if(spawn.room.terminal.store[resources[i]] < 1000){
                 go = 0
             }
         }
         console.log(go)
         if(go){
-            for (var i = 0; i < resources.length; i++){
+            for (let i = 0; i < resources.length; i++){
                 let lab = Game.getObjectById(memory.ferryInfo.boosterInfo[i][0])
                 if (lab.mineralAmount < 1000){
                     memory.ferryInfo.boosterInfo[i][1] = 1
@@ -615,8 +614,8 @@ function runObs(city){
 			let structures = Game.rooms[roomName].find(FIND_STRUCTURES)
 			let powerBank = _.find(structures, structure => structure.structureType === STRUCTURE_POWER_BANK);
 			let flagName = city + 'powerMine'
-			if (powerBank && Game.cpu.bucket > 6000 && powerBank.ticksToDecay > 2500 && !Game.flags[flagName]
-			    && Game.rooms[roomName].find(FIND_STRUCTURES).length < 10){
+			if (powerBank && Game.cpu.bucket > 6000 && powerBank.ticksToDecay > 2500 && !Game.flags[flagName] &&
+                    Game.rooms[roomName].find(FIND_STRUCTURES).length < 10){
 				//put a flag on it
 				Game.rooms[roomName].createFlag(powerBank.pos, flagName)
 				console.log('Power Bank found in: ' + roomName)
