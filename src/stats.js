@@ -19,6 +19,7 @@ var rM = require('remoteMiner');
 var rS = require('scout');
 var rA = require('attacker');
 var u = require('utils');
+var rD = require('defender');
 
 var stats = {
     collectStats: function() {
