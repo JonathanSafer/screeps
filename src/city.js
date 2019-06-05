@@ -38,12 +38,16 @@ function makeCreeps(role, type, target, city) {
         let spawn = u.getAvailableSpawn(spawns);
         //console.log(spawn);
         if(spawn != null) {
-            Game.spawns['Home'].memory.counter++;
-            spawn.spawnCreep(recipe, name);
-            Game.creeps[name].memory.role = role;
-            Game.creeps[name].memory.target = target;
-            Game.creeps[name].memory.city = city;
-            Game.creeps[name].memory.new = true;
+            try {
+                Game.spawns['Home'].memory.counter++;
+                spawn.spawnCreep(recipe, name);
+                Game.creeps[name].memory.role = role;
+                Game.creeps[name].memory.target = target;
+                Game.creeps[name].memory.city = city;
+                Game.creeps[name].memory.new = true;
+            } catch (e) {
+                throw new Error("Error making creep of role: " + role);
+            }
         }
     }
 }
