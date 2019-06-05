@@ -1,5 +1,4 @@
 var a = require('actions');
-var t = require('types');
 var u = require('utils');
 
 var rTr = {
@@ -16,7 +15,7 @@ var rTr = {
         let buildings = _.reject(creep.room.find(FIND_HOSTILE_STRUCTURES), structure => structure.structureType == STRUCTURE_CONTROLLER);
         let towers = _.filter(buildings, structure => structure.structureType === STRUCTURE_TOWER)
         if(towers.length){
-            for(i = 0; i < towers.length; i++){
+            for(let i = 0; i < towers.length; i++){
                 if(towers[i].pos.inRangeTo(creep.pos, 20) && towers[i].energy > 9){
                     creep.memory.retreat = true;
                 }
@@ -24,7 +23,7 @@ var rTr = {
         }
         let combo = hostiles.concat(buildings);
         let attack = 0
-        for(i = 0; i < combo.length; i++){
+        for(let i = 0; i < combo.length; i++){
             if(combo[i].pos.isNearTo(creep.pos)){
                 creep.rangedMassAttack();
                 attack = 1
@@ -52,14 +51,14 @@ var rTr = {
         } else {
             //look for medics
             var allCreeps = u.splitCreepsByCity();
-            var status = creep.memory.role.substring(0, 3);
+            let status = creep.memory.role.substring(0, 3);
             var medicSearch = 0
             if (status == 'big'){
-                medicSearch = _.find(allCreeps[creep.memory.city], localCreep => localCreep.memory.role === 'bigMedic' && localCreep.pos.isNearTo(creep.pos) 
-                                                                                        && localCreep.memory.breaker == creep.id);
+                medicSearch = _.find(allCreeps[creep.memory.city], localCreep => localCreep.memory.role === 'bigMedic' &&
+                    localCreep.pos.isNearTo(creep.pos) && localCreep.memory.breaker == creep.id);
             } else {
-                medicSearch = _.find(allCreeps[creep.memory.city], localCreep => localCreep.memory.role === 'medic' && localCreep.pos.isNearTo(creep.pos) 
-                                                                                    && localCreep.memory.breaker == creep.id);
+                medicSearch = _.find(allCreeps[creep.memory.city], localCreep => localCreep.memory.role === 'medic' &&
+                    localCreep.pos.isNearTo(creep.pos) && localCreep.memory.breaker == creep.id);
             }
             if (medicSearch){
                 creep.memory.medic = medicSearch.id;
