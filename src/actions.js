@@ -171,7 +171,7 @@ var actions = {
         let myRooms = u.splitRoomsByCity();
         let buildings = _.flatten(_.map(myRooms[city], room => room.find(FIND_STRUCTURES)));
         let needRepair = _.filter(buildings, structure => (structure.hits < (0.2*structure.hitsMax)) && (structure.structureType != STRUCTURE_WALL) && (structure.structureType != STRUCTURE_RAMPART));
-        let walls = _.filter(buildings, structure => (structure.hits < 100000) && (structure.hits < structure.hitsMax));
+        let walls = _.filter(buildings, structure => (structure.hits < 1000000) && (structure.hits < structure.hitsMax) && (structure.structureType != STRUCTURE_ROAD));
         //console.log(buildings);
     	if(needRepair.length){
     		creep.memory.repair = needRepair[0].id;
@@ -189,9 +189,9 @@ var actions = {
   					return actions.repair(creep, damagedStructures[0]);
   				}
   				if (walls.length) {
-  				    let closestWall = creep.pos.findClosestByRange(walls);
-  				    creep.memory.repair = closestWall.id;
-  					return actions.repair(creep, walls[0]);
+  					let sortedWalls = _.sortBy(walls, structure => structure.hits)
+  				    creep.memory.repair = sortedWalls[0].id;
+  					return actions.repair(creep, sortedWalls[0]);
   				}
       		}
   		}
