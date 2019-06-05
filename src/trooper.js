@@ -14,13 +14,6 @@ var rTr = {
         let hostiles = creep.room.find(FIND_HOSTILE_CREEPS);
         let buildings = _.reject(creep.room.find(FIND_HOSTILE_STRUCTURES), structure => structure.structureType == STRUCTURE_CONTROLLER);
         let towers = _.filter(buildings, structure => structure.structureType === STRUCTURE_TOWER)
-        if(towers.length){
-            for(let i = 0; i < towers.length; i++){
-                if(towers[i].pos.inRangeTo(creep.pos, 20) && towers[i].energy > 9){
-                    creep.memory.retreat = true;
-                }
-            }
-        }
         let combo = hostiles.concat(buildings);
         let attack = 0
         for(let i = 0; i < combo.length; i++){
@@ -37,6 +30,15 @@ var rTr = {
         }
         if(!attack && hostiles.length){
             creep.memory.target = creep.pos.findClosestByRange(FIND_HOSTILE_CREEPS).id
+        }
+        if(towers.length){
+            console.log(towers)
+            for(let i = 0; i < towers.length; i++){
+                if(towers[i].energy > 9){
+                    creep.memory.retreat = true;
+                    return a.retreat(creep);
+                }
+            }
         }
         if (!creep.memory.medic){
             // undefined causes error, so using null
@@ -84,19 +86,19 @@ var rTr = {
         } else {
             flagName = city + 'shoot'
         }
+        if(creep.hits < creep.hitsMax * 0.85){
+            creep.memory.retreat = true
+        }
+        if(creep.memory.retreat) {
+            return a.retreat(creep);
+        }
         if(Game.flags[flagName]){
             if(creep.pos.roomName != Game.flags[flagName].pos.roomName){
                 creep.moveTo(Game.flags[flagName].pos, {reusePath: 50}); 
                 return;       
             }
         }
-        if(creep.hits < creep.hitsMax * 0.85){
-            creep.memory.retreat = true
-        }
-        
-        if(creep.memory.retreat) {
-            return a.retreat(creep);
-        }
+
         
         if(target){
             creep.moveTo(target);
