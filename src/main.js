@@ -103,13 +103,6 @@ module.exports.loop = function () {
             }
         }
     }
-    //clear roads use for new expansions
-    if (Game.time % 50000 == 0) {
-        var roadSites = _.filter(Game.constructionSites, site => site.structureType == STRUCTURE_ROAD && !site.progress)
-        for (var i = 0; i < roadSites.length; i++){
-            var result = roadSites[i].remove();
-        }
-    }
     //clear rooms
     if (Game.time % 50000 == 0){
        for(var name in Memory.rooms) {

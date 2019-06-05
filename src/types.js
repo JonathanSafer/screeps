@@ -55,6 +55,10 @@ function getRecipe(type, extensions){
 			d['builder'] = [WORK,WORK, WORK, WORK, WORK,CARRY, CARRY, CARRY, CARRY,CARRY, CARRY, CARRY, CARRY,CARRY,MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE];
 			d['scout'] = [MOVE, MOVE, CLAIM, CLAIM];
 			d['attacker'] = [TOUGH, TOUGH, MOVE, MOVE, MOVE, MOVE, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK];
+			d['spawnBuilder'] = [WORK, WORK, WORK, WORK, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE]
+    		d['claimer'] = [CLAIM, MOVE]
+    		d['trooper'] = [RANGED_ATTACK, RANGED_ATTACK, RANGED_ATTACK, MOVE, MOVE, MOVE]
+    		d['medic'] = [HEAL, HEAL, MOVE, MOVE]
 			break;
 		case 6:
 		case 7:
@@ -70,8 +74,10 @@ function getRecipe(type, extensions){
     		d['scout'] = [MOVE, MOVE, MOVE, MOVE, MOVE, CLAIM, CLAIM];
     		d['erunner'] = [CARRY, CARRY, MOVE];
     		d['attacker'] = [TOUGH, TOUGH, MOVE, MOVE, MOVE, MOVE, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK];
-    		d['spawnBuilder'] = [WORK, WORK, WORK, WORK, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE]
+    		d['spawnBuilder'] = [WORK, WORK, WORK, WORK, WORK, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE]
     		d['claimer'] = [CLAIM, MOVE]
+    		d['trooper'] = [RANGED_ATTACK, RANGED_ATTACK, RANGED_ATTACK, MOVE, MOVE, MOVE]
+    		d['medic'] = [HEAL, HEAL, MOVE, MOVE]
     		break;
 		case 8:
 		case 9:
@@ -93,6 +99,8 @@ function getRecipe(type, extensions){
     		d['attacker'] = [TOUGH, TOUGH, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK];
     		d['spawnBuilder'] = [WORK, WORK, WORK, WORK, WORK, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE]
     		d['claimer'] = [CLAIM, MOVE]
+    		d['trooper'] = [RANGED_ATTACK, RANGED_ATTACK, RANGED_ATTACK, MOVE, MOVE, MOVE]
+    		d['medic'] = [HEAL, HEAL, MOVE, MOVE]
     		break;
 		case 10:
 		case 11:
