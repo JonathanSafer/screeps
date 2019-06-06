@@ -31,15 +31,6 @@ var rTr = {
         if(!attack && hostiles.length){
             creep.memory.target = creep.pos.findClosestByRange(FIND_HOSTILE_CREEPS).id
         }
-        if(towers.length){
-            console.log(towers)
-            for(let i = 0; i < towers.length; i++){
-                if(towers[i].energy > 9){
-                    creep.memory.retreat = true;
-                    return a.retreat(creep);
-                }
-            }
-        }
         if (!creep.memory.medic){
             // undefined causes error, so using null
             creep.memory.medic = null
@@ -67,6 +58,21 @@ var rTr = {
             }
             return;
         }
+        if(towers.length){
+            console.log(towers)
+            for(let i = 0; i < towers.length; i++){
+                if(towers[i].energy > 9){
+                    creep.memory.retreat = true;
+                    return a.retreat(creep);
+                }
+            }
+        }
+        if(creep.hits < creep.hitsMax * 0.85){
+            creep.memory.retreat = true
+        }
+        if(creep.memory.retreat) {
+            return a.retreat(creep);
+        }
         // Go to rally en route to target
         var rallyFlag = creep.memory.city + 'trooperRally'
         if (Game.flags[rallyFlag] && !creep.memory.rally){
@@ -86,15 +92,9 @@ var rTr = {
         } else {
             flagName = city + 'shoot'
         }
-        if(creep.hits < creep.hitsMax * 0.85){
-            creep.memory.retreat = true
-        }
-        if(creep.memory.retreat) {
-            return a.retreat(creep);
-        }
         if(Game.flags[flagName]){
             if(creep.pos.roomName != Game.flags[flagName].pos.roomName){
-                creep.moveTo(Game.flags[flagName].pos, {reusePath: 50}); 
+                creep.moveTo(Game.flags[flagName].pos); 
                 return;       
             }
         }
