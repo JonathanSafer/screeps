@@ -37,6 +37,20 @@ var rTr = {
         }
         var medic = Game.getObjectById(creep.memory.medic);
         if (medic){
+            //set tolerance
+            if(!creep.memory.tolerance){
+                let tolerance = 0;
+                for(var i = 0; i < medic.body.length; ++i){
+                    if(medic.body[i].type == HEAL){
+                        tolerance++;
+                    }
+                }
+                if(medic.memory.role.substring(0, 3) === 'big'){
+                    tolerance = (tolerance*12)
+                }
+                tolerance = (tolerance*12)
+                creep.memory.tolerance = (tolerance * 0.8)
+            }
             // Wait for medic to get closer unless on the border
             if ((!creep.pos.isNearTo(medic.pos) && !(creep.pos.x == 0 || creep.pos.x == 49 || creep.pos.y == 0 || creep.pos.y == 49)) || (medic.fatigue > 0)){
                 return;
@@ -59,12 +73,15 @@ var rTr = {
             return;
         }
         if(towers.length){
-            console.log(towers)
+            let damage = 0
             for(let i = 0; i < towers.length; i++){
                 if(towers[i].energy > 9){
-                    creep.memory.retreat = true;
-                    return a.retreat(creep);
+                    damage = (damage + Math.min(800 - Math.min((towers[i].pos.getRangeTo(creep.pos)*30), 200), 200))
                 }
+            }
+            if(damage > creep.memory.tolerance){
+                creep.memory.retreat = true;
+                return a.retreat(creep);
             }
         }
         if(creep.hits < creep.hitsMax * 0.85){

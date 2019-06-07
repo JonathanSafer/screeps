@@ -274,7 +274,7 @@ var actions = {
         if (checkpoints) {
             let oldCheckpoint = checkpoints[0];
             let o = oldCheckpoint;
-            return creep.moveTo(o.x, o.y, o.roomName);
+            return creep.moveTo(new RoomPosition(o.x, o.y, o.roomName));
         }
     }
 };
