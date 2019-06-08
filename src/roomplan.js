@@ -11,7 +11,7 @@ let p = {
         let distantRooms = p.getDistantRooms(rooms)
         let roomsWithAController = p.getRoomsWithAController(distantRooms)
         let rankings = p.sortByScore(roomsWithAController)
-        if (rankings) {
+        if (rankings.length) {
             p.addRoom(rankings[0])
         }
         return
@@ -31,11 +31,11 @@ let p = {
             p.hasCpu() &&
             p.totalEnergy() > 200000 &&
             p.isRcl4() &&
-            true // we aren't already building a base
+            p.myRooms().length === p.roomsSelected().length
     },
 
     getAllRoomsInRange: function() {
-        // TODO
+        let myRooms = p.roomsSelected();
         return []
     },
 
