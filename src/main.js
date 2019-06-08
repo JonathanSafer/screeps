@@ -3,6 +3,7 @@ var u = require('utils');
 var c = require('city');
 var m = require('markets');
 var s = require('stats');
+var rp = require('roomplan');
 const profiler = require('screeps-profiler');
 //Game.profiler.profile(1000);
 //Game.profiler.output();
@@ -79,6 +80,10 @@ module.exports.loop = function () {
         if (Game.time % 200 === 0) {
             m.manageMarket(myCities);
         }
+
+        rp.findRooms();
+        rp.planRooms();
+        rp.buildConstructionSites(); // TODO: this could go in run city?
 
         s.collectStats();
     });
