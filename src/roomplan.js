@@ -8,9 +8,8 @@ let p = {
             return
         }
         let rooms = p.getAllRoomsInRange()
-        let distantRooms = p.getDistantRooms(rooms)
-        let roomsWithAController = p.getRoomsWithAController(distantRooms)
-        let rankings = p.sortByScore(roomsWithAController)
+        let validRooms = p.getValidRooms(rooms)
+        let rankings = p.sortByScore(validRooms)
         if (rankings.length) {
             p.addRoom(rankings[0])
         }
@@ -35,34 +34,41 @@ let p = {
     },
 
     getAllRoomsInRange: function() {
+        let d = 10
         let myRooms = p.roomsSelected()
-        let pos = _.map(myRooms, (room) => (room.name.match("/[A-Z]|\d+/g")))
-        let nsPos = pos.sort(p.cardCompNS)
-        let ewPos = pos.sort(p.cardCompEW)
-        let northernPt = nsPos[-1]
-
-        return []
+        let pos = _.map(myRooms, p.roomNameToPos)
+        let posXY = _.unzip(pos);
+        let ranges = _.map(posXY, coords => _.range(_.min(coords) - d, _.max(coords) + 1 + d))
+        let roomCoords = _.flatMap(ranges[0], x => _.map(ranges[1], y => [x, y]))
+        let roomNames = _.map(roomCoords, p.roomPosToName)
+        return roomNames
     },
 
-    cardCompNS: function(pos1, pos2) {
-        return pos1[0] < pos2[0] ||  // North > South
-            (pos1[0] === 'N' && pos1[1] > pos2[1]) || // N20 > N1
-            (pos1[0] === 'S' && pos1[1] < pos2[1]) // S1 > S20
+    roomNameToPos: function(roomName) {
+        let quad = roomName.match("/[NSEW]/g")
+        let coords = roomName.match("/[0-9]+/g")
+        let x = Number(coords[0])
+        let y = Number(coords[1])
+        return [
+            quad[0] === 'W' ? 0 - x : 1 + x,
+            quad[1] === 'S' ? 0 - y : 1 + y
+        ]
     },
 
-    cardCompEW: function(pos1, pos2) {
-        return pos1[0] < pos2[0] ||  // East > West
-            (pos1[0] === 'E' && pos1[1] > pos2[1]) || // E20 > E1
-            (pos1[0] === 'W' && pos1[1] < pos2[1]) // W1 > W20
+    roomPosToName: function(roomPos) {
+        let x = roomPos[0]
+        let y = roomPos[1]
+        return (x <= 0 ? "W" + String(-x) : "E" + String(x - 1)) +
+            (y <= 0 ? "S" + String(-y) : "N" + String(y - 1))
     },
 
-    getDistantRooms: function(rooms) {
-        // TODO
-        return rooms
+    getValidRooms: function(rooms) {
+        return _.filter(rooms, p.isValidRoom)
     },
 
-    getRoomsWithAController: function(rooms) {
-        return _.filter(rooms, (room) => room.controller !== undefined)
+    isValidRoom: function(roomName) {
+        if (!Game.map.isRoomAvailable(roomName)) return false
+        return false
     },
 
     sortByScore: function(rooms) {
