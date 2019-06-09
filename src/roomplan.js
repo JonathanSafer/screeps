@@ -35,8 +35,25 @@ let p = {
     },
 
     getAllRoomsInRange: function() {
-        let myRooms = p.roomsSelected();
+        let myRooms = p.roomsSelected()
+        let pos = _.map(myRooms, (room) => (room.name.match("/[A-Z]|\d+/g")))
+        let nsPos = pos.sort(p.cardCompNS)
+        let ewPos = pos.sort(p.cardCompEW)
+        let northernPt = nsPos[-1]
+
         return []
+    },
+
+    cardCompNS: function(pos1, pos2) {
+        return pos1[0] < pos2[0] ||  // North > South
+            (pos1[0] === 'N' && pos1[1] > pos2[1]) || // N20 > N1
+            (pos1[0] === 'S' && pos1[1] < pos2[1]) // S1 > S20
+    },
+
+    cardCompEW: function(pos1, pos2) {
+        return pos1[0] < pos2[0] ||  // East > West
+            (pos1[0] === 'E' && pos1[1] > pos2[1]) || // E20 > E1
+            (pos1[0] === 'W' && pos1[1] < pos2[1]) // W1 > W20
     },
 
     getDistantRooms: function(rooms) {

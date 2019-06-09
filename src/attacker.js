@@ -10,6 +10,9 @@ var rA = {
 
     /** @param {Creep} creep **/
     run: function(creep) {
+        if(creep.ticksToLive === 1490) {
+            creep.notifyWhenAttacked(false);
+        }
     	let target = Game.getObjectById(creep.memory.target);
     	if (target){
     		a.attack(creep, target);

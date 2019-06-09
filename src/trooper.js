@@ -13,6 +13,7 @@ var rTr = {
             creep.notifyWhenAttacked(false);
         }
         u.updateCheckpoints(creep);
+        creep.notifyWhenAttacked(false)
         
         let hostiles = creep.room.find(FIND_HOSTILE_CREEPS);
         let buildings = _.reject(creep.room.find(FIND_HOSTILE_STRUCTURES), structure => structure.structureType == STRUCTURE_CONTROLLER);
