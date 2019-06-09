@@ -9,6 +9,9 @@ var rTr = {
 
     /** @param {Creep} creep **/
     run: function(creep) {
+        if(creep.ticksToLive === 1490) {
+            creep.notifyWhenAttacked(false);
+        }
         u.updateCheckpoints(creep);
         
         let hostiles = creep.room.find(FIND_HOSTILE_CREEPS);

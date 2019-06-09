@@ -10,6 +10,9 @@ var rMe = {
 
     /** @param {Creep} creep **/
     run: function(creep) {
+        if(creep.tickToLive === 1490) {
+            creep.notifyWhenAttacked(false);
+        }
     	if (!creep.memory.breaker){
     		creep.memory.breaker = null
     	}
