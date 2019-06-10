@@ -39,14 +39,14 @@ let p = {
         let pos = _.map(myRooms, p.roomNameToPos)
         let posXY = _.unzip(pos);
         let ranges = _.map(posXY, coords => _.range(_.min(coords) - d, _.max(coords) + 1 + d))
-        let roomCoords = _.flatMap(ranges[0], x => _.map(ranges[1], y => [x, y]))
+        let roomCoords = _.flatten(_.map(ranges[0], x => _.map(ranges[1], y => [x, y])))
         let roomNames = _.map(roomCoords, p.roomPosToName)
         return roomNames
     },
 
     roomNameToPos: function(roomName) {
-        let quad = roomName.match("/[NSEW]/g")
-        let coords = roomName.match("/[0-9]+/g")
+        let quad = roomName.match(/[NSEW]/g)
+        let coords = roomName.match(/[0-9]+/g)
         let x = Number(coords[0])
         let y = Number(coords[1])
         return [
