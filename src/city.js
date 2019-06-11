@@ -105,7 +105,7 @@ function updateCountsCity(city, creeps, rooms) {
                 runNuker(city)
                 checkLabs(city)
                 updateTransporter(extensions, memory);
-                updateMilitary(city, memory);
+                updateMilitary(city, memory, rooms);
                 updateColonizers(memory);
                 updateUpgrader(city, controller, memory, rcl8, creeps);
                 updateBuilder(rcl, memory, spawn, rooms, rcl8);
@@ -267,14 +267,14 @@ function checkLabs(city){
     }
 }
 
-function updateMilitary(city, memory) {
+function updateMilitary(city, memory, rooms) {
     let flags = ['harass', 'break', 'defend', 'powerMine', 'bigShoot', 'shoot', 'bigBreak'];
     let updateFns = [updateHarasser, updateBreaker, updateDefender, updatePowerMine, updateBigTrooper, updateTrooper, updateBigBreaker];
     let big = 0
     for (var i = 0; i < flags.length; i++) {
         let flagName = city + flags[i];
         let updateFn = updateFns[i];
-        updateFn(Game.flags[flagName], memory, city);
+        updateFn(Game.flags[flagName], memory, city, rooms);
         if(Game.flags[flagName] && flagName.includes('big')){
             big = 1
         }
@@ -503,7 +503,7 @@ function updatePowerMine(flag, memory) {
     if (flag) memory[rT.name] = 4;
 }
 
-function updateTrooper(flag, memory) {
+function updateTrooper(flag, memory, unused, rooms) {
     // use troopers to defend rooms
     var enemyCounts = _.map(rooms, room => {
         var allBadCreeps = room.find(FIND_HOSTILE_CREEPS);
