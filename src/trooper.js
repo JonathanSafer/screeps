@@ -55,7 +55,7 @@ var rTr = {
 
         // Don't bother if some trooper already has the medic
         let otherTrooperWithMedic = _.find(allCreeps[creep.memory.city], localCreep => localCreep.memory.role === 'trooper' &&
-                !localCreep.memory.medic && localCreep.name !== creep.name)
+                localCreep.memory.medic && localCreep.name !== creep.name)
         if (otherTrooperWithMedic) return true
 
         if (!creep.memory.medic){
