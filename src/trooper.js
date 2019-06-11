@@ -51,6 +51,13 @@ var rTr = {
     },
 
     meetMedic: function(creep) {
+        let allCreeps = u.splitCreepsByCity();
+
+        // Don't bother if some trooper already has the medic
+        let otherTrooperWithMedic = _.find(allCreeps[creep.memory.city], localCreep => localCreep.memory.role === 'trooper' &&
+                !localCreep.memory.medic && localCreep.name !== creep.name)
+        if (otherTrooperWithMedic) return true
+
         if (!creep.memory.medic){
             // undefined causes error, so using null
             creep.memory.medic = null
@@ -77,7 +84,6 @@ var rTr = {
             }
         } else {
             //look for medics
-            var allCreeps = u.splitCreepsByCity();
             let status = creep.memory.role.substring(0, 3);
             var medicSearch = 0
             if (status == 'big'){
