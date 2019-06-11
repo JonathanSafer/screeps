@@ -17,7 +17,20 @@ var rTr = {
         
         let hostiles = creep.room.find(FIND_HOSTILE_CREEPS);
         let buildings = _.reject(creep.room.find(FIND_HOSTILE_STRUCTURES), structure => structure.structureType == STRUCTURE_CONTROLLER);
-        let towers = _.filter(buildings, structure => structure.structureType === STRUCTURE_TOWER)
+        let target = Game.getObjectById(creep.memory.target);
+
+        rTr.rangedAttack(creep, hostiles, buildings, target)
+        if (!rTr.meetMedic(creep)) return
+        if (rTr.avoidTowers(creep, buildings)) return
+        if (rTr.maybeRetreat(creep)) return
+        if (rTr.maybeRally(creep)) return
+        if (rTr.maybeShoot(creep)) return
+        if(target) return creep.moveTo(target)
+
+        rTr.destroyBuildings(creep, buildings)
+    },
+
+    rangedAttack: function(creep, hostiles, buildings, target) {
         let combo = hostiles.concat(buildings);
         let attack = 0
         for(let i = 0; i < combo.length; i++){
@@ -27,7 +40,7 @@ var rTr = {
                 break;
             }
         }
-        let target = Game.getObjectById(creep.memory.target);
+
         if(!attack && target && target.pos.roomName === creep.pos.roomName && target.pos.inRangeTo(creep.pos, 3)) {
             creep.rangedAttack(target);
             attack = 1
@@ -35,6 +48,9 @@ var rTr = {
         if(!attack && hostiles.length){
             creep.memory.target = creep.pos.findClosestByRange(FIND_HOSTILE_CREEPS).id
         }
+    },
+
+    meetMedic: function(creep) {
         if (!creep.memory.medic){
             // undefined causes error, so using null
             creep.memory.medic = null
@@ -57,7 +73,7 @@ var rTr = {
             }
             // Wait for medic to get closer unless on the border
             if ((!creep.pos.isNearTo(medic.pos) && !(creep.pos.x == 0 || creep.pos.x == 49 || creep.pos.y == 0 || creep.pos.y == 49)) || (medic.fatigue > 0)){
-                return;
+                return false
             }
         } else {
             //look for medics
@@ -74,8 +90,13 @@ var rTr = {
             if (medicSearch){
                 creep.memory.medic = medicSearch.id;
             }
-            return;
+            return false
         }
+        return true
+    },
+
+    avoidTowers: function(creep, buildings) {
+        let towers = _.filter(buildings, structure => structure.structureType === STRUCTURE_TOWER)
         if(towers.length){
             let damage = 0
             for(let i = 0; i < towers.length; i++){
@@ -85,15 +106,25 @@ var rTr = {
             }
             if(damage > creep.memory.tolerance){
                 creep.memory.retreat = true;
-                return a.retreat(creep);
+                a.retreat(creep);
+                return true
             }
         }
+        return false
+    },
+
+    maybeRetreat: function(creep) {
         if(creep.hits < creep.hitsMax * 0.85){
             creep.memory.retreat = true
         }
         if(creep.memory.retreat) {
-            return a.retreat(creep);
+            a.retreat(creep)
+            return true
         }
+        return false
+    },
+
+    maybeRally: function(creep) {
         // Go to rally en route to target
         var rallyFlag = creep.memory.city + 'trooperRally'
         if (Game.flags[rallyFlag] && !creep.memory.rally){
@@ -101,10 +132,13 @@ var rTr = {
             if (Game.flags[rallyFlag].pos.x == creep.pos.x && Game.flags[rallyFlag].pos.y == creep.pos.y && Game.flags[rallyFlag].pos.roomName == creep.pos.roomName){
                 creep.memory.rally = true
             }
-            return;
+            return true
         }
+        return false
+    },
 
-        // If there is a 'defend' flag, move to the flag before attacking. 
+    maybeShoot: function(creep) {
+        // If there is a 'shoot' flag, move to the flag before attacking. 
         var city = creep.memory.city;
         var flagName = 'shoot'
         var status = creep.memory.role.substring(0, 3);
@@ -116,15 +150,13 @@ var rTr = {
         if(Game.flags[flagName]){
             if(creep.pos.roomName != Game.flags[flagName].pos.roomName){
                 creep.moveTo(Game.flags[flagName].pos); 
-                return;       
+                return true      
             }
         }
+        return false
+    },
 
-        
-        if(target){
-            creep.moveTo(target);
-            return;
-        }
+    destroyBuildings: function(creep, buildings) {
         if (buildings.length){
             let spawns = _.filter(buildings, structure => structure.structureType == STRUCTURE_SPAWN)
             if(spawns.length){
@@ -134,6 +166,6 @@ var rTr = {
             creep.moveTo(buildings[0])
             return;
         }
-    },
+    }
 }
 module.exports = rTr;
