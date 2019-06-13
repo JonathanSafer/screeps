@@ -106,8 +106,12 @@ var rTr = {
         if(towers.length){
             let damage = 0
             for(let i = 0; i < towers.length; i++){
-                if(towers[i].energy > 9){
-                    damage = (damage + Math.min(800 - Math.min((towers[i].pos.getRangeTo(creep.pos)*30), 200), 200))
+                if(towers[i].energy >= TOWER_ENERGY_COST){
+                    let distance = towers[i].pos.getRangeTo(creep.pos)
+                    let damage_distance = _.max(TOWER_OPTIMAL_RANGE, _.min(distance, TOWER_FALLOFF_RANGE))
+                    let steps = TOWER_FALLOFF_RANGE - TOWER_OPTIMAL_RANGE
+                    let step_size = TOWER_FALLOFF * TOWER_POWER_ATTACK / steps
+                    damage += TOWER_POWER_ATTACK - (damage_distance - TOWER_OPTIMAL_RANGE) * step_size
                 }
             }
             if(damage > creep.memory.tolerance){
