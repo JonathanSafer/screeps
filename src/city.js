@@ -304,14 +304,14 @@ function updateColonizers(memory) {
 
 // Automated attacker count for defense
 function updateAttacker(rooms, memory) {
-    // if (Game.time % 30 == 0) {
-    //     var enemyCounts = _.map(rooms, room => {
-    //         var allBadCreeps = room.find(FIND_HOSTILE_CREEPS);
-    //         var invaders = _.reject(allBadCreeps, creep => creep.owner.username == "Source Keeper");
-    //         return invaders.length;
-    //     });
-    //     memory[rA.name] = _.sum(enemyCounts);
-    // }
+    if (Game.time % 30 == 0) {
+        var enemyCounts = _.map(rooms, room => {
+            var allBadCreeps = room.find(FIND_HOSTILE_CREEPS);
+            var invaders = _.reject(allBadCreeps, creep => creep.owner.username == "Source Keeper");
+            return invaders.length;
+        });
+        memory[rA.name] = _.sum(enemyCounts);
+    }
     memory[rA.name] = 0;
 }
 
@@ -505,14 +505,14 @@ function updatePowerMine(flag, memory) {
 
 function updateTrooper(flag, memory, unused, rooms) {
     // use troopers to defend rooms
-    var enemyCounts = _.map(rooms, room => {
-        var allBadCreeps = room.find(FIND_HOSTILE_CREEPS);
-        var invaders = _.reject(allBadCreeps, creep => creep.owner.username == "Source Keeper");
-        return invaders.length;
-    });
-    memory[rTr.name] = _.sum(enemyCounts);
+    // var enemyCounts = _.map(rooms, room => {
+    //     var allBadCreeps = room.find(FIND_HOSTILE_CREEPS);
+    //     var invaders = _.reject(allBadCreeps, creep => creep.owner.username == "Source Keeper");
+    //     return invaders.length;
+    // });
+    // memory[rTr.name] = _.sum(enemyCounts);
     // add troopers for a shoot
-    memory[rTr.name] += flag ? 1 : 0;
+    memory[rTr.name] = flag ? 1 : 0;
     if (flag) memory[rMe.name]++;
 }
 
