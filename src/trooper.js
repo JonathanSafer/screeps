@@ -76,7 +76,7 @@ var rTr = {
                     tolerance = (tolerance*12)
                 }
                 tolerance = (tolerance*12)
-                creep.memory.tolerance = (tolerance * 0.8)
+                creep.memory.tolerance = (tolerance * 0.9)
             }
             // Wait for medic to get closer unless on the border
             if ((!creep.pos.isNearTo(medic.pos) && !(creep.pos.x == 0 || creep.pos.x == 49 || creep.pos.y == 0 || creep.pos.y == 49)) || (medic.fatigue > 0)){
@@ -108,7 +108,7 @@ var rTr = {
             for(let i = 0; i < towers.length; i++){
                 if(towers[i].energy >= TOWER_ENERGY_COST){
                     let distance = towers[i].pos.getRangeTo(creep.pos)
-                    let damage_distance = _.max(TOWER_OPTIMAL_RANGE, _.min(distance, TOWER_FALLOFF_RANGE))
+                    let damage_distance = Math.max(TOWER_OPTIMAL_RANGE, Math.min(distance, TOWER_FALLOFF_RANGE))
                     let steps = TOWER_FALLOFF_RANGE - TOWER_OPTIMAL_RANGE
                     let step_size = TOWER_FALLOFF * TOWER_POWER_ATTACK / steps
                     damage += TOWER_POWER_ATTACK - (damage_distance - TOWER_OPTIMAL_RANGE) * step_size
