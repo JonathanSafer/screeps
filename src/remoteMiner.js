@@ -14,7 +14,7 @@ var rM = {
         } else if (Game.getObjectById(creep.memory.source) == null){
             creep.moveTo(new RoomPosition(25, 25, creep.memory.sourceRoom), {reusePath: 50}); 
         } else {
-            if (creep.saying != '🔅'){
+            if (creep.saying != '*'){
                 rM.harvestTarget(creep);
             }
             if (Game.time % 50 === 0){
@@ -36,17 +36,17 @@ var rM = {
                     let link = Game.getObjectById(creep.memory.link);
             	    a.charge(creep, link);
             	    if (link.energy >= link.energyCapacity * .5){
-            	        creep.say('🔅', true);
+            	        creep.say('*', true);
             	    }
                 }
-            	if (creep.saying === '🔅'){
+            	if (creep.saying === '*'){
             	    let link = Game.getObjectById(creep.memory.link);
             		let storageLink = Game.getObjectById(Game.spawns[creep.memory.city].memory.storageLink);
             		if (storageLink.energy === 0 && !link.cooldown){
             		    link.transferEnergy(storageLink)
-            		    creep.say('🔆', true);
+            		    creep.say('**', true);
             		} else {
-            		    creep.say('🔅', true);
+            		    creep.say('*', true);
             		}
             	}
             }
