@@ -312,7 +312,7 @@ function updateAttacker(rooms, memory) {
         });
         memory[rA.name] = _.sum(enemyCounts);
     }
-    memory[rA.name] = 0;
+    //memory[rA.name] = 0;
 }
 
 function updateScout(city, rcl, rcl8, memory){
