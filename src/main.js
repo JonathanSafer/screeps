@@ -1,5 +1,6 @@
 var rS = require('scout');
 var u = require('utils');
+var pC = require('powerCreeps');
 var c = require('city');
 var m = require('markets');
 var s = require('stats');
@@ -34,7 +35,7 @@ module.exports.loop = function () {
             }
         }
         //run power creeps
-        //pC.run103207();
+        pC.run103207();
         //pC.run138066();
         //distribute energy and power
         if (Game.time % 100 === 0) {
