@@ -102,6 +102,9 @@ var rTr = {
     },
 
     avoidTowers: function(creep, buildings) {
+        if (creep.room.controller && !creep.room.controller.owner){
+            return false
+        }
         let towers = _.filter(buildings, structure => structure.structureType === STRUCTURE_TOWER)
         if(towers.length){
             let damage = 0
