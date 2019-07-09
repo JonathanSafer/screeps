@@ -62,7 +62,7 @@ var powerCreeps = {
             return;
         }
         if(!(creep.spawnCooldownTime > Date.now()) && !creep.hits) {
-            let structures = Game.spawns['Joshua_Tree_National_Park'].room.find(FIND_MY_STRUCTURES)
+            let structures = Game.spawns['Yonland'].room.find(FIND_MY_STRUCTURES)
             let powerSpawn = _.find(structures, structure => structure.structureType === STRUCTURE_POWER_SPAWN)
             creep.spawn(powerSpawn);
             creep.memory.powerSpawn = powerSpawn.id;
@@ -75,7 +75,7 @@ var powerCreeps = {
             return;
         }
         if (creep.saying){
-            let source = Game.getObjectById(Object.keys(Game.spawns['Joshua_Tree_National_Park'].memory.sources)[creep.saying])
+            let source = Game.getObjectById(Object.keys(Game.spawns['Yonland'].memory.sources)[creep.saying])
             if (creep.usePower(PWR_REGEN_SOURCE, source) === ERR_NOT_IN_RANGE){
                 creep.moveTo(source, {reusePath: 15})
                 creep.say(creep.saying)
@@ -92,7 +92,7 @@ var powerCreeps = {
         if (creep.powers[PWR_GENERATE_OPS].cooldown < 1 && _.sum(creep.carry) < creep.carryCapacity){
             creep.usePower(PWR_GENERATE_OPS);
         }
-        let sources = Object.keys(Game.spawns['Joshua_Tree_National_Park'].memory.sources)
+        let sources = Object.keys(Game.spawns['Yonland'].memory.sources)
         if (Game.time % 250 == 0){
             let source = Game.getObjectById(sources[0])
             if (creep.usePower(PWR_REGEN_SOURCE, source) === ERR_NOT_IN_RANGE){
