@@ -13,7 +13,7 @@ var rC = {
             return;
         }
         if (Game.flags.claim.pos.x == creep.pos.x && Game.flags.claim.pos.y == creep.pos.y && Game.flags.claim.pos.roomName == creep.pos.roomName) {
-        	var newCity = 'sAmalia_suburbs'
+        	var newCity = 'sAmalia'
         	creep.signController(creep.room.controller, newCity)
         	creep.room.memory.city = newCity;
             creep.claimController(creep.room.controller);

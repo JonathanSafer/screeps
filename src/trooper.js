@@ -25,6 +25,7 @@ var rTr = {
         if (rTr.maybeRetreat(creep)) return
         if (rTr.maybeRally(creep)) return
         if (rTr.maybeShoot(creep)) return
+        target = Game.getObjectById(creep.memory.target);
         if(target) return creep.moveTo(target)
 
         rTr.destroyBuildings(creep, buildings)

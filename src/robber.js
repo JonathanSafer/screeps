@@ -13,15 +13,19 @@ var rRo = {
           if(creep.ticksToLive < 270){
               creep.suicide();
           }
-          var target = Game.getObjectById('5cad9508f10dfb205d9c38db');
+          var target = Game.getObjectById('5bdba51722610f5b666ba2c9');
+          let mineral = RESOURCE_ZYNTHIUM
           if (target){
-              return actions.interact(creep, target, () => creep.withdraw(target, RESOURCE_ENERGY));
+              if(!target.store[mineral]){
+                  Game.notify("Robbery complete")
+                  return;
+              }
+              return actions.interact(creep, target, () => creep.withdraw(target, mineral));
           } else {
-              return creep.moveTo(new RoomPosition(25, 25, 'W41N37'), {reusePath: 50})
+              return creep.moveTo(Game.flags['steal'], {reusePath: 50})
           }
 
       } else {
-          //console.log(creep.moveTo(Game.spawns[creep.memory.city].room.storage, {maxRooms: 32} ))
           actions.charge(creep, Game.spawns[creep.memory.city].room.storage)
       }
       
