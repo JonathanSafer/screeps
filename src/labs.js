@@ -76,7 +76,12 @@ var labs = {
                 return;
             }
             //stop making boost
-            spawn.memory.ferryInfo.labInfo[6] = 'XGH2O';
+            if(spawn.room.terminal.store['G'] == undefined || spawn.room.terminal.store['G'] < 15000){
+                spawn.memory.ferryInfo.labInfo[6] = 'G';
+                return;
+            } else {
+                spawn.memory.ferryInfo.labInfo[6] = 'XGH2O';
+            }
         }
     },
 

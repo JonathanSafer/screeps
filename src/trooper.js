@@ -70,6 +70,7 @@ var rTr = {
                 }
                 if(medic.memory.role.substring(0, 3) === 'big'){
                     tolerance = (tolerance*12)
+                    tolerance = (tolerance*0.5)
                 }
                 tolerance = (tolerance*12)
                 creep.memory.tolerance = (tolerance * 0.9)

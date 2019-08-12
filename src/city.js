@@ -1,4 +1,5 @@
 var rMe = require('medic');
+var rp = require('roomplan');
 var rBM = require('bigMedic')
 var rTr = require('trooper')
 var rBT = require('bigTrooper')
@@ -525,6 +526,9 @@ function updateBigBreaker(flag, memory, city) {
             if(spawn.room.terminal.store[resources[i]] < 1000){
                 go = 0
             }
+            if(spawn.room.terminal.store[resources[i]] < 2000){
+                spawn.memory.ferryInfo.mineralRequest = resources[i];
+            }
         }
         if(go){
             for (let i = 0; i < resources.length; i++){
@@ -553,8 +557,10 @@ function updateBigTrooper(flag, memory, city) {
             if(spawn.room.terminal.store[resources[i]] < 1000){
                 go = 0
             }
+            if(spawn.room.terminal.store[resources[i]] < 2000){
+                spawn.memory.ferryInfo.mineralRequest = resources[i];
+            }
         }
-        console.log(go)
         if(go){
             for (let i = 0; i < resources.length; i++){
                 let lab = Game.getObjectById(memory.ferryInfo.boosterInfo[i][0])
@@ -592,18 +598,20 @@ function runObs(city){
 			//check for list
 			if (!Game.spawns[city].memory.powerRooms){
 				Game.spawns[city].memory.powerRooms = [];
-				let roomName = Game.spawns[city].room.name;
-				let north = Number(roomName.slice(4,6)) - 1;
-				let west = Number(roomName.slice(1,3)) - 1;
-				for (var i = 0; i < 3; i++){
-					for (var j = 0; j < 3; j++){
-						let coord = 'W' + west.toString() + 'N' + north.toString();
-						Game.spawns[city].memory.powerRooms.push(coord)
-						north++
-					}
-					west++
-					north = north - 3
-				}
+                let myRoom = Game.spawns[city].room.name
+                let pos = rp.roomNameToPos(myRoom)
+                let x = pos[0] - 2;
+                let y = pos[1] - 2;
+                for (var i = 0; i < 5; i++){
+         			for (var j = 0; j < 5; j++){
+         			    let coord = [x, y]
+         			    let roomName = rp.roomPosToName(coord);
+         			    Game.spawns[city].memory.powerRooms.push(roomName)
+         			    x++
+         			}
+         			y++
+         			x = x - 5;
+                }
 			}
 			let roomNum = Game.time % Game.spawns[city].memory.powerRooms.length
 			//scan next room
@@ -629,9 +637,24 @@ function runObs(city){
 			let flagName = city + 'powerMine'
 			if (powerBank && Game.cpu.bucket > 6000 && powerBank.ticksToDecay > 2500 && !Game.flags[flagName] &&
                     Game.rooms[roomName].find(FIND_STRUCTURES).length < 10){
-				//put a flag on it
-				Game.rooms[roomName].createFlag(powerBank.pos, flagName)
-				console.log('Power Bank found in: ' + roomName)
+                let walls = 0
+                let terrain = Game.rooms[roomName].getTerrain();
+                let x = powerBank.pos.x - 1
+                let y = powerBank.pos.y - 1
+                for(var i = 0; i < 3; i++){
+                    for (var j = 0; J < 3; j++){
+                        let result = terrain.get(x,y);
+                        if (result = TERRAIN_MASK_WALL){
+                            walls++
+                        }
+                    }
+                    j = j - 3;
+                }
+                if(walls < 8){
+    				//put a flag on it
+    				Game.rooms[roomName].createFlag(powerBank.pos, flagName)
+    				console.log('Power Bank found in: ' + roomName)
+                }
 			}
 		}
 	}

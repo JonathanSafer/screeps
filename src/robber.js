@@ -10,11 +10,11 @@ var rRo = {
     /** @param {Creep} creep **/
     run: function(creep) {
       if (_.sum(creep.carry) < 0.1 * creep.carryCapacity) {
-          if(creep.ticksToLive < 270){
+          if(creep.ticksToLive < 350){
               creep.suicide();
           }
-          var target = Game.getObjectById('5bdba51722610f5b666ba2c9');
-          let mineral = RESOURCE_ZYNTHIUM
+          var target = Game.getObjectById('5c496f9b4ec9361e82f49711');
+          let mineral = RESOURCE_OXYGEN
           if (target){
               if(!target.store[mineral]){
                   Game.notify("Robbery complete")

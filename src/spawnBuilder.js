@@ -21,6 +21,9 @@ var rSB = {
             }
             return;
         }
+        if(!Game.flags.claim){
+            return;
+        }
         if(creep.pos.roomName === Game.flags.claim.pos.roomName){
             if(creep.carry.energy == 0 && creep.memory.building){
                 creep.memory.building = false;
@@ -58,9 +61,17 @@ var rSB = {
     
     harvest: function(creep) {
         var sources =  creep.room.find(FIND_SOURCES);
-        if(creep.harvest(sources[creep.memory.target]) == ERR_NOT_IN_RANGE) {
+        if (sources.length == 1){
+            let result = creep.harvest(sources[0]);
+            if(result == ERR_NOT_IN_RANGE) {
+                creep.moveTo(sources[0], {reusePath: 15});
+            }
+            return;
+        }
+        let result = creep.harvest(sources[creep.memory.target]);
+        if(result == ERR_NOT_IN_RANGE) {
             creep.moveTo(sources[creep.memory.target], {reusePath: 15});
-        } else if (creep.harvest(sources[creep.memory.target]) == ERR_NOT_ENOUGH_RESOURCES){
+        } else if (result == ERR_NOT_ENOUGH_RESOURCES || result == ERR_NO_PATH){
             creep.memory.target = (creep.memory.target + 1) % 2;
         }
     }

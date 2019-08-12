@@ -99,7 +99,21 @@ var markets = {
                         let price = markets.sortOrder(sellOrders['XGH2O'])[0].price - 0.1;
                         Game.market.createOrder(ORDER_SELL, 'XGH2O', price, quantity, myCities[i].name)
                     } else if (myOrder.remainingAmount > 15000 && myOrder.price > 3){
-                        Game.market.changeOrderPrice(myId, (myOrder.price - 0.03))
+                        Game.market.changeOrderPrice(myId, (myOrder.price - 0.001))
+                    }
+                }
+                if (myCities[i].terminal.store['G']){
+                    let quantity = myCities[i].terminal.store['G']
+                    let myId = _.find(Object.keys(Game.market.orders), order => Game.market.orders[order].roomName === myCities[i].name && Game.market.orders[order].resourceType === 'G')
+                    let myOrder = Game.market.orders[myId];
+                    if (myOrder && myOrder.remainingAmount < quantity){
+                        let remaining = myOrder.remainingAmount
+                        Game.market.extendOrder(myId, (quantity - remaining))                     
+                    } else if(!myOrder){
+                        let price = markets.sortOrder(sellOrders['G'])[0].price - 0.01;
+                        Game.market.createOrder(ORDER_SELL, 'G', price, quantity, myCities[i].name)
+                    } else if (myOrder.remainingAmount > 15000 && myOrder.price > 1){
+                        Game.market.changeOrderPrice(myId, (myOrder.price - 0.005))
                     }
                 }
                 if (myCities[i].storage.store.energy > 500000){

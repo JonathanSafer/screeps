@@ -26,12 +26,12 @@ module.exports.loop = function () {
         //run cities
         for (let i = 0; i < myCities.length; i += 1) {
             var city = myCities[i].memory.city;
-            if (myCities[i].memory.hermit !== true) {
+            if (myCities[i].memory.city !== "pit") {
                 c.runCity(city, localCreeps[city]);
                 c.updateCountsCity(city, localCreeps[city], localRooms[city]);
                 c.runTowers(city);
                 // TODO: obs runs in dead cities
-                //c.runObs(city)
+                c.runObs(city)
             }
         }
         //run power creeps
@@ -85,7 +85,9 @@ module.exports.loop = function () {
         rp.findRooms();
         rp.planRooms();
         rp.buildConstructionSites(); // TODO: this could go in run city?
-
         s.collectStats();
+        
+        
+        
     });
 };
