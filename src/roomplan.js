@@ -38,6 +38,9 @@ let p = {
                                    "y": plan.y + location.y - template.offset.y}
                         var name = roomName + spawnCount
                         spawnCount = spawnCount + 1
+                        if (Game.cpu.getUsed() + 20 > Game.cpu.tickLimit) {
+                            return
+                        }
                         p.buildConstructionSite(room, structureType, pos, name)
                     })
                 })

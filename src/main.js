@@ -82,9 +82,9 @@ module.exports.loop = function () {
             m.manageMarket(myCities);
         }
 
-        rp.findRooms();
-        rp.planRooms();
-        rp.buildConstructionSites(); // TODO: this could go in run city?
+        //rp.findRooms();
+        //rp.planRooms();
+        //rp.buildConstructionSites(); // TODO: this could go in run city?
         s.collectStats();
         
         //clear labs in a room
