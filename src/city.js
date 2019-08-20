@@ -644,7 +644,7 @@ function runObs(city){
                 for(var i = 0; i < 3; i++){
                     for (var j = 0; j < 3; j++){
                         let result = terrain.get(x,y);
-                        if (result = TERRAIN_MASK_WALL){
+                        if (result == TERRAIN_MASK_WALL){
                             walls++
                         }
                         x++
