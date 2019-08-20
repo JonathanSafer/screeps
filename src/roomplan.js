@@ -31,19 +31,22 @@ let p = {
             if (Game.rooms[roomName].memory.plan) {
                 var room = Game.rooms[roomName]
                 var plan = room.memory.plan
+                var spawnCount = 0
                 _.forEach(template.buildings, function(locations, structureType) {
                     locations.pos.forEach(location => {
                         var pos = {"x": plan.x + location.x, "y": plan.y + location.y}
-                        p.buildConstructionSite(room, structureType, pos)
+                        var name = roomName + spawnCount
+                        spawnCount = spawnCount + 1
+                        p.buildConstructionSite(room, structureType, pos, name)
                     })
                 })
             }
         })
     },
 
-    buildConstructionSite: function(room, structureType, pos) {
+    buildConstructionSite: function(room, structureType, pos, name) {
         if (room.lookAt(pos.x, pos.y).length == 0) {
-            room.createConstructionSite(pos.x, pos.y, structureType)
+            room.createConstructionSite(pos.x, pos.y, structureType, name)
         }
     },
 
