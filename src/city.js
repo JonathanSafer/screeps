@@ -593,6 +593,9 @@ function runNuker(city){
 function runObs(city){
 	if(Game.time % 100 == 0){
 		//check for Obs
+		if(!Game.spawns[city]){
+			return;
+		}
 		let buildings = Game.spawns[city].room.find(FIND_MY_STRUCTURES)
 		let obs = _.find(buildings, structure => structure.structureType === STRUCTURE_OBSERVER);
 		if (obs){
@@ -622,6 +625,9 @@ function runObs(city){
 	}
 	if (Game.time % 100 == 1){
 		//check for Obs and list
+		if(!Game.spawns[city]){
+			return;
+		}
 		let buildings = Game.spawns[city].room.find(FIND_MY_STRUCTURES)
 		let obs = _.find(buildings, structure => structure.structureType === STRUCTURE_OBSERVER);
 		if (obs && Game.spawns[city].memory.powerRooms.length){
