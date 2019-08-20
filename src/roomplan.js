@@ -18,10 +18,59 @@ let p = {
 
     planRooms: function() {
         // TODO
+
+        // 1. for rooms I own. If room has a spawn or a plan, ignore. otherwise plan.
+        // 2. if bucket is less than 3k, return
+        // 
+
     },
 
     buildConstructionSites: function() {
         // TODO
+    },
+
+    planRoom: function(roomName) {
+        // TODO
+        // var room = Game.rooms[roomName]
+        var ter = Game.map.getRoomTerrain(roomName)
+        var sqd = Array(50).fill().map(e => Array(50))
+        var i, j;
+        for (i = 0; i < 50; i++) {
+            for (j = 0; j < 50; j++) {
+                sqd[i][j] = ter.get(i, j) == TERRAIN_MASK_WALL ? 0 : 
+                    i < 2 || i > 47 || j < 2 || j > 47 ? 0 : 
+                    Math.min(sqd[i - 1][j], sqd[i][j - 1], sqd[i - 1][j - 1]) + 1
+            }
+        }
+        
+        for (i = 47; i >= 2; i--) {
+            for (j = 2; j <= 47; j++) {
+                sqd[i][j] = Math.min(sqd[i][j], Math.min(sqd[i + 1][j], sqd[i + 1][j - 1]) + 1)
+            }
+        }
+        
+        for (i = 47; i >= 2; i--) {
+            for (j = 47; j >= 2; j--) {
+                sqd[i][j] = Math.min(sqd[i][j], Math.min(sqd[i + 1][j + 1], sqd[i][j + 1]) + 1)
+            }
+        }
+        
+        for (i = 2; i <= 47; i++) {
+            for (j = 47; j >= 2; j--) {
+                sqd[i][j] = Math.min(sqd[i][j], sqd[i - 1][j + 1] + 1)
+            }
+        }
+        
+        for (i = 0; i < 50; i++) {
+            for (j = 0; j < 50; j++) {
+                if (sqd[i][j] > 6) {
+                    //console.log(i, j)--- save i & j as "planned"
+                    //return
+                }
+                //var hex = sqd[i][j].toString(16)
+                //room.visual.text(sqd[i][j], i, j, {color: "#" + "00" + hex + hex + hex + hex})
+            }
+        }
     },
 
     newRoomNeeded: function() {    
