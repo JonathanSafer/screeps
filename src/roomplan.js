@@ -27,10 +27,8 @@ let p = {
     },
 
     buildConstructionSites: function() {
-        var rooms = p.roomsSelected()
-
-        rooms.forEach((roomName) => {
-            if (roomName in Game.rooms && Game.rooms[roomName].memory.plan) {
+        Game.rooms.forEach((roomName) => {
+            if (Game.rooms[roomName].memory.plan) {
                 var room = Game.rooms[roomName]
                 var plan = room.memory.plan
                 _.forEach(template.buildings, function(locations, structureType) {
