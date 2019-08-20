@@ -12,7 +12,7 @@ var rPM = {
     run: function(creep) {
         var breakerTarget = Game.getObjectById(creep.memory.target)
         if (Game.time % 50 == 1 && breakerTarget){
-            if (breakerTarget.hits < 500000){
+            if (breakerTarget.hits < 600000){
         		Game.spawns[creep.memory.city].memory.runner = Math.ceil(breakerTarget.power/1600);
         	}
         }
