@@ -27,7 +27,7 @@ let p = {
     },
 
     buildConstructionSites: function() {
-        Game.rooms.forEach((roomName) => {
+        Object.keys(Game.rooms).forEach((roomName) => {
             if (Game.rooms[roomName].memory.plan) {
                 var room = Game.rooms[roomName]
                 var plan = room.memory.plan
