@@ -1,5 +1,6 @@
 module.exports = {
 	"dimensions": {"x":13, "y":11},
+	"offset": {"x":18, "y":17},
 	"exits": [{"x": 0, "y": 0}],
 	"buildings": {
 		"extension":{

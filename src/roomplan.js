@@ -34,7 +34,8 @@ let p = {
                 var spawnCount = 0
                 _.forEach(template.buildings, function(locations, structureType) {
                     locations.pos.forEach(location => {
-                        var pos = {"x": plan.x + location.x, "y": plan.y + location.y}
+                        var pos = {"x": plan.x + location.x - template.offset.x, 
+                                   "y": plan.y + location.y - template.offset.y}
                         var name = roomName + spawnCount
                         spawnCount = spawnCount + 1
                         p.buildConstructionSite(room, structureType, pos, name)
