@@ -33,7 +33,7 @@ var rC = {
             return;
         }
         if (Game.flags.claim.pos.roomName == creep.pos.roomName) {
-            if (creep.isNearTo(creep.room.controller.pos)) {
+            if (creep.pos.isNearTo(creep.room.controller.pos)) {
                 var newCity = 'pit'
                 creep.signController(creep.room.controller, newCity)
                 creep.room.memory.city = newCity;
