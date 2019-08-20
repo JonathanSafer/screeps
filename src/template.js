@@ -1,4 +1,4 @@
-{
+module.exports = {
 	"dimensions": {"x":13, "y":11},
 	"exits": [{"x": 0, "y": 0}],
 	"buildings": {

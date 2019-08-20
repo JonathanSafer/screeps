@@ -1,4 +1,5 @@
 let rS = require("scout")
+let template = require("template")
 
 let p = {
     frequency: 2000,
@@ -26,7 +27,26 @@ let p = {
     },
 
     buildConstructionSites: function() {
-        // TODO
+        var rooms = p.roomsSelected()
+
+        rooms.forEach((roomName) => {
+            if (roomName in Game.rooms && Game.rooms[roomName].memory.plan) {
+                var room = Game.rooms[roomName]
+                var plan = room.memory.plan
+                _.forEach(template.buildings, function(locations, structureType) {
+                    locations.pos.forEach(location => {
+                        var pos = {"x": plan.x + location.x, "y": plan.y + location.y}
+                        p.buildConstructionSite(room, structureType, pos)
+                    })
+                })
+            }
+        })
+    },
+
+    buildConstructionSite: function(room, structureType, pos) {
+        if (room.lookAt(pos.x, pos.y).length == 0) {
+            room.createConstructionSite(pos.x, pos.y, structureType)
+        }
     },
 
     planRoom: function(roomName) {
