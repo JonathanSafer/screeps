@@ -64,15 +64,15 @@ function runCity(city, creeps){
         //console.log(JSON.stringify(roles));
         let nextRole = _.find(roles, role => (typeof counts[role.name] == "undefined" && 
             Game.spawns[city].memory[role.name]) || (counts[role.name] < Game.spawns[city].memory[role.name]));
-        console.debug(Game.spawns[city].memory.rM);
+        // console.log(Game.spawns[city].memory.rM);
         if (nextRole) {
-            console.debug(JSON.stringify(nextRole));
+            //console.log(JSON.stringify(nextRole));
             makeCreeps(nextRole.name, nextRole.type, nextRole.target(), city);
         }
     
         // Print out each role & number of workers doing it
         var printout = _.map(roles, role => role.name + ": " + counts[role.name]);
-        console.debug(city + ': ' + printout.join(', ' ));
+        //console.log(city + ': ' + printout.join(', ' ));
     
         // Run all the creeps in this city
         _.forEach(creeps, (creep) => nameToRole[creep.memory.role][0].run(creep)/* || console.log(creep.memory.role + ' ' + Game.cpu.getUsed())*/);
