@@ -298,8 +298,9 @@ function emptyBoosters(memory){
 
 function updateColonizers(memory) {
     //claimer and spawnBuilder reset
-    memory[rSB.name] = 0;
-    memory[rC.name] = 0;
+    // TODO only make a claimer if city is close
+    memory[rSB.name] = Game.flags.claim ? 1 : 0;
+    memory[rC.name] = Game.flags.claim ? 1 : 0;
     //memory[rRo.name] = 0;
 }
 
