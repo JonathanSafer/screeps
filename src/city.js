@@ -590,7 +590,7 @@ function runNuker(city){
     }
 }
 function runObs(city){
-	if(Game.time % 101 == 0){
+	if(Game.time % 100 == 0){
 		//check for Obs
 		let buildings = Game.spawns[city].room.find(FIND_MY_STRUCTURES)
 		let obs = _.find(buildings, structure => structure.structureType === STRUCTURE_OBSERVER);
@@ -613,19 +613,19 @@ function runObs(city){
          			x = x - 5;
                 }
 			}
-			let roomNum = Game.time % Game.spawns[city].memory.powerRooms.length
+			let roomNum = ((Game.time) % (Game.spawns[city].memory.powerRooms.length * 100))/100
 			//scan next room
             obs.observeRoom(Game.spawns[city].memory.powerRooms[roomNum])
 
 		}
 	}
-	if (Game.time % 101 == 1){
+	if (Game.time % 100 == 1){
 		//check for Obs and list
 		let buildings = Game.spawns[city].room.find(FIND_MY_STRUCTURES)
 		let obs = _.find(buildings, structure => structure.structureType === STRUCTURE_OBSERVER);
 		if (obs && Game.spawns[city].memory.powerRooms.length){
 			//do stuff in that room
-			let roomNum = (Game.time - 1) % Game.spawns[city].memory.powerRooms.length
+			let roomNum = ((Game.time - 1) % (Game.spawns[city].memory.powerRooms.length * 100))/100
 			let roomName = Game.spawns[city].memory.powerRooms[roomNum]
 			console.log('Scanning: ' + roomName)
 			if (Game.rooms[roomName].controller){
@@ -642,14 +642,17 @@ function runObs(city){
                 let x = powerBank.pos.x - 1
                 let y = powerBank.pos.y - 1
                 for(var i = 0; i < 3; i++){
-                    for (var j = 0; J < 3; j++){
+                    for (var j = 0; j < 3; j++){
                         let result = terrain.get(x,y);
                         if (result = TERRAIN_MASK_WALL){
                             walls++
                         }
+                        x++
                     }
-                    j = j - 3;
+                    x = x - 3
+                    y++
                 }
+                console.log(walls)
                 if(walls < 8){
     				//put a flag on it
     				Game.rooms[roomName].createFlag(powerBank.pos, flagName)
