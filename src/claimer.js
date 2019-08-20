@@ -32,11 +32,15 @@ var rC = {
         if(!Game.flags.claim){
             return;
         }
-        if (Game.flags.claim.pos.x == creep.pos.x && Game.flags.claim.pos.y == creep.pos.y && Game.flags.claim.pos.roomName == creep.pos.roomName) {
-        	var newCity = 'pit'
-        	creep.signController(creep.room.controller, newCity)
-        	creep.room.memory.city = newCity;
-            creep.claimController(creep.room.controller);
+        if (Game.flags.claim.pos.roomName == creep.pos.roomName) {
+            if (creep.isNearTo(creep.room.controller.pos)) {
+                var newCity = 'pit'
+                creep.signController(creep.room.controller, newCity)
+                creep.room.memory.city = newCity;
+                creep.claimController(creep.room.controller);
+            } else {
+                creep.moveTo(creep.room.controller.pos, {reusePath: 50})
+            }
         } else {
         	creep.moveTo(Game.flags.claim, {reusePath: 50});
         }
