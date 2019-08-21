@@ -1,3 +1,4 @@
+var a = require("actions")
 
 var rSB = {
     name: "spawnBuilder",
@@ -55,10 +56,12 @@ var rSB = {
         if(creep.build(target) == ERR_NOT_IN_RANGE) {
             creep.moveTo(target, {reusePath: 15});
         }
-      } else {
+      } else if(creep.room.controller.level < 2) {
         if(creep.upgradeController(creep.room.controller) == ERR_NOT_IN_RANGE) {
             creep.moveTo(creep.room.controller, {reusePath: 15});  
         }
+      } else {
+        a.charge(creep, spawns[0])
       }
     },
     
