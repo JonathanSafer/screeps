@@ -56,7 +56,16 @@ let p = {
 
     buildConstructionSite: function(room, structureType, pos, name) {
         //console.log(room.lookAt(pos.x, pos.y)[0].type)
-        if (room.lookAt(pos.x, pos.y).length == 1) {
+        let look = room.lookAt(pos.x, pos.y)
+        if(room.controller.level < 5 && structureType == STRUCTURE_TERMINAL){
+            structureType = STRUCTURE_CONTAINER
+        } else if(structureType == STRUCTURE_TERMINAL){
+            let struct = _.find(look, object => object.type == 'structure')
+            if(struct && struct.structureType == STRUCTURE_CONTAINER){
+                struct.destroy()
+            }
+        }
+        if (look.length == 1) {
             //console.log("hi")
             room.createConstructionSite(pos.x, pos.y, structureType, name)
         }
