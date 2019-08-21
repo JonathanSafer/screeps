@@ -107,7 +107,7 @@ function updateCountsCity(city, creeps, rooms) {
                 checkLabs(city)
                 updateTransporter(extensions, memory);
                 updateMilitary(city, memory, rooms);
-                updateColonizers(memory);
+                updateColonizers(city, memory);
                 updateUpgrader(city, controller, memory, rcl8, creeps);
                 updateBuilder(rcl, memory, spawn, rooms, rcl8);
                 updateMineralMiner(rcl, structures, spawn, memory);
@@ -296,11 +296,13 @@ function emptyBoosters(memory){
     }
 }
 
-function updateColonizers(memory) {
+function updateColonizers(city, memory) {
     //claimer and spawnBuilder reset
     // TODO only make a claimer if city is close
-    memory[rSB.name] = Game.flags.claim ? 1 : 0;
-    memory[rC.name] = Game.flags.claim ? 1 : 0;
+    if(city == 'Home'){
+        memory[rSB.name] = Game.flags.claim ? 2 : 0;
+        memory[rC.name] = Game.flags.claim ? 1 : 0;
+    }
     //memory[rRo.name] = 0;
 }
 
@@ -322,49 +324,49 @@ function updateScout(city, rcl, rcl8, memory){
         memory[rS.name] = 0;
         return;
     }
-	let scouts = 0;
-	_.each(memory.remoteRooms, function(roomInfo, room) {
-		if (roomInfo.reinforceTime < Game.time){
-			scouts++
-		}
-	})
-	if (rcl > 3){
-		if (!memory.remoteRooms || Object.keys(memory.remoteRooms).length < 1){
-			scouts = 1;
-		}
-	}
-	if (rcl > 4){
-		if (!memory.remoteRooms || Object.keys(memory.remoteRooms).length < 2){
-			scouts = 2;
-		}
-	}
-	memory[rS.name] = scouts;
+    let scouts = 0;
+    _.each(memory.remoteRooms, function(roomInfo, room) {
+        if (roomInfo.reinforceTime < Game.time){
+            scouts++
+        }
+    })
+    if (rcl > 3){
+        if (!memory.remoteRooms || Object.keys(memory.remoteRooms).length < 1){
+            scouts = 1;
+        }
+    }
+    if (rcl > 4){
+        if (!memory.remoteRooms || Object.keys(memory.remoteRooms).length < 2){
+            scouts = 2;
+        }
+    }
+    memory[rS.name] = scouts;
 }
 
 function updateMiner(rooms, rcl8, memory, spawn){
-	if (!memory.sources) memory.sources = {};
+    if (!memory.sources) memory.sources = {};
     if (rcl8 && _.keys(memory.sources).length > 2) memory.sources = {};
-	let miners = 0;
+    let miners = 0;
     let miningRooms = rcl8 ? [spawn.room] : rooms;
     let sources = _.flatten(_.map(miningRooms, room => room.find(FIND_SOURCES)));
 
-	_.each(sources, function(sourceInfo){
-		let sourceId = sourceInfo.id;
-		let sourcePos = sourceInfo.pos;
-		if (!([sourceId] in memory.sources)){
+    _.each(sources, function(sourceInfo){
+        let sourceId = sourceInfo.id;
+        let sourcePos = sourceInfo.pos;
+        if (!([sourceId] in memory.sources)){
             memory.sources[sourceId] = sourcePos;
         }
-	});
-	_.each(memory.sources, function(sourceInfo){
-	    miners++;
-		let room = sourceInfo.roomName;
-		//if (Game.rooms[room] && !Game.rooms[room].controller.reservation){
-			//delete(Game.spawns[city].memory.sources[source])\
-			//console.log(Game.spawns[city].memory.sources[source])
-			//this is currently not working
-		//}
-	});
-	memory[rM.name] = miners;
+    });
+    _.each(memory.sources, function(sourceInfo){
+        miners++;
+        let room = sourceInfo.roomName;
+        //if (Game.rooms[room] && !Game.rooms[room].controller.reservation){
+            //delete(Game.spawns[city].memory.sources[source])\
+            //console.log(Game.spawns[city].memory.sources[source])
+            //this is currently not working
+        //}
+    });
+    memory[rM.name] = miners;
 }
 
 function updateMineralMiner(rcl, buildings, spawn, memory) {
@@ -591,58 +593,58 @@ function runNuker(city){
     }
 }
 function runObs(city){
-	if(Game.time % 100 == 0){
-		//check for Obs
-		if(!Game.spawns[city]){
-			return;
-		}
-		let buildings = Game.spawns[city].room.find(FIND_MY_STRUCTURES)
-		let obs = _.find(buildings, structure => structure.structureType === STRUCTURE_OBSERVER);
-		if (obs){
-			//check for list
-			if (!Game.spawns[city].memory.powerRooms){
-				Game.spawns[city].memory.powerRooms = [];
+    if(Game.time % 100 == 0){
+        //check for Obs
+        if(!Game.spawns[city]){
+            return;
+        }
+        let buildings = Game.spawns[city].room.find(FIND_MY_STRUCTURES)
+        let obs = _.find(buildings, structure => structure.structureType === STRUCTURE_OBSERVER);
+        if (obs){
+            //check for list
+            if (!Game.spawns[city].memory.powerRooms){
+                Game.spawns[city].memory.powerRooms = [];
                 let myRoom = Game.spawns[city].room.name
                 let pos = rp.roomNameToPos(myRoom)
                 let x = pos[0] - 2;
                 let y = pos[1] - 2;
                 for (var i = 0; i < 5; i++){
-         			for (var j = 0; j < 5; j++){
-         			    let coord = [x, y]
-         			    let roomName = rp.roomPosToName(coord);
-         			    Game.spawns[city].memory.powerRooms.push(roomName)
-         			    x++
-         			}
-         			y++
-         			x = x - 5;
+                    for (var j = 0; j < 5; j++){
+                        let coord = [x, y]
+                        let roomName = rp.roomPosToName(coord);
+                        Game.spawns[city].memory.powerRooms.push(roomName)
+                        x++
+                    }
+                    y++
+                    x = x - 5;
                 }
-			}
-			let roomNum = ((Game.time) % (Game.spawns[city].memory.powerRooms.length * 100))/100
-			//scan next room
+            }
+            let roomNum = ((Game.time) % (Game.spawns[city].memory.powerRooms.length * 100))/100
+            //scan next room
             obs.observeRoom(Game.spawns[city].memory.powerRooms[roomNum])
 
-		}
-	}
-	if (Game.time % 100 == 1){
-		//check for Obs and list
-		if(!Game.spawns[city]){
-			return;
-		}
-		let buildings = Game.spawns[city].room.find(FIND_MY_STRUCTURES)
-		let obs = _.find(buildings, structure => structure.structureType === STRUCTURE_OBSERVER);
-		if (obs && Game.spawns[city].memory.powerRooms.length){
-			//do stuff in that room
-			let roomNum = ((Game.time - 1) % (Game.spawns[city].memory.powerRooms.length * 100))/100
-			let roomName = Game.spawns[city].memory.powerRooms[roomNum]
-			console.log('Scanning: ' + roomName)
-			if (Game.rooms[roomName].controller){
-				Game.spawns[city].memory.powerRooms.splice(roomNum, 1);
-				return;
-			}
-			let structures = Game.rooms[roomName].find(FIND_STRUCTURES)
-			let powerBank = _.find(structures, structure => structure.structureType === STRUCTURE_POWER_BANK);
-			let flagName = city + 'powerMine'
-			if (powerBank && Game.cpu.bucket > 6000 && powerBank.ticksToDecay > 2500 && !Game.flags[flagName] &&
+        }
+    }
+    if (Game.time % 100 == 1){
+        //check for Obs and list
+        if(!Game.spawns[city]){
+            return;
+        }
+        let buildings = Game.spawns[city].room.find(FIND_MY_STRUCTURES)
+        let obs = _.find(buildings, structure => structure.structureType === STRUCTURE_OBSERVER);
+        if (obs && Game.spawns[city].memory.powerRooms.length){
+            //do stuff in that room
+            let roomNum = ((Game.time - 1) % (Game.spawns[city].memory.powerRooms.length * 100))/100
+            let roomName = Game.spawns[city].memory.powerRooms[roomNum]
+            console.log('Scanning: ' + roomName)
+            if (Game.rooms[roomName].controller){
+                Game.spawns[city].memory.powerRooms.splice(roomNum, 1);
+                return;
+            }
+            let structures = Game.rooms[roomName].find(FIND_STRUCTURES)
+            let powerBank = _.find(structures, structure => structure.structureType === STRUCTURE_POWER_BANK);
+            let flagName = city + 'powerMine'
+            if (powerBank && Game.cpu.bucket > 6000 && powerBank.ticksToDecay > 2500 && !Game.flags[flagName] &&
                     Game.rooms[roomName].find(FIND_STRUCTURES).length < 10){
                 let walls = 0
                 let terrain = Game.rooms[roomName].getTerrain();
@@ -661,13 +663,13 @@ function runObs(city){
                 }
                 console.log(walls)
                 if(walls < 8){
-    				//put a flag on it
-    				Game.rooms[roomName].createFlag(powerBank.pos, flagName)
-    				console.log('Power Bank found in: ' + roomName)
+                    //put a flag on it
+                    Game.rooms[roomName].createFlag(powerBank.pos, flagName)
+                    console.log('Power Bank found in: ' + roomName)
                 }
-			}
-		}
-	}
+            }
+        }
+    }
 }
 
 module.exports = {

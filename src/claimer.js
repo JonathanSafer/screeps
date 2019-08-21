@@ -34,7 +34,7 @@ var rC = {
         }
         if (Game.flags.claim.pos.roomName == creep.pos.roomName) {
             if (creep.pos.isNearTo(creep.room.controller.pos)) {
-                var newCity = creep.room.name + "0"
+                var newCity = creep.room.name + "129"
                 creep.signController(creep.room.controller, newCity)
                 creep.room.memory.city = newCity;
                 creep.claimController(creep.room.controller);
@@ -42,7 +42,7 @@ var rC = {
                 creep.moveTo(creep.room.controller.pos, {reusePath: 50})
             }
         } else {
-        	creep.moveTo(Game.flags.claim, {reusePath: 50});
+            creep.moveTo(Game.flags.claim, {reusePath: 50});
         }
     }
       

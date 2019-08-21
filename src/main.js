@@ -84,8 +84,12 @@ module.exports.loop = function () {
 
         //rp.findRooms();
         //rp.planRooms();
-        //rp.buildConstructionSites(); // TODO: this could go in run city?
+        if (Game.time % 500 == 155){
+            rp.buildConstructionSites(); 
+        }// TODO: this could go in run city?
         s.collectStats();
+        
+ 
         
         //clear labs in a room
         /*let creep = Game.creeps['a'];
@@ -105,3 +109,4 @@ module.exports.loop = function () {
         }*/
     });
 };
+

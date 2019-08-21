@@ -28,8 +28,14 @@ let p = {
 
     buildConstructionSites: function() {
         Object.keys(Game.rooms).forEach((roomName) => {
-            if (Game.rooms[roomName].memory.plan) {
-                var room = Game.rooms[roomName]
+            var room = Game.rooms[roomName]
+            if(Game.flags.plan && Game.flags.plan.pos.roomName == roomName){
+                room.memory.plan = {}
+                room.memory.plan.x = Game.flags.plan.pos.x
+                room.memory.plan.y = Game.flags.plan.pos.y
+                Game.flags.plan.remove();
+            }
+            if (room.memory.plan) {
                 var plan = room.memory.plan
                 var spawnCount = 0
                 _.forEach(template.buildings, function(locations, structureType) {
@@ -37,7 +43,7 @@ let p = {
                         var pos = {"x": plan.x + location.x - template.offset.x, 
                                    "y": plan.y + location.y - template.offset.y}
                         var name = roomName + spawnCount
-                        spawnCount = spawnCount + 1
+                        spawnCount = structureType == STRUCTURE_SPAWN ? spawnCount + 1 : spawnCount
                         if (Game.cpu.getUsed() + 20 > Game.cpu.tickLimit) {
                             return
                         }
@@ -49,7 +55,9 @@ let p = {
     },
 
     buildConstructionSite: function(room, structureType, pos, name) {
-        if (room.lookAt(pos.x, pos.y).length == 0) {
+        //console.log(room.lookAt(pos.x, pos.y)[0].type)
+        if (room.lookAt(pos.x, pos.y).length == 1) {
+            //console.log("hi")
             room.createConstructionSite(pos.x, pos.y, structureType, name)
         }
     },
