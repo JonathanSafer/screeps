@@ -3,82 +3,79 @@ function getRecipe(type, extensions){
 	switch (Math.floor(extensions/5)) {
 		case 0:
 			//lvl 1 recipes
-			d['runner'] = [CARRY, CARRY, MOVE, MOVE];
-			d['normal'] = [WORK, WORK, CARRY, MOVE];
-			d['miner'] = [MOVE, MOVE, WORK, WORK];
-			d['transporter'] = [CARRY, CARRY, MOVE, MOVE];
-			d['builder'] = [WORK, WORK, CARRY, MOVE];
-			d['scout'] = [CLAIM, MOVE];
-			d['attacker'] = [TOUGH, MOVE, ATTACK];
+            d['runner'] = body([2, 2], [CARRY, MOVE]);
+            d['normal'] = body([2, 1, 1], [WORK, CARRY, MOVE]);
+            d['miner'] = body([2, 2], [MOVE, WORK]);
+            d['transporter'] = body([2, 2], [CARRY, MOVE]);
+            d['builder'] = body([2, 1, 1], [WORK, CARRY, MOVE]);
+            d['scout'] = body([1, 1], [MOVE, CLAIM]);
+            d['attacker'] = body([1, 1, 1], [TOUGH, MOVE, ATTACK]);
 			break;
 		case 1:
 			//lvl 2 recipes
-			d['runner'] = [CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE];
-			d['normal'] = [WORK, WORK, WORK, CARRY, CARRY, MOVE, MOVE, MOVE];
-			d['miner'] = [MOVE, WORK, WORK, WORK, WORK, WORK];
-			d['transporter'] = [CARRY, CARRY, CARRY, CARRY, MOVE, MOVE];
-			d['builder'] = [WORK, WORK, CARRY, CARRY, MOVE, MOVE];
-			d['scout'] = [CLAIM, MOVE];
-			d['attacker'] = [TOUGH, TOUGH, MOVE, MOVE, MOVE, ATTACK];
+            d['runner'] = body([6, 3], [CARRY, MOVE]);
+            d['normal'] = body([3, 2, 3], [WORK, CARRY, MOVE]);
+            d['miner'] = body([1, 5], [MOVE, WORK]);
+            d['transporter'] = body([4, 2], [CARRY, MOVE]);
+            d['builder'] = body([2, 2, 2], [WORK, CARRY, MOVE]);
+            d['scout'] = body([1, 1], [MOVE, CLAIM]);
+            d['attacker'] = body([2, 3, 1], [TOUGH, MOVE, ATTACK]);
 			break;
 		case 2:
 		case 3:
 			//lvl 3 recipes
-			d['runner'] = [CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE];
-			d['normal'] = [WORK, WORK, WORK, WORK, CARRY, CARRY, MOVE, MOVE, MOVE];
-			d['miner'] = [MOVE, MOVE, MOVE, WORK, WORK, WORK, WORK, WORK];
-			d['transporter'] = [CARRY, CARRY, CARRY, CARRY, MOVE, MOVE];
-			d['builder'] = [WORK, WORK, WORK, CARRY, CARRY, MOVE, MOVE];
-			d['scout'] = [CLAIM, MOVE];
-			d['attacker'] = [MOVE, MOVE, MOVE, MOVE, ATTACK, ATTACK, ATTACK, ATTACK];
+            d['runner'] = body([10, 5], [CARRY, MOVE]);
+            d['normal'] = body([4, 2, 3], [WORK, CARRY, MOVE]);
+            d['miner'] = body([3, 5], [MOVE, WORK]);
+            d['transporter'] = body([4, 2], [CARRY, MOVE]);
+            d['builder'] = body([3, 2, 2], [WORK, CARRY, MOVE]);
+            d['scout'] = body([1, 1], [MOVE, CLAIM]);
+            d['attacker'] = body([4, 4], [MOVE, ATTACK]);
 			break;
 		case 4:
 		case 5:
 			//lvl 4 recipes
-			d['runner'] = [CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY,CARRY, CARRY, CARRY, CARRY,CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE,MOVE, MOVE];
-			d['normal'] =  [WORK, WORK, WORK, WORK, WORK, WORK, WORK, WORK, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE];
-			d['miner'] = [MOVE, MOVE, MOVE, WORK, WORK, WORK, WORK, WORK];
-			d['transporter'] = [CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE];
-			d['builder'] = [WORK,WORK, WORK, WORK, WORK,CARRY, CARRY, CARRY, CARRY,CARRY, CARRY, CARRY, CARRY,CARRY,MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE];
-			d['scout'] = [MOVE, MOVE, CLAIM, CLAIM];
-			d['attacker'] = [TOUGH, TOUGH, MOVE, MOVE, MOVE, MOVE, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK];
-			d['spawnBuilder'] = [WORK, WORK, WORK, WORK, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE]
-    		d['trooper'] = [RANGED_ATTACK, RANGED_ATTACK, RANGED_ATTACK, MOVE, MOVE, MOVE]
-    		d['medic'] = [HEAL, HEAL, MOVE, MOVE]
+            d['runner'] = body([16, 8], [CARRY, MOVE]);
+            d['normal'] = body([8, 4, 6], [WORK, CARRY, MOVE]);
+            d['miner'] = body([3, 5], [MOVE, WORK]);
+            d['transporter'] = body([8, 4], [CARRY, MOVE]);
+            d['builder'] = body([5, 9, 7], [WORK, CARRY, MOVE]);
+            d['scout'] = body([2, 2], [MOVE, CLAIM]);
+            d['attacker'] = body([2, 4, 6], [TOUGH, MOVE, ATTACK]);
+            d['spawnBuilder'] = body([4, 2, 4], [WORK, CARRY, MOVE]);
+    		d['trooper'] = body([3, 3], [RANGED_ATTACK, MOVE]);
+    		d['medic'] = body([2, 2], [MOVE, HEAL]);
 			break;
 		case 6:
 		case 7:
 			//lvl 5 recipes
-    		d['normal'] = [WORK, WORK, WORK, WORK, WORK, WORK, WORK, WORK, WORK, WORK, WORK, WORK, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE];
-    		d['builder'] = [WORK,WORK, WORK, WORK, WORK,CARRY, CARRY, CARRY, CARRY,CARRY, CARRY, CARRY, CARRY,CARRY,MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE];
-    		d['ferry'] = [CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE];
-    		d['runner'] = [CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE];
-    		d['transporter'] = [CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE];
-    		d['miner'] = [MOVE, MOVE, MOVE, WORK, WORK, WORK, WORK, WORK];
-    		d['scout'] = [MOVE, MOVE, MOVE, MOVE, MOVE, CLAIM, CLAIM];
-    		d['attacker'] = [TOUGH, TOUGH, MOVE, MOVE, MOVE, MOVE, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK];
-    		d['spawnBuilder'] = [WORK, WORK, WORK, WORK, WORK, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE]
-    		d['trooper'] = [RANGED_ATTACK, RANGED_ATTACK, RANGED_ATTACK, RANGED_ATTACK, RANGED_ATTACK, RANGED_ATTACK, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE]
-    		d['medic'] = [MOVE, MOVE, MOVE, MOVE, MOVE, HEAL, HEAL, HEAL, HEAL, HEAL]
+    		d['normal'] = body([12, 4, 8], [WORK, CARRY, MOVE]);
+    		d['builder'] = body([5, 9, 7], [WORK, CARRY, MOVE]);
+    		d['ferry'] = body([6, 3], [CARRY, MOVE]);
+    		d['runner'] = body([24, 12], [CARRY, MOVE]);
+    		d['transporter'] = body([8, 4], [CARRY, MOVE]);
+    		d['miner'] = body([3, 5], [MOVE, WORK]);
+    		d['scout'] = body([5, 2], [MOVE, CLAIM]);
+    		d['attacker'] = body([2, 4, 6], [TOUGH, MOVE, ATTACK]);
+    		d['spawnBuilder'] = body([5, 2, 5], [WORK, CARRY, MOVE]);
+    		d['trooper'] = body([6, 6], [RANGED_ATTACK, MOVE]);
+    		d['medic'] = body([5, 5], [MOVE, HEAL]);
     		break;
 		case 8:
 		case 9:
 			// lvl 6 recipes
-    		d['normal'] = [WORK, WORK, WORK, WORK, WORK, WORK, WORK, WORK, WORK, WORK, WORK, WORK, WORK, WORK, WORK, CARRY, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE];
-    		d['builder'] = [WORK, WORK, WORK, WORK, WORK, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY,CARRY,MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE];
-    		d['ferry'] = [CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE];
-    		d['runner'] = [CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY,
-            	CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY,
-            	MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE];
-    		d['transporter'] = [CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE];
-    		d['miner'] = [MOVE, MOVE, MOVE, WORK, WORK, WORK, WORK, WORK];
-    		d['mineralMiner'] = [WORK, WORK, WORK, WORK, WORK, WORK, WORK, WORK, WORK, WORK, WORK, WORK, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY,
-            	MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE];
-    		d['scout'] = [MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, CLAIM, CLAIM, CLAIM];
-    		d['attacker'] = [TOUGH, TOUGH, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK];
-    		d['spawnBuilder'] = [WORK, WORK, WORK, WORK, WORK, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE]
-    	    d['trooper'] = [RANGED_ATTACK, RANGED_ATTACK, RANGED_ATTACK, RANGED_ATTACK, RANGED_ATTACK, RANGED_ATTACK, RANGED_ATTACK, RANGED_ATTACK, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE]
-    		d['medic'] = [MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, HEAL, HEAL, HEAL, HEAL, HEAL, HEAL, HEAL]
+    		d['normal'] = body([15, 5, 10], [WORK, CARRY, MOVE]);
+    		d['builder'] = body([5, 9, 7], [WORK, CARRY, MOVE]);
+    		d['ferry'] = body([6, 3], [CARRY, CARRY, MOVE]);
+    		d['runner'] = body([30, 15], [CARRY, MOVE]);
+    		d['transporter'] = body([8, 4], [CARRY, MOVE]);
+    		d['miner'] = body([3, 5], [MOVE, WORK]);
+    		d['mineralMiner'] = body([12, 6, 9], [WORK, CARRY, MOVE]);
+    		d['scout'] = body([8, 3], [MOVE, CLAIM]);
+    		d['attacker'] = body([2, 6, 10], [TOUGH, MOVE, ATTACK]);
+    		d['spawnBuilder'] = body([5, 2, 5], [WORK, CARRY, MOVE]);
+    	    d['trooper'] = body([8, 8], [RANGED_ATTACK, MOVE]);
+    		d['medic'] = body([7, 7], [MOVE, HEAL]);
     		d['robber'] = body([20, 20], [CARRY, MOVE]);
     		break;
 		case 10:
