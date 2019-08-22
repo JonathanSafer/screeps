@@ -90,7 +90,6 @@ function updateCountsCity(city, creeps, rooms) {
         let controller = spawn.room.controller;
         let rcl = controller.level;
         let rcl8 = rcl > 7;
-        let rcl8Room = _.find(Game.rooms, room => room.controller && room.controller.owner && room.controller.owner == "Yoner" && room.controller.level == 8)
         var extensions = _.filter(Game.structures, 
             (structure) => (structure.structureType == STRUCTURE_EXTENSION) &&
             (structure.room.memory.city == [city])).length;
@@ -98,6 +97,7 @@ function updateCountsCity(city, creeps, rooms) {
 
         let logisticsTime = rcl8 ? 500 : 50;
         if (Game.time % logisticsTime == 0) {
+            let rcl8Room = _.find(Game.rooms, room => room.controller && room.controller.owner && room.controller.owner.username == "Yoner" && room.controller.level == 8)
             updateScout(city, rcl, rcl8, rcl8Room, memory);
             updateRunner(creeps, spawn, extensions, memory, rcl8);
             updateFerry(spawn, memory, rcl8);
