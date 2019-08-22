@@ -324,6 +324,11 @@ function updateScout(city, rcl, rcl8, memory){
         memory[rS.name] = 0;
         return;
     }
+    rcl8Room = _.find(Game.rooms, room => room.controller && room.controller.owner && room.controller.owner == "Yoner" && room.controller.level == 8)
+    if (rcl8Room){
+        memory[rS.name] = 0;
+        return;
+    }
     let scouts = 0;
     _.each(memory.remoteRooms, function(roomInfo, room) {
         if (roomInfo.reinforceTime < Game.time){
