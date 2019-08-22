@@ -301,7 +301,7 @@ function emptyBoosters(memory){
 function updateColonizers(city, memory) {
     //claimer and spawnBuilder reset
     // TODO only make a claimer if city is close
-    if(city == 'Home'){
+    if(city == 'sAmalia'){
         memory[rSB.name] = Game.flags.claim ? 2 : 0;
         memory[rC.name] = Game.flags.claim ? 1 : 0;
     }
