@@ -435,7 +435,7 @@ function updateBuilder(rcl, memory, spawn, rooms, rcl8) {
         let repairSites = _.filter(buildings, structure => (structure.hits < (structure.hitsMax*0.3)) && (structure.structureType != STRUCTURE_WALL));
         totalSites = (Math.floor((repairSites.length)/10) + constructionSites.length);
     } else {
-        totalSites = constructionSites.length + 1;
+        totalSites = constructionSites.length;
     }
     if (totalSites > 0){
         memory[rB.name] = (totalSites > 10 && rcl > 2) ? 3 : 1;
