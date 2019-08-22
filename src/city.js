@@ -90,6 +90,7 @@ function updateCountsCity(city, creeps, rooms) {
         let controller = spawn.room.controller;
         let rcl = controller.level;
         let rcl8 = rcl > 7;
+        let rcl8Room = _.find(Game.rooms, room => room.controller && room.controller.owner && room.controller.owner == "Yoner" && room.controller.level == 8)
         var extensions = _.filter(Game.structures, 
             (structure) => (structure.structureType == STRUCTURE_EXTENSION) &&
             (structure.room.memory.city == [city])).length;
@@ -97,10 +98,10 @@ function updateCountsCity(city, creeps, rooms) {
 
         let logisticsTime = rcl8 ? 500 : 50;
         if (Game.time % logisticsTime == 0) {
-            updateScout(city, rcl, rcl8, memory);
+            updateScout(city, rcl, rcl8, rcl8Room, memory);
             updateRunner(creeps, spawn, extensions, memory, rcl8);
             updateFerry(spawn, memory, rcl8);
-            updateMiner(rooms, rcl8, memory, spawn);
+            updateMiner(rooms, rcl8Room, memory, spawn);
         
             if (Game.time % 500 === 0) {
                 runNuker(city)
@@ -319,12 +320,11 @@ function updateAttacker(rooms, memory) {
     //memory[rA.name] = 0;
 }
 
-function updateScout(city, rcl, rcl8, memory){
+function updateScout(city, rcl, rcl8, rcl8Room, memory){
     if (rcl8) {
         memory[rS.name] = 0;
         return;
     }
-    rcl8Room = _.find(Game.rooms, room => room.controller && room.controller.owner && room.controller.owner == "Yoner" && room.controller.level == 8)
     if (rcl8Room){
         memory[rS.name] = 0;
         return;
@@ -348,11 +348,11 @@ function updateScout(city, rcl, rcl8, memory){
     memory[rS.name] = scouts;
 }
 
-function updateMiner(rooms, rcl8, memory, spawn){
+function updateMiner(rooms, rcl8Room, memory, spawn){
     if (!memory.sources) memory.sources = {};
-    if (rcl8 && _.keys(memory.sources).length > 2) memory.sources = {};
+    if (rcl8Room && _.keys(memory.sources).length > 2) memory.sources = {};
     let miners = 0;
-    let miningRooms = rcl8 ? [spawn.room] : rooms;
+    let miningRooms = rcl8Room ? [spawn.room] : rooms;
     let sources = _.flatten(_.map(miningRooms, room => room.find(FIND_SOURCES)));
 
     _.each(sources, function(sourceInfo){
