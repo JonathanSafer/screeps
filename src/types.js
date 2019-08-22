@@ -1,9 +1,14 @@
-function getRecipe(type, extensions){
+function getRecipe(type, extensions, room){
 	let d = {};
+
+    let baseCost = 2 * BODYPART_COST[CARRY] + BODYPART_COST[MOVE];
+    let scale = Math.floor(Math.min(room.energyCapacityAvailable / baseCost, MAX_CREEP_SIZE / 3));
+    d.runner = body([2 * scale, scale], [CARRY, MOVE]);
+
 	switch (Math.floor(extensions/5)) {
 		case 0:
 			//lvl 1 recipes
-            d['runner'] = body([2, 2], [CARRY, MOVE]);
+            d.runner = body([2, 2], [CARRY, MOVE]);
             d['normal'] = body([2, 1, 1], [WORK, CARRY, MOVE]);
             d['miner'] = body([2, 2], [MOVE, WORK]);
             d['transporter'] = body([2, 2], [CARRY, MOVE]);
@@ -13,7 +18,6 @@ function getRecipe(type, extensions){
 			break;
 		case 1:
 			//lvl 2 recipes
-            d['runner'] = body([6, 3], [CARRY, MOVE]);
             d['normal'] = body([3, 2, 3], [WORK, CARRY, MOVE]);
             d['miner'] = body([1, 5], [MOVE, WORK]);
             d['transporter'] = body([4, 2], [CARRY, MOVE]);
@@ -24,7 +28,6 @@ function getRecipe(type, extensions){
 		case 2:
 		case 3:
 			//lvl 3 recipes
-            d['runner'] = body([10, 5], [CARRY, MOVE]);
             d['normal'] = body([4, 2, 3], [WORK, CARRY, MOVE]);
             d['miner'] = body([3, 5], [MOVE, WORK]);
             d['transporter'] = body([4, 2], [CARRY, MOVE]);
@@ -35,7 +38,6 @@ function getRecipe(type, extensions){
 		case 4:
 		case 5:
 			//lvl 4 recipes
-            d['runner'] = body([16, 8], [CARRY, MOVE]);
             d['normal'] = body([8, 4, 6], [WORK, CARRY, MOVE]);
             d['miner'] = body([3, 5], [MOVE, WORK]);
             d['transporter'] = body([8, 4], [CARRY, MOVE]);
@@ -52,7 +54,6 @@ function getRecipe(type, extensions){
     		d['normal'] = body([12, 4, 8], [WORK, CARRY, MOVE]);
     		d['builder'] = body([5, 9, 7], [WORK, CARRY, MOVE]);
     		d['ferry'] = body([6, 3], [CARRY, MOVE]);
-    		d['runner'] = body([24, 12], [CARRY, MOVE]);
     		d['transporter'] = body([8, 4], [CARRY, MOVE]);
     		d['miner'] = body([3, 5], [MOVE, WORK]);
     		d['scout'] = body([5, 2], [MOVE, CLAIM]);
@@ -67,7 +68,6 @@ function getRecipe(type, extensions){
     		d['normal'] = body([15, 5, 10], [WORK, CARRY, MOVE]);
     		d['builder'] = body([5, 9, 7], [WORK, CARRY, MOVE]);
     		d['ferry'] = body([6, 3], [CARRY, CARRY, MOVE]);
-    		d['runner'] = body([30, 15], [CARRY, MOVE]);
     		d['transporter'] = body([8, 4], [CARRY, MOVE]);
     		d['miner'] = body([3, 5], [MOVE, WORK]);
     		d['mineralMiner'] = body([12, 6, 9], [WORK, CARRY, MOVE]);
@@ -84,7 +84,6 @@ function getRecipe(type, extensions){
     		d['normal'] = body([20, 12, 16], [WORK, CARRY, MOVE]);
     		d['builder'] = body([5, 9, 7], [WORK, CARRY, MOVE]);
     		d['ferry'] = body([10, 5], [CARRY, MOVE]);
-    		d['runner'] = body([32, 16], [CARRY, MOVE]);
     		d['transporter'] = body([8, 4], [CARRY, MOVE]);
     		d['miner'] = body([5, 10], [MOVE, WORK]);
     		d['mineralMiner'] = body([22, 10, 16], [WORK, CARRY, MOVE]);
@@ -102,7 +101,6 @@ function getRecipe(type, extensions){
     		d['normal'] = body([15, 15, 15],[WORK, CARRY, MOVE]);
     		d['builder'] = body([15, 9, 12], [WORK, CARRY, MOVE]);
     		d['ferry'] = body([20, 10], [CARRY, MOVE]);
-    		d['runner'] = body([32, 16], [CARRY, MOVE]);
     		d['transporter'] = body([8, 4],[CARRY, MOVE]);
     		d['miner'] = body([14, 8, 20],[MOVE, CARRY, WORK]);
     		d['mineralMiner'] = body([22, 10, 16], [WORK, CARRY, MOVE]);
@@ -122,11 +120,11 @@ function getRecipe(type, extensions){
             break;
 	}
 
-    d['eye'] = body([1], [MOVE]);
-    d['basic'] = body([1,1,1],[WORK, CARRY, MOVE]);
-    d['lightMiner'] = body([2, 2], [MOVE, WORK]);
-    d['erunner'] = body([2, 1], [CARRY, MOVE]);
-    d['claimer'] = body([1, 1], [CLAIM, MOVE]);
+    d.eye = body([1], [MOVE]);
+    d.basic = body([1,1,1],[WORK, CARRY, MOVE]);
+    d.lightMiner = body([2, 2], [MOVE, WORK]);
+    d.erunner = body([2, 1], [CARRY, MOVE]);
+    d.claimer = body([1, 1], [CLAIM, MOVE]);
 
 	return d[type]//recipe
 }

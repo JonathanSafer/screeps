@@ -31,11 +31,12 @@ function makeCreeps(role, type, target, city) {
     let extensions = _.filter(Game.structures, (structure) => (structure.structureType == STRUCTURE_EXTENSION) && (structure.room.memory.city == [city])).length
     //console.log(extensions)
     //console.log(types.getRecipe('basic', 2));
-    let recipe = types.getRecipe(type, extensions);
+    let room = Game.spawns[city].room;
+    let recipe = types.getRecipe(type, extensions, room);
     //console.log(role)
-    let spawns = Game.spawns[city].room.find(FIND_MY_SPAWNS);
+    let spawns = room.find(FIND_MY_SPAWNS);
     let name = Game.spawns['Home'].memory.counter.toString();
-    if (types.cost(recipe) <= Game.spawns[city].room.energyAvailable){
+    if (types.cost(recipe) <= room.energyAvailable){
         let spawn = u.getAvailableSpawn(spawns);
         //console.log(spawn);
         if(spawn != null) {
@@ -454,7 +455,7 @@ function updateRunner(creeps, spawn, extensions, memory, rcl8) {
     var totalDistance = _.sum(distances);
     var minerEnergyPerTick = extensions < 5 ? 10 : 20;
     var energyProduced = 1.0 * totalDistance * minerEnergyPerTick;
-    var energyCarried = types.carry(types.getRecipe('runner', extensions));
+    var energyCarried = types.carry(types.getRecipe('runner', extensions, spawn.room));
     memory[rR.name] = Math.min(8, Math.max(Math.ceil(energyProduced / energyCarried), 2));
 }
 
