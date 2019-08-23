@@ -77,7 +77,7 @@ let p = {
         _.forEach(structures, structure => {
             structure.destroy();
         })
-    }
+    },
 
     planRoom: function(roomName) {
         // TODO
