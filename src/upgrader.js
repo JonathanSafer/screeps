@@ -16,19 +16,21 @@ var rU = {
       rU.checkBoost(creep, city);
       rU.getBoosted(creep, city);
 
-      if(creep.memory.upgrading && creep.carry.energy == 0) {
-        creep.memory.upgrading = false;
-      } else if(!creep.memory.upgrading && creep.carry.energy == creep.carryCapacity) {
-        creep.memory.upgrading = true;
+      if (creep.memory.state == 2){
+        if(creep.memory.upgrading && creep.carry.energy == 0) {
+          creep.memory.upgrading = false;
+        } else if(!creep.memory.upgrading && creep.carry.energy == creep.carryCapacity) {
+          creep.memory.upgrading = true;
+        }
+        var targets = u.getWithdrawLocations(creep);
+        var location = targets[creep.memory.target];
+        if (!location){
+          location = Game.spawns[city];  
+        }
+        if (creep.memory.upgrading ? actions.upgrade(creep) : actions.withdraw(creep, location) == ERR_NOT_ENOUGH_RESOURCES){
+            creep.memory.target = u.getNextLocation(creep.memory.target, targets);
+        };
       }
-      var targets = u.getWithdrawLocations(creep);
-      var location = targets[creep.memory.target];
-      if (!location){
-        location = Game.spawns[city];  
-      }
-      if (creep.memory.upgrading ? actions.upgrade(creep) : actions.withdraw(creep, location) == ERR_NOT_ENOUGH_RESOURCES){
-          creep.memory.target = u.getNextLocation(creep.memory.target, targets);
-      };
     },
 
 
