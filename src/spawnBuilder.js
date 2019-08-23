@@ -76,8 +76,10 @@ var rSB = {
         }
         let result = creep.harvest(sources[creep.memory.target]);
         if(result == ERR_NOT_IN_RANGE) {
-            creep.moveTo(sources[creep.memory.target], {reusePath: 15});
-        } else if (result == ERR_NOT_ENOUGH_RESOURCES || result == ERR_NO_PATH){
+            if(creep.moveTo(sources[creep.memory.target], {reusePath: 15}) == ERR_NO_PATH){
+                creep.memory.target = (creep.memory.target + 1) % 2;
+            }
+        } else if (result == ERR_NOT_ENOUGH_RESOURCES){
             creep.memory.target = (creep.memory.target + 1) % 2;
         }
     }
