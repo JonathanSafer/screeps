@@ -40,12 +40,12 @@ var rU = {
           creep.memory.state = 2
           return;
       }
-      if(!Game.spawns[city].ferryInfo || !Game.spawns[city].ferryInfo.boosterInfo){
+      if(!Game.spawns[city].memory.ferryInfo || !Game.spawns[city].memory.ferryInfo.boosterInfo){
           creep.memory.state = 2
           return;
       }
       let terminal = creep.room.terminal
-      let lab = Game.getObjectById(Game.spawns[city].ferryInfo.boosterInfo[0][0])
+      let lab = Game.getObjectById(Game.spawns[city].memory.ferryInfo.boosterInfo[0][0])
       if(terminal.store['XGH2O'] > (LAB_BOOST_MINERAL * 15) && lab.mineralAmount == 0){
         creep.memory.state = 1
       } else {
@@ -58,7 +58,7 @@ var rU = {
       if(creep.memory.state != 1){
         return;
       }
-      let lab = Game.getObjectById(Game.spawns[city].ferryInfo.boosterInfo[0][0])
+      let lab = Game.getObjectById(Game.spawns[city].memory.ferryInfo.boosterInfo[0][0])
       if(_.sum(creep.carry) == 0 && !creep.pos.isNearTo(lab.pos)){
         actions.withdraw(creep, creep.room.terminal, 'XGH2O', LAB_BOOST_MINERAL * 15)
         return;
