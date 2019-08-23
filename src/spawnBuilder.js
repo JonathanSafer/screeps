@@ -25,7 +25,8 @@ var rSB = {
         if(creep.pos.roomName === Game.flags.claim.pos.roomName){
             if(Game.time % 100 == 0){
                 let extensions = _.filter(creep.room.find(FIND_MY_STRUCTURES), structure => structure.structureType == STRUCTURE_EXTENSION)
-                if (extensions.length > 4){
+                let cSites = creep.room.find(FIND_MY_CONSTRUCTION_SITES)
+                if (extensions.length > 4 && !cSites.length){
                     Game.flags.claim.remove()
                 }
             }
