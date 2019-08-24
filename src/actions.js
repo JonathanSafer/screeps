@@ -8,7 +8,11 @@ var actions = {
                 if(false) {//creep.memory.test) {
                     actions.move(creep, location);
                 } else {
-                    return creep.moveTo(location, {reusePath: 15, maxOps: 10000, maxRooms: 32});
+                    if(creep.memory.role === 'upgrader'){
+                        return creep.moveTo(location, {reusePath: 15, range: 3});
+                    } else {
+                        return creep.moveTo(location, {reusePath: 15, maxOps: 10000, maxRooms: 32});
+                    }
                 }
             case OK:
                 return 1;
