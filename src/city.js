@@ -414,6 +414,11 @@ function updateUpgrader(city, controller, memory, rcl8, creeps) {
             Game.spawns[city].memory[rU.name] = 0;
         }
     } else {
+        let constructionSites = Game.spawns[city].room.find(FIND_MY_CONSTRUCTION_SITES)
+        if(constructionSites.length){
+            memory[rU.name] = 1;
+            return;
+        }
         var banks = u.getWithdrawLocations(creeps[0]);
         //console.log(banks);
         var money = _.sum(_.map(banks, bank => bank.store[RESOURCE_ENERGY]));
