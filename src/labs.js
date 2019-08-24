@@ -27,7 +27,7 @@ var labs = {
         if (lab0.mineralAmount > 0 && lab1.mineralAmount > 0){
             let produce = REACTIONS[spawn.memory.ferryInfo.labInfo[0][2]][spawn.memory.ferryInfo.labInfo[1][2]]
             let reactionTime = REACTION_TIME[produce]
-            if (Game.time % reactionTime === 4){
+            if (Game.time % reactionTime === 4 && Game.cpu.bucket > 2000){
                 lab2.runReaction(lab0, lab1);
                 lab3.runReaction(lab0, lab1);
                 lab4.runReaction(lab0, lab1);
