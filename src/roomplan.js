@@ -62,7 +62,7 @@ let p = {
             structureType = STRUCTURE_CONTAINER
         } else if(structureType == STRUCTURE_TERMINAL){
             let struct = _.find(look, object => object.type == 'structure')
-            if(struct && struct.structureType == STRUCTURE_CONTAINER){
+            if(struct && struct.structure.structureType == STRUCTURE_CONTAINER){
                 struct.destroy()
             }
         }
