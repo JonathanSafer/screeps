@@ -304,6 +304,9 @@ function updateColonizers(city, memory) {
     if(city == 'Yonland'){
         memory[rSB.name] = Game.flags.claim ? 2 : 0;
         memory[rC.name] = Game.flags.claim ? 1 : 0;
+    } else {
+        memory[rSB.name] = 0;
+        memory[rC.name] = 0;
     }
     //memory[rRo.name] = 0;
 }
