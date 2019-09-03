@@ -69,6 +69,17 @@ var markets = {
     	}
     },
     
+    sellPower: function distributePower(city, buyOrders){
+        let terminal = city.terminal
+        if ('power' in terminal.store && terminal.store['power'] > 20000){
+            var goodOrders = markets.sortOrder(buyOrders['power']);
+            if (goodOrders.length && goodOrders[goodOrders.length - 1].price > .20){
+                Game.market.deal(goodOrders[goodOrders.length - 1].id, Math.min(goodOrders[goodOrders.length - 1].remainingAmount,  Math.max(0, terminal.store['power'] - 20000)), myCities[i].name)
+                console.log(Math.min(goodOrders[goodOrders.length - 1].remainingAmount,  Math.max(0, myCities[i].terminal.store['power'] - 20000)) + " " + 'power' + " sold for " + goodOrders[goodOrders.length - 1].price)
+            }
+        }
+    },
+
     manageMarket: function manageMarket(myCities){
         for(i = 0; i < Object.keys(Game.market.orders).length; i++){
             if(!Game.market.orders[Object.keys(Game.market.orders)[i]].active){
@@ -88,6 +99,7 @@ var markets = {
                 		console.log(Math.min(goodOrders[goodOrders.length - 1].remainingAmount,  Math.max(0, myCities[i].terminal.store[mineral] - 20000)) + " " + mineral + " sold for " + goodOrders[goodOrders.length - 1].price)
                 	}
                 }
+                markets.sellPower(myCities[i], buyOrders);
                 if (myCities[i].terminal.store['XGH2O']){
                     let quantity = myCities[i].terminal.store['XGH2O']
                     let myId = _.find(Object.keys(Game.market.orders), order => Game.market.orders[order].roomName === myCities[i].name && Game.market.orders[order].resourceType === 'XGH2O')
