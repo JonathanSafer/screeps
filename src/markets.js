@@ -74,7 +74,7 @@ var markets = {
         if ('power' in terminal.store && terminal.store['power'] > 20000){
             var goodOrders = markets.sortOrder(buyOrders['power']);
             if (goodOrders.length && goodOrders[goodOrders.length - 1].price > .20){
-                Game.market.deal(goodOrders[goodOrders.length - 1].id, Math.min(goodOrders[goodOrders.length - 1].remainingAmount,  Math.max(0, terminal.store['power'] - 20000)), myCities[i].name)
+                Game.market.deal(goodOrders[goodOrders.length - 1].id, Math.min(goodOrders[goodOrders.length - 1].remainingAmount,  Math.max(0, terminal.store['power'] - 20000)), city.name)
                 console.log(Math.min(goodOrders[goodOrders.length - 1].remainingAmount,  Math.max(0, myCities[i].terminal.store['power'] - 20000)) + " " + 'power' + " sold for " + goodOrders[goodOrders.length - 1].price)
             }
         }
