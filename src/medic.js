@@ -23,6 +23,9 @@ var rMe = {
     	    }
     	}
     	if (!breaker){
+            if(creep.ticksToLive < 150){
+                creep.suicide();
+            }
 	   		var allCreeps = u.splitCreepsByCity();
 	   		var status = creep.memory.role.substring(0, 3);
 	   		var breakerSearch = [];
