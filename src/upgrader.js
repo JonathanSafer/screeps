@@ -45,7 +45,7 @@ var rU = {
       if(Game.spawns[city].room.controller.level < 8){
         let lab = _.find(Game.spawns[city].room.find(FIND_STRUCTURES), structure => structure.structureType === STRUCTURE_LAB)
         if(lab){
-          if(rU.checkMaterials(lab)){
+          if(rU.checkMaterials(lab, creep)){
             creep.memory.lab = lab.id
             creep.memory.state = 1
             return;
