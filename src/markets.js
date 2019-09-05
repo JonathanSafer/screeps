@@ -125,7 +125,7 @@ var markets = {
                     } else if(!myOrder && quantity > 10000){
                         let price = markets.sortOrder(sellOrders['XGH2O'])[0].price - 0.1;
                         Game.market.createOrder(ORDER_SELL, 'XGH2O', price, quantity, myCities[i].name)
-                    } else if (myOrder.remainingAmount > 15000 && myOrder.price > 3){
+                    } else if (myOrder && myOrder.remainingAmount > 15000 && myOrder.price > 3){
                         Game.market.changeOrderPrice(myId, (myOrder.price - 0.001))
                     }
                 }
