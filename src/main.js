@@ -37,10 +37,11 @@ module.exports.loop = function () {
         //run power creeps
         pC.run103207();
         pC.run138066();
-        //distribute energy and power
+        //distribute energy, power and upgrade boost
         if (Game.time % 100 === 0) {
             m.distributeEnergy(myCities);
             m.distributePower(myCities);
+            m.distributeUpgrade(myCities);
         }
 
         if (Game.time % 50 === 25) {

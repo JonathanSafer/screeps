@@ -68,6 +68,21 @@ var markets = {
     		}
     	}
     },
+
+    distributeUpgrade: function distributeUpgrade(myCities){
+        var receiver = null
+        var needUpgrade = _.filter(myCities, city => city.controller.level > 5 && city.terminal && (city.terminal.store['XGH2O'] < 1000 || city.terminal.store['XGH2O'] == undefined))
+        if (needUpgrade.length){
+            receiver = needUpgrade[0].name
+            for (var i = 0; i < myCities.length; i++){
+                if (myCities[i].terminal && myCities[i].terminal.store['XGH2O'] > 7000){
+                    myCities[i].terminal.send('XGH2O', 3000, receiver);
+                    console.log('Sending upgrade boost to ' + receiver)
+                    return;
+                }
+            }
+        }
+    },
     
     sellPower: function distributePower(city, buyOrders){
         let terminal = city.terminal
@@ -107,7 +122,7 @@ var markets = {
                     if (myOrder && myOrder.remainingAmount < quantity){
                         let remaining = myOrder.remainingAmount
                         Game.market.extendOrder(myId, (quantity - remaining))                     
-                    } else if(!myOrder){
+                    } else if(!myOrder && quantity > 10000){
                         let price = markets.sortOrder(sellOrders['XGH2O'])[0].price - 0.1;
                         Game.market.createOrder(ORDER_SELL, 'XGH2O', price, quantity, myCities[i].name)
                     } else if (myOrder.remainingAmount > 15000 && myOrder.price > 3){
