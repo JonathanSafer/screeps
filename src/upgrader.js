@@ -59,7 +59,7 @@ var rU = {
           return;
       }
       let lab = Game.getObjectById(Game.spawns[city].memory.ferryInfo.boosterInfo[0][0])
-      if(rU.checkMaterials(lab)){
+      if(rU.checkMaterials(lab, creep)){
             creep.memory.lab = lab.id
             creep.memory.state = 1
       } else {
@@ -67,9 +67,10 @@ var rU = {
       }
     },
 
-    checkMaterials: function(lab){
+    checkMaterials: function(lab, creep){
       let terminal = lab.room.terminal
-      if(terminal.store['XGH2O'] > (LAB_BOOST_MINERAL * 15) && lab.mineralAmount == 0){
+      let work = _.filter(creep.body, bodypart => bodypart.type == WORK).length
+      if(terminal.store['XGH2O'] > (LAB_BOOST_MINERAL * work) && lab.mineralAmount == 0){
         return 1
       } else {
         return 0
