@@ -65,7 +65,7 @@ function getRecipe(type, extensions, room){
 		case 8:
 		case 9:
 			// lvl 6 recipes
-    		d['normal'] = body([15, 5, 10], [WORK, CARRY, MOVE]);
+    		d['normal'] = body([12, 8, 10], [WORK, CARRY, MOVE]);
     		d['builder'] = body([5, 9, 7], [WORK, CARRY, MOVE]);
     		d['ferry'] = body([6, 3], [CARRY, MOVE]);
     		d['transporter'] = body([8, 4], [CARRY, MOVE]);
