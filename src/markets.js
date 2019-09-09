@@ -119,12 +119,12 @@ var markets = {
                     let quantity = myCities[i].terminal.store['XGH2O']
                     let myId = _.find(Object.keys(Game.market.orders), order => Game.market.orders[order].roomName === myCities[i].name && Game.market.orders[order].resourceType === 'XGH2O')
                     let myOrder = Game.market.orders[myId];
-                    if (myOrder && myOrder.remainingAmount < quantity){
+                    if (myOrder && myOrder.remainingAmount < (quantity - 10000)){
                         let remaining = myOrder.remainingAmount
-                        Game.market.extendOrder(myId, (quantity - remaining))                     
+                        Game.market.extendOrder(myId, ((quantity - 10000) - remaining))                     
                     } else if(!myOrder && quantity > 10000){
-                        let price = markets.sortOrder(sellOrders['XGH2O'])[0].price - 0.1;
-                        Game.market.createOrder(ORDER_SELL, 'XGH2O', price, quantity, myCities[i].name)
+                        let price = Math.min(markets.sortOrder(sellOrders['XGH2O'])[0].price - 0.1, 3);
+                        Game.market.createOrder(ORDER_SELL, 'XGH2O', price, quantity - 10000, myCities[i].name)
                     } else if (myOrder && myOrder.remainingAmount > 15000 && myOrder.price > 3){
                         Game.market.changeOrderPrice(myId, (myOrder.price - 0.001))
                     }
@@ -137,7 +137,7 @@ var markets = {
                         let remaining = myOrder.remainingAmount
                         Game.market.extendOrder(myId, (quantity - remaining))                     
                     } else if(!myOrder){
-                        let price = markets.sortOrder(sellOrders['G'])[0].price - 0.01;
+                        let price = Math.min(markets.sortOrder(sellOrders['G'])[0].price - 0.01, 1);
                         Game.market.createOrder(ORDER_SELL, 'G', price, quantity, myCities[i].name)
                     } else if (myOrder.remainingAmount > 15000 && myOrder.price > 1){
                         Game.market.changeOrderPrice(myId, (myOrder.price - 0.005))
