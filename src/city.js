@@ -148,6 +148,12 @@ function makeEmergencyCreeps(extensions, creeps, city, rcl8) {
 // Run the tower function
 function runTowers(city){
     if (Game.spawns[city]){
+        if(!Game.spawns[city].memory.towersActive){
+            Game.spawns[city].memory.towersActive = 1
+        }
+        if(Game.spawns[city].memory.towersActive = 1 && Game.time % 10 != 0){
+            return;
+        }
         var towers = _.filter(Game.structures, (structure) => structure.structureType == STRUCTURE_TOWER && structure.room.memory.city == city);
         var hostileCreep = Game.spawns[city].room.find(FIND_HOSTILE_CREEPS);
         var injuredCreep = Game.spawns[city].room.find(FIND_MY_CREEPS, {filter: (injured) => { 
@@ -168,9 +174,15 @@ function runTowers(city){
             });
             notWalls = _.reject(damaged, location => location.structureType == STRUCTURE_WALL || location.structureType == STRUCTURE_RAMPART);
         }
+        if(hostiles.length > 0){
+            Game.spawns[city].memory.towersActive = 2
+        } else {
+            Game.spawns[city].memory.towersActive = 1
+        }
         for (let i = 0; i < towers.length; i++){
             if(hostiles.length > 0){
-                towers[i].attack(hostiles[0]);
+                let target = towers[i].pos.findClosestByRange(hostiles);
+                towers[i].attack(target);
             } else if (injured.length > 0){
                 towers[i].heal(injured[0])
             } else if (Game.time % 10 === 0 && notWalls.length > 0){
