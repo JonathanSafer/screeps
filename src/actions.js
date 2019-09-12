@@ -9,7 +9,7 @@ var actions = {
                     actions.move(creep, location);
                 } else {
                     if(creep.memory.role === 'Upgrader' && location.structureType && location.structureType === STRUCTURE_CONTROLLER){
-                        return creep.moveTo(location, {reusePath: 15, range: 3});
+                        return creep.moveTo(location, {reusePath: 15, range: 3, swampCost: 2, plainCost: 2});
                     } else {
                         return creep.moveTo(location, {reusePath: 15, maxOps: 10000, maxRooms: 32});
                     }
