@@ -148,10 +148,10 @@ function makeEmergencyCreeps(extensions, creeps, city, rcl8) {
 // Run the tower function
 function runTowers(city){
     if (Game.spawns[city]){
-        if(!Game.spawns[city].memory.towersActive){
-            Game.spawns[city].memory.towersActive = 1
+        if(Game.spawns[city].memory.towersActive == undefined){
+            Game.spawns[city].memory.towersActive = false
         }
-        if(Game.spawns[city].memory.towersActive = 1 && Game.time % 10 != 0){
+        if(Game.spawns[city].memory.towersActive == false && Game.time % 10 != 0){
             return;
         }
         var towers = _.filter(Game.structures, (structure) => structure.structureType == STRUCTURE_TOWER && structure.room.memory.city == city);
@@ -175,9 +175,11 @@ function runTowers(city){
             notWalls = _.reject(damaged, location => location.structureType == STRUCTURE_WALL || location.structureType == STRUCTURE_RAMPART);
         }
         if(hostiles.length > 0){
-            Game.spawns[city].memory.towersActive = 2
+            console.log('Towers up')
+            Game.spawns[city].memory.towersActive = true
         } else {
-            Game.spawns[city].memory.towersActive = 1
+            console.log('Towers down')
+            Game.spawns[city].memory.towersActive = false
         }
         for (let i = 0; i < towers.length; i++){
             if(hostiles.length > 0){
