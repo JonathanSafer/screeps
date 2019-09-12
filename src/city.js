@@ -175,10 +175,9 @@ function runTowers(city){
             notWalls = _.reject(damaged, location => location.structureType == STRUCTURE_WALL || location.structureType == STRUCTURE_RAMPART);
         }
         if(hostiles.length > 0){
-            console.log('Towers up')
+            console.log('Towers up in ' + city)
             Game.spawns[city].memory.towersActive = true
         } else {
-            console.log('Towers down')
             Game.spawns[city].memory.towersActive = false
         }
         for (let i = 0; i < towers.length; i++){
