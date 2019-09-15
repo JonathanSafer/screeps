@@ -719,6 +719,7 @@ function runObs(city){
 }
 
 module.exports = {
+    chooseColonizerRoom: chooseColonizerRoom,
     runCity: runCity,
     updateCountsCity: updateCountsCity,
     runTowers: runTowers,
