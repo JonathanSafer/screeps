@@ -341,7 +341,7 @@ function updateColonizers(city, memory, closestRoom) {
             memory[rSB.name] = 0;
         }
         if(Game.flags.claim && !Game.map.isRoomAvailable(Game.flags.claim.pos.roomName)){
-            memory[rC.name] = Game.flags.claim = 0;
+            memory[rC.name] = 0;
         } else {
             memory[rC.name] = Game.flags.claim ? 1 : 0;
         }
