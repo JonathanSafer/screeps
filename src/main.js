@@ -22,7 +22,10 @@ module.exports.loop = function () {
         var localRooms = u.splitRoomsByCity();
         var localCreeps = u.splitCreepsByCity();
         var myCities = _.filter(Game.rooms, (room) => rS.iOwn(room.name));
-        let closestRoom = c.chooseColonizerRoom(myCities)
+        let closestRoom = null;
+        if(Game.time % 500 == 0){
+            closestRoom = c.chooseColonizerRoom(myCities);
+        }
         console.log("Time: " + Game.time);
         //run cities
         for (let i = 0; i < myCities.length; i += 1) {
