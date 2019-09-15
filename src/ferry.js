@@ -11,7 +11,6 @@ var rF = {
     run: function(creep) {
         if (creep.saying == 'getJob'){
             creep.memory.target = rF.getJob(creep);
-            return;
         }
         switch(creep.memory.target){
             case 0:
@@ -27,12 +26,12 @@ var rF = {
                     actions.charge(creep, creep.room.terminal);
                 } else if(creep.room.storage.store.energy > 150000 && creep.room.terminal.store.energy < 150000){
                     if (Game.time % 10 === 0 || Game.time % 10 === 1){
-                        creep.say('getJob');
+                        creep.memory.target = rF.getJob(creep);
                         break;
                     }
                     actions.withdraw(creep, creep.room.storage, RESOURCE_ENERGY);
                 } else {
-                    creep.say('getJob');
+                    creep.memory.target = rF.getJob(creep);
                 }
                 break;
             case 2:
@@ -45,7 +44,7 @@ var rF = {
                     let mineral =_.keys(creep.room.storage.store)[1];
                     actions.withdraw(creep, creep.room.storage, mineral);
                 } else {
-                    creep.say('getJob');
+                    creep.memory.target = rF.getJob(creep);
                 }
                 break;
             case 3:
@@ -55,7 +54,7 @@ var rF = {
                 } else if(creep.room.terminal.store.energy > 151000){
                     actions.withdraw(creep, creep.room.terminal, RESOURCE_ENERGY);
                 } else {
-                    creep.say('getJob');
+                    creep.memory.target = rF.getJob(creep);
                 }
                 break;
             case 4:
@@ -67,7 +66,7 @@ var rF = {
                 } else if(powerSpawn.power < 30 && creep.room.terminal.store.power){
                     actions.withdraw(creep, creep.room.terminal, RESOURCE_POWER, Math.min(70, creep.room.terminal.store[RESOURCE_POWER]));
                 } else {
-                    creep.say('getJob');
+                    creep.memory.target = rF.getJob(creep);
                 }
                 break;
             case 5:
