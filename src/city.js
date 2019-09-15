@@ -84,7 +84,7 @@ function runCity(city, creeps){
     }
 }
 //updateCountsCity function
-function updateCountsCity(city, creeps, rooms) {
+function updateCountsCity(city, creeps, rooms, closestRoom) {
     let spawn = Game.spawns[city];
     if (spawn){
         let memory = spawn.memory;
@@ -109,7 +109,7 @@ function updateCountsCity(city, creeps, rooms) {
                 checkLabs(city)
                 updateTransporter(extensions, memory);
                 updateMilitary(city, memory, rooms);
-                updateColonizers(city, memory);
+                updateColonizers(city, memory, closestRoom);
                 updateUpgrader(city, controller, memory, rcl8, creeps);
                 updateBuilder(rcl, memory, spawn, rooms, rcl8);
                 updateMineralMiner(rcl, structures, spawn, memory);
@@ -311,12 +311,31 @@ function emptyBoosters(memory){
     }
 }
 
-function updateColonizers(city, memory) {
+function chooseColonizerRoom(myCities){
+    if(!Game.flags.claim){
+        return 0;
+    }
+    let claimRoom = Game.flags.claim.roomName;
+    let closestRoom = myCities[0];
+    for (let i = 0; i < myCities.length; i += 1){
+        if(Game.map.getRoomLinearDistance(myCities[i].name, claimRoom) < Game.map.getRoomLinearDistance(closestRoom, claimRoom)){
+            closestRoom = myCities[i];
+        }
+    }
+    return closestRoom;
+}
+
+function updateColonizers(city, memory, closestRoom) {
     //claimer and spawnBuilder reset
     // TODO only make a claimer if city is close
-    if(city == 'Yonland'){
+    let roomName = Game.spawns[city].room.name
+    if(roomName == closestRoom){
         memory[rSB.name] = Game.flags.claim ? 2 : 0;
-        memory[rC.name] = Game.flags.claim ? 1 : 0;
+        if(Game.flags.claim && !Game.map.isRoomAvailable(Game.flags.claim.pos.roomName)){
+            memory[rC.name] = Game.flags.claim = 0;
+        } else {
+            memory[rC.name] = Game.flags.claim ? 1 : 0;
+        }
     } else {
         memory[rSB.name] = 0;
         memory[rC.name] = 0;

@@ -22,13 +22,14 @@ module.exports.loop = function () {
         var localRooms = u.splitRoomsByCity();
         var localCreeps = u.splitCreepsByCity();
         var myCities = _.filter(Game.rooms, (room) => rS.iOwn(room.name));
+        let closestRoom = c.chooseColonizerRoom(myCities)
         console.log("Time: " + Game.time);
         //run cities
         for (let i = 0; i < myCities.length; i += 1) {
             var city = myCities[i].memory.city;
             if (city !== "pit") {
                 c.runCity(city, localCreeps[city]);
-                c.updateCountsCity(city, localCreeps[city], localRooms[city]);
+                c.updateCountsCity(city, localCreeps[city], localRooms[city], closestRoom);
                 c.runTowers(city);
                 // TODO: obs runs in dead cities
                 c.runObs(city)
