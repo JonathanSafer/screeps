@@ -65,15 +65,8 @@ module.exports.loop = function () {
                 }
             }
         }
-        //clear roads use for new expansions
-        if (Game.time % 50000 === 0) {
-            var roadSites = _.filter(Game.constructionSites, (site) => site.structureType === STRUCTURE_ROAD && !site.progress);
-            for (let i = 0; i < roadSites.length; i += 1) {
-                roadSites[i].remove();
-            }
-        }
         //clear rooms
-        if (Game.time % 50000 === 0) {
+        if (Game.time % 5000 === 0) {
            for (let name in Memory.rooms) {
                 if (!Memory.rooms[name].city) {
                     delete Memory.rooms[name];
