@@ -49,21 +49,19 @@ var rSB = {
     build: function(creep) {
         var targets = creep.room.find(FIND_CONSTRUCTION_SITES);
         var spawns = _.filter(targets, site => site.structureType == STRUCTURE_SPAWN);
-      if(targets.length) {
-        var target = targets[0];
-        if (spawns.length){
-            target = spawns[0];
-        }
-        if(creep.build(target) == ERR_NOT_IN_RANGE) {
-            creep.moveTo(target, {reusePath: 15});
-        }
-      } else if(creep.room.controller.level < 2) {
-        if(creep.upgradeController(creep.room.controller) == ERR_NOT_IN_RANGE) {
-            creep.moveTo(creep.room.controller, {reusePath: 15});  
-        }
-      } else {
-        a.charge(creep, spawns[0])
-      }
+        if(targets.length) {
+            var target = targets[0];
+            if (spawns.length){
+                target = spawns[0];
+            }
+            if(creep.build(target) == ERR_NOT_IN_RANGE) {
+                creep.moveTo(target, {reusePath: 15});
+            }
+        } else {
+            if(creep.upgradeController(creep.room.controller) == ERR_NOT_IN_RANGE) {
+                creep.moveTo(creep.room.controller, {reusePath: 15});  
+            }
+        }   
     },
     
     harvest: function(creep) {
