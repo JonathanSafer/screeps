@@ -340,7 +340,7 @@ function updateColonizers(city, memory, closestRoom) {
         } else {
             memory[rSB.name] = 0;
         }
-        if(Game.flags.claim && !Game.map.isRoomAvailable(Game.flags.claim.pos.roomName)){
+        if(Game.flags.claim && Game.flags.claim.room && Game.flags.claim.room.controller.my){
             memory[rC.name] = 0;
         } else {
             memory[rC.name] = Game.flags.claim ? 1 : 0;
