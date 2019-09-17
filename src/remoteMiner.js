@@ -23,11 +23,13 @@ var rM = {
             			//find link
             			var source = Game.getObjectById(creep.memory.source);
             			var structures = creep.room.find(FIND_MY_STRUCTURES)
-            			link = _.find(structures, structure => structure.structureType === STRUCTURE_LINK && structure.pos.inRangeTo(source.pos, 3))
+            			links = _.filter(structures, structure => structure.structureType === STRUCTURE_LINK && structure.pos.inRangeTo(source.pos, 3))
             			//console.log(link)
-            			if (link){
-            			    creep.memory.link = link.id;
-            			}
+            			if (links.length > 1){
+            			    creep.memory.link = source.pos.getClosestByRange(links);
+            			} else if(links.length){
+                            creep.memory.link = links[0];
+                        }
             		}
             	}
             }
