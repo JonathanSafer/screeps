@@ -123,7 +123,7 @@ var markets = {
                         let remaining = myOrder.remainingAmount
                         Game.market.extendOrder(myId, ((quantity - 10000) - remaining))                     
                     } else if(!myOrder && quantity > 10000){
-                        let price = Math.min(markets.sortOrder(sellOrders['XGH2O'])[0].price - 0.1, 3);
+                        let price = Math.max(markets.sortOrder(sellOrders['XGH2O'])[0].price - 0.1, 3);
                         Game.market.createOrder(ORDER_SELL, 'XGH2O', price, quantity - 10000, myCities[i].name)
                     } else if (myOrder && myOrder.remainingAmount > 15000 && myOrder.price > 3){
                         Game.market.changeOrderPrice(myId, (myOrder.price - 0.001))
@@ -137,7 +137,7 @@ var markets = {
                         let remaining = myOrder.remainingAmount
                         Game.market.extendOrder(myId, (quantity - remaining))                     
                     } else if(!myOrder){
-                        let price = Math.min(markets.sortOrder(sellOrders['G'])[0].price - 0.01, 1);
+                        let price = Math.max(markets.sortOrder(sellOrders['G'])[0].price - 0.01, 1);
                         Game.market.createOrder(ORDER_SELL, 'G', price, quantity, myCities[i].name)
                     } else if (myOrder.remainingAmount > 15000 && myOrder.price > 1){
                         Game.market.changeOrderPrice(myId, (myOrder.price - 0.005))
