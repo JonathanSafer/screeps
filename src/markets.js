@@ -33,7 +33,7 @@ var markets = {
                     if(!senders[j].terminal){
                         continue;
                     }
-                    if(senders[j].terminal.store[mineral] > 3000){
+                    if(senders[j].terminal.store[mineral] >= 6000){
                         let result = senders[j].terminal.send(mineral, 3000, myCities[i].name)
                         senders = senders.splice(senders.indexOf(senders[j]), 1);
                         Game.spawns[city].memory.ferryInfo.mineralRequest = null;
