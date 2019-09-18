@@ -28,7 +28,7 @@ var rM = {
             			if (links.length > 1){
             			    creep.memory.link = source.pos.getClosestByRange(links).id;
             			} else if(links.length){
-                            creep.memory.link = links[0].id:
+                            creep.memory.link = links[0].id;
                         }
             		}
             	}
