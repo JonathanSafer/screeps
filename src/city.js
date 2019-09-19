@@ -465,7 +465,7 @@ function updateUpgrader(city, controller, memory, rcl8, creeps) {
         var money = _.sum(_.map(banks, bank => bank.store[RESOURCE_ENERGY]));
         var capacity = _.sum(_.map(banks, bank => bank.storeCapacity));
         //console.log('money: ' + money + ', ' + (100*money/capacity));
-        if(money < (capacity * .3)){
+        if(money < (capacity * .32)){
             memory[rU.name] = Math.max(memory[rU.name] - 1, 1); 
         }
         else if (money > (capacity * .32)){
