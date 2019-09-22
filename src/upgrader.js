@@ -84,6 +84,10 @@ var rU = {
       }
       let lab = Game.getObjectById(creep.memory.lab)
       if(_.sum(creep.carry) == 0 && !creep.pos.isNearTo(lab.pos)){
+        if(Game.time % 50 == 0){
+          creep.memory.state = 0
+          return;
+        }
         let work = _.filter(creep.body, bodypart => bodypart.type == WORK).length
         actions.withdraw(creep, creep.room.terminal, 'XGH2O', LAB_BOOST_MINERAL * work)
         return;
