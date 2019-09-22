@@ -650,7 +650,7 @@ function runNuker(city){
 function runObs(city){
     if(Game.time % 100 == 0){
         //check for Obs
-        if(!Game.spawns[city]) || Game.cpu.bucket < 5500{
+        if((!Game.spawns[city]) || Game.cpu.bucket < 5500){
             return;
         }
         let buildings = Game.spawns[city].room.find(FIND_MY_STRUCTURES)
