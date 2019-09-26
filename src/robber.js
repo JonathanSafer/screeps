@@ -10,10 +10,10 @@ var rRo = {
     /** @param {Creep} creep **/
     run: function(creep) {
       if (_.sum(creep.carry) < 0.1 * creep.carryCapacity) {
-          if(creep.ticksToLive < 350){
+          if(creep.ticksToLive < 150){
               creep.suicide();
           }
-          var target = Game.getObjectById('5c496f9b4ec9361e82f49711');
+          var target = Game.getObjectById('5d56ea99dc8788211b62a46d');
           let mineral = RESOURCE_OXYGEN
           if (target){
               if(!target.store[mineral]){
