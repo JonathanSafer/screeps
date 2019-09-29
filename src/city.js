@@ -315,7 +315,7 @@ function chooseColonizerRoom(myCities){
     if(!Game.flags.claim){
         return 0;
     }
-    let goodCities = _.filter(myCities, city => city.controller.level >= 4);
+    let goodCities = _.filter(myCities, city => city.controller.level >= 4 && Game.spawns[city.memory.city]);
     let claimRoom = Game.flags.claim.pos.roomName;
     let closestRoom = goodCities[0].name;
     for (let i = 0; i < goodCities.length; i += 1){
