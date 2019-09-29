@@ -143,7 +143,7 @@ var markets = {
                         Game.market.changeOrderPrice(myId, (myOrder.price - 0.005))
                     }
                 }
-                if (myCities[i].storage.store.energy > 500000){
+                if (myCities[i].storage && myCities[i].storage.store.energy > 500000){
                 	var energyOrders = markets.sortOrder(buyOrders[RESOURCE_ENERGY])
                 	if (!energyOrders.length){
                 	    return;
