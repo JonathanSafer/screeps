@@ -5,7 +5,7 @@ var u = require('utils');
 var rM = {
     name: "remoteMiner",
     type: "miner",
-    target: () => Game.spawns["Home"].memory.nextSource,
+    target: () => 0,
 
     /** @param {Creep} creep **/
     run: function(creep) {

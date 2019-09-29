@@ -35,13 +35,16 @@ function makeCreeps(role, type, target, city) {
     let recipe = types.getRecipe(type, extensions, room);
     //console.log(role)
     let spawns = room.find(FIND_MY_SPAWNS);
-    let name = Game.spawns['Home'].memory.counter.toString();
+    if(!Memory.counter){
+        Memory.counter = 0;
+    }
+    let name = Memory.counter.toString();
     if (types.cost(recipe) <= room.energyAvailable){
         let spawn = u.getAvailableSpawn(spawns);
         //console.log(spawn);
         if(spawn != null) {
             try {
-                Game.spawns['Home'].memory.counter++;
+                Memory.counter++;
                 spawn.spawnCreep(recipe, name);
                 Game.creeps[name].memory.role = role;
                 Game.creeps[name].memory.target = target;
