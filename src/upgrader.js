@@ -38,7 +38,7 @@ var rU = {
       if(creep.memory.state != 0){
         return;
       }
-      if(Game.spawns[city].room.controller.level < 6){
+      if(Game.spawns[city].room.controller.level < 6 || !creep.room.terminal){
           creep.memory.state = 2
           return;
       }
