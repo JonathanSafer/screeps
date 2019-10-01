@@ -1,6 +1,6 @@
 var powerCreeps = {
     run103207: function() {
-        const city = 'Jordan'
+        const city = 'E21S280'
         const creep = Game.powerCreeps['103207']
         if(creep.spawnCooldownTime > Date.now()){
             return;
