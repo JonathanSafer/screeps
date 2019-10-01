@@ -40,7 +40,7 @@ var rF = {
                     actions.charge(creep, creep.room.terminal);
                     break;
                 }
-                if(Object.keys(creep.room.storage.store).length > 1){
+                if(Object.keys(creep.room.storage.store).length > 1 && _.sum(creep.room.terminal.store) < 295000){
                     let mineral =_.keys(creep.room.storage.store)[1];
                     actions.withdraw(creep, creep.room.storage, mineral);
                 } else {
@@ -187,7 +187,7 @@ var rF = {
         if (creep.room.terminal.store.energy > 151000){
             return 3;
         }
-        if(Object.keys(creep.room.storage.store).length > 1){
+        if(Object.keys(creep.room.storage.store).length > 1 && _,sum(creep.room.terminal.store) < 295000){
             return 2;
         }
         if (Game.spawns[creep.memory.city].memory.ferryInfo.needPower === true && Game.spawns[creep.memory.city].room.terminal.store[RESOURCE_POWER] > 0){
