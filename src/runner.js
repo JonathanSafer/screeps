@@ -9,7 +9,8 @@ var rR = {
 
     /** @param {Creep} creep **/
     run: function(creep) {
-        if (Game.spawns[creep.memory.city].room.controller.level > 7){
+        if (Game.spawns[creep.memory.city].room.controller.level > 7 && Game.spawns[creep.memory.city].room.energyCapacityAvailable > 12500
+                && Game.spawns[creep.memory.city].room.storage && Game.spawns[creep.memory.city].room.storage.store.energy > 50000){
             //RCL 8 mode
             if (_.sum(creep.carry) > 0){
                 if (!creep.memory.location){

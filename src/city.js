@@ -498,7 +498,7 @@ function updateBuilder(rcl, memory, spawn, rooms, rcl8) {
 }
 
 function updateRunner(creeps, spawn, extensions, memory, rcl8) {
-    if (rcl8) {
+    if (rcl8 && extensions > 55 && spawn.room.storage && spawn.room.storage.store.energy > 50000) {
         memory[rR.name] = 0;
         return;
     }
