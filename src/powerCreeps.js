@@ -71,7 +71,7 @@ var powerCreeps = {
             return;
         }
         if(Game.flags[creep.name]){
-            moveTo(Game.flags[creep.name])
+            creep.moveTo(Game.flags[creep.name])
             if(creep.pos.isEqualTo(Game.flags[creep.name]).pos){
                 Game.flags[creep.name].remove();
             }
