@@ -58,7 +58,7 @@ var powerCreeps = {
     },
     
     run138066: function() {
-        const city = 'E21S280'
+        const city = 'E11S90'
         const creep = Game.powerCreeps['138066']
         if(creep.spawnCooldownTime > Date.now()){
             return;
