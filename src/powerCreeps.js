@@ -70,6 +70,12 @@ var powerCreeps = {
             creep.memory.powerSpawn = powerSpawn.id;
             return;
         }
+        if(Game.flags[creep.name]){
+            moveTo(Game.flags[creep.name])
+            if(creep.pos.isEqualTo(Game.flags[creep.name]).pos){
+                Game.flags[creep.name].remove();
+            }
+        }
         if (creep.room.controller && !creep.room.controller.isPowerEnabled){
             if (creep.enableRoom(creep.room.controller) === ERR_NOT_IN_RANGE){
                 creep.moveTo(creep.room.controller, {reusePath: 15})
