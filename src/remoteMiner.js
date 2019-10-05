@@ -26,7 +26,7 @@ var rM = {
             			links = _.filter(structures, structure => structure.structureType === STRUCTURE_LINK && structure.pos.inRangeTo(source.pos, 3))
             			//console.log(link)
             			if (links.length > 1){
-            			    creep.memory.link = source.pos.getClosestByRange(links).id;
+            			    creep.memory.link = source.pos.findClosestByRange(links).id;
             			} else if(links.length){
                             creep.memory.link = links[0].id;
                         }
