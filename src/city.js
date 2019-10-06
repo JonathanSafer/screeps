@@ -722,7 +722,7 @@ function runObs(city){
                 console.log(walls)
                 if(walls < 8){
                     //put a flag on it
-                    Game.rooms[roomName].createFlag(powerBank.pos, flagName)
+                    //Game.rooms[roomName].createFlag(powerBank.pos, flagName)
                     console.log('Power Bank found in: ' + roomName)
                 }
             }
