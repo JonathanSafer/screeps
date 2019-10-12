@@ -6,8 +6,14 @@ var powerCreeps = {
             return;
         }
         if(!(creep.spawnCooldownTime > Date.now()) && !creep.hits) {
+            if(!Game.spawns[city]){
+                return;
+            }
             let structures = Game.spawns[city].room.find(FIND_MY_STRUCTURES)
             let powerSpawn = _.find(structures, structure => structure.structureType === STRUCTURE_POWER_SPAWN)
+            if(!powerSpawn){
+                return;
+            }
             creep.spawn(powerSpawn);
             creep.memory.powerSpawn = powerSpawn.id;
             return;
@@ -58,14 +64,20 @@ var powerCreeps = {
     },
     
     run138066: function() {
-        const city = 'E11S90'
+        const city = 'E9N10'
         const creep = Game.powerCreeps['138066']
         if(creep.spawnCooldownTime > Date.now()){
             return;
         }
         if(!(creep.spawnCooldownTime > Date.now()) && !creep.hits) {
+            if(!Game.spawns[city]){
+                return;
+            }
             let structures = Game.spawns[city].room.find(FIND_MY_STRUCTURES)
             let powerSpawn = _.find(structures, structure => structure.structureType === STRUCTURE_POWER_SPAWN)
+            if(!powerSpawn){
+                return;
+            }
             creep.spawn(powerSpawn);
             creep.memory.powerSpawn = powerSpawn.id;
             return;
