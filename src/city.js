@@ -222,7 +222,7 @@ function runPowerSpawn(city){
                 Game.spawns[city].memory.ferryInfo.needPower = false
             }
         }
-        if(powerSpawn && powerSpawn.energy >= 50 && powerSpawn.power > 0 && powerSpawn.room.storage.store.energy > 520000 && Game.cpu.bucket > 3000){
+        if(powerSpawn && powerSpawn.energy >= 50 && powerSpawn.power > 0 && powerSpawn.room.storage.store.energy > 650000 && Game.cpu.bucket > 3000){
             powerSpawn.processPower();
         }
     }
@@ -703,7 +703,7 @@ function runObs(city){
             let powerBank = _.find(structures, structure => structure.structureType === STRUCTURE_POWER_BANK);
             let flagName = city + 'powerMine'
             if (powerBank && Game.cpu.bucket > 6000 && powerBank.ticksToDecay > 2500 && !Game.flags[flagName] &&
-                    Game.rooms[roomName].find(FIND_STRUCTURES).length < 30){
+                    structures.length < 30 && Game.spawns[city].room.storage.store.energy > 600000){
                 let walls = 0
                 let terrain = Game.rooms[roomName].getTerrain();
                 let x = powerBank.pos.x - 1
@@ -722,7 +722,7 @@ function runObs(city){
                 console.log(walls)
                 if(walls < 8){
                     //put a flag on it
-                    //Game.rooms[roomName].createFlag(powerBank.pos, flagName)
+                    Game.rooms[roomName].createFlag(powerBank.pos, flagName)
                     console.log('Power Bank found in: ' + roomName)
                 }
             }
