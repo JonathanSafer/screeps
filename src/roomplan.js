@@ -139,9 +139,8 @@ let p = {
         } 
 
         //road from controller
-        const controller = room.find(FIND_MY_STRUCTURES, {
-            filter: { structureType: STRUCTURE_CONTROLLER }
-        });
+        const structures = room.find(FIND_MY_STRUCTURES);
+        const controller = _.find(structures, structure => structure.structureType === STRUCTURE_CONTROLLER);
         const controllerPos = controller.pos;
         let controllerPath = PathFinder.search(controllerPos, exits, {
             plainCost: 2, swampCost: 2, maxRooms: 1, 
@@ -188,21 +187,23 @@ let p = {
         let startPoint = template.buildings.storage.pos[0];
         let startPos = new RoomPosition(plan.x + startPoint.x - template.offset.x, plan.y + startPoint.y - template.offset.y, room.name)
         for(var i = 0; i < 4; i++){//find closest Exit point for each side and then path to it
-            let exitPath0 = PathFinder.search(startPos, roomExits[i], {
-                plainCost: 2, swampCost: 2, maxRooms: 1, 
-                roomCallback: function(roomName) {
-                    return room.costs;
-                },
-            })
-            let exitPoint = exitPath0.path[exitPath0.path.length - 1];
-            //now path from this point to template exits
-            let exitPath = PathFinder.search(exitPoint, exits, {
-                plainCost: 2, swampCost: 2, maxRooms: 1, 
-                roomCallback: function(roomName) {
-                    return room.costs;
-                },
-            })
-            roads.push(exitPath.path[i]);
+            if(roomExits[i].length){
+                let exitPath0 = PathFinder.search(startPos, roomExits[i], {
+                    plainCost: 2, swampCost: 2, maxRooms: 1, 
+                    roomCallback: function(roomName) {
+                        return room.costs;
+                    },
+                })
+                let exitPoint = exitPath0.path[exitPath0.path.length - 1];
+                //now path from this point to template exits
+                let exitPath = PathFinder.search(exitPoint, exits, {
+                    plainCost: 2, swampCost: 2, maxRooms: 1, 
+                    roomCallback: function(roomName) {
+                        return room.costs;
+                    },
+                })
+                roads.push(exitPath.path[i]);
+            }
         }
         console.log(room.memory.city + " roads: " + roads)
         //TODO: build roads, cut this function up, plan and build walls + ramparts
