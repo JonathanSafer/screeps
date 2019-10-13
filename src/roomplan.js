@@ -206,7 +206,7 @@ let p = {
         }
         console.log(room.memory.city + " roads: " + roads)
         //TODO: build roads, cut this function up, plan and build walls + ramparts
-    }
+    },
 
     clearAllStructures: function(room) {
         let structures = room.find(FIND_STRUCTURES);
