@@ -38,6 +38,7 @@ let p = {
             }
             if (room.memory.plan) {
                 var plan = room.memory.plan
+                p.buildRoads(room, plan);
                 var spawnCount = 0
                 _.forEach(template.buildings, function(locations, structureType) {
                     locations.pos.forEach(location => {
@@ -71,6 +72,141 @@ let p = {
             room.createConstructionSite(pos.x, pos.y, structureType, name)
         }
     },
+
+    buildRoads: function(room, plan){
+        //need roads to sources, mineral, controller (3 spaces away), exits (nearest exit point for each)
+        let roads = [];
+        if(!(room.memory.city && Game.spawns[room.memory.city] && Game.spawns[room.memory.city].memory.sources)){
+            return;
+        }
+        let exits = [];
+        for(var i = 0; i < template.exits.length; i++){
+            let posX = plan.x + template.exits[i].x - template.offset.x;
+            let posY = plan.y + template.exits[i].y - template.offset.y;
+            let roomPos = new RoomPosition(posX, posY, room.name)
+            exits.push(roomPos);
+        }//exits now filled with roomPos of all exits from template
+
+        //can this be its own function?
+        let costs = new PathFinder.CostMatrix;
+        _.forEach(template.buildings, function(locations, structureType) {
+            locations.pos.forEach(location => {
+                var pos = {"x": plan.x + location.x - template.offset.x, 
+                           "y": plan.y + location.y - template.offset.y}
+                if(structureType !== STRUCTURE_ROAD){
+                    costs.set(pos.x, pos.y, 0xff)
+                }
+            })
+        })
+        room.find(FIND_STRUCTURES).forEach(function(struct) {
+            if (struct.structureType === STRUCTURE_ROAD) {
+                // Favor roads over plain tiles
+                costs.set(struct.pos.x, struct.pos.y, 1);
+            } else if (struct.structureType !== STRUCTURE_CONTAINER &&
+                         (struct.structureType !== STRUCTURE_RAMPART ||
+                          !struct.my)) {
+                // Can't walk through non-walkable buildings
+                costs.set(struct.pos.x, struct.pos.y, 0xff);
+            }
+        });
+        room.costs = costs;
+
+        //roads from sources
+        const sources = Game.spawns[room.memory.city].memory.sources
+        for (var i = 0; i < sources.length; i++) {
+            let sourcePos = Game.getObjectById(sources[i]).pos;
+            let sourcePath = PathFinder.search(sourcePos, exits, {
+                plainCost: 2, swampCost: 2, maxRooms: 1, 
+                roomCallback: function(roomName) {
+                    return room.costs;
+                },
+            })
+            for(var i = 1; i < sourcePath.path.length; i++){// don't include first path (not needed)
+                roads.push(sourcePath.path[i]);
+            }
+        }
+
+        //road from mineral
+        const mineralPos = room.find(FIND_MINERALS)[0].pos;
+        let mineralPath = PathFinder.search(mineralPos, exits, {
+            plainCost: 2, swampCost: 2, maxRooms: 1, 
+            roomCallback: function(roomName) {
+                return room.costs;
+            },
+        })
+        for(var i = 1; i < mineralPath.path.length; i++){// don't include first path (not needed)
+            roads.push(mineralPath.path[i]);
+        } 
+
+        //road from controller
+        const controller = room.find(FIND_MY_STRUCTURES, {
+            filter: { structureType: STRUCTURE_CONTROLLER }
+        });
+        const controllerPos = controller.pos;
+        let controllerPath = PathFinder.search(controllerPos, exits, {
+            plainCost: 2, swampCost: 2, maxRooms: 1, 
+            roomCallback: function(roomName) {
+                return room.costs;
+            },
+        })
+        for(var i = 2; i < controllerPath.path.length; i++){// don't include first two paths (not needed)
+            roads.push(controllerPath.path[i]);
+        } 
+
+        //roads from exits
+        const terrain = Game.map.getRoomTerrain(room.name)
+        let nExits = []
+        let sExits = []
+        let eExits = []
+        let wExits = []
+        for(var i = 0; i < 50; i++){
+            if(terrain.get(0,i) !== TERRAIN_MASK_WALL){
+                let pos = new RoomPosition(0, i, room.name)
+                wExits.push(pos)
+            }
+        }
+        for(var i = 0; i < 50; i++){
+            if(terrain.get(i,0) !== TERRAIN_MASK_WALL){
+                let pos = new RoomPosition(i, 0, room.name)
+                nExits.push(pos)
+            }
+        }
+        for(var i = 0; i < 50; i++){
+            if(terrain.get(49,i) !== TERRAIN_MASK_WALL){
+                let pos = new RoomPosition(49, i, room.name)
+                eExits.push(pos)
+            }
+        }
+        for(var i = 0; i < 50; i++){
+            if(terrain.get(i,49) !== TERRAIN_MASK_WALL){
+                let pos = new RoomPosition(i, 49, room.name)
+                sExits.push(pos)
+            }
+        }
+        let roomExits = [nExits, sExits, eExits, wExits];
+
+        let startPoint = template.buildings.storage.pos[0];
+        let startPos = new RoomPosition(plan.x + startPoint.x - template.offset.x, plan.y + startPoint.y - template.offset.y, room.name)
+        for(var i = 0; i < 4; i++){//find closest Exit point for each side and then path to it
+            let exitPath0 = PathFinder.search(startPos, roomExits[i], {
+                plainCost: 2, swampCost: 2, maxRooms: 1, 
+                roomCallback: function(roomName) {
+                    return room.costs;
+                },
+            })
+            let exitPoint = exitPath0.path[exitPath0.path.length - 1];
+            //now path from this point to template exits
+            let exitPath = PathFinder.search(exitPoint, exits, {
+                plainCost: 2, swampCost: 2, maxRooms: 1, 
+                roomCallback: function(roomName) {
+                    return room.costs;
+                },
+            })
+            roads.push(exitPath.path[i]);
+        }
+        console.log(room.memory.city + " roads: " + roads)
+        //TODO: build roads, cut this function up, plan and build walls + ramparts
+    }
 
     clearAllStructures: function(room) {
         let structures = room.find(FIND_STRUCTURES);
