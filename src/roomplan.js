@@ -112,7 +112,7 @@ let p = {
         room.costs = costs;
 
         //roads from sources
-        const sources = Game.spawns[room.memory.city].memory.sources
+        const sources = Object.keys(Game.spawns[room.memory.city].memory.sources)
         for (var i = 0; i < sources.length; i++) {
             let sourcePos = Game.getObjectById(sources[i]).pos;
             let sourcePath = PathFinder.search(sourcePos, exits, {
@@ -121,8 +121,8 @@ let p = {
                     return room.costs;
                 },
             })
-            for(var i = 1; i < sourcePath.path.length; i++){// don't include first path (not needed)
-                roads.push(sourcePath.path[i]);
+            for(var j = 1; j < sourcePath.path.length; j++){// don't include first path (not needed)
+                roads.push(sourcePath.path[j]);
             }
         }
 
@@ -202,11 +202,18 @@ let p = {
                         return room.costs;
                     },
                 })
-                roads.push(exitPath.path[i]);
+                for(var j = 0; j < exitPath.path.length; j++){
+                    roads.push(exitPath.path[j]);
+                }
             }
         }
-        console.log(room.memory.city + " roads: " + roads)
-        //TODO: build roads, cut this function up, plan and build walls + ramparts
+        for(var i = 0; i < roads.length; i++){
+            room.visual.circle(roads[i], {fill: 'transparent', radius: 0.25, stroke: 'red'});
+            if(Game.constructionSites.length < 10){
+                room.createConstructionSite(roads[i], STRUCTURE_ROAD)
+            }
+        }
+        //TODO: cut this function up, plan and build walls + ramparts
     },
 
     clearAllStructures: function(room) {
