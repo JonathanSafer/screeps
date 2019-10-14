@@ -209,7 +209,7 @@ let p = {
         }
         for(var i = 0; i < roads.length; i++){
             room.visual.circle(roads[i], {fill: 'transparent', radius: 0.25, stroke: 'red'});
-            if(Game.constructionSites.length < 20){
+            if(Object.keys(Game.constructionSites).length < 20){
                 room.createConstructionSite(roads[i], STRUCTURE_ROAD)
             }
         }
