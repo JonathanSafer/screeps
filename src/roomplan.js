@@ -89,7 +89,7 @@ let p = {
 
         //can this be its own function?
         let costs = new PathFinder.CostMatrix;
-        _.forEach(template.buildings, function(locations, structureType) {
+        _.forEach(template.buildings, function(locations, structureType) {//don't make roads anywhere that a structure needs to go
             locations.pos.forEach(location => {
                 var pos = {"x": plan.x + location.x - template.offset.x, 
                            "y": plan.y + location.y - template.offset.y}
@@ -116,7 +116,7 @@ let p = {
         for (var i = 0; i < sources.length; i++) {
             let sourcePos = Game.getObjectById(sources[i]).pos;
             let sourcePath = PathFinder.search(sourcePos, exits, {
-                plainCost: 2, swampCost: 2, maxRooms: 1, 
+                plainCost: 4, swampCost: 4, maxRooms: 1, 
                 roomCallback: function(roomName) {
                     return room.costs;
                 },
@@ -129,7 +129,7 @@ let p = {
         //road from mineral
         const mineralPos = room.find(FIND_MINERALS)[0].pos;
         let mineralPath = PathFinder.search(mineralPos, exits, {
-            plainCost: 2, swampCost: 2, maxRooms: 1, 
+            plainCost: 4, swampCost: 4, maxRooms: 1, 
             roomCallback: function(roomName) {
                 return room.costs;
             },
@@ -143,7 +143,7 @@ let p = {
         const controller = _.find(structures, structure => structure.structureType === STRUCTURE_CONTROLLER);
         const controllerPos = controller.pos;
         let controllerPath = PathFinder.search(controllerPos, exits, {
-            plainCost: 2, swampCost: 2, maxRooms: 1, 
+            plainCost: 4, swampCost: 4, maxRooms: 1, 
             roomCallback: function(roomName) {
                 return room.costs;
             },
@@ -189,7 +189,7 @@ let p = {
         for(var i = 0; i < 4; i++){//find closest Exit point for each side and then path to it
             if(roomExits[i].length){
                 let exitPath0 = PathFinder.search(startPos, roomExits[i], {
-                    plainCost: 2, swampCost: 2, maxRooms: 1, 
+                    plainCost: 4, swampCost: 4, maxRooms: 1, 
                     roomCallback: function(roomName) {
                         return room.costs;
                     },
@@ -197,7 +197,7 @@ let p = {
                 let exitPoint = exitPath0.path[exitPath0.path.length - 1];
                 //now path from this point to template exits
                 let exitPath = PathFinder.search(exitPoint, exits, {
-                    plainCost: 2, swampCost: 2, maxRooms: 1, 
+                    plainCost: 4, swampCost: 4, maxRooms: 1, 
                     roomCallback: function(roomName) {
                         return room.costs;
                     },
@@ -209,11 +209,11 @@ let p = {
         }
         for(var i = 0; i < roads.length; i++){
             room.visual.circle(roads[i], {fill: 'transparent', radius: 0.25, stroke: 'red'});
-            if(Object.keys(Game.constructionSites).length < 20){
+            if(Object.keys(Game.constructionSites).length < 20){//doesn't update during the tick
                 room.createConstructionSite(roads[i], STRUCTURE_ROAD)
             }
         }
-        //TODO: cut this function up, plan and build walls + ramparts
+        //TODO: cut this function up, plan and build walls + ramparts, limit number of roads total using static or global, make this happen less frequently
     },
 
     clearAllStructures: function(room) {
