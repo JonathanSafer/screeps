@@ -117,7 +117,7 @@ function getRecipe(type, extensions, room){
             d['bigTrooper'] = body([16, 24, 10], [TOUGH, RANGED_ATTACK, MOVE]);
             d['trooper'] = body([25, 25], [RANGED_ATTACK, MOVE]);
             d['robber'] = body([25, 25], [CARRY, MOVE]);
-            d['depositMiner'] = body([10, 2, 12], [WORK, CARRY, MOVE]);
+            d['depositMiner'] = body([10, 10, 20], [WORK, CARRY, MOVE]);
             break;
 	}
 

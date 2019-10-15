@@ -1,4 +1,4 @@
-var a = require('actions');
+var actions = require('actions');
 var t = require('types');
 var u = require('utils');
 
@@ -15,7 +15,7 @@ var rDM = {
         }
         if(creep.memory.target === 0){
             if(_.sum(creep.store) === creep.store.getCapacity()){
-                creep.memory.target === 1
+                creep.memory.target = 1
             }
         }
         switch(creep.memory.target){
@@ -37,7 +37,7 @@ var rDM = {
                     return;
                 }
                 //move towards and mine deposit (actions.harvest)
-                actions.harvest(deposit[0]);
+                actions.harvest(creep, deposit[0]);
                 break;
             case 1:
                 //store is full
