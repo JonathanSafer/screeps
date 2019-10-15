@@ -1,3 +1,4 @@
+var rDM = require('depositMiner');
 var rMe = require('medic');
 var rH = require('harasser');
 var rSB = require('spawnBuilder');

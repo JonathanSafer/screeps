@@ -1,4 +1,5 @@
 var rMe = require('medic');
+var rDM = require('depositMiner');
 var rp = require('roomplan');
 var rBM = require('bigMedic')
 var rTr = require('trooper')
@@ -59,7 +60,7 @@ function makeCreeps(role, type, target, city) {
 //runCity function
 function runCity(city, creeps){
     if (Game.spawns[city]){
-        var roles = [rF, rA, rT, rM, rR, rU, rB, rS, rMM, rC, rSB, rH, rBM, rD, rBB, rBT, rMe, rTr, rBr, rPM, rRo] // order roles for priority
+        var roles = [rF, rA, rT, rM, rR, rU, rB, rS, rMM, rC, rSB, rH, rBM, rD, rBB, rBT, rMe, rTr, rBr, rPM, rRo, rDM] // order roles for priority
         var nameToRole = _.groupBy(roles, role => role.name); // map from names to roles
         var counts = _.countBy(creeps, creep => creep.memory.role); // lookup table from role to count
     
