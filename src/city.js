@@ -287,8 +287,8 @@ function checkLabs(city){
 }
 
 function updateMilitary(city, memory, rooms) {
-    let flags = ['harass', 'break', 'defend', 'powerMine', 'bigShoot', 'shoot', 'bigBreak'];
-    let updateFns = [updateHarasser, updateBreaker, updateDefender, updatePowerMine, updateBigTrooper, updateTrooper, updateBigBreaker];
+    let flags = ['harass', 'break', 'defend', 'powerMine', 'bigShoot', 'shoot', 'bigBreak', 'depositMine'];
+    let updateFns = [updateHarasser, updateBreaker, updateDefender, updatePowerMine, updateBigTrooper, updateTrooper, updateBigBreaker, updateDepositMiner];
     let big = 0
     for (var i = 0; i < flags.length; i++) {
         let flagName = city + flags[i];
@@ -565,6 +565,10 @@ function updatePowerMine(flag, memory) {
     if (flag) memory[rT.name] = 4;
 }
 
+function updateDepositMiner(flag, memory) {
+    memory[rDM.name] = flag ? 1 : 0;
+}
+
 function updateTrooper(flag, memory, unused, rooms) {
     // use troopers to defend rooms
     // var enemyCounts = _.map(rooms, room => {
@@ -724,6 +728,14 @@ function runObs(city){
                     //put a flag on it
                     Game.rooms[roomName].createFlag(powerBank.pos, flagName)
                     console.log('Power Bank found in: ' + roomName)
+                }
+            }
+            //flag deposits
+            let deposit = Game.rooms[roomName].find(FIND_DEPOSITS)
+            if(deposit.length){
+                let depositFlagName = city + 'deposit';
+                if(!Game.flags[depositFlagName] && Game.spawns[city].room.terminal.store[deposit[0].depositType] < 10000){
+                    Game.rooms[roomName].createFlag(deposit[0].pos, flagName)
                 }
             }
         }

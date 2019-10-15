@@ -152,7 +152,7 @@ var actions = {
             let mineral = _.keys(carry)[1];
             return actions.interact(creep, location, () => creep.transfer(location, mineral));
         } else{
-            return actions.interact(creep, location, () => creep.transfer(location, /*creep.carry[0]*/RESOURCE_ENERGY));
+            return actions.interact(creep, location, () => creep.transfer(location, Object.keys(carry)[0]));
         }
     },
 

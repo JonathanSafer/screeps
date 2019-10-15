@@ -26,7 +26,7 @@ var rR = {
             let flagName = creep.memory.city + 'powerMine';
             if (Game.flags[flagName] && Game.flags[flagName].pos.roomName !== creep.pos.roomName){
                 //move to flag range 5
-                creep.moveTo(Game.flags[flagName], {reusePath: 50}, {range: 5})
+                creep.moveTo(Game.flags[flagName], {reusePath: 50}, {range: 4})
                 return;
             }
             if (Game.flags[flagName]){
@@ -35,7 +35,16 @@ var rR = {
                 if (resource.length){
                     //pickup resource
                     if (creep.pickup(resource[0]) == ERR_NOT_IN_RANGE){
-                        creep.moveTo(Game.flags[flagName], {reusePath: 5})
+                        creep.moveTo(Game.flags[flagName], {reusePath: 2})
+                    }
+
+                    return;
+                }
+                let ruin = Game.flags[flagName].room.lookForAt(LOOK_RUINS, Game.flags[flagName].pos);
+                if (ruin.length){
+                    //pickup resource
+                    if (creep.withdraw(ruin[0], RESOURCE_POWER) == ERR_NOT_IN_RANGE){
+                        creep.moveTo(Game.flags[flagName], {reusePath: 2})
                     }
 
                     return;
