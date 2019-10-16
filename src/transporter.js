@@ -68,8 +68,9 @@ var rT = {
                                             || structure.structureType == STRUCTURE_LAB
                                             || structure.structureType == STRUCTURE_NUKER)
                                             && structure.energy < structure.energyCapacity)
-                                            || (structure.structureType == STRUCTURE_POWER_SPAWN && structure.energy < (structure.energyCapacity - 350))
-                                            || (structure.structureType == STRUCTURE_TOWER && structure.energy < (structure.energyCapacity - 350))
+                                            || (structure.structureType == STRUCTURE_POWER_SPAWN && structure.energy < (structure.energyCapacity - 400))
+                                            || (structure.structureType == STRUCTURE_FACTORY && structure.store.getUsedCapacity(RESOURCE_ENERGY) < 10000)
+                                            || (structure.structureType == STRUCTURE_TOWER && structure.energy < (structure.energyCapacity - 400))
                                     );
                                 }
                         });
