@@ -49,8 +49,9 @@ var rPM = {
                 creep.moveTo(Game.spawns[creep.memory.city])
             }
             let resource = Game.flags[targetFlag].room.lookForAt(LOOK_RESOURCES, Game.flags[targetFlag].pos);
-            if (!resource.length){
-            	Game.flags[targetFlag].remove();
+            let ruin = Game.flags[targetFlag].room.lookForAt(LOOK_RUINS, Game.flags[targetFlag].pos);
+            if (!resource.length && !ruin.length){
+                Game.flags[targetFlag].remove();
             }
         } else if(Game.flags[targetFlag]){
             creep.moveTo(Game.flags[targetFlag], {reusePath: 50})
