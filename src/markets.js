@@ -13,7 +13,7 @@ var markets = {
     		receiver = sortedCities[0].name
     		for (var i = 0; i < myCities.length; i++){
     		    if (myCities[i].storage && myCities[i].storage.store.energy > 500000){
-    		        myCities[i].terminal.send(RESOURCE_ENERGY, 75000, receiver);
+    		        myCities[i].terminal.send(RESOURCE_ENERGY, 25000, receiver);
     		    }
     		}
     	}

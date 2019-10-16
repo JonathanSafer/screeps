@@ -24,7 +24,7 @@ var rF = {
                 //move energy from storage to terminal
                 if (creep.carry.energy > 0){
                     actions.charge(creep, creep.room.terminal);
-                } else if(creep.room.storage.store.energy > 150000 && creep.room.terminal.store.energy < 150000){
+                } else if(creep.room.storage.store.energy > 150000 && creep.room.terminal.store.energy < 50000){
                     if (Game.time % 10 === 0 || Game.time % 10 === 1){
                         creep.memory.target = rF.getJob(creep);
                         break;
@@ -51,7 +51,7 @@ var rF = {
                 //move energy from terminal to storage
                 if (creep.carry.energy > 0){
                     actions.charge(creep, creep.room.storage);
-                } else if(creep.room.terminal.store.energy > 151000){
+                } else if(creep.room.terminal.store.energy > 51000){
                     actions.withdraw(creep, creep.room.terminal, RESOURCE_ENERGY);
                 } else {
                     creep.memory.target = rF.getJob(creep);
@@ -181,10 +181,10 @@ var rF = {
         if (Game.spawns[creep.memory.city].memory.storageLink && Game.getObjectById(Game.spawns[creep.memory.city].memory.storageLink).energy > 0){
             return 5;
         }
-        if (creep.room.storage.store.energy > 150000 && creep.room.terminal.store.energy < 150000 && _.sum(creep.room.terminal.store) < 295000){
+        if (creep.room.storage.store.energy > 150000 && creep.room.terminal.store.energy < 50000 && _.sum(creep.room.terminal.store) < 295000){
             return 1;
         }
-        if (creep.room.terminal.store.energy > 151000){
+        if (creep.room.terminal.store.energy > 51000){
             return 3;
         }
         if(Object.keys(creep.room.storage.store).length > 1 && _.sum(creep.room.terminal.store) < 295000){
