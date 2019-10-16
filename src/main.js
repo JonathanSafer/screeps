@@ -91,18 +91,20 @@ module.exports.loop = function () {
         
         //clear labs in a room
         /*let creep = Game.creeps['a'];
-        let labs = _.filter(creep.room.find(FIND_STRUCTURES), structure => structure.structureType === STRUCTURE_LAB)
-        for(var i = 0; i < labs.length; i++){
-            if(labs[i].mineralAmount > 0){
-                let sum = _.sum(creep.carry)
-                if(sum > 0){
-                    creep.drop(Object.keys(creep.carry)[1])
+        if(creep){
+            let labs = _.filter(creep.room.find(FIND_STRUCTURES), structure => structure.structureType === STRUCTURE_LAB)
+            for(var i = 0; i < labs.length; i++){
+                if(labs[i].mineralAmount > 0){
+                    let sum = _.sum(creep.carry)
+                    if(sum > 0){
+                        creep.drop(Object.keys(creep.store)[0])
+                        return;
+                    }
+                    if(creep.withdraw(labs[i], labs[i].mineralType) == ERR_NOT_IN_RANGE){
+                        creep.moveTo(labs[i]);
+                    }
                     return;
                 }
-                if(creep.withdraw(labs[i], labs[i].mineralType) == ERR_NOT_IN_RANGE){
-                    creep.moveTo(labs[i]);
-                }
-                return;
             }
         }*/
     });
