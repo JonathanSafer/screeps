@@ -51,7 +51,7 @@ var rR = {
                 }
                 //move to flag
                 if (!creep.pos.inRangeTo(Game.flags[flagName].pos, 5)){
-                    creep.moveTo(Game.flags[flagName].pos, {reusePath: 50}, {range: 5})
+                    creep.moveTo(Game.flags[flagName].pos, {reusePath: 50}, {range: 4})
                 }
                 // every 50 ticks check for powerbank
                 if (Game.time % 50 == 0){
