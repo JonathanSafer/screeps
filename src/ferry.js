@@ -169,6 +169,35 @@ var rF = {
                     Game.spawns[creep.memory.city].memory.ferryInfo.boosterInfo[creep.memory.labNum][1] = 0
                 }
                 break;
+            case 11:
+                //move produce from factory to terminal
+                if (_.sum(creep.store) > 0){
+                    let result = actions.charge(creep, creep.room.terminal)
+                    if(result = 1){//successful deposit, remove element from task list
+                        _.remove(Game.spawns[creep.memory.city].memory.ferryInfo.factoryInfo.transfer, creep.memory.labNum);
+                        creep.say('getJob')
+                    }
+                    break;
+                }
+                let factory = Game.getObjectById(creep.memory.lab)
+                actions.withdraw(creep, factory, creep.memory.mineral, creep.memory.quantity); 
+
+                break;
+            case 12:
+                //move component from terminal to factory
+                if (_.sum(creep.store) > 0){
+                    let factory = Game.getObjectById(creep.memory.lab)
+                    let result = creep.transfer(factory, creep.memory.mineral, creep.memory.quantity);
+                    if (result == 0){
+                        _.remove(Game.spawns[creep.memory.city].memory.ferryInfo.factoryInfo.transfer, creep.memory.labNum); //remove element
+                        creep.say('getJob')
+                        break;
+                    }
+                    creep.moveTo(factory)
+                    break;
+                }
+                actions.withdraw(creep, creep.room.terminal, creep.memory.mineral, creep.memory.quantity);
+                break;
         }
      
     },
@@ -220,6 +249,36 @@ var rF = {
                     creep.memory.mineral = Game.spawns[creep.memory.city].memory.ferryInfo.labInfo[i][2]
                     creep.memory.labNum = i;
                     return 6;
+                }
+            }
+        }
+        if(Game.spawns[creep.memory.city].memory.ferryInfo.factoryInfo){
+            let transfer = Game.spawns[creep.memory.city].memory.ferryInfo.factoryInfo.transfer
+            if(transfer.length){
+                for(i = 0; i < transfer.length; i++){
+                    if(transfer[i][1] === 0){//move produce from factory to terminal
+                        creep.memory.mineral = transfer[i][0];
+                        creep.memory.quantity = transfer[i][2];
+                        creep.memory.labNum = i; //use labNum as index
+                        creep.memory.lab = _.find(creep.room.find(FIND_MY_STRUCTURES), structure => structure.structureType == STRUCTURE_FACTORY).id;
+                        return 11;
+                    }
+                    if(transfer[i][1] === 1){//move component from terminal to factory OR request mineral if no mineral request
+                        //if compenent that is needed is not in terminal, do not request, component will be delivered by empire manager
+                        if(creep.room.terminal.store[transfer[i][0]] >= transfer[i][2]){ 
+                            creep.memory.mineral = transfer[i][0];
+                            creep.memory.quantity = transfer[i][2];
+                            creep.memory.labNum = i;
+                            creep.memory.lab = _.find(creep.room.find(FIND_MY_STRUCTURES), structure => structure.structureType == STRUCTURE_FACTORY).id;
+                            return 12;
+                        }
+                        if(_.includes(Object.keys(REACTIONS, transfer[i][0]))){// must be a mineral of some sort
+                            if(!Game.spawns[creep.memory.city].memory.ferryInfo.mineralRequest){
+                                Game.spawns[creep.memory.city].memory.ferryInfo.mineralRequest = transfer[i][0];
+                            }
+                        }
+                    }
+
                 }
             }
         }

@@ -87,8 +87,29 @@ module.exports.loop = function () {
         }// TODO: this could go in run city?
         s.collectStats();
         
- 
+        //calc for deposit mining
+        function calcCooldown(harvested) {
+            return Math.ceil(0.001*Math.pow(harvested,1.2))
+        }
         
+        function test(hpt, ticks) {
+            let harvested = 4000
+            let cooldown = 0
+            for (let i = 0; i < ticks; i++) {
+                if (cooldown == 0) {
+                    harvested += hpt
+                    cooldown = calcCooldown(harvested);
+                }
+                else {
+                    cooldown--
+                }
+            }
+            console.log("Harvested so far:", harvested);
+            console.log("Last cooldown", calcCooldown(harvested));
+        }
+        //test(20,100)
+
+
         //clear labs in a room
         /*let creep = Game.creeps['a'];
         if(creep){
