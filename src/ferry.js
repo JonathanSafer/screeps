@@ -272,7 +272,7 @@ var rF = {
                             creep.memory.lab = _.find(creep.room.find(FIND_MY_STRUCTURES), structure => structure.structureType == STRUCTURE_FACTORY).id;
                             return 12;
                         }
-                        if(_.includes(Object.keys(REACTIONS, transfer[i][0]))){// must be a mineral of some sort
+                        if(_.includes(Object.keys(REACTIONS), transfer[i][0])){// must be a mineral of some sort
                             if(!Game.spawns[creep.memory.city].memory.ferryInfo.mineralRequest){
                                 Game.spawns[creep.memory.city].memory.ferryInfo.mineralRequest = transfer[i][0];
                             }

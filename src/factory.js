@@ -2,9 +2,9 @@ var fact = {
 
     runFactory: function(city) {
         fact.initFactoryMem(city);
-        if(Game.spawns[city].memory.ferryInfo.factoryInfo.produce === 'dormant'){
+        if(Game.spawns[city].memory.ferryInfo.factoryInfo.produce === 'dormant' || !Game.spawns[city].memory.ferryInfo.factoryInfo.produce){
             if(Game.time % 100 === 0){
-                Game.spawns[city].memory.ferryInfo.factoryInfo.produce = null;
+                Game.spawns[city].memory.ferryInfo.factoryInfo.produce = RESOURCE_ORGANISM;
             }
             return;
         }
@@ -109,7 +109,7 @@ var fact = {
         let productionNum = _.floor(1000/rateLimit)//number of cycles we can run per charter
         for(i = 0; i < components.length; i++){
             let requestAmount = COMMODITIES[produce].components[components[i]] * productionNum;
-            Game.spawns[city].memory.ferryInfo.factoryInfo.transfer.push([components[i], 1, requestAmount)
+            Game.spawns[city].memory.ferryInfo.factoryInfo.transfer.push([components[i], 1, requestAmount])
         }
 
     }
