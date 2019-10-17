@@ -173,7 +173,7 @@ var rF = {
                 //move produce from factory to terminal
                 if (_.sum(creep.store) > 0){
                     let result = actions.charge(creep, creep.room.terminal)
-                    if(result = 1){//successful deposit, remove element from task list
+                    if(result == 1){//successful deposit, remove element from task list
                         _.remove(Game.spawns[creep.memory.city].memory.ferryInfo.factoryInfo.transfer, creep.memory.labNum);
                         creep.say('getJob')
                     }
