@@ -83,7 +83,7 @@ function getRecipe(type, extensions, room){
 			// lvl 7 recipes
     		d['normal'] = body([20, 12, 16], [WORK, CARRY, MOVE]);
     		d['builder'] = body([5, 9, 7], [WORK, CARRY, MOVE]);
-    		d['ferry'] = body([10, 5], [CARRY, MOVE]);
+    		d['ferry'] = body([20, 10], [CARRY, MOVE]);
     		d['transporter'] = body([8, 4], [CARRY, MOVE]);
     		d['miner'] = body([5, 10], [MOVE, WORK]);
     		d['mineralMiner'] = body([22, 10, 16], [WORK, CARRY, MOVE]);

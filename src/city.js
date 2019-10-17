@@ -26,6 +26,7 @@ var T = require('tower');
 var rD = require('defender');
 var rPM = require('powerMiner');
 var labs = require('labs');
+var fact = require('factory');
 
 
 function makeCreeps(role, type, target, city) {
@@ -84,7 +85,8 @@ function runCity(city, creeps){
         
         //run powerSpawn
         runPowerSpawn(city);
-        labs.runLabs(city)
+        labs.runLabs(city);
+        fact.runFactory(city);
     }
 }
 //updateCountsCity function
