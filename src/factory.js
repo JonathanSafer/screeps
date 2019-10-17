@@ -60,6 +60,19 @@ var fact = {
                 }
             }
         }
+        if(Game.time % 10 === 0 && Game.spawns[city].memory.ferryInfo.factoryInfo.produce){
+            let produce = Game.spawns[city].memory.ferryInfo.factoryInfo.produce;
+            let components = Object.keys(COMMODITIES[produce].components);
+            let go = true;
+            for (var i = 0; i < components.length; i++) {
+                if(COMMODITIES[produce].components[components[i]] > factory.store[components[i]]){
+                    go = false;
+                }
+            }
+            if(!go){
+                fact.restock(factory, city, produce);
+            }
+        }
     },
 
     restock: function(factory, city, produce){
