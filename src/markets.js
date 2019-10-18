@@ -132,9 +132,11 @@ var markets = {
         for(i = 0; i < bars.length; i++){
             if(terminal.store[bars[i]] > 5000){
                 sellAmount = 5000 - terminal.store[bars[i]];
-                let goodOrders = markets.sortOrder(buyOrders[mineral]).reverse();
-                Game.market.deal(goodOrders[0].id, Math.min(goodOrders[0].remainingAmount,  sellAmount), city.name);
-                return true;
+                let goodOrders = markets.sortOrder(buyOrders[bars[i]]).reverse();
+                if(goodOrders.length){
+                    Game.market.deal(goodOrders[0].id, Math.min(goodOrders[0].remainingAmount,  sellAmount), city.name);
+                    return true;
+                }
             }
         }
         return false;
