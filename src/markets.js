@@ -131,7 +131,7 @@ var markets = {
         let terminal = city.terminal;
         for(var i = 0; i < bars.length; i++){
             if(terminal.store[bars[i]] > 5000){
-                sellAmount = 5000 - terminal.store[bars[i]];
+                sellAmount = terminal.store[bars[i]] - 5000;
                 let goodOrders = markets.sortOrder(buyOrders[bars[i]]).reverse();
                 if(goodOrders.length){
                     Game.market.deal(goodOrders[0].id, Math.min(goodOrders[0].remainingAmount,  sellAmount), city.name);
@@ -168,7 +168,10 @@ var markets = {
                 let orderId = _.find(Object.keys(Game.market.orders),
                         order => Game.market.orders[order].roomName === city.name && Game.market.orders[order].resourceType === RESOURCE_ENERGY);
                 let order = Game.market.orders[orderId];
-                if(!order){
+                if(order && order.remainingAmount === 0){
+                    //update order quantity
+                    Game.market.extendOrder(orderId, 50000)
+                } else if(!order){
                     let buyPrice = 0.002
                     Game.market.createOrder({
                         type: ORDER_BUY,
@@ -194,6 +197,11 @@ var markets = {
     },
 
     manageMarket: function manageMarket(myCities){
+        for(var i = 0; i < Object.keys(Game.market.orders).length; i++){
+            if(!Game.market.orders[Object.keys(Game.market.orders)[i]].active){
+                Game.market.cancelOrder(Object.keys(Game.market.orders)[i])
+            }
+        }
         const orders = Game.market.getAllOrders();
         global.marketHistory = _.groupBy(Game.market.getHistory(), history => history.resourceType)
         const sellOrders = _.groupBy(_.filter(orders, order => order.type == ORDER_SELL), order => order.resourceType)

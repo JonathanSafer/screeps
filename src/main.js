@@ -42,13 +42,13 @@ module.exports.loop = function () {
         pC.run103207();
         pC.run138066();
         //distribute energy, power and upgrade boost
-        if (Game.time % 100 === 0) {
+        if (Game.time % 100 === 10) {
             m.distributeEnergy(myCities);
             m.distributePower(myCities);
             m.distributeUpgrade(myCities);
         }
 
-        if (Game.time % 50 === 25) {
+        if (Game.time % 50 === 20) {
             m.distributeMinerals(myCities);
         }
 
