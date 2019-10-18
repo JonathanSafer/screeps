@@ -88,6 +88,9 @@ var labs = {
     chooseMineral: function(mineral, spawn) {
         //if requesting mineral, early return
         if (spawn.memory.ferryInfo.mineralRequest){
+            if(Game.time % 50 == 26){
+                spawn.memory.ferryInfo.mineralRequest = null;
+            }
             return 0;
         }
         let ingredients = labs.findIngredients(mineral)

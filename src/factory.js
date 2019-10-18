@@ -93,7 +93,7 @@ var fact = {
         } else {
             //make 5k of each base resource commodity (in increments of 200)
             let baseComs = [RESOURCE_UTRIUM_BAR, RESOURCE_LEMERGIUM_BAR, RESOURCE_ZYNTHIUM_BAR,
-                    RESOURCE_KEANIUM_BAR, RESOURCE_GHODIUM_MELT, RESOURCE_OXIDANT, RESOURCE_REDUCTANT, RESOURCE_PURIFIER];
+                    RESOURCE_KEANIUM_BAR, RESOURCE_OXIDANT, RESOURCE_REDUCTANT, RESOURCE_PURIFIER, RESOURCE_GHODIUM_MELT];
             let terminal = Game.spawns[city].room.terminal;
             for(i = 0; i < baseComs.length; i++){
                 if(terminal.store[baseComs[i]] < 5000){
