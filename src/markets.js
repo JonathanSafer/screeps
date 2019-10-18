@@ -110,7 +110,7 @@ var markets = {
                     //update order quantity
                     Game.market.extendOrder(orderId, (amountNeeded - order.remainingAmount))
                 } else if(!order){
-                    let buyPrice = market.getPrice(minerals[i]);
+                    let buyPrice = markets.getPrice(minerals[i]);
                     Game.market.createOrder({
                         type: ORDER_BUY,
                         resourceType: minerals[i],
