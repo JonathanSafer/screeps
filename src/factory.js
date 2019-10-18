@@ -116,9 +116,10 @@ var fact = {
             }
             //make base commodities i.e. wire, cell etc.
             let baseComs = [RESOURCE_CONDENSATE, RESOURCE_ALLOY, RESOURCE_CELL, RESOURCE_WIRE]
+            let rawComs = [RESOURCE_SILICON, RESOURCE_METAL, RESOURCE_BIOMASS, RESOURCE_MIST]
             for(i = 0; i < baseComs.length; i++){
                 let components = _.without(Object.keys(COMMODITIES[baseComs[i]].components), RESOURCE_ENERGY);
-                let commodity = _.without(components, bars);
+                let commodity = _.intersection(components, rawComs);
                 if(terminal.store[commodity] >= 1000){
                     //produce it
                     Game.spawns[city].memory.ferryInfo.factoryInfo.produce = baseComs[i];

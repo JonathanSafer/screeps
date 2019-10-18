@@ -29,7 +29,7 @@ var markets = {
             let mineral = Game.spawns[city].memory.ferryInfo.mineralRequest;
             if(mineral){
                 let x = senders.length
-                for (j = 0; j < senders.length; j++){
+                for (var j = 0; j < senders.length; j++){
                     if(!senders[j].terminal){
                         continue;
                     }
@@ -99,7 +99,7 @@ var markets = {
 
     buyMins: function(city, minerals){
         let terminal = city.terminal
-        for(i = 0; i < minerals.length; i++){
+        for(var i = 0; i < minerals.length; i++){
             let mineralAmount = terminal.store[minerals[i]];
             if(mineralAmount < 10000){
                 let amountNeeded = 10000 - mineralAmount;
@@ -129,7 +129,7 @@ var markets = {
 
     sellBars: function(city, bars, buyOrders){//if # of bars is above threshold, sell extras
         let terminal = city.terminal;
-        for(i = 0; i < bars.length; i++){
+        for(var i = 0; i < bars.length; i++){
             if(terminal.store[bars[i]] > 5000){
                 sellAmount = 5000 - terminal.store[bars[i]];
                 let goodOrders = markets.sortOrder(buyOrders[bars[i]]).reverse();
@@ -147,7 +147,7 @@ var markets = {
         let history = marketHistory[resource];
         let totalVol = 0;
         let totalPrice = 0;
-        for(i = 0; i < history.length; i++){
+        for(var i = 0; i < history.length; i++){
             totalVol = totalVol + history[i].volume
             totalPrice = totalPrice + (history[i].volume * history[i].avgPrice)
         }
