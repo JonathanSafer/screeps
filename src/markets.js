@@ -91,81 +91,143 @@ var markets = {
             if (goodOrders.length && goodOrders[goodOrders.length - 1].price > .20){
                 Game.market.deal(goodOrders[goodOrders.length - 1].id, Math.min(goodOrders[goodOrders.length - 1].remainingAmount,  Math.max(0, terminal.store['power'] - 20000)), city.name)
                 console.log(Math.min(goodOrders[goodOrders.length - 1].remainingAmount,  Math.max(0, terminal.store['power'] - 20000)) + " " + 'power' + " sold for " + goodOrders[goodOrders.length - 1].price)
+                return true;
+            }
+        }
+        return false;
+    },
+
+    buyMins: function(city, minerals){
+        let terminal = city.terminal
+        for(i = 0; i < minerals.length; i++){
+            let mineralAmount = terminal.store[minerals[i]];
+            if(mineralAmount < 10000){
+                let amountNeeded = 10000 - mineralAmount;
+                let orderId = _.find(Object.keys(Game.market.orders),
+                        order => Game.market.orders[order].roomName === city.name && Game.market.orders[order].resourceType === minerals[i]);
+                let order = Game.market.orders[orderId];
+                if(order && order.remainingAmount < amountNeeded){
+                    //update order quantity
+                    Game.market.extendOrder(orderId, (amountNeeded - order.remainingAmount))
+                } else if(!order){
+                    let buyPrice = market.getPrice(minerals[i]);
+                    Game.market.createOrder({
+                        type: ORDER_BUY,
+                        resourceType: minerals[i],
+                        price: buyPrice,
+                        totalAmount: 10000,
+                        roomName: city.name   
+                    });
+                }
+                else if(amountNeeded === 10000){//order already exists for max amount and has not been satisfied
+                    //increment price
+                    Game.market.changeOrderPrice(orderId, (order.price + 0.001))
+                }
             }
         }
     },
 
-    manageMarket: function manageMarket(myCities){
-        for(i = 0; i < Object.keys(Game.market.orders).length; i++){
-            if(!Game.market.orders[Object.keys(Game.market.orders)[i]].active){
-                Game.market.cancelOrder(Object.keys(Game.market.orders)[i])
+    sellBars: function(city, bars, buyOrders){//if # of bars is above threshold, sell extras
+        let terminal = city.terminal;
+        for(i = 0; i < bars.length; i++){
+            if(terminal.store[bars[i]] > 5000){
+                sellAmount = 5000 - terminal.store[bars[i]];
+                let goodOrders = markets.sortOrder(buyOrders[mineral]).reverse();
+                Game.market.deal(goodOrders[0].id, Math.min(goodOrders[0].remainingAmount,  sellAmount), city.name);
+                return true;
             }
         }
-        var orders = Game.market.getAllOrders();
-        var sellOrders = _.groupBy(_.filter(orders, order => order.type == ORDER_SELL), order => order.resourceType)
-        var buyOrders = _.groupBy(_.filter(orders, order => order.type == ORDER_BUY), order => order.resourceType)
-        for (var i = 0; i < myCities.length; i++){
-            if (myCities[i].terminal){
-                var mineral = myCities[i].find(FIND_MINERALS)[0].mineralType;
-                if (mineral in myCities[i].terminal.store && myCities[i].terminal.store[mineral] > 20000){
-                	var goodOrders = markets.sortOrder(buyOrders[mineral]);
-                	if (goodOrders.length && goodOrders[goodOrders.length - 1].price > .05 && myCities[i].storage.store.energy > 200000){
-                		Game.market.deal(goodOrders[goodOrders.length - 1].id, Math.min(goodOrders[goodOrders.length - 1].remainingAmount,  Math.max(0, myCities[i].terminal.store[mineral] - 20000)), myCities[i].name)
-                		console.log(Math.min(goodOrders[goodOrders.length - 1].remainingAmount,  Math.max(0, myCities[i].terminal.store[mineral] - 20000)) + " " + mineral + " sold for " + goodOrders[goodOrders.length - 1].price)
-                	}
-                }
-                markets.sellPower(myCities[i], buyOrders);
-                if (myCities[i].terminal.store['XGH2O']){
-                    let quantity = myCities[i].terminal.store['XGH2O']
-                    let myId = _.find(Object.keys(Game.market.orders), order => Game.market.orders[order].roomName === myCities[i].name && Game.market.orders[order].resourceType === 'XGH2O')
-                    let myOrder = Game.market.orders[myId];
-                    if (myOrder && myOrder.remainingAmount < (quantity - 10000)){
-                        let remaining = myOrder.remainingAmount
-                        Game.market.extendOrder(myId, ((quantity - 10000) - remaining))                     
-                    } else if(!myOrder && quantity > 10000){
-                        let price = Math.max(markets.sortOrder(sellOrders['XGH2O'])[0].price - 0.1, 3);
-                        Game.market.createOrder(ORDER_SELL, 'XGH2O', price, quantity - 10000, myCities[i].name)
-                    } else if (myOrder && myOrder.remainingAmount > 15000 && myOrder.price > 3){
-                        Game.market.changeOrderPrice(myId, (myOrder.price - 0.001))
-                    }
-                }
-                if (myCities[i].terminal.store['G']){
-                    let quantity = myCities[i].terminal.store['G']
-                    let myId = _.find(Object.keys(Game.market.orders), order => Game.market.orders[order].roomName === myCities[i].name && Game.market.orders[order].resourceType === 'G')
-                    let myOrder = Game.market.orders[myId];
-                    if (myOrder && myOrder.remainingAmount < quantity){
-                        let remaining = myOrder.remainingAmount
-                        Game.market.extendOrder(myId, (quantity - remaining))                     
-                    } else if(!myOrder){
-                        let price = Math.max(markets.sortOrder(sellOrders['G'])[0].price - 0.01, 1);
-                        Game.market.createOrder(ORDER_SELL, 'G', price, quantity, myCities[i].name)
-                    } else if (myOrder.remainingAmount > 15000 && myOrder.price > 1){
-                        Game.market.changeOrderPrice(myId, (myOrder.price - 0.001))
-                    }
-                }
-                if (myCities[i].storage && myCities[i].storage.store.energy > 500000){
-                	var energyOrders = markets.sortOrder(buyOrders[RESOURCE_ENERGY])
-                	if (!energyOrders.length){
-                	    return;
-                	}
-                	if (energyOrders[energyOrders.length - 1].price > 0.2){
-                    	Game.market.deal(energyOrders[energyOrders.length - 1].id, Math.min(energyOrders[energyOrders.length - 1].remainingAmount, myCities[i].terminal.store.energy / 2), myCities[i].name)
-                    	console.log(Math.min(energyOrders[energyOrders.length - 1].remainingAmount, myCities[i].terminal.store.energy / 2) + " energy sold for " + energyOrders[energyOrders.length - 1].price)
-                	} else if (myCities[i].storage.store.energy > 600000 && energyOrders[energyOrders.length - 1].price > 0.1){
-                	    Game.market.deal(energyOrders[energyOrders.length - 1].id, Math.min(energyOrders[energyOrders.length - 1].remainingAmount, myCities[i].terminal.store.energy / 2), myCities[i].name)
-                    	console.log(Math.min(energyOrders[energyOrders.length - 1].remainingAmount, myCities[i].terminal.store.energy / 2) + " energy sold for " + energyOrders[energyOrders.length - 1].price)
-                	} else if (myCities[i].storage.store.energy > 700000 && energyOrders[energyOrders.length - 1].price > 0.07){
-                	    Game.market.deal(energyOrders[energyOrders.length - 1].id, Math.min(energyOrders[energyOrders.length - 1].remainingAmount, myCities[i].terminal.store.energy / 2), myCities[i].name)
-                    	console.log(Math.min(energyOrders[energyOrders.length - 1].remainingAmount, myCities[i].terminal.store.energy / 2) + " energy sold for " + energyOrders[energyOrders.length - 1].price)
-                	} else if (myCities[i].storage.store.energy > 800000 && energyOrders[energyOrders.length - 1].price > 0.04){
-                	    Game.market.deal(energyOrders[energyOrders.length - 1].id, Math.min(energyOrders[energyOrders.length - 1].remainingAmount, myCities[i].terminal.store.energy / 2), myCities[i].name)
-                    	console.log(Math.min(energyOrders[energyOrders.length - 1].remainingAmount, myCities[i].terminal.store.energy / 2) + " energy sold for " + energyOrders[energyOrders.length - 1].price)
-                	} else if (myCities[i].storage.store.energy > 900000){
-                	    Game.market.deal(energyOrders[energyOrders.length - 1].id, Math.min(energyOrders[energyOrders.length - 1].remainingAmount, myCities[i].terminal.store.energy / 2), myCities[i].name)
-                    	console.log(Math.min(energyOrders[energyOrders.length - 1].remainingAmount, myCities[i].terminal.store.energy / 2) + " energy sold for " + energyOrders[energyOrders.length - 1].price)
-                	}
+        return false;
+    },
+
+    getPrice: function(resource){
+        //determine price using history
+        let history = Game.market.getHistory(resource);
+        let totalVol = 0;
+        let totalPrice = 0;
+        for(i = 0; i < history.length; i++){
+            totalVol = totalVol + history[i].volume
+            totalPrice = totalPrice + (history[i].volume * history[i].avgPrice)
+        }
+        let price = totalPrice/totalVol;
+        return price;
+    },
+
+    processEnergy: function(city, termUsed, highEnergyOrder){
+        //can't sell if terminal has been used
+        let terminal = city.terminal;
+        let storage = city.storage;
+        if(!storage){
+            return termUsed;
+        }
+        if(storage.store[RESOURCE_ENERGY] < 400000){//buy energy if it's cheap
+            if(highEnergyOrder.price <= 0.002){
+                //buy energy
+                let orderId = _.find(Object.keys(Game.market.orders),
+                        order => Game.market.orders[order].roomName === city.name && Game.market.orders[order].resourceType === RESOURCE_ENERGY);
+                let order = Game.market.orders[orderId];
+                if(!order){
+                    let buyPrice = 0.002
+                    Game.market.createOrder({
+                        type: ORDER_BUY,
+                        resourceType: RESOURCE_ENERGY,
+                        price: buyPrice,
+                        totalAmount: 50000,
+                        roomName: city.name   
+                    });
                 }
             }
+        }
+        if(!termUsed){
+            if(storage.store[RESOURCE_ENERGY] > 600000 && highEnergyOrder.price > .05){//sell if expensive
+                Game.market.deal(highEnergyOrder.id, Math.min(highEnergyOrder.remainingAmount, terminal.store.energy / 2), city.name)
+                return true;
+            }
+            else if(storage.store[RESOURCE_ENERGY] > 900000){
+                Game.market.deal(highEnergyOrder.id, Math.min(highEnergyOrder.remainingAmount, terminal.store.energy / 2), city.name)
+                return true;
+            }
+        }
+        return termUsed;
+    },
+
+    manageMarket: function manageMarket(myCities){
+        const orders = Game.market.getAllOrders();
+        const sellOrders = _.groupBy(_.filter(orders, order => order.type == ORDER_SELL), order => order.resourceType)
+        const buyOrders = _.groupBy(_.filter(orders, order => order.type == ORDER_BUY), order => order.resourceType)
+        const highEnergyOrder = markets.sortOrder(buyOrders[RESOURCE_ENERGY]).reverse()[0];
+        const baseMins = [RESOURCE_HYDROGEN, RESOURCE_OXYGEN, RESOURCE_UTRIUM, RESOURCE_LEMERGIUM, RESOURCE_KEANIUM, RESOURCE_ZYNTHIUM, RESOURCE_CATALYST];
+        const bars = [RESOURCE_UTRIUM_BAR, RESOURCE_LEMERGIUM_BAR, RESOURCE_ZYNTHIUM_BAR, RESOURCE_KEANIUM_BAR, RESOURCE_GHODIUM_MELT, 
+                RESOURCE_OXIDANT, RESOURCE_REDUCTANT, RESOURCE_PURIFIER, RESOURCE_CELL, RESOURCE_WIRE, RESOURCE_ALLOY, RESOURCE_CONDENSATE];
+        for (var i = 0; i < myCities.length; i++){
+            //if no terminal continue
+            if(!myCities[i].terminal || !Game.spawns[myCities[i].memory.city].memory.ferryInfo){
+                continue;
+            }
+            let termUsed = false; //only one transaction can be run using each cities terminal
+            if(myCities[i].terminal.cooldown){
+                termUsed = true;
+            }
+            if(!termUsed){
+                termUsed = markets.sellPower(myCities[i], buyOrders);
+            }
+            let memory = Game.spawns[myCities[i].memory.city].memory;
+            let level = memory.ferryInfo.factoryInfo.factoryLevel;
+            //cities w/o level send all base resources to non levelled cities
+            //base mins are NOT sold, they are made into bars instead.
+            //bars can be sold if in excess
+            //if any base mineral (besides ghodium) is low, an order for it will be placed on the market. If an order already exists, update quantity
+            //if an order already exists and is above threshold (arbitrary?), increase price
+            if(!level){
+                //buy minerals as needed
+                markets.buyMins(myCities[i], baseMins);
+                if(!termUsed){
+                    termUsed = markets.sellBars(myCities[i], bars, buyOrders);
+                }
+
+            }
+            //buy/sell energy
+            termUsed = markets.processEnergy(myCities[i], termUsed, highEnergyOrder);
         }
     }
 };

@@ -66,7 +66,7 @@ var labs = {
     },
 
     chooseBoost: function(currentBoost, spawn) {
-        let boostsList = ['XKHO2', 'XLHO2', 'XZHO2', 'XGHO2', 'XZH2O', 'G']
+        let boostsList = ['XKHO2', 'XLHO2', 'XZHO2', 'XGHO2', 'XZH2O', 'G', 'XGH2O']
         if (boostsList.includes(currentBoost) && spawn.room.terminal.store[currentBoost] > 7000){
             boostsList.splice(boostsList.indexOf(currentBoost), 1);
         }
@@ -75,14 +75,9 @@ var labs = {
                 spawn.memory.ferryInfo.labInfo[6] = boostsList[i]
                 return;
             }
-            //stop making boost
-            if(spawn.room.terminal.store['G'] == undefined || spawn.room.terminal.store['G'] < 15000){
-                spawn.memory.ferryInfo.labInfo[6] = 'G';
-                return;
-            } else {
-                spawn.memory.ferryInfo.labInfo[6] = 'XGH2O';
-            }
         }
+        //make ghodium with excess time
+        spawn.memory.ferryInfo.labInfo[6] = 'G';
     },
 
     chooseMineral: function(mineral, spawn) {

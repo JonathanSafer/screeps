@@ -59,6 +59,7 @@ var fact = {
                     fact.restock(factory, city, produce);// maybe run this every 10 to save cpu?
                 }
             }
+            return;
         }
         if(Game.time % 10 === 0 && Game.spawns[city].memory.ferryInfo.factoryInfo.produce){
             let produce = Game.spawns[city].memory.ferryInfo.factoryInfo.produce;
@@ -92,19 +93,40 @@ var fact = {
             Game.spawns[city].memory.ferryInfo.factoryInfo.produce = null;
         } else {
             //make 5k of each base resource commodity (in increments of 200)
-            let baseComs = [RESOURCE_UTRIUM_BAR, RESOURCE_LEMERGIUM_BAR, RESOURCE_ZYNTHIUM_BAR,
+            let bars = [RESOURCE_UTRIUM_BAR, RESOURCE_LEMERGIUM_BAR, RESOURCE_ZYNTHIUM_BAR,
                     RESOURCE_KEANIUM_BAR, RESOURCE_OXIDANT, RESOURCE_REDUCTANT, RESOURCE_PURIFIER, RESOURCE_GHODIUM_MELT];
             let terminal = Game.spawns[city].room.terminal;
-            for(i = 0; i < baseComs.length; i++){
-                if(terminal.store[baseComs[i]] < 5000){
-                    Game.spawns[city].memory.ferryInfo.factoryInfo.produce = baseComs[i];
-                    let components = _.without(Object.keys(COMMODITIES[baseComs[i]].components), RESOURCE_ENERGY); //ferry shouldn't deliver energy
-                    fact.requestComponents(city, components, baseComs[i])
+            for(i = 0; i < bars.length; i++){
+                if(terminal.store[bars[i]] < 5000){
+                    Game.spawns[city].memory.ferryInfo.factoryInfo.produce = bars[i];
+                    let components = _.without(Object.keys(COMMODITIES[bars[i]].components), RESOURCE_ENERGY); //ferry shouldn't deliver energy
+                    fact.requestComponents(city, components, bars[i])
+                    return;
+                }
+            }
+            //if excess base mineral, process it
+            for(i = 0; i < bars.length; i++){
+                let components = _.without(Object.keys(COMMODITIES[bars[i]].components), RESOURCE_ENERGY);
+                if(terminal.store[components[0]] >= 11000){
+                    Game.spawns[city].memory.ferryInfo.factoryInfo.produce = bars[i];
+                    let components = _.without(Object.keys(COMMODITIES[bars[i]].components), RESOURCE_ENERGY); //ferry shouldn't deliver energy
+                    fact.requestComponents(city, components, bars[i])
                     return;
                 }
             }
             //make base commodities i.e. wire, cell etc.
+            let baseComs = [RESOURCE_CONDENSATE, RESOURCE_ALLOY, RESOURCE_CELL, RESOURCE_WIRE]
+            for(i = 0; i < baseComs.length; i++){
+                let components = _.without(Object.keys(COMMODITIES[baseComs[i]].components), RESOURCE_ENERGY);
+                let commodity = _.without(components, bars);
+                if(terminal.store[commodity] >= 1000){
+                    //produce it
+                    Game.spawns[city].memory.ferryInfo.factoryInfo.produce = baseComs[i];
+                    fact.requestComponents(city, components, baseComs[i])
+                    return;
+                }
 
+            }
             //activate dormant mode
             Game.spawns[city].memory.ferryInfo.factoryInfo.produce = 'dormant';
         }
