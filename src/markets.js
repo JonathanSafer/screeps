@@ -144,7 +144,7 @@ var markets = {
 
     getPrice: function(resource){
         //determine price using history
-        let history = marketHistory(resource);
+        let history = marketHistory[resource];
         let totalVol = 0;
         let totalPrice = 0;
         for(i = 0; i < history.length; i++){
