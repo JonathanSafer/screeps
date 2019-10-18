@@ -1,11 +1,11 @@
 
 var markets = {
-    sortOrder: function sortOrder(orders) {
+    sortOrder: function(orders) {
         sortedOrders = _.sortBy(orders, order => order.price); 
         return sortedOrders;
     },
     
-    distributeEnergy: function distributeEnergy(myCities){
+    distributeEnergy: function(myCities){
         var receiver = null
     	var needEnergy = _.filter(myCities, city => city.storage && city.storage.store.energy < 350000 && city.terminal)
     	if (needEnergy.length){
@@ -19,7 +19,7 @@ var markets = {
     	}
     },
     
-    distributeMinerals: function distributeEnergy(myCities){
+    distributeMinerals: function(myCities){
         let senders = myCities
         for (var i = 0; i < myCities.length; i++){
             let city = myCities[i].memory.city
@@ -55,7 +55,7 @@ var markets = {
         }
     },
 
-    distributePower: function distributePower(myCities){
+    distributePower: function(myCities){
         var receiver = null
     	var needPower = _.filter(myCities, city => city.controller.level > 7 && city.terminal && (city.terminal.store.power < 1 || city.terminal.store.power == undefined))
     	if (needPower.length){
@@ -69,7 +69,7 @@ var markets = {
     	}
     },
 
-    distributeUpgrade: function distributeUpgrade(myCities){
+    distributeUpgrade: function(myCities){
         var receiver = null
         var needUpgrade = _.filter(myCities, city => city.controller.level > 5 && city.terminal && (city.terminal.store['XGH2O'] < 1000 || city.terminal.store['XGH2O'] == undefined))
         if (needUpgrade.length){
@@ -84,7 +84,7 @@ var markets = {
         }
     },
     
-    sellPower: function distributePower(city, buyOrders){
+    sellPower: function(city, buyOrders){
         let terminal = city.terminal
         if ('power' in terminal.store && terminal.store['power'] > 20000){
             var goodOrders = markets.sortOrder(buyOrders['power']);
@@ -144,7 +144,7 @@ var markets = {
 
     getPrice: function(resource){
         //determine price using history
-        let history = Game.market.getHistory(resource);
+        let history = marketHistory(resource);
         let totalVol = 0;
         let totalPrice = 0;
         for(i = 0; i < history.length; i++){
@@ -195,6 +195,7 @@ var markets = {
 
     manageMarket: function manageMarket(myCities){
         const orders = Game.market.getAllOrders();
+        global.marketHistory = _.groupBy(Game.market.getHistory(), history => history.resourceType)
         const sellOrders = _.groupBy(_.filter(orders, order => order.type == ORDER_SELL), order => order.resourceType)
         const buyOrders = _.groupBy(_.filter(orders, order => order.type == ORDER_BUY), order => order.resourceType)
         const highEnergyOrder = markets.sortOrder(buyOrders[RESOURCE_ENERGY]).reverse()[0];
