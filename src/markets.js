@@ -140,7 +140,7 @@ var markets = {
                         let price = Math.max(markets.sortOrder(sellOrders['G'])[0].price - 0.01, 1);
                         Game.market.createOrder(ORDER_SELL, 'G', price, quantity, myCities[i].name)
                     } else if (myOrder.remainingAmount > 15000 && myOrder.price > 1){
-                        Game.market.changeOrderPrice(myId, (myOrder.price - 0.005))
+                        Game.market.changeOrderPrice(myId, (myOrder.price - 0.001))
                     }
                 }
                 if (myCities[i].storage && myCities[i].storage.store.energy > 500000){

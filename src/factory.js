@@ -4,7 +4,7 @@ var fact = {
         fact.initFactoryMem(city);
         if(Game.spawns[city].memory.ferryInfo.factoryInfo.produce === 'dormant' || !Game.spawns[city].memory.ferryInfo.factoryInfo.produce){
             if(Game.time % 100 === 0){
-                Game.spawns[city].memory.ferryInfo.factoryInfo.produce = RESOURCE_ORGANISM;
+                Game.spawns[city].memory.ferryInfo.factoryInfo.produce = RESOURCE_ORGANISM;//will result in reset
             }
             return;
         }
