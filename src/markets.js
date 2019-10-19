@@ -111,6 +111,7 @@ var markets = {
                     Game.market.extendOrder(orderId, (amountNeeded - order.remainingAmount))
                 } else if(!order){
                     let buyPrice = markets.getPrice(minerals[i]);
+                    buyPrice = buyPrice * 0.8;//start 20% below market value
                     Game.market.createOrder({
                         type: ORDER_BUY,
                         resourceType: minerals[i],
