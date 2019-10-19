@@ -67,11 +67,11 @@ var labs = {
 
     chooseBoost: function(currentBoost, spawn) {
         let boostsList = ['XKHO2', 'XLHO2', 'XZHO2', 'XGHO2', 'XZH2O', 'G', 'XGH2O']
-        if (boostsList.includes(currentBoost) && spawn.room.terminal.store[currentBoost] > 7000){
+        if (boostsList.includes(currentBoost) && spawn.room.terminal.store[currentBoost] > 5000){
             boostsList.splice(boostsList.indexOf(currentBoost), 1);
         }
         for(i = 0; i < boostsList.length; i++){
-            if(spawn.room.terminal.store[boostsList[i]] == undefined || spawn.room.terminal.store[boostsList[i]] < 10000){
+            if(spawn.room.terminal.store[boostsList[i]] == undefined || spawn.room.terminal.store[boostsList[i]] < 8000){
                 spawn.memory.ferryInfo.labInfo[6] = boostsList[i]
                 return;
             }

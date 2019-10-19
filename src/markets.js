@@ -86,11 +86,11 @@ var markets = {
     
     sellPower: function(city, buyOrders){
         let terminal = city.terminal
-        if ('power' in terminal.store && terminal.store['power'] > 20000){
+        if ('power' in terminal.store && terminal.store['power'] > 10000){
             var goodOrders = markets.sortOrder(buyOrders['power']);
             if (goodOrders.length && goodOrders[goodOrders.length - 1].price > .20){
-                Game.market.deal(goodOrders[goodOrders.length - 1].id, Math.min(goodOrders[goodOrders.length - 1].remainingAmount,  Math.max(0, terminal.store['power'] - 20000)), city.name)
-                console.log(Math.min(goodOrders[goodOrders.length - 1].remainingAmount,  Math.max(0, terminal.store['power'] - 20000)) + " " + 'power' + " sold for " + goodOrders[goodOrders.length - 1].price)
+                Game.market.deal(goodOrders[goodOrders.length - 1].id, Math.min(goodOrders[goodOrders.length - 1].remainingAmount,  Math.max(0, terminal.store['power'] - 10000)), city.name)
+                console.log(Math.min(goodOrders[goodOrders.length - 1].remainingAmount,  Math.max(0, terminal.store['power'] - 10000)) + " " + 'power' + " sold for " + goodOrders[goodOrders.length - 1].price)
                 return true;
             }
         }
@@ -101,8 +101,8 @@ var markets = {
         let terminal = city.terminal
         for(var i = 0; i < minerals.length; i++){
             let mineralAmount = terminal.store[minerals[i]];
-            if(mineralAmount < 10000){
-                let amountNeeded = 10000 - mineralAmount;
+            if(mineralAmount < 8000){
+                let amountNeeded = 8000 - mineralAmount;
                 let orderId = _.find(Object.keys(Game.market.orders),
                         order => Game.market.orders[order].roomName === city.name && Game.market.orders[order].resourceType === minerals[i]);
                 let order = Game.market.orders[orderId];
@@ -115,11 +115,11 @@ var markets = {
                         type: ORDER_BUY,
                         resourceType: minerals[i],
                         price: buyPrice,
-                        totalAmount: 10000,
+                        totalAmount: amountNeeded,
                         roomName: city.name   
                     });
                 }
-                else if(amountNeeded === 10000){//order already exists for max amount and has not been satisfied
+                else if(amountNeeded === 8000){//order already exists for max amount and has not been satisfied
                     //increment price
                     Game.market.changeOrderPrice(orderId, (order.price + 0.001))
                 }
@@ -130,8 +130,8 @@ var markets = {
     sellBars: function(city, bars, buyOrders){//if # of bars is above threshold, sell extras
         let terminal = city.terminal;
         for(var i = 0; i < bars.length; i++){
-            if(terminal.store[bars[i]] > 5000){
-                sellAmount = terminal.store[bars[i]] - 5000;
+            if(terminal.store[bars[i]] > 3000){
+                sellAmount = terminal.store[bars[i]] - 3000;
                 let goodOrders = markets.sortOrder(buyOrders[bars[i]]).reverse();
                 if(goodOrders.length){
                     Game.market.deal(goodOrders[0].id, Math.min(goodOrders[0].remainingAmount,  sellAmount), city.name);

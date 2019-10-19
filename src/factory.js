@@ -97,7 +97,7 @@ var fact = {
                     RESOURCE_KEANIUM_BAR, RESOURCE_OXIDANT, RESOURCE_REDUCTANT, RESOURCE_PURIFIER, RESOURCE_GHODIUM_MELT];
             let terminal = Game.spawns[city].room.terminal;
             for(i = 0; i < bars.length; i++){
-                if(terminal.store[bars[i]] < 5000){
+                if(terminal.store[bars[i]] < 3000){
                     Game.spawns[city].memory.ferryInfo.factoryInfo.produce = bars[i];
                     let components = _.without(Object.keys(COMMODITIES[bars[i]].components), RESOURCE_ENERGY); //ferry shouldn't deliver energy
                     fact.requestComponents(city, components, bars[i])
@@ -107,7 +107,7 @@ var fact = {
             //if excess base mineral, process it
             for(i = 0; i < bars.length; i++){
                 let components = _.without(Object.keys(COMMODITIES[bars[i]].components), RESOURCE_ENERGY);
-                if(terminal.store[components[0]] >= 11000){
+                if(terminal.store[components[0]] >= 9000){
                     Game.spawns[city].memory.ferryInfo.factoryInfo.produce = bars[i];
                     let components = _.without(Object.keys(COMMODITIES[bars[i]].components), RESOURCE_ENERGY); //ferry shouldn't deliver energy
                     fact.requestComponents(city, components, bars[i])
