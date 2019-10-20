@@ -18,7 +18,7 @@ var rPC = {
     run: function(creep) {
         if (!rPC.hasValidState(creep)) {
             if (creep.ticksToLive > 0) {
-                creep.suicide()
+                // disabled suicide bc 8 hour delay. creep.suicide()
                 return
             }
             creep.memory.state = CS.START
@@ -27,7 +27,8 @@ var rPC = {
             case CS.START:
                 rPC.initializePowerCreep(creep)
                 break
-            case CS.SPAWN: // do nothing
+            case CS.SPAWN:
+                rPC.spawnPowerCreep(creep)
                 break
             case CS.ENABLE_POWER:
                 a.enablePower(creep)
@@ -71,11 +72,14 @@ var rPC = {
         let fullPower = _.filter(cities, (city) => city.controller.level == 8)
         let city = _.sample(fullPower) // pick a random city
         creep.memory.city = city.name
+    },
+
+    spawnPowerCreep: function(creep) {
         // spawn creep
-        if(!Game.spawns[city.name]){
+        if(!Game.spawns[creep.memory.city]){
             return;
         }
-        let structures = city.find(FIND_MY_STRUCTURES)
+        let structures = Game.spawns[creep.memory.city].room.find(FIND_MY_STRUCTURES)
         let powerSpawn = _.find(structures, structure => structure.structureType === STRUCTURE_POWER_SPAWN)
         if(!powerSpawn){
             return;
