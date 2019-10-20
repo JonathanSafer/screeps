@@ -39,6 +39,9 @@ let p = {
             if (room.memory.plan) {
                 var plan = room.memory.plan
                 p.buildRoads(room, plan);
+                if(room.controller.level === 8){
+                    p.buildWalls(room, plan);
+                }
                 var spawnCount = 0
                 _.forEach(template.buildings, function(locations, structureType) {
                     locations.pos.forEach(location => {
@@ -71,6 +74,28 @@ let p = {
             //console.log("hi")
             room.createConstructionSite(pos.x, pos.y, structureType, name)
         }
+    },
+
+    buildWalls: function(room, plan){
+        //first identify all locations to be walled, if there is a road there, place a rampart instead. if there is a terrain wall don't make anything
+        let startPoint = new RoomPosition(plan.x - 3, plan.y - 3, room.name)
+        let wallSpots = []
+        for(var i = startPoint.x; i < startPoint.x + 19; i++){//walls are 19 by 17
+            let location = new RoomPosition(i, startPoint.y, room.name)
+            let location2 = new RoomPosition(i, startPoint.y + 16, room.name)
+            wallSpots.push(location)
+            wallSpots.push(location2)
+        }
+        for(var i = startPoint.y; i < startPoint.y + 17; i++){//walls are 19 by 17
+            let location = new RoomPosition(startPoint.x, i, room.name)
+            let location2 = new RoomPosition(startPoint.x + 18, i, room.name)
+            wallSpots.push(location)
+            wallSpots.push(location2)
+        }
+        for(var i = 0; i < wallSpots.length; i++){
+            room.visual.circle(wallSpots[i], {fill: 'transparent', radius: 0.25, stroke: 'green'});
+        }
+        //build stuff
     },
 
     buildRoads: function(room, plan){
