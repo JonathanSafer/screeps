@@ -1,6 +1,6 @@
-var rS = require('scout');
 var u = require('utils');
-var pC = require('powerCreeps');
+var pC = require('powerCreeps'); // TODO delete this
+var rPC = require('powerCreep');
 var c = require('city');
 var m = require('markets');
 var s = require('stats');
@@ -19,9 +19,9 @@ module.exports.loop = function () {
     "use strict";
     profiler.wrap(function () {
     //new code
-        var localRooms = u.splitRoomsByCity();
-        var localCreeps = u.splitCreepsByCity();
-        var myCities = _.filter(Game.rooms, (room) => rS.iOwn(room.name));
+        var localRooms = u.splitRoomsByCity()
+        var localCreeps = u.splitCreepsByCity()
+        var myCities = u.getMyCities()
         let closestRoom = null;
         if(Game.time % 500 == 0){
             closestRoom = c.chooseColonizerRoom(myCities);
@@ -29,16 +29,20 @@ module.exports.loop = function () {
         console.log("Time: " + Game.time);
         //run cities
         for (let i = 0; i < myCities.length; i += 1) {
-            var city = myCities[i].memory.city;
+            var city = myCities[i].memory.city
             if (city !== "pit") {
-                c.runCity(city, localCreeps[city]);
-                c.updateCountsCity(city, localCreeps[city], localRooms[city], closestRoom);
-                c.runTowers(city);
+                c.runCity(city, localCreeps[city])
+                c.updateCountsCity(city, localCreeps[city], localRooms[city], closestRoom)
+                c.runTowers(city)
                 // TODO: obs runs in dead cities
                 c.runObs(city)
             }
         }
         //run power creeps
+        _.forEach(Game.powerCreeps, function(powerCreep) {
+            rPC.run(powerCreep)
+        })
+
         pC.run103207();
         pC.run138066();
         //distribute energy, power and upgrade boost

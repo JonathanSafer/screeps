@@ -105,13 +105,6 @@ var rS = {
         var allCreeps = u.splitCreepsByCity();
         var result = _.filter(allCreeps[city], creep => (creep.memory.role == 'scout') && (creep.memory.roomAssigned == roomName)).length;
         return result;
-    },
-    
-    iOwn: function(roomName) {
-        var room = Game.rooms[roomName];
-        var hasController = room && room.controller;
-        return hasController && room.controller.my;
-    },
-    
+    }
 };
 module.exports = rS;

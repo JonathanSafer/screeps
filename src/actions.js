@@ -75,6 +75,18 @@ var actions = {
     attack: function(creep, target){
         return actions.interact(creep, target, () => creep.attack(target));
     },
+
+    enablePower: function(creep) {
+        return actions.interact(creep, creep.room.controller, () => creep.enableRoom(creep.room.controller))
+    },
+
+    powerSource: function(creep, target) {
+        return actions.interact(creep, target, () => creep.usePower(PWR_REGEN_SOURCE, target))
+    },
+
+    renewPowerCreep: function(creep, target) {
+        return actions.interact(creep, target, () => creep.renew(target))
+    },
     
     rangedAttack: function(creep, target){
         var result = creep.rangedAttack(target);
