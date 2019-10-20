@@ -69,13 +69,13 @@ var rPC = {
     initializePowerCreep: function(creep) {
         let cities = u.getMyCities()
         let fullPower = _.filter(cities, (city) => city.controller.level == 8)
-        creep.memory.city = _.sample(fullPower) // pick a random city
-        let city = creep.memory.city
+        let city = _.sample(fullPower) // pick a random city
+        creep.memory.city = city.name
         // spawn creep
-        if(!Game.spawns[city]){
+        if(!Game.spawns[city.name]){
             return;
         }
-        let structures = Game.spawns[city].room.find(FIND_MY_STRUCTURES)
+        let structures = city.find(FIND_MY_STRUCTURES)
         let powerSpawn = _.find(structures, structure => structure.structureType === STRUCTURE_POWER_SPAWN)
         if(!powerSpawn){
             return;
