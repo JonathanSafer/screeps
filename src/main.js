@@ -40,7 +40,7 @@ module.exports.loop = function () {
         }
         //run power creeps
         _.forEach(Game.powerCreeps, function(powerCreep) {
-            //rPC.run(powerCreep)
+            rPC.run(powerCreep)
         })
 
         //pC.run103207();

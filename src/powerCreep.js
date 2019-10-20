@@ -140,9 +140,3 @@ var rPC = {
 };
 module.exports = rPC;
 
-TypeError: Cannot read property 'controller' of undefined
-    at Object.enablePower (actions:80:51)
-    at Object.run (powerCreep:34:19)
-    at main:43:17
-    at <runtime>:19399:15
-    at baseForOwn (<runtime>:18372:14)
