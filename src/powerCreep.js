@@ -53,10 +53,8 @@ var rPC = {
     getNextState: function(creep) {
         switch (creep.memory.state) {
             case CS.START: return CS.SPAWN
-            case CS.SPAWN: 
-                return (creep.spawnCooldownTime > Date.now()) ? CS.SPAWN :
-                    (creep.room.controller && !creep.room.controller.isPowerEnabled) ?
-                        CS.ENABLE_POWER : rPC.getNextWork()
+            case CS.SPAWN: return (creep.spawnCooldownTime > Date.now()) ? CS.SPAWN :
+                rPC.isPowerEnabled(creep) ? CS.ENABLE_POWER : rPC.getNextWork()
             case CS.ENABLE_POWER: return rPC.atTarget() ? rPC.getNextWork() : CS.ENABLE_POWER
             case CS.WORK_SOURCE: return rPC.atTarget() ? rPC.getNextWork() : CS.WORK_SOURCE
             case CS.WORK_GENERATE_OPS: return rPC.getNextWork()
@@ -112,6 +110,11 @@ var rPC = {
         return (creep.ticksToLive < 300) ? CS.WORK_RENEW :
             rPC.canGenerateOps(creep) ? CS.WORK_GENERATE_OPS :
             rPC.hasSourceUpdate() ? CS.WORK_SOURCE : CS.WORK_DECIDE
+    },
+
+    isPowerEnabled: function(creep) {
+        let room = Game.rooms[creep.memory.city]
+        return (room.controller && room.controller.isPowerEnabled)
     },
 
     canGenerateOps: function(creep) {
