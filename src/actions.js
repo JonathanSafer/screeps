@@ -16,7 +16,7 @@ var actions = {
                 }
             case OK:
                 if (logSuccess) {
-                    console.log(creep.memory.role + " at " + creep.pos + ": " + fnToTry.toString())
+                    console.log(creep.name+ " at " + creep.pos + ": " + fnToTry.toString())
                 }
                 return 1;
             case ERR_BUSY:
