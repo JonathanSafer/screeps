@@ -92,10 +92,27 @@ let p = {
             wallSpots.push(location)
             wallSpots.push(location2)
         }
-        for(var i = 0; i < wallSpots.length; i++){
-            room.visual.circle(wallSpots[i], {fill: 'transparent', radius: 0.25, stroke: 'green'});
+        for(var i = 0; i < wallSpots.length; i++){//build stuff
+            let terrain = room.lookForAt(LOOK_TERRAIN, wallSpots[i])
+            if(terrain[0] === TERRAIN_MASK_WALL){
+                continue;
+            }
+            let structures = room.lookForAt(LOOK_STRUCTURES, wallSpots[i])
+            for(var j = 0; j < structures.length; j++){
+                if(structures[i].structureType === STRUCTURE_WALL || structures[i].structureType === STRUCTURE_RAMPART){
+                    continue;
+                }
+                //if not wall or ramp, place a ramp
+                //room.createConstructionSite(wallSpots[i], STRUCTURE_RAMPART)
+                room.visual.circle(wallSpots[i], {fill: 'transparent', radius: 0.25, stroke: 'green'});
+            }
+            if(!structures.length){
+                //place wall
+                //room.createConstructionSite(wallSpots[i], STRUCTURE_WALL)
+                room.visual.circle(wallSpots[i], {fill: 'transparent', radius: 0.25, stroke: 'blue'});
+            }
         }
-        //build stuff
+
     },
 
     buildRoads: function(room, plan){
