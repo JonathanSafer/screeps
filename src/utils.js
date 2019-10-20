@@ -45,6 +45,12 @@ var u = {
         var hasController = room && room.controller;
         return hasController && ((room.controller.reservation) && (room.controller.reservation.username == "Yoner"));
     },
+
+    iOwn: function(roomName) {
+        var room = Game.rooms[roomName];
+        var hasController = room && room.controller;
+        return hasController && room.controller.my;
+    },
     
     enemyOwned: function(room) {
         var hasController = room.controller;
@@ -69,6 +75,10 @@ var u = {
 	    //console.log(JSON.stringify(rooms));
 	    return _.groupBy(rooms, room => room.memory.city);
     },
+
+    getMyCities: function() {
+        return _.filter(Game.rooms, (room) => u.iOwn(room.name));
+    }
 
     getAvailableSpawn: function(spawns) {
         validSpawns = _.filter(spawns, spawn => !spawn.spawning);

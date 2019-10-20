@@ -1,4 +1,4 @@
-let rS = require("scout")
+let u = require("utils")
 let template = require("template")
 
 let p = {
@@ -349,7 +349,7 @@ let p = {
     },
 
     myRooms: function() {
-        return _.filter(Game.rooms, (room) => rS.iOwn(room.name))
+        return _.filter(Game.rooms, (room) => u.iOwn(room.name))
     },
 
     myRoomNames: function() {
