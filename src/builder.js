@@ -16,8 +16,8 @@ var rB = {
                     rB.repWalls(creep)
                 }
             } else {
-                if(creep.withdraw(Game.spawns[creep.room.city].room.storage, RESOURCE_ENERGY) === ERR_NOT_IN_RANGE){
-                    creep.moveTo(creep.moveTo(Game.spawns[creep.room.city].room.storage, {reusePath: 15, range: 1, swampCost: 2, plainCost: 2}))
+                if(creep.withdraw(Game.spawns[creep.memory.city].room.storage, RESOURCE_ENERGY) === ERR_NOT_IN_RANGE){
+                    creep.moveTo(creep.moveTo(Game.spawns[creep.memory.city].room.storage, {reusePath: 15, range: 1, swampCost: 2, plainCost: 2}))
                 }
             }
             return;
