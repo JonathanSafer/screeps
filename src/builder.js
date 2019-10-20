@@ -59,7 +59,7 @@ var rB = {
         if(Game.time % 20 === 0){//occasionally scan for construction sites
             var targets = Game.spawns[creep.memory.city].room.find(FIND_MY_CONSTRUCTION_SITES)
             if(targets.length){
-                creep.memory.build = targets[0];
+                creep.memory.build = targets[0].id;
                 return true;
             }
         }
@@ -83,7 +83,7 @@ var rB = {
             const walls = _.filter(buildings, struct => struct.structureType === STRUCTURE_RAMPART || struct.structureType === STRUCTURE_WALL)
             if(walls.length){//find lowest hits wall
                 sortedWalls = _.sortBy(walls, wall => wall.hits)
-                creep.memory.repair = sortedWalls[0]
+                creep.memory.repair = sortedWalls[0].id
                 return;
             }
         }
