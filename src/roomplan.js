@@ -99,7 +99,7 @@ let p = {
             }
             let structures = room.lookForAt(LOOK_STRUCTURES, wallSpots[i])
             for(var j = 0; j < structures.length; j++){
-                if(structures[i].structureType === STRUCTURE_WALL || structures[i].structureType === STRUCTURE_RAMPART){
+                if(structures[j].structureType === STRUCTURE_WALL || structures[j].structureType === STRUCTURE_RAMPART){
                     continue;
                 }
                 //if not wall or ramp, place a ramp
