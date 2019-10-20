@@ -99,16 +99,16 @@ var rPC = {
         var target
         switch (creep.memory.state) {
             case CS.WORK_SOURCE:
-                target = creep.memory.target
+                target = Game.getObjectById(creep.memory.target)
                 break
             case CS.ENABLE_POWER:
                 target = creep.room.controller
                 break
             case CS.WORK_RENEW:
-                target = creep.memory.powerSpawn
+                target = Game.getObjectById(creep.memory.powerSpawn)
                 break
         }
-        return creep.pos.isNearTo(Game.getObjectById(target))
+        return creep.pos.isNearTo(target)
     },
 
     getNextWork: function(creep) {
@@ -133,7 +133,7 @@ var rPC = {
     updateSource: function(creep) {
         if (rPC.hasSourceUpdate()) {
             creep.memory.source = creep.memory.source == 0 ? 1 : 0
-            let sources = Object.keys(Game.spawns[creep.memory.city].memory.sources)
+            let sources = Object.keys(Game.spawns[creep.memory.city + "0"].memory.sources)
             creep.memory.target = sources[creep.memory.source] 
         }
     }

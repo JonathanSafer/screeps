@@ -1,7 +1,7 @@
 var u = require("utils");
 
 var actions = {
-    interact: function(creep, location, fnToTry) {
+    interact: function(creep, location, fnToTry, logSuccess) {
         var result = fnToTry();
         switch (result) {
             case ERR_NOT_IN_RANGE:
@@ -15,6 +15,9 @@ var actions = {
                     }
                 }
             case OK:
+                if (logSuccess) {
+                    console.log(creep.memory.role + " at " + creep.pos + ": " + fnToTry.toString())
+                }
                 return 1;
             case ERR_BUSY:
             case ERR_FULL:
@@ -77,15 +80,21 @@ var actions = {
     },
 
     enablePower: function(creep) {
-        return actions.interact(creep, creep.room.controller, () => creep.enableRoom(creep.room.controller))
+        return actions.interact(creep, 
+            creep.room.controller, 
+            () => creep.enableRoom(creep.room.controller), 
+            true)
     },
 
     powerSource: function(creep, target) {
-        return actions.interact(creep, target, () => creep.usePower(PWR_REGEN_SOURCE, target))
+        return actions.interact(creep, 
+            target, 
+            () => creep.usePower(PWR_REGEN_SOURCE, target), 
+            true)
     },
 
     renewPowerCreep: function(creep, target) {
-        return actions.interact(creep, target, () => creep.renew(target))
+        return actions.interact(creep, target, () => creep.renew(target), true)
     },
     
     rangedAttack: function(creep, target){
