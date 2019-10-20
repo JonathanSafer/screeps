@@ -41,7 +41,7 @@ var rDM = {
                     return;
                 }
                 //move towards and mine deposit (actions.harvest)
-                if(actions.harvest(creep, deposit[0])){
+                if(actions.harvest(creep, deposit[0]) === 1){
                     //record amount harvested
                     let works = 0;
                     for(var i = 0; i < creep.body.length; ++i){
