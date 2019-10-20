@@ -92,9 +92,9 @@ let p = {
             wallSpots.push(location)
             wallSpots.push(location2)
         }
+        const terrain = new Room.Terrain(room.name);
         for(var i = 0; i < wallSpots.length; i++){//build stuff
-            let terrain = room.lookForAt(LOOK_TERRAIN, wallSpots[i])
-            if(terrain[0] === TERRAIN_MASK_WALL){
+            if(terrain.get(wallSpots[i].x, wallSpots[i].y) === TERRAIN_MASK_WALL){
                 continue;
             }
             let structures = room.lookForAt(LOOK_STRUCTURES, wallSpots[i])
