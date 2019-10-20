@@ -78,7 +78,7 @@ var u = {
 
     getMyCities: function() {
         return _.filter(Game.rooms, (room) => u.iOwn(room.name));
-    }
+    },
 
     getAvailableSpawn: function(spawns) {
         validSpawns = _.filter(spawns, spawn => !spawn.spawning);
