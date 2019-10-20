@@ -1,5 +1,4 @@
 var u = require('utils');
-var pC = require('powerCreeps'); // TODO delete this
 var rPC = require('powerCreep');
 var c = require('city');
 var m = require('markets');
@@ -43,8 +42,6 @@ module.exports.loop = function () {
             rPC.run(powerCreep)
         })
 
-        //pC.run103207();
-        //pC.run138066();
         //distribute energy, power and upgrade boost
         if (Game.time % 100 === 10) {
             m.distributeEnergy(myCities);
