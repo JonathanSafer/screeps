@@ -41,7 +41,19 @@ var rDM = {
                     return;
                 }
                 //move towards and mine deposit (actions.harvest)
-                actions.harvest(creep, deposit[0]);
+                if(actions.harvest(creep, deposit[0])){
+                    //record amount harvested
+                    let works = 0;
+                    for(var i = 0; i < creep.body.length; ++i){
+                        if(creep.body[i].type == WORK){
+                            works++;
+                        }
+                    }
+                    if(!Game.spawns[creep.memory.city].memory.deposit){
+                        Game.spawns[creep.memory.city].memory.deposit = 0;
+                    }
+                    Game.spawns[creep.memory.city].memory.deposit = Game.spawns[creep.memory.city].memory.deposit + works;
+                }
                 break;
             case 1:
                 //store is full

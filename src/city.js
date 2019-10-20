@@ -739,6 +739,7 @@ function runObs(city){
                 let depositFlagName = city + 'deposit';
                 if(!Game.flags[depositFlagName] && Game.spawns[city].room.terminal.store[deposit[0].depositType] < 10000 && Game.cpu.bucket > 7000 && deposit[0].lastCooldown < 25){
                     Game.rooms[roomName].createFlag(deposit[0].pos, depositFlagName)
+                    Game.spawns[city].memory.deposit = 0;
                 }
             }
         }
