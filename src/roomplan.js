@@ -103,12 +103,12 @@ let p = {
                     continue;
                 }
                 //if not wall or ramp, place a ramp
-                //room.createConstructionSite(wallSpots[i], STRUCTURE_RAMPART)
+                room.createConstructionSite(wallSpots[i], STRUCTURE_RAMPART)
                 room.visual.circle(wallSpots[i], {fill: 'transparent', radius: 0.25, stroke: 'green'});
             }
             if(!structures.length){
                 //place wall
-                //room.createConstructionSite(wallSpots[i], STRUCTURE_WALL)
+                room.createConstructionSite(wallSpots[i], STRUCTURE_WALL)
                 room.visual.circle(wallSpots[i], {fill: 'transparent', radius: 0.25, stroke: 'blue'});
             }
         }
