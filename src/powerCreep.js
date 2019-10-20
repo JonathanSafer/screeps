@@ -2,13 +2,13 @@ var a = require('actions');
 var u = require('utils');
 
 var CreepState = {
-  START: 0,
-  SPAWN: 1,
-  ENABLE_POWER: 2,
-  WORK_SOURCE: 3,
-  WORK_GENERATE_OPS: 4,
-  WORK_RENEW: 4,
-  WORK_DECIDE: 5
+  START: 1,
+  SPAWN: 2,
+  ENABLE_POWER: 3,
+  WORK_SOURCE: 4,
+  WORK_GENERATE_OPS: 5,
+  WORK_RENEW: 6,
+  WORK_DECIDE: 7
 };
 var CS = CreepState;
 
@@ -66,10 +66,12 @@ var rPC = {
     },
 
     initializePowerCreep: function(creep) {
-        let cities = u.getMyCities()
-        let fullPower = _.filter(cities, (city) => city.controller.level == 8)
-        let city = _.sample(fullPower) // pick a random city
-        creep.memory.city = city.name
+        if (!creep.memory.city) {
+            let cities = u.getMyCities()
+            let fullPower = _.filter(cities, (city) => city.controller.level == 8)
+            let city = _.sample(fullPower) // pick a random city
+            creep.memory.city = city.name
+        }
     },
 
     spawnPowerCreep: function(creep) {
@@ -87,7 +89,10 @@ var rPC = {
     },
 
     hasValidState: function(creep) { // TODO. false if creep spawns in city with no power spawn
-        return creep.memory.state && creep.memory.city && (!creep.room || creep.room.controller)
+        let validSpawn = creep.memory.state == CS.START || 
+                         creep.memory.state == CS.SPAWN || (creep.room && creep.room.controller)
+        let initialized = creep.memory.state && creep.memory.city
+        return initialized && validSpawn
     },
 
     atTarget: function(creep) {
@@ -134,3 +139,10 @@ var rPC = {
     }
 };
 module.exports = rPC;
+
+TypeError: Cannot read property 'controller' of undefined
+    at Object.enablePower (actions:80:51)
+    at Object.run (powerCreep:34:19)
+    at main:43:17
+    at <runtime>:19399:15
+    at baseForOwn (<runtime>:18372:14)
