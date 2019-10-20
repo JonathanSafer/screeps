@@ -97,9 +97,11 @@ var rPC = {
 
     atTarget: function(creep) {
         var target
+        var distance = 1
         switch (creep.memory.state) {
             case CS.WORK_SOURCE:
                 target = Game.getObjectById(creep.memory.target)
+                distance = 3
                 break
             case CS.ENABLE_POWER:
                 target = creep.room.controller
@@ -108,7 +110,7 @@ var rPC = {
                 target = Game.getObjectById(creep.memory.powerSpawn)
                 break
         }
-        return creep.pos.isNearTo(target)
+        return creep.pos.inRangeTo(target, distance)
     },
 
     getNextWork: function(creep) {
