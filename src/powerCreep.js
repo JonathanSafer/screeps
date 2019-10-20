@@ -54,12 +54,12 @@ var rPC = {
         switch (creep.memory.state) {
             case CS.START: return CS.SPAWN
             case CS.SPAWN: return (creep.spawnCooldownTime > Date.now()) ? CS.SPAWN :
-                rPC.isPowerEnabled(creep) ? CS.ENABLE_POWER : rPC.getNextWork()
-            case CS.ENABLE_POWER: return rPC.atTarget() ? rPC.getNextWork() : CS.ENABLE_POWER
-            case CS.WORK_SOURCE: return rPC.atTarget() ? rPC.getNextWork() : CS.WORK_SOURCE
-            case CS.WORK_GENERATE_OPS: return rPC.getNextWork()
-            case CS.WORK_DECIDE: return rPC.getNextWork()
-            case CS.WORK_RENEW: return rPC.atTarget() ? rPC.getNextWork() : CS.WORK_RENEW
+                rPC.isPowerEnabled(creep) ? CS.ENABLE_POWER : rPC.getNextWork(creep)
+            case CS.ENABLE_POWER: return rPC.atTarget(creep) ? rPC.getNextWork(creep) : CS.ENABLE_POWER
+            case CS.WORK_SOURCE: return rPC.atTarget(creep) ? rPC.getNextWork(creep) : CS.WORK_SOURCE
+            case CS.WORK_GENERATE_OPS: return rPC.getNextWork(creep)
+            case CS.WORK_DECIDE: return rPC.getNextWork(creep)
+            case CS.WORK_RENEW: return rPC.atTarget(creep) ? rPC.getNextWork(creep) : CS.WORK_RENEW
         }
         // If state is unknown then restart
         return CS.START
@@ -76,10 +76,10 @@ var rPC = {
 
     spawnPowerCreep: function(creep) {
         // spawn creep
-        if(!Game.spawns[creep.memory.city]){
+        if(!Game.rooms[creep.memory.city]){
             return;
         }
-        let structures = Game.spawns[creep.memory.city].room.find(FIND_MY_STRUCTURES)
+        let structures = Game.rooms[creep.memory.city].find(FIND_MY_STRUCTURES)
         let powerSpawn = _.find(structures, structure => structure.structureType === STRUCTURE_POWER_SPAWN)
         if(!powerSpawn){
             return;
@@ -139,4 +139,3 @@ var rPC = {
     }
 };
 module.exports = rPC;
-
