@@ -79,7 +79,7 @@ var rB = {
         }
         if(Game.time % 200 === 19 || !creep.memory.repair){//occasionally scan for next target to repair
             const buildings = Game.spawns[creep.memory.city].room.find(FIND_STRUCTURES)
-            const walls = _.filter(buildings, struct => struct.structureType === STRUCTURE_RAMPART || struct.structureType === STRUCTURE_WALL)
+            const walls = _.filter(buildings, struct => struct.structureType === STRUCTURE_RAMPART || struct.structureType === STRUCTURE_WALL).reverse()
             if(walls.length){//find lowest hits wall
                 sortedWalls = _.sortBy(walls, wall => wall.hits)
                 creep.memory.repair = sortedWalls[0].id
