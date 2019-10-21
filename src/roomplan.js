@@ -145,10 +145,11 @@ let p = {
                 // Favor roads over plain tiles
                 costs.set(struct.pos.x, struct.pos.y, 1);
             } else if (struct.structureType !== STRUCTURE_CONTAINER &&
-                         (struct.structureType !== STRUCTURE_RAMPART ||
-                          !struct.my)) {
+                         (struct.structureType !== STRUCTURE_RAMPART)) {
                 // Can't walk through non-walkable buildings
                 costs.set(struct.pos.x, struct.pos.y, 0xff);
+            } else if(!struct.my){//allow roads on walls so that path to controller still works
+                costs.set(struct.pos.x, struct.pos.y, 5);
             }
         });
         room.costs = costs;
