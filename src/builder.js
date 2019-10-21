@@ -67,9 +67,11 @@ var rB = {
     },
 
     repWalls: function(creep){
+        let lookTime = 20
         if(creep.memory.repair){//check for target and repair
             let target = Game.getObjectById(creep.memory.repair)
             if(target){//if there is a target, repair it
+            lookTime = Math.min(20, target.hits)
                 if(creep.repair(target) === ERR_NOT_IN_RANGE){
                     creep.moveTo(target, {reusePath: 15, range: 3, swampCost: 2, plainCost: 2})
                 }
@@ -77,7 +79,7 @@ var rB = {
                 creep.memory.repair = null
             }
         }
-        if(Game.time % 200 === 19 || !creep.memory.repair){//occasionally scan for next target to repair
+        if(Game.time % lookTime === 19 || !creep.memory.repair){//occasionally scan for next target to repair
             const buildings = Game.spawns[creep.memory.city].room.find(FIND_STRUCTURES)
             const walls = _.filter(buildings, struct => struct.structureType === STRUCTURE_RAMPART || struct.structureType === STRUCTURE_WALL).reverse()
             if(walls.length){//find lowest hits wall
