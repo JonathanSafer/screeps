@@ -99,7 +99,7 @@ function getRecipe(type, extensions, room){
 		case 12:
 		    // lvl 8 recipes
     		d['normal'] = body([15, 15, 15],[WORK, CARRY, MOVE]);
-    		d['builder'] = body([15, 9, 12], [WORK, CARRY, MOVE]);
+    		d['builder'] = body([15, 18, 17], [WORK, CARRY, MOVE]);
     		d['ferry'] = body([20, 10], [CARRY, MOVE]);
     		d['transporter'] = body([8, 4],[CARRY, MOVE]);
     		d['miner'] = body([14, 8, 20],[MOVE, CARRY, WORK]);
@@ -125,7 +125,7 @@ function getRecipe(type, extensions, room){
     d.basic = body([1,1,1],[WORK, CARRY, MOVE]);
     d.lightMiner = body([2, 2], [MOVE, WORK]);
     d.erunner = body([2, 1], [CARRY, MOVE]);
-    d.claimer = body([1, 1], [CLAIM, MOVE]);
+    d.claimer = body([5, 1], [MOVE, CLAIM]);
 
 	return d[type]//recipe
 }
