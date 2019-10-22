@@ -350,8 +350,9 @@ function updateColonizers(city, memory, closestRoom) {
             memory[rC.name] = 0;
         } else {
             memory[rC.name] = Game.flags.claim ? 1 : 0;
+        }
+        if(Game.time % 1000 === 0){
             memory[rC.name] = Game.flags.unclaim ? 1 : memory[rC.name];
-            
         }
     } else {
         memory[rSB.name] = 0;
