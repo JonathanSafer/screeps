@@ -34,7 +34,7 @@ var rC = {
         }
         if(Game.flags.unclaim){
             //if unclaimer flag, become an unclaimer
-            creep.memory.target == 1
+            creep.memory.target = 1
             return;
         }
         if(!Game.flags.claim){
