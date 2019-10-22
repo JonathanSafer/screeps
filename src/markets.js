@@ -119,10 +119,12 @@ var markets = {
                         totalAmount: amountNeeded,
                         roomName: city.name   
                     });
-                }
-                else if(amountNeeded === 8000 || Game.time % 400 === 0){//order already exists for max amount and has not been satisfied
-                    //increment price
-                    Game.market.changeOrderPrice(orderId, (order.price + 0.001))
+                } else if(amountNeeded === 8000 || Game.time % 400 === 0){//order already exists for max amount and has not been satisfied
+                    //increment price if price is not above market value 
+                    let buyPrice = markets.getPrice(minerals[i]);
+                    if(order.price < buyPrice){
+                        Game.market.changeOrderPrice(orderId, (order.price + 0.001))
+                    }
                 }
             }
         }
