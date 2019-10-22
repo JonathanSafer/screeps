@@ -71,7 +71,7 @@ var rB = {
         if(creep.memory.repair){//check for target and repair
             let target = Game.getObjectById(creep.memory.repair)
             if(target){//if there is a target, repair it
-            lookTime = Math.min(20, target.hits)
+            lookTime = Math.max(20, Math.floor(target.hits/1000))
                 if(creep.repair(target) === ERR_NOT_IN_RANGE){
                     creep.moveTo(target, {reusePath: 15, range: 3, swampCost: 2, plainCost: 2})
                 }
