@@ -145,7 +145,7 @@ var markets = {
                 let goodOrders = markets.sortOrder(buyOrders[bars[i]]).reverse();
                 //determine price of associated resource
                 let base = _.without(Object.keys(COMMODITIES[bars[i]].components), RESOURCE_ENERGY)[0]
-                if(goodOrders.length && (getPrice(base) * 6) < goodOrders[0].price){
+                if(goodOrders.length && (markets.getPrice(base) * 6) < goodOrders[0].price){
                     Game.market.deal(goodOrders[0].id, Math.min(goodOrders[0].remainingAmount,  sellAmount), city.name);
                     return true;
                 }
