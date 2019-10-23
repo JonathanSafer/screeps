@@ -28,7 +28,7 @@ var rDM = {
                     return;
                 }
                 if (Game.flags[flagName].pos.roomName !== creep.pos.roomName){//move to flag until it is visible
-                    creep.moveTo(Game.flags[flagName], {reusePath: 50}, {range: 1})
+                    creep.moveTo(Game.flags[flagName], {reusePath: 50}, {range: 1, maxOps: 5000, swampCost: 8})
                     return;
                 }
                 let deposit = Game.flags[flagName].room.lookForAt(LOOK_DEPOSITS, Game.flags[flagName].pos);//if flag is visible, check for deposit, if no deposit, remove flag
