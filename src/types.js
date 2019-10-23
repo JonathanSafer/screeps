@@ -163,7 +163,7 @@ function dMinerCalc(room){
     let workTime = 1500 - (distance * 3) - 100;//100 is arbitrary buffer to be adjusted, distance x 3 since it'll take 2x as long on return
     let work = 20
     let carryAmount = test(work, workTime, harvested)
-    let carry = Math.floor(carryAmount/50)
+    let carry = Math.floor(carryAmount/100)*2 //carry must be an even number for 20 works
     if(carry < 2){// if we're getting less than 100 resource in a lifetime, drop the source
         flag.remove()
         return [1, 1, 1];
