@@ -14,10 +14,10 @@ var rC = {
         }
         if(creep.memory.target == 1){//creep is an unclaimer
             //unclaimer stuff
-            if(!Game.flags.claim){
+            if(!Game.flags.unclaim){
                 return;
             }
-            if (Game.flags.unclaim.claim.pos.roomName == creep.pos.roomName) {
+            if (Game.flags.unclaim.pos.roomName == creep.pos.roomName) {
                 if (creep.pos.isNearTo(creep.room.controller.pos)) {
                     let result = creep.attackController(creep.room.controller);
                     if(result === OK){
