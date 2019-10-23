@@ -126,6 +126,10 @@ function getRecipe(type, extensions, room){
     d.lightMiner = body([2, 2], [MOVE, WORK]);
     d.erunner = body([2, 1], [CARRY, MOVE]);
     d.claimer = body([5, 1], [MOVE, CLAIM]);
+    if (type === 'depositMiner'){
+        let dMinerCounts = dMinerCalc(room);
+        d['depositMiner'] = body(dMinerCounts, [WORK, CARRY, MOVE])
+    }
 
 	return d[type]//recipe
 }
@@ -143,7 +147,64 @@ function cost(recipe){
 function carry(recipe){
     return _.filter(recipe, part => part == CARRY).length * CARRY_CAPACITY;
 }
+function dMinerCalc(room){
+    let city = room.memory.city
+    let spawn = Game.spawns[city]
+    let flagName = city + "deposit"
+    let flag = Game.flags[flagName]
+    if(!flag){
+        return [1, 1, 1];//return 1,1, 1
+    }
+    let harvested = spawn.memory.deposit
+    if(!harvested){
+        harvested = 0
+    }
+    let distance = PathFinder.search(spawn.pos, {pos: flag.pos, range: 1}, {maxOps: 10000}).path.length
+    let workTime = 1500 - (distance * 3) - 100;//100 is arbitrary buffer to be adjusted, distance x 3 since it'll take 2x as long on return
+    let work = 20
+    let carryAmount = test(work, workTime, harvested)
+    let carry = Math.floor(carryAmount/50)
+    if(carry < 2){// if we're getting less than 100 resource in a lifetime, drop the source
+        flag.remove()
+        return [1, 1, 1];
+    }
+    if(carry > 10){
+        //body is impossible so we have to decrease works
+        for(var i = 0; i < 2; i++){
+            work = work/2
+            carryAmount = test(work, workTime, harvested)
+            carry = Math.floor(carryAmount/50)
+            if(carry < (32 - work)){
+                return [work, carry, 16]
+            }
+        }
+        //can't go under 5 works => make min body
+        return [work, 27, 16]
+    } else {
+        return [work, carry, 20]
+    }
 
+}
+function calcCooldown(harvested) {
+    return Math.ceil(0.001*Math.pow(harvested,1.2))
+}
+
+function test(hpt, ticks, harvested) {
+    let harvested = 4000
+    let cooldown = 0
+    for (let i = 0; i < ticks; i++) {
+        if (cooldown == 0) {
+            harvested += hpt
+            cooldown = calcCooldown(harvested);
+        }
+        else {
+            cooldown--
+        }
+    }
+    console.log("Harvested so far:", harvested);
+    console.log("Last cooldown", calcCooldown(harvested));
+    return harvested;
+}
 
 module.exports = {
 	getRecipe: getRecipe,
