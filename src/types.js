@@ -190,6 +190,7 @@ function calcCooldown(harvested) {
 }
 
 function test(hpt, ticks, harvested) {
+    const start = harvested;
     let cooldown = 0
     for (let i = 0; i < ticks; i++) {
         if (cooldown == 0) {
@@ -200,7 +201,7 @@ function test(hpt, ticks, harvested) {
             cooldown--
         }
     }
-    return harvested;
+    return (harvested - start);
 }
 
 module.exports = {
