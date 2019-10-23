@@ -142,7 +142,7 @@ var markets = {
                 }
             }
             //alternatively, sell if price is right
-            if(terminal.store[bars[i]] >= 1000 && Object.keys(COMMODITIES[bars[i]].components).length === 2){//excludes commodities
+            if(terminal.store[bars[i]] === 3000 && Object.keys(COMMODITIES[bars[i]].components).length === 2){//excludes commodities
                 sellAmount = 1000;
                 let goodOrders = markets.sortOrder(buyOrders[bars[i]]).reverse();
                 //determine price of associated resource
