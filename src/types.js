@@ -190,7 +190,6 @@ function calcCooldown(harvested) {
 }
 
 function test(hpt, ticks, harvested) {
-    let harvested = 4000
     let cooldown = 0
     for (let i = 0; i < ticks; i++) {
         if (cooldown == 0) {
@@ -201,8 +200,6 @@ function test(hpt, ticks, harvested) {
             cooldown--
         }
     }
-    console.log("Harvested so far:", harvested);
-    console.log("Last cooldown", calcCooldown(harvested));
     return harvested;
 }
 
