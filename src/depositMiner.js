@@ -9,7 +9,7 @@ var rDM = {
 
     /** @param {Creep} creep **/
     run: function(creep) {
-        if (_.sum(creep.store) === 0 && creep.ticksToLive < 130){//if old and no store, suicide
+        if (_.sum(creep.store) === 0 && creep.ticksToLive < 500){//if old and no store, suicide
             creep.suicide()
             return;
         }
