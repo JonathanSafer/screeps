@@ -180,7 +180,7 @@ var rF = {
                     break;
                 }
                 let factory = Game.getObjectById(creep.memory.lab)
-                actions.withdraw(creep, factory, creep.memory.mineral, creep.memory.quantity); 
+                actions.withdraw(creep, factory, creep.memory.mineral, Math.min(creep.memory.quantity, creep.store.getCapacity())); 
 
                 break;
             case 12:
