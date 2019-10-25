@@ -37,7 +37,7 @@ var rDM = {
                     Game.flags[flagName].remove();
                     return;
                 }
-                if(_.sum(creep.store) === 0 && (deposit[0].lastCooldown > 25 || Game.cpu.bucket < 3000)){
+                if(_.sum(creep.store) === 0 && (deposit[0].lastCooldown > 25 && Game.cpu.bucket < 3000)){
                     Game.flags[flagName].remove();
                     return;
                 }
