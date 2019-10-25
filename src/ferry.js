@@ -174,7 +174,7 @@ var rF = {
                 if (_.sum(creep.store) > 0){
                     let result = actions.charge(creep, creep.room.terminal)
                     if(result == 1){//successful deposit, remove element from task list
-                        _.remove(Game.spawns[creep.memory.city].memory.ferryInfo.factoryInfo.transfer, n => n[0] === creep.memory.mineral); //remove element
+                        _.pullAt(Game.spawns[creep.memory.city].memory.ferryInfo.factoryInfo.transfer, creep.memory.labNum) //remove element
                         creep.say('getJob')
                     }
                     break;
@@ -189,8 +189,7 @@ var rF = {
                     let factory = Game.getObjectById(creep.memory.lab)
                     let result = creep.transfer(factory, creep.memory.mineral, creep.memory.quantity);
                     if (result == 0){
-                        _.remove(Game.spawns[creep.memory.city].memory.ferryInfo.factoryInfo.transfer,
-                                 _.indexOf(Game.spawns[creep.memory.city].memory.ferryInfo.factoryInfo.transfer, creep.memory.mineral)); //remove element
+                        _.pullAt(Game.spawns[creep.memory.city].memory.ferryInfo.factoryInfo.transfer, creep.memory.labNum) //remove element
                         creep.say('getJob')
                         break;
                     }
