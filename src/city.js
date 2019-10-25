@@ -743,9 +743,14 @@ function runObs(city){
             let deposit = Game.rooms[roomName].find(FIND_DEPOSITS)
             if(deposit.length){
                 let depositFlagName = city + 'deposit';
-                if(!Game.flags[depositFlagName] && Game.spawns[city].room.terminal.store[deposit[0].depositType] < 10000 && Game.cpu.bucket > 7000 && deposit[0].lastCooldown < 25){
-                    Game.rooms[roomName].createFlag(deposit[0].pos, depositFlagName)
-                    Game.spawns[city].memory.deposit = Math.floor(Math.pow((deposit[0].lastCooldown / 0.001), 1/1.2))
+                if(Game.cpu.bucket > 7000 && deposit[0].lastCooldown < 25){
+                    if(!Game.flags[depositFlagName]){
+                        Game.rooms[roomName].createFlag(deposit[0].pos, depositFlagName)
+                        Game.spawns[city].memory.deposit = Math.floor(Math.pow((deposit[0].lastCooldown / 0.001), 1/1.2))
+                    } else if(Game.spawns[city].memory.deposit > 8000){
+                        Game.flags[depositFlagName].setPosition(deposit[0].pos)
+                        Game.spawns[city].memory.deposit = Math.floor(Math.pow((deposit[0].lastCooldown / 0.001), 1/1.2))
+                    }
                 }
             }
         }
