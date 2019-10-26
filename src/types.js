@@ -6,8 +6,8 @@ function getRecipe(type, energyAvailable, room){
     let scale = Math.floor(Math.min(room.energyCapacityAvailable / baseCost, MAX_CREEP_SIZE / 3));
     d.runner = body([2 * scale, scale], [CARRY, MOVE]);
 
-	switch (Math.floor(extensions/5)) {
-		case 0:
+	switch (Math.floor(energyAvailable / 500) * 500) {
+		case 0: // 300 energy
 			//lvl 1 recipes
             d.runner = body([2, 2], [CARRY, MOVE]);
             d['normal'] = body([2, 1, 1], [WORK, CARRY, MOVE]);
@@ -17,7 +17,7 @@ function getRecipe(type, energyAvailable, room){
             d['scout'] = body([1, 1], [MOVE, CLAIM]);
             d['attacker'] = body([1, 1, 1], [TOUGH, MOVE, ATTACK]);
 			break;
-		case 1:
+		case 500: // 550 energy
 			//lvl 2 recipes
             d['normal'] = body([3, 2, 3], [WORK, CARRY, MOVE]);
             d['miner'] = body([1, 5], [MOVE, WORK]);
@@ -26,8 +26,7 @@ function getRecipe(type, energyAvailable, room){
             d['scout'] = body([1, 1], [MOVE, CLAIM]);
             d['attacker'] = body([2, 3, 1], [TOUGH, MOVE, ATTACK]);
 			break;
-		case 2:
-		case 3:
+		case 1000: // 800
 			//lvl 3 recipes
             d['normal'] = body([4, 2, 3], [WORK, CARRY, MOVE]);
             d['miner'] = body([3, 5], [MOVE, WORK]);
@@ -36,8 +35,7 @@ function getRecipe(type, energyAvailable, room){
             d['scout'] = body([1, 1], [MOVE, CLAIM]);
             d['attacker'] = body([4, 4], [MOVE, ATTACK]);
 			break;
-		case 4:
-		case 5:
+		case 1500: // 1300
 			//lvl 4 recipes
             d['normal'] = body([8, 4, 6], [WORK, CARRY, MOVE]);
             d['miner'] = body([3, 5], [MOVE, WORK]);
@@ -49,8 +47,7 @@ function getRecipe(type, energyAvailable, room){
     		d['trooper'] = body([3, 3], [RANGED_ATTACK, MOVE]);
     		d['medic'] = body([2, 2], [MOVE, HEAL]);
 			break;
-		case 6:
-		case 7:
+		case 2000: // 1800
 			//lvl 5 recipes
     		d['normal'] = body([12, 4, 8], [WORK, CARRY, MOVE]);
     		d['builder'] = body([5, 9, 7], [WORK, CARRY, MOVE]);
@@ -63,8 +60,7 @@ function getRecipe(type, energyAvailable, room){
     		d['trooper'] = body([6, 6], [RANGED_ATTACK, MOVE]);
     		d['medic'] = body([5, 5], [MOVE, HEAL]);
     		break;
-		case 8:
-		case 9:
+		case 2500: // 2300
 			// lvl 6 recipes
     		d['normal'] = body([12, 8, 10], [WORK, CARRY, MOVE]);
     		d['builder'] = body([5, 9, 7], [WORK, CARRY, MOVE]);
@@ -79,8 +75,12 @@ function getRecipe(type, energyAvailable, room){
     		d['medic'] = body([7, 7], [MOVE, HEAL]);
     		d['robber'] = body([20, 20], [CARRY, MOVE]);
     		break;
-		case 10:
-		case 11:
+		case 3000:
+        case 3500:
+        case 4000:
+        case 4500:
+        case 5000:
+		case 5500: // 5600
 			// lvl 7 recipes
     		d['normal'] = body([20, 12, 16], [WORK, CARRY, MOVE]);
     		d['builder'] = body([5, 9, 7], [WORK, CARRY, MOVE]);
@@ -97,7 +97,7 @@ function getRecipe(type, energyAvailable, room){
 	        d['trooper'] = body([20, 20], [RANGED_ATTACK, MOVE]);
         	d['robber'] = body([25, 25], [CARRY, MOVE]);
     		break;
-		case 12:
+		default: // 12900
 		    // lvl 8 recipes
     		d['normal'] = body([15, 15, 15],[WORK, CARRY, MOVE]);
     		d['builder'] = body([15, 18, 17], [WORK, CARRY, MOVE]);
