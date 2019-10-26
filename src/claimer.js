@@ -50,7 +50,8 @@ var rC = {
                 creep.moveTo(creep.room.controller.pos, {reusePath: 50})
             }
         } else {
-            creep.moveTo(Game.flags.claim, {reusePath: 50});
+            let pos = Memory.flags.claim.pos
+            creep.moveTo(new RoomPosition(pos.x, pos.y, pos.roomName), {reusePath: 50});
         }
     }
       

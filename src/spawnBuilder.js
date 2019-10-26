@@ -42,7 +42,8 @@ var rSB = {
                 rSB.harvest(creep)
             }
         } else {
-            creep.moveTo(Memory.flags.claim.pos, {reusePath: 50});
+            let pos = Memory.flags.claim.pos
+            creep.moveTo(new RoomPosition(pos.x, pos.y, pos.roomName), {reusePath: 50});
         }
     },
     
