@@ -108,7 +108,7 @@ function updateCountsCity(city, creeps, rooms, closestRoom) {
             (structure.room.memory.city == [city])).length;
         var structures = spawn.room.find(FIND_STRUCTURES);
 
-        let emergencyTime = spawn.room.storage && spawn.room.storage < 5000
+        let emergencyTime = spawn.room.storage && spawn.room.storage.store.energy < 5000
         let logisticsTime = rcl8 && !emergencyTime ? 500 : 50;
         if (Game.time % logisticsTime == 0) {
             let rcl8Room = _.find(Game.rooms, room => room.controller && room.controller.owner && room.controller.owner.username == "Yoner" && room.controller.level == 8)
