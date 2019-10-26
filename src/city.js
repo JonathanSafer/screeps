@@ -546,11 +546,9 @@ function updateFerry(spawn, memory, rcl8) {
 }
 
 function updateStorageLink(spawn, memory, structures) {
-    if (!memory.storageLink){
-        let storageLink = _.find(structures, structure => structure.structureType == STRUCTURE_LINK && structure.pos.inRangeTo(spawn.room.storage.pos, 3))
-        if (storageLink){
-            memory.storageLink = storageLink.id;
-        }
+    let storageLink = _.find(structures, structure => structure.structureType == STRUCTURE_LINK && structure.pos.inRangeTo(spawn.room.storage.pos, 3))
+    if (storageLink){
+        memory.storageLink = storageLink.id;
     }
 }
 
