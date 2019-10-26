@@ -5,7 +5,8 @@ var u = {
         var spawn = Game.spawns[city];
         var structures = spawn.room.find(FIND_STRUCTURES);
         return _.filter(structures, structure => structure.structureType == STRUCTURE_CONTAINER ||
-                                                 structure.structureType == STRUCTURE_STORAGE);
+                                                 structure.structureType == STRUCTURE_STORAGE ||
+                                                 structure.structureType == STRUCTURE_TERMINAL);
     },
     
     getTransferLocations: function(creep) {
