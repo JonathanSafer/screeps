@@ -61,7 +61,8 @@ var rB = {
         if(Game.time % 20 === 0){//occasionally scan for construction sites
             var targets = Game.spawns[creep.memory.city].room.find(FIND_MY_CONSTRUCTION_SITES)
             if(targets.length){
-                creep.memory.build = targets[0].id;
+                var targetsByCost = _.sortBy(targets, target => target.progressTotal)
+                creep.memory.build = targetsByCost[0].id;
                 return true;
             }
         }
