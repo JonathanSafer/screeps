@@ -59,7 +59,7 @@ var rU = {
           return;
       }
       let lab = Game.getObjectById(Game.spawns[city].memory.ferryInfo.boosterInfo[0][0])
-      if(rU.checkMaterials(lab, creep)){
+      if(lab != null && rU.checkMaterials(lab, creep)){
             creep.memory.lab = lab.id
             creep.memory.state = 1
       } else {

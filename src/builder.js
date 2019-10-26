@@ -16,9 +16,7 @@ var rB = {
                     rB.repWalls(creep)
                 }
             } else {
-                if(creep.withdraw(Game.spawns[creep.memory.city].room.storage, RESOURCE_ENERGY) === ERR_NOT_IN_RANGE){
-                    creep.moveTo(creep.moveTo(Game.spawns[creep.memory.city].room.storage, {reusePath: 15, range: 1, swampCost: 2, plainCost: 2}))
-                }
+                rB.getEnergy(creep)
             }
             return;
         }
@@ -26,11 +24,15 @@ var rB = {
         if (creep.memory.building) {
             a.build(creep);
         } else {
-            var location = rB.getLocation(creep);
-            if (a.withdraw(creep, location) == ERR_NOT_ENOUGH_RESOURCES) {
-                var targets = u.getWithdrawLocations(creep);
-                creep.memory.target = u.getNextLocation(creep.memory.target, targets);
-            }
+            rB.getEnergy(creep)
+        }
+    },
+
+    getEnergy: function(creep) {
+        var location = rB.getLocation(creep);
+        if (a.withdraw(creep, location) == ERR_NOT_ENOUGH_RESOURCES) {
+            var targets = u.getWithdrawLocations(creep);
+            creep.memory.target = u.getNextLocation(creep.memory.target, targets);
         }
     },
 
