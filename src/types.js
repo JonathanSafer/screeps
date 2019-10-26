@@ -131,7 +131,9 @@ function getRecipe(type, energyAvailable, room){
         let dMinerCounts = dMinerCalc(room);
         d['depositMiner'] = body(dMinerCounts, [WORK, CARRY, MOVE])
     }
-
+    if (d[type] == null) {
+        return [WORK, CARRY, MOVE]
+    }
 	return d[type]//recipe
 }
 function body(counts, order) { // order is list of types from move, work, attack, carry, heal, ranged, tough, claim
