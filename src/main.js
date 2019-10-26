@@ -4,6 +4,7 @@ var c = require('city');
 var m = require('markets');
 var s = require('stats');
 var rp = require('roomplan');
+var er = require('error');
 const profiler = require('screeps-profiler');
 //Game.profiler.profile(1000);
 //Game.profiler.output();
@@ -17,7 +18,8 @@ const profiler = require('screeps-profiler');
 module.exports.loop = function () {
     "use strict";
     profiler.wrap(function () {
-    //new code
+        er.reset()
+
         var localRooms = u.splitRoomsByCity()
         var localCreeps = u.splitCreepsByCity()
         var myCities = u.getMyCities()
@@ -28,14 +30,19 @@ module.exports.loop = function () {
         console.log("Time: " + Game.time);
         //run cities
         for (let i = 0; i < myCities.length; i += 1) {
-            var city = myCities[i].memory.city
-            if (city !== "pit") {
-                c.runCity(city, localCreeps[city])
-                c.updateCountsCity(city, localCreeps[city], localRooms[city], closestRoom)
-                c.runTowers(city)
-                // TODO: obs runs in dead cities
-                c.runObs(city)
+            try {
+                var city = myCities[i].memory.city
+                if (city !== "pit") {
+                    c.runCity(city, localCreeps[city])
+                    c.updateCountsCity(city, localCreeps[city], localRooms[city], closestRoom)
+                    c.runTowers(city)
+                    // TODO: obs runs in dead cities
+                    c.runObs(city)
+                } 
+            } catch (failedCityError) {
+                er.reportError(failedCityError)
             }
+            
         }
         //run power creeps
         _.forEach(Game.powerCreeps, function(powerCreep) {
@@ -129,6 +136,8 @@ module.exports.loop = function () {
                 }
             }
         }*/
+        // This will always be last. Throw an exception if any city failed.
+        er.finishTick()
     });
 };
 
