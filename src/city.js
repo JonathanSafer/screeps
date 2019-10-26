@@ -132,16 +132,16 @@ function updateCountsCity(city, creeps, rooms, closestRoom) {
                     updateStorageLink(spawn, memory, structures);
                 }
             }
-            makeEmergencyCreeps(extensions, creeps, city, rcl8); 
+            makeEmergencyCreeps(extensions, creeps, city, rcl8, emergencyTime); 
         }
         updateAttacker(rooms, memory);
     }
 }
 
-function makeEmergencyCreeps(extensions, creeps, city, rcl8) {
+function makeEmergencyCreeps(extensions, creeps, city, rcl8, emergency) {
     let checkTime = rcl8 ? 2000 : 150;
 
-    if (Game.time % checkTime == 0 && extensions >= 5) {
+    if (emergency || Game.time % checkTime == 0 && extensions >= 5) {
         if (_.filter(creeps, creep => creep.memory.role == 'remoteMiner') < 1){
             console.log('Making Emergency Miner');
             makeCreeps('remoteMiner', "lightMiner", 1, city);
