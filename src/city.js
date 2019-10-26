@@ -61,7 +61,7 @@ function makeCreeps(role, type, target, city) {
 //runCity function
 function runCity(city, creeps){
     if (Game.spawns[city]){
-        let room = Game.rooms[city]
+        let room = Game.spawns[city].room
 
         // Only build required roles during financial stress
         var coreRoles = [rF, rA, rT, rM, rR, rU, rB]
