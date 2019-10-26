@@ -1,4 +1,5 @@
-function getRecipe(type, extensions, room){
+function getRecipe(type, energyAvailable, room){
+    let extensions = energyAvailable / 50
 	let d = {};
 
     let baseCost = 2 * BODYPART_COST[CARRY] + BODYPART_COST[MOVE];
