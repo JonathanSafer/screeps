@@ -119,6 +119,7 @@ function updateCountsCity(city, creeps, rooms, closestRoom) {
                 updateUpgrader(city, controller, memory, rcl8, creeps);
                 updateBuilder(rcl, memory, spawn, rooms, rcl8);
                 updateMineralMiner(rcl, structures, spawn, memory);
+                updatePowerSpawn(city, memory)
 
                 if (rcl8) {
                     updateStorageLink(spawn, memory, structures);
@@ -203,15 +204,6 @@ function runTowers(city){
 function runPowerSpawn(city){
     if(Game.spawns[city]){
         if (!Game.spawns[city].memory.powerSpawn){
-            if (!Game.spawns[city].memory.ferryInfo){
-                Game.spawns[city].memory.ferryInfo = {}
-            }
-            if (Game.time % 500 == 0){
-                let powerSpawn = _.find(Game.structures, (structure) => structure.structureType == STRUCTURE_POWER_SPAWN && structure.room.memory.city == city);
-                if (powerSpawn){
-                    Game.spawns[city].memory.powerSpawn = powerSpawn.id
-                }
-            }
             return;
         }
         var powerSpawn = Game.getObjectById(Game.spawns[city].memory.powerSpawn)
@@ -228,6 +220,16 @@ function runPowerSpawn(city){
         if(powerSpawn && powerSpawn.energy >= 50 && powerSpawn.power > 0 && powerSpawn.room.storage.store.energy > 650000 && Game.cpu.bucket > 3000){
             powerSpawn.processPower();
         }
+    }
+}
+
+function updatePowerSpawn(city, memory) {
+    if (!memory.ferryInfo){
+        memory.ferryInfo = {}
+    }
+    let powerSpawn = _.find(Game.structures, (structure) => structure.structureType == STRUCTURE_POWER_SPAWN && structure.room.memory.city == city);
+    if (powerSpawn){
+        memory.powerSpawn = powerSpawn.id
     }
 }
 
