@@ -152,7 +152,8 @@ function makeEmergencyCreeps(extensions, creeps, city, rcl8, emergency) {
             makeCreeps('transporter', 'basic', 0, city);
         }
 
-        if (!rcl8 && _.filter(creeps, creep => creep.memory.role == 'runner') < 1) {
+        // TODO disable if links are present (not rcl8!! links may be missing for rcl8)
+        if (_.filter(creeps, creep => creep.memory.role == 'runner') < 1) {
             console.log('Making Emergency Runner')
             makeCreeps('runner', 'erunner', 1, city);
         }
