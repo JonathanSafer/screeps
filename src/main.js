@@ -5,6 +5,7 @@ var m = require('markets');
 var s = require('stats');
 var rp = require('roomplan');
 var er = require('error');
+var em = require('empire');
 const profiler = require('screeps-profiler');
 //Game.profiler.profile(1000);
 //Game.profiler.output();
@@ -26,6 +27,7 @@ module.exports.loop = function () {
         let closestRoom = null;
         if(Game.time % 500 == 0){
             closestRoom = c.chooseColonizerRoom(myCities);
+            em.expand() // grow the empire!
         }
         console.log("Time: " + Game.time);
         //run cities
