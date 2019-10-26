@@ -15,6 +15,7 @@ var em = {
         let claimPos = claimFlag.pos
         let planPos = planFlag.pos
 
+        // apparently you need vision to create flags
         claimPos.createFlag("claim")
         planPos.createFlag("plan")
 
@@ -23,7 +24,8 @@ var em = {
     },
 
     getFlagsOfType: function(type) {
-        return _.filter(Game.flags, flag => flag.name.startsWith(type))
+        let flags = _.filter(Game.flags, flag => flag.name.startsWith(type))
+        return _.sortBy(flags, flag => flag.name)
     },
 
     canExpand: function() {
