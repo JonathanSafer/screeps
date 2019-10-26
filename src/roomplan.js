@@ -29,11 +29,11 @@ let p = {
     buildConstructionSites: function() {
         Object.keys(Game.rooms).forEach((roomName) => {
             var room = Game.rooms[roomName]
-            if(Game.flags.plan && Game.flags.plan.pos.roomName == roomName && room.controller.owner && room.controller.owner.username == "Yoner"){
+            if(Memory.flags.plan && Memory.flags.plan.pos.roomName == roomName && room.controller.owner && room.controller.owner.username == "Yoner"){
                 room.memory.plan = {}
-                room.memory.plan.x = Game.flags.plan.pos.x
-                room.memory.plan.y = Game.flags.plan.pos.y
-                Game.flags.plan.remove();
+                room.memory.plan.x = Memory.flags.plan.pos.x
+                room.memory.plan.y = Memory.flags.plan.pos.y
+                Memory.flags.plan = null
                 p.clearAllStructures(room);
             }
             if (room.memory.plan) {

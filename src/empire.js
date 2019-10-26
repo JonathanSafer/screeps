@@ -1,7 +1,7 @@
 var em = {
     
     expand: function() { // run every 500
-        if (em.canExpand() && !Game.flags.claim && !Game.flags.plan) {
+        if (em.canExpand() && !Memory.flags.claim && !Memory.flags.plan) {
             em.claimNextRoom()
         }
     },
@@ -12,13 +12,10 @@ var em = {
         let roomSuffix = claimFlag.name.substr(5)
         let planFlag = Game.flags["plan" + roomSuffix]
 
-        let claimPos = claimFlag.pos
-        let planPos = planFlag.pos
-
         // apparently you need vision to create flags. Better to use memory instead
         try {
-            claimPos.createFlag("claim")
-            planPos.createFlag("plan")
+            Memory.flags.claim = claimFlag
+            Memory.flags.plan = planFlag
         } catch (err) {
             console.log("No vision into room selected")
         }

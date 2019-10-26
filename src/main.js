@@ -25,6 +25,9 @@ module.exports.loop = function () {
         var localCreeps = u.splitCreepsByCity()
         var myCities = u.getMyCities()
         let closestRoom = null;
+
+        // TODO add a setup function to validate memory etc
+        if (!Memory.flags) Memory.flags = {}
         if(Game.time % 500 == 0){
             closestRoom = c.chooseColonizerRoom(myCities);
             em.expand() // grow the empire!

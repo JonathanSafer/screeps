@@ -19,15 +19,15 @@ var rSB = {
             }
             return;
         }
-        if(!Game.flags.claim){
+        if(!Memory.flags.claim){
             return;
         }
-        if(creep.pos.roomName === Game.flags.claim.pos.roomName){
+        if(creep.pos.roomName === Memory.flags.claim.pos.roomName){
             if(Game.time % 100 == 0){
                 let extensions = _.filter(creep.room.find(FIND_MY_STRUCTURES), structure => structure.structureType == STRUCTURE_EXTENSION)
                 let cSites = creep.room.find(FIND_MY_CONSTRUCTION_SITES)
                 if (extensions.length > 4 && !cSites.length){
-                    Game.flags.claim.remove()
+                    Memory.flags.claim = null
                 }
             }
             if(creep.carry.energy == 0 && creep.memory.building){
@@ -42,7 +42,7 @@ var rSB = {
                 rSB.harvest(creep)
             }
         } else {
-            creep.moveTo(Game.flags.claim.pos, {reusePath: 50});
+            creep.moveTo(Memory.flags.claim.pos, {reusePath: 50});
         }
     },
     

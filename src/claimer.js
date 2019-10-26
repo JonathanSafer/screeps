@@ -37,10 +37,10 @@ var rC = {
             creep.memory.target = 1
             return;
         }
-        if(!Game.flags.claim){
+        if(!Memory.flags.claim){
             return;
         }
-        if (Game.flags.claim.pos.roomName == creep.pos.roomName) {
+        if (Memory.flags.claim.pos.roomName == creep.pos.roomName) {
             if (creep.pos.isNearTo(creep.room.controller.pos)) {
                 var newCity = creep.room.name + "0"
                 creep.signController(creep.room.controller, newCity)
