@@ -61,7 +61,13 @@ function makeCreeps(role, type, target, city) {
 //runCity function
 function runCity(city, creeps){
     if (Game.spawns[city]){
-        var roles = [rF, rA, rT, rM, rR, rU, rB, rS, rMM, rC, rSB, rH, rBM, rD, rBB, rBT, rMe, rTr, rBr, rPM, rRo, rDM] // order roles for priority
+        let room = Game.rooms[city]
+
+        // Only build required roles during financial stress
+        var coreRoles = [rF, rA, rT, rM, rR, rU, rB]
+        var allRoles = [rF, rA, rT, rM, rR, rU, rB, rS, rMM, rC, rSB, rH, rBM, rD, rBB, rBT, rMe, rTr, rBr, rPM, rRo, rDM] // order roles for priority
+        var roles = room.storage.store.energy < 50000 ? coreRoles : allRoles
+
         var nameToRole = _.groupBy(roles, role => role.name); // map from names to roles
         var counts = _.countBy(creeps, creep => creep.memory.role); // lookup table from role to count
     

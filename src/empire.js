@@ -15,9 +15,13 @@ var em = {
         let claimPos = claimFlag.pos
         let planPos = planFlag.pos
 
-        // apparently you need vision to create flags
-        claimPos.createFlag("claim")
-        planPos.createFlag("plan")
+        // apparently you need vision to create flags. Better to use memory instead
+        try {
+            claimPos.createFlag("claim")
+            planPos.createFlag("plan")
+        } catch (err) {
+            console.log("No vision into room selected")
+        }
 
         claimFlag.remove()
         planFlag.remove()
