@@ -250,10 +250,14 @@ let p = {
                 }
             }
         }
+        let counter = 0;
+        roads = roads.reverse();
         for(var i = 0; i < roads.length; i++){
             room.visual.circle(roads[i], {fill: 'transparent', radius: 0.25, stroke: 'red'});
-            if(Object.keys(Game.constructionSites).length < 20){//doesn't update during the tick
-                room.createConstructionSite(roads[i], STRUCTURE_ROAD)
+            if(counter < 20){//doesn't update during the tick
+                if(!room.createConstructionSite(roads[i], STRUCTURE_ROAD)){
+                    counter++
+                }
             }
         }
         //TODO: cut this function up, plan and build walls + ramparts, limit number of roads total using static or global, make this happen less frequently
