@@ -30,7 +30,7 @@ module.exports.loop = function () {
         if (!Memory.flags) Memory.flags = {}
         if(Game.time % 500 == 0){
             closestRoom = c.chooseColonizerRoom(myCities);
-            em.expand() // grow the empire!
+            //em.expand() // grow the empire!
         }
         console.log("Time: " + Game.time);
         //run cities
