@@ -66,7 +66,7 @@ function runCity(city, creeps){
         var allRoles = [rF, rA, rT, rM, rR, rU, rB, rS, rMM, rC, rSB, rH, rBM, rD, rBB, rBT, rMe, rTr, rBr, rPM, rRo, rDM] // order roles for priority
         var roles = (room.storage && room.storage.store.energy < 50000) ? coreRoles : allRoles
 
-        var nameToRole = _.groupBy(roles, role => role.name); // map from names to roles
+        var nameToRole = _.groupBy(allRoles, role => role.name); // map from names to roles
         var counts = _.countBy(creeps, creep => creep.memory.role); // lookup table from role to count
     
         // Get counts for all roles, make first thing that doesn't have enough
