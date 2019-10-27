@@ -326,11 +326,11 @@ function emptyBoosters(memory){
 }
 
 function chooseColonizerRoom(myCities){
-    if(!Memory.flags.claim && !Game.flags.unclaim){
+    if(!Game.flags.claim && !Game.flags.unclaim){
         return 0;
     }
     let goodCities = _.filter(myCities, city => city.controller.level >= 4 && Game.spawns[city.memory.city]);
-    let claimRoom = Game.flags.unclaim ? Game.flags.unclaim.pos.roomName: Memory.flags.claim.pos.roomName
+    let claimRoom = Game.flags.unclaim ? Game.flags.unclaim.pos.roomName: Game.flags.claim.pos.roomName
     let closestRoom = goodCities[0].name;
     for (let i = 0; i < goodCities.length; i += 1){
         if(Game.map.getRoomLinearDistance(goodCities[i].name, claimRoom) < Game.map.getRoomLinearDistance(closestRoom, claimRoom)){
@@ -345,7 +345,7 @@ function updateColonizers(city, memory, closestRoom) {
     // TODO only make a claimer if city is close
     let roomName = Game.spawns[city].room.name
     if(roomName == closestRoom){
-        if(Memory.flags.claim){
+        if(Game.flags.claim){
             if(Game.spawns[city].room.controller.level < 7){
                 memory[rSB.name] = 4;
             } else {
@@ -354,10 +354,10 @@ function updateColonizers(city, memory, closestRoom) {
         } else {
             memory[rSB.name] = 0;
         }
-        if(Memory.flags.claim && Memory.flags.claim.room && Memory.flags.claim.room.controller.my){
+        if(Game.flags.claim && Game.flags.claim.room && Game.flags.claim.room.controller.my){
             memory[rC.name] = 0;
         } else {
-            memory[rC.name] = Memory.flags.claim ? 1 : 0;
+            memory[rC.name] = Game.flags.claim ? 1 : 0;
         }
         if(Game.time % 1000 === 0){
             memory[rC.name] = Game.flags.unclaim ? 1 : memory[rC.name];
