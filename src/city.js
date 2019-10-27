@@ -32,7 +32,9 @@ var fact = require('factory');
 function makeCreeps(role, type, target, city) {
     //console.log(types.getRecipe('basic', 2));
     let room = Game.spawns[city].room;
-    let recipe = types.getRecipe(type, room.energyCapacityAvailable, room);
+    let energyToSpend = room.storage && room.storage.store.energy < 50000 ? room.energyAvailable :
+            room.energyCapacityAvailable
+    let recipe = types.getRecipe(type, energyToSpend, room);
     //console.log(role)
     let spawns = room.find(FIND_MY_SPAWNS);
     if(!Memory.counter){
