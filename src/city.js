@@ -32,7 +32,7 @@ var fact = require('factory');
 function makeCreeps(role, type, target, city) {
     //console.log(types.getRecipe('basic', 2));
     let room = Game.spawns[city].room;
-    let recipe = types.getRecipe(type, room.energyAvailable, room);
+    let recipe = types.getRecipe(type, room.energyCapacityAvailable, room);
     //console.log(role)
     let spawns = room.find(FIND_MY_SPAWNS);
     if(!Memory.counter){
@@ -64,7 +64,7 @@ function runCity(city, creeps){
         // Only build required roles during financial stress
         var coreRoles = [rF, rA, rT, rM, rR, rU, rB]
         var allRoles = [rF, rA, rT, rM, rR, rU, rB, rS, rMM, rC, rSB, rH, rBM, rD, rBB, rBT, rMe, rTr, rBr, rPM, rRo, rDM] // order roles for priority
-        var roles = room.storage.store.energy < 50000 ? coreRoles : allRoles
+        var roles = (room.storage && room.storage.store.energy < 50000) ? coreRoles : allRoles
 
         var nameToRole = _.groupBy(roles, role => role.name); // map from names to roles
         var counts = _.countBy(creeps, creep => creep.memory.role); // lookup table from role to count
