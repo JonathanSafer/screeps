@@ -3,7 +3,7 @@ function getRecipe(type, energyAvailable, room){
 	let d = {};
 
     let baseCost = 2 * BODYPART_COST[CARRY] + BODYPART_COST[MOVE];
-    let scale = Math.floor(Math.min(room.energyCapacityAvailable / baseCost, MAX_CREEP_SIZE / 3));
+    let scale = Math.floor(Math.min(energyAvailable / baseCost, MAX_CREEP_SIZE / 3));
     d.runner = body([2 * scale, scale], [CARRY, MOVE]);
 
 	switch (Math.floor(energyAvailable / 500) * 500) {
