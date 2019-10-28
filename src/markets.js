@@ -127,6 +127,21 @@ var markets = {
                 Game.market.deal(goodOrders[goodOrders.length - 1].id, Math.min(goodOrders[goodOrders.length - 1].remainingAmount,  Math.max(0, terminal.store['power'] - 10000)), city.name)
                 console.log(Math.min(goodOrders[goodOrders.length - 1].remainingAmount,  Math.max(0, terminal.store['power'] - 10000)) + " " + 'power' + " sold for " + goodOrders[goodOrders.length - 1].price)
                 return true;
+            } else {
+                //make a sell order
+                let orderId = _.find(Object.keys(Game.market.orders),
+                        order => Game.market.orders[order].roomName === city.name && Game.market.orders[order].resourceType === 'power');
+                let order = Game.market.orders[orderId];
+                if(!order){
+                    let sellPrice = markets.getPrice('power') * .90
+                    Game.market.createOrder({
+                        type: ORDER_SELL,
+                        resourceType: 'power',
+                        price: sellPrice,
+                        totalAmount: 2000,
+                        roomName: city.name   
+                    });
+                }
             }
         }
         return false;
