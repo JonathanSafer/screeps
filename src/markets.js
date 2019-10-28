@@ -18,6 +18,41 @@ var markets = {
     		}
     	}
     },
+
+    relocateBaseMins: function(myCities){
+        //receivers are rooms with a lvl 0 factory
+        let receivers = _.filter(myCities, city => city.terminal && !Game.spawns[city.memory.city].memory.ferryInfo.factoryInfo.factoryLevel && city.controller.level >= 7)
+        //senders are rooms with a levelled factory, or no factory at all
+        let senders = _.filter(myCities, city => city.terminal && (Game.spawns[city.memory.city].memory.ferryInfo.factoryInfo.factoryLevel > 0 || city.controller.level == 6))
+        const baseMins = [RESOURCE_HYDROGEN, RESOURCE_OXYGEN, RESOURCE_UTRIUM, RESOURCE_LEMERGIUM, RESOURCE_KEANIUM, RESOURCE_ZYNTHIUM, RESOURCE_CATALYST];
+        const baseComs = [RESOURCE_SILICON, RESOURCE_METAL, RESOURCE_BIOMASS, RESOURCE_MIST]
+        for(var i = 0; i < senders.length(); i++){
+            //if a sender has more than 8k of a base mineral, or ANY of a base commodity, send it to a random receiver
+            let go = true
+            for(var j = 0; j < baseMins.length(); j++){
+                if(!go){
+                    continue;
+                }
+                if(senders[i].terminal.store[baseMins[j]] > 8000){
+                    let amount = senders[i].terminal.store[baseMins[j]] - 8000;
+                    let receiver = receivers[Math.floor(Math.random() * Math.floor(receivers.length))].name
+                    senders[i].terminal.send(baseMins[j], amount, receiver)
+                    go = false;
+                }
+            }
+            for(var j = 0; j < baseComs.length(); j++){
+                if(!go){
+                    continue;
+                }
+                if(senders[i].terminal.store[baseComs[j]] > 0){
+                    let amount = senders[i].terminal.store[baseComs[j]];
+                    let receiver = receivers[Math.floor(Math.random() * Math.floor(receivers.length))].name
+                    senders[i].terminal.send(baseComs[j], amount, receiver)
+                    go = false;
+                }
+            }
+        }
+    },
     
     distributeMinerals: function(myCities){
         let senders = myCities
