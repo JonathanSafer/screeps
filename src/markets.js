@@ -26,10 +26,10 @@ var markets = {
         let senders = _.filter(myCities, city => city.terminal && (Game.spawns[city.memory.city].memory.ferryInfo.factoryInfo.factoryLevel > 0 || city.controller.level == 6))
         const baseMins = [RESOURCE_HYDROGEN, RESOURCE_OXYGEN, RESOURCE_UTRIUM, RESOURCE_LEMERGIUM, RESOURCE_KEANIUM, RESOURCE_ZYNTHIUM, RESOURCE_CATALYST];
         const baseComs = [RESOURCE_SILICON, RESOURCE_METAL, RESOURCE_BIOMASS, RESOURCE_MIST]
-        for(var i = 0; i < senders.length(); i++){
+        for(var i = 0; i < senders.length; i++){
             //if a sender has more than 8k of a base mineral, or ANY of a base commodity, send it to a random receiver
             let go = true
-            for(var j = 0; j < baseMins.length(); j++){
+            for(var j = 0; j < baseMins.length; j++){
                 if(!go){
                     continue;
                 }
