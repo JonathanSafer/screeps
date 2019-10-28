@@ -87,10 +87,31 @@ var fact = {
         }
     },
 
+    checkTerminal: function(factory, city){
+        const products = _.filter(Object.keys(COMMODITIES), key => COMMODITIES[key].level === factory.level)
+        for (var i = 0; i < products.length; i++) {
+            let components = Object.keys(COMMODITIES[products[i]].components);
+            let rate = fact.findRateLimit(components, products[i])
+            let go = true;
+            for (var j = 0; j < components.length; j++) {
+                if((COMMODITIES[products[i]].components[components[j]] * rate) > city.terminal.store[components[i]]){
+                    go = false;
+                }
+            }
+            if(go){
+                fact.requestComponents(city, components, products[i])
+            }
+        }
+    },
+
     chooseProduce: function(factory, city){
         if(factory.level >= 1){
-            //set produce to null, empire manager will assign next produce
-            Game.spawns[city].memory.ferryInfo.factoryInfo.produce = null;
+            //check terminal for resources needed to produce same level comms
+            if(fact.checkTerminal(factory, city)){
+                return;
+            }
+            //otherwise go dormant
+            Game.spawns[city].memory.ferryInfo.factoryInfo.produce = 'dormant';
         } else {
             //make 5k of each base resource commodity (in increments of 200)
             let bars = [RESOURCE_UTRIUM_BAR, RESOURCE_LEMERGIUM_BAR, RESOURCE_ZYNTHIUM_BAR,
@@ -133,7 +154,7 @@ var fact = {
         }
     },
 
-    requestComponents: function(city, components, produce){
+    findRateLimit: function(components, produce){//return number of cycles we can do
         let rateLimit = 0; //determine rate limit(resources cannot be transferred in quantities greater than 1k)
         for(i = 0; i < components.length; i++){
             let needed = COMMODITIES[produce].components[components[i]];
@@ -143,6 +164,11 @@ var fact = {
         }
         //use rate limit to determine how much of each component is needed
         let productionNum = _.floor(1000/rateLimit)//number of cycles we can run per charter
+        return productionNum;
+    },
+
+    requestComponents: function(city, components, produce){
+        let productionNum = fact.findRateLimit(components, produce);
         for(i = 0; i < components.length; i++){
             let requestAmount = COMMODITIES[produce].components[components[i]] * productionNum;
             Game.spawns[city].memory.ferryInfo.factoryInfo.transfer.push([components[i], 1, requestAmount])
