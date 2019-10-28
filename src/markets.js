@@ -182,7 +182,7 @@ var markets = {
                 let goodOrders = markets.sortOrder(buyOrders[bars[i]]).reverse();
                 //determine price of associated resource
                 let base = _.without(Object.keys(COMMODITIES[bars[i]].components), RESOURCE_ENERGY)[0]
-                if(goodOrders.length && terminal.store[base] >= 5000 && (markets.getPrice(base) * 6) < goodOrders[0].price){//check base quantity to prevent buying from other ppls orders
+                if(goodOrders.length && terminal.store[base] >= 5000 && (markets.getPrice(base) * 7) < goodOrders[0].price){//check base quantity to prevent buying from other ppls orders
                     Game.market.deal(goodOrders[0].id, Math.min(goodOrders[0].remainingAmount,  sellAmount), city.name);
                     return true;
                 }
