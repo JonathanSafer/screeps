@@ -40,7 +40,7 @@ var markets = {
                     go = false;
                 }
             }
-            for(var j = 0; j < baseComs.length(); j++){
+            for(var j = 0; j < baseComs.length; j++){
                 if(!go){
                     continue;
                 }
