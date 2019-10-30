@@ -173,11 +173,11 @@ function dMinerCalc(room){
         harvested = 0
     }
     let distance = PathFinder.search(spawn.pos, {pos: flag.pos, range: 1}, {maxOps: 10000}).path.length
-    let workTime = 1500 - (distance * 3) - 100;//100 is arbitrary buffer to be adjusted, distance x 3 since it'll take 2x as long on return
+    let workTime = 1500 - (distance * 3);//distance x 3 since it'll take 2x as long on return
     let work = 20
     let carryAmount = test(work, workTime, harvested)
     let carry = Math.floor(carryAmount/100)*2 //carry must be an even number for 20 works
-    if(carry < 2){// if we're getting less than 100 resource in a lifetime, drop the source
+    if(carry < 4){// if we're getting less than 200 resource in a lifetime, drop the source
         flag.remove()
         return [1, 1, 1];
     }
