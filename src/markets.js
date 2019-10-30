@@ -186,7 +186,7 @@ var markets = {
             if(terminal.store[bars[i]] > 3000){
                 sellAmount = terminal.store[bars[i]] - 3000;
                 let goodOrders = markets.sortOrder(buyOrders[bars[i]]).reverse();
-                if(goodOrders.length){
+                if(goodOrders.length && goodOrders[0].price > (0.7 * markets.getPrice(bars[i]))){
                     Game.market.deal(goodOrders[0].id, Math.min(goodOrders[0].remainingAmount,  sellAmount), city.name);
                     return true;
                 }
