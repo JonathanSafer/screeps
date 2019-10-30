@@ -28,6 +28,9 @@ var rDM = {
                     creep.suicide();
                     return;
                 }
+                if(creep.body.length === 3){
+                    Game.flags[flagName].remove();
+                }
                 if (Game.flags[flagName].pos.roomName !== creep.pos.roomName){//move to flag until it is visible
                     creep.moveTo(Game.flags[flagName], {reusePath: 50}, {range: 1, maxOps: 5000, swampCost: 8})
                     return;
