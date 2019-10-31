@@ -413,6 +413,10 @@ function updateScout(city, rcl, rcl8, rcl8Room, memory){
 }
 
 function updateMiner(rooms, rcl8Room, memory, spawn){
+    if(Game.flags.claim && Game.flags.claim.pos.roomName === spawn.pos.roomName){
+        memory.[rM.name] = 0;
+        return;
+    }
     if (!memory.sources) memory.sources = {};
     if (rcl8Room && _.keys(memory.sources).length > 2) memory.sources = {};
     let miners = 0;
