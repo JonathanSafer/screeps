@@ -252,6 +252,10 @@ let p = {
         }
         let counter = 0;
         roads = roads.reverse();
+        let csites = room.find(FIND_MY_CONSTRUCTION_SITES);
+        if(csites.length){
+            counter = csites.length;
+        }
         for(var i = 0; i < roads.length; i++){
             room.visual.circle(roads[i], {fill: 'transparent', radius: 0.25, stroke: 'red'});
             if(counter < 20){//doesn't update during the tick
