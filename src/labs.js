@@ -71,7 +71,7 @@ var labs = {
             boostsList.splice(boostsList.indexOf(currentBoost), 1);
         }
         for(i = 0; i < boostsList.length; i++){
-            if(spawn.room.terminal.store[boostsList[i]] == undefined || spawn.room.terminal.store[boostsList[i]] < 8000){
+            if(spawn.room.terminal.store[boostsList[i]] < 8000){
                 spawn.memory.ferryInfo.labInfo[6] = boostsList[i]
                 return;
             }
@@ -100,7 +100,7 @@ var labs = {
         }
         //if we don't have both ingredients find the one we don't have and find it's ingredients
         for(i = 0; i < 2; i++){
-            if (spawn.room.terminal.store[ingredients[i]] == undefined || spawn.room.terminal.store[ingredients[i]] < 3000){
+            if (spawn.room.terminal.store[ingredients[i]] < 3000){
                 return labs.chooseMineral(ingredients[i], spawn);
             }
         }

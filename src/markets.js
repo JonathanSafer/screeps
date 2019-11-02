@@ -92,7 +92,7 @@ var markets = {
 
     distributePower: function(myCities){
         var receiver = null
-    	var needPower = _.filter(myCities, city => city.controller.level > 7 && city.terminal && (city.terminal.store.power < 1 || city.terminal.store.power == undefined))
+    	var needPower = _.filter(myCities, city => city.controller.level > 7 && city.terminal && city.terminal.store.power < 1)
     	if (needPower.length){
     		receiver = needPower[0].name
     		for (var i = 0; i < myCities.length; i++){
@@ -106,7 +106,7 @@ var markets = {
 
     distributeUpgrade: function(myCities){
         var receiver = null
-        var needUpgrade = _.filter(myCities, city => city.controller.level > 5 && city.terminal && (city.terminal.store['XGH2O'] < 1000 || city.terminal.store['XGH2O'] == undefined))
+        var needUpgrade = _.filter(myCities, city => city.controller.level > 5 && city.terminal && city.terminal.store['XGH2O'] < 1000)
         if (needUpgrade.length){
             receiver = needUpgrade[0].name
             for (var i = 0; i < myCities.length; i++){

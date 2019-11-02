@@ -100,7 +100,7 @@ var rF = {
                     }
                     break;
                 }
-                if (creep.room.terminal.store[creep.memory.mineral]){
+                if (creep.room.terminal.store[creep.memory.mineral] > 0){
                     actions.withdraw(creep, creep.room.terminal, creep.memory.mineral)
                 } else {
                     creep.say('getJob');
@@ -148,7 +148,7 @@ var rF = {
                     }
                     break;
                 }
-                if (creep.room.terminal.store[creep.memory.mineral]){
+                if (creep.room.terminal.store[creep.memory.mineral] > 0){
                     actions.withdraw(creep, creep.room.terminal, creep.memory.mineral)
                 } else {
                     creep.say('getJob')

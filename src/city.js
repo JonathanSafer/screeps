@@ -609,10 +609,10 @@ function updateBigBreaker(flag, memory, city) {
         let resources = ['XZHO2', 'XZH2O', 'XLHO2', 'XGHO2']
         let go = 1;
         for (let i = 0; i < resources.length; i++){
-            if(spawn.room.terminal.store[resources[i]] < 1000 || spawn.room.terminal.store[resources[i]] == undefined){
+            if(spawn.room.terminal.store[resources[i]] < 1000){
                 go = 0
             }
-            if(spawn.room.terminal.store[resources[i]] < 2000 || spawn.room.terminal.store[resources[i]] == undefined){
+            if(spawn.room.terminal.store[resources[i]] < 2000){
                 spawn.memory.ferryInfo.mineralRequest = resources[i];
             }
         }
@@ -640,10 +640,10 @@ function updateBigTrooper(flag, memory, city) {
         let resources = ['XZHO2', 'XKHO2', 'XLHO2', 'XGHO2']
         let go = 1;
         for (let i = 0; i < resources.length; i++){
-            if(spawn.room.terminal.store[resources[i]] < 1000 || spawn.room.terminal.store[resources[i]] == undefined){
+            if(spawn.room.terminal.store[resources[i]] < 1000){
                 go = 0
             }
-            if(spawn.room.terminal.store[resources[i]] < 2000 || spawn.room.terminal.store[resources[i]] == undefined){
+            if(spawn.room.terminal.store[resources[i]] < 2000){
                 spawn.memory.ferryInfo.mineralRequest = resources[i];
             }
         }
