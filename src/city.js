@@ -755,7 +755,7 @@ function runObs(city){
             let deposit = Game.rooms[roomName].find(FIND_DEPOSITS)
             if(deposit.length){
                 let depositFlagName = city + 'deposit';
-                if(Game.cpu.bucket > 7000 && deposit[0].lastCooldown < 25){
+                if(Game.cpu.bucket > 7000 && deposit[0].lastCooldown < 25 && structures.length < 30){
                     if(!Game.flags[depositFlagName]){
                         Game.rooms[roomName].createFlag(deposit[0].pos, depositFlagName)
                         Game.spawns[city].memory.deposit = Math.floor(Math.pow((deposit[0].lastCooldown / 0.001), 1/1.2))
