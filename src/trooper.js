@@ -128,6 +128,14 @@ var rTr = {
             creep.memory.retreat = true
         }
         if(creep.memory.retreat) {
+            let medic = Game.getObjectById(creep.memory.medic)
+            if(medic && creep.memory.tolerance){
+                if(creep.hits === creep.hitsMax && medic.hits === medic.hitsMax){
+                    creep.memory.tolerance = creep.memory.tolerance + (creep.memory.tolerance * 0.001);
+                } else {
+                    creep.memory.tolerance = creep.memory.tolerance - (creep.memory.tolerance * 0.001);
+                }
+            }
             a.retreat(creep)
             return true
         }
