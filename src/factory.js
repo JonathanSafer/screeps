@@ -84,7 +84,7 @@ var fact = {
             }
             //don't choose new produce if ferry just deposited (ferry will be isNearTo and carrying stuff)
             let ferry = _.find(factory.room.find(FIND_MY_CREEPS), creep => creep.memory.role === 'ferry')
-            if(ferry &&  _.sum(ferry.store > 0) && ferry.pos.isNearTo(factory.pos)) {
+            if(ferry &&  _.sum(ferry.store) > 0 && ferry.pos.isNearTo(factory.pos)) {
                 return;
             }
             fact.chooseProduce(factory, city);
