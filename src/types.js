@@ -177,7 +177,7 @@ function dMinerCalc(room){
     let work = 20
     let carryAmount = test(work, workTime, harvested)
     let carry = Math.floor(carryAmount/100)*2 //carry must be an even number for 20 works
-    if(carry < 4){// if we're getting less than 200 resource in a lifetime, drop the source
+    if(carry < 8){// if we're getting less than 400 resource in a lifetime, drop the source
         flag.remove()
         return [1, 1, 1];
     }
