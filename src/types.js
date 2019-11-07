@@ -199,7 +199,7 @@ function dMinerCalc(room){
 
 }
 function calcCooldown(harvested) {
-    return Math.ceil(0.001*Math.pow(harvested,1.2))
+    return Math.ceil(DEPOSIT_EXHAUST_MULTIPLY*Math.pow(harvested,DEPOSIT_EXHAUST_POW))
 }
 
 function test(hpt, ticks, harvested) {
