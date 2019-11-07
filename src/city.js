@@ -758,9 +758,9 @@ function runObs(city){
                     let depositFlagName = city + 'deposit';
                     let flagPlaced = Game.flags[depositFlagName] ? true : false;
                     for (var i = 0; i < deposits.length; i++) {
-                        if(deposit[0].lastCooldown < 25 && flagPlaced === false){
-                            Game.rooms[roomName].createFlag(deposit[0].pos, depositFlagName)
-                            Game.spawns[city].memory.deposit = Math.floor(Math.pow((deposit[0].lastCooldown / 0.001), 1/1.2))
+                        if(deposits[i].lastCooldown < 25 && flagPlaced === false){
+                            Game.rooms[roomName].createFlag(deposits[i].pos, depositFlagName)
+                            Game.spawns[city].memory.deposit = Math.floor(Math.pow((deposits[i].lastCooldown / 0.001), 1/1.2))
                             flagPlaced = true;
                         }
                     }
