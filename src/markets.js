@@ -271,7 +271,7 @@ var markets = {
     sendComs(cities){
         for(var i = 0; i < cities.length; i++){
             const memory = Game.spawns[cities[i].memory.city].memory
-            if(memory.ferryInfo.factoryInfo && memory.ferryInfo.factoryInfo.comSend.length){
+            if(memory.ferryInfo.factoryInfo && memory.ferryInfo.comSend.length){
                 const comSend = memory.ferryInfo.factoryInfo.comSend[0]
                 if(cities[i].terminal.store[comSend[0]] >= comSend[1] && !cities[i].terminal.termUsed){
                     cities[i].terminal.send(comSend[0], comSend[1], comSend[2])
