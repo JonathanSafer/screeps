@@ -23,7 +23,7 @@ var fact = {
         }
         if(!Game.spawns[city].memory.ferryInfo.factoryInfo){
             Game.spawns[city].memory.ferryInfo.factoryInfo = {};
-            Game.spawns[city].memory.ferryInfo.comRequest = null;//commodity request addition to mineral request
+            Game.spawns[city].memory.ferryInfo.comSend = null;//list of commodities to be delivered as soon as the terminal is ready
             Game.spawns[city].memory.ferryInfo.factoryInfo.produce = null;
             Game.spawns[city].memory.ferryInfo.factoryInfo.factoryLevel = null;
             Game.spawns[city].memory.ferryInfo.factoryInfo.transfer = [];

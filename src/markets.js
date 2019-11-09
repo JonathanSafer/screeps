@@ -12,12 +12,14 @@ var markets = {
     		var sortedCities = _.sortBy(needEnergy, city => city.storage.store.energy)
     		receiver = sortedCities[0].name
     		for (var i = 0; i < myCities.length; i++){
-    		    if (myCities[i].storage && myCities[i].storage.store.energy > 500000){
+    		    if (myCities[i].storage && myCities[i].storage.store.energy > 500000 && !myCities[i].terminal.termUsed){
     		        myCities[i].terminal.send(RESOURCE_ENERGY, 25000, receiver);
+                    myCities[i].terminal.termUsed = true;
     		    }
     		}
     	}
     },
+
 
     relocateBaseMins: function(myCities){
         //receivers are rooms with a lvl 0 factory
@@ -33,10 +35,11 @@ var markets = {
                 if(!go){
                     continue;
                 }
-                if(senders[i].terminal.store[baseMins[j]] > 8000){
+                if(senders[i].terminal.store[baseMins[j]] > 8000 && !senders[i].terminal.termUsed){
                     let amount = senders[i].terminal.store[baseMins[j]] - 8000;
                     let receiver = receivers[Math.floor(Math.random() * Math.floor(receivers.length))].name
                     senders[i].terminal.send(baseMins[j], amount, receiver)
+                    senders[i].terminal.termUsed = true;
                     go = false;
                 }
             }
@@ -44,10 +47,11 @@ var markets = {
                 if(!go){
                     continue;
                 }
-                if(senders[i].terminal.store[baseComs[j]] > 0){
+                if(senders[i].terminal.store[baseComs[j]] > 0 && !senders[i].terminal.termUsed){
                     let amount = senders[i].terminal.store[baseComs[j]];
                     let receiver = receivers[Math.floor(Math.random() * Math.floor(receivers.length))].name
                     senders[i].terminal.send(baseComs[j], amount, receiver)
+                    senders[i].terminal.termUsed = true;
                     go = false;
                 }
             }
@@ -68,20 +72,22 @@ var markets = {
                     if(!senders[j].terminal){
                         continue;
                     }
-                    if(senders[j].terminal.store[mineral] >= 6000){
+                    if(senders[j].terminal.store[mineral] >= 6000 && !senders[j].terminal.termUsed){
                         let result = senders[j].terminal.send(mineral, 3000, myCities[i].name)
+                        senders[j].terminal.termUsed = true;
                         senders = senders.splice(senders.indexOf(senders[j]), 1);
                         Game.spawns[city].memory.ferryInfo.mineralRequest = null;
                         break;
                     }
                     
                 }
-                if(x === senders.length){
+                if(x === senders.length && !myCities[i].terminal.termUsed){
                     //buy mineral
                     let sellOrders = markets.sortOrder(Game.market.getAllOrders(order => order.type == ORDER_SELL && order.resourceType == mineral && order.amount >= 3000 && order.price < 0.5))
                     if (sellOrders.length){
                         Game.market.deal(sellOrders[0].id, 3000, myCities[i].name)
                         Game.spawns[city].memory.ferryInfo.mineralRequest = null;
+                        myCities[i].terminal.termUsed = true;
                     } else {
                         Game.notify('Problem at distributeMinerals with ' + mineral, 20)
                     }
@@ -96,8 +102,9 @@ var markets = {
     	if (needPower.length){
     		receiver = needPower[0].name
     		for (var i = 0; i < myCities.length; i++){
-    		    if (myCities[i].terminal && myCities[i].terminal.store.power > 2000){
+    		    if (myCities[i].terminal && myCities[i].terminal.store.power > 2000 && !myCities[i].terminal.termUsed){
     		        myCities[i].terminal.send(RESOURCE_POWER, 560, receiver);
+                    myCities[i].terminal.termUsed = true;
     		        console.log('Sending power to ' + receiver)
     		    }
     		}
@@ -110,8 +117,9 @@ var markets = {
         if (needUpgrade.length){
             receiver = needUpgrade[0].name
             for (var i = 0; i < myCities.length; i++){
-                if (myCities[i].terminal && myCities[i].terminal.store['XGH2O'] > 7000){
+                if (myCities[i].terminal && myCities[i].terminal.store['XGH2O'] > 7000 && !myCities[i].terminal.termUsed){
                     myCities[i].terminal.send('XGH2O', 3000, receiver);
+                    myCities[i].terminal.termUsed = true;
                     console.log('Sending upgrade boost to ' + receiver)
                     return;
                 }
@@ -260,49 +268,93 @@ var markets = {
         return termUsed;
     },
 
-    manageMarket: function manageMarket(myCities){
-        for(var i = 0; i < Object.keys(Game.market.orders).length; i++){
-            if(!Game.market.orders[Object.keys(Game.market.orders)[i]].active){
-                Game.market.cancelOrder(Object.keys(Game.market.orders)[i])
+    sendComs(cities){
+        for(var i = 0; i < cities.length; i++){
+            const memory = Game.spawns[cities[i].memory.city].memory
+            if(memory.ferryInfo.factoryInfo && memory.ferryInfo.factoryInfo.comSend.length){
+                const comSend = memory.ferryInfo.factoryInfo.comSend[0]
+                if(cities[i].terminal.store[comSend[0]] >= comSend[1] && !cities[i].terminal.termUsed){
+                    cities[i].terminal.send(comSend[0], comSend[1], comSend[2])
+                    cities[i].terminal.termUsed = true;
+                } else {
+                    console.log("Error sending " + comSend[0] + " from: " + cities[i].name)
+                }
             }
         }
-        const orders = Game.market.getAllOrders();
-        global.marketHistory = _.groupBy(Game.market.getHistory(), history => history.resourceType)
-        const sellOrders = _.groupBy(_.filter(orders, order => order.type == ORDER_SELL), order => order.resourceType)
-        const buyOrders = _.groupBy(_.filter(orders, order => order.type == ORDER_BUY), order => order.resourceType)
-        const highEnergyOrder = markets.sortOrder(buyOrders[RESOURCE_ENERGY]).reverse()[0];
-        const baseMins = [RESOURCE_HYDROGEN, RESOURCE_OXYGEN, RESOURCE_UTRIUM, RESOURCE_LEMERGIUM, RESOURCE_KEANIUM, RESOURCE_ZYNTHIUM, RESOURCE_CATALYST];
-        const bars = [RESOURCE_UTRIUM_BAR, RESOURCE_LEMERGIUM_BAR, RESOURCE_ZYNTHIUM_BAR, RESOURCE_KEANIUM_BAR, RESOURCE_GHODIUM_MELT, 
-                RESOURCE_OXIDANT, RESOURCE_REDUCTANT, RESOURCE_PURIFIER, RESOURCE_CELL, RESOURCE_WIRE, RESOURCE_ALLOY, RESOURCE_CONDENSATE];
-        for (var i = 0; i < myCities.length; i++){
-            //if no terminal continue
-            if(!myCities[i].terminal || !Game.spawns[myCities[i].memory.city].memory.ferryInfo){
-                continue;
-            }
-            let termUsed = false; //only one transaction can be run using each cities terminal
-            if(myCities[i].terminal.cooldown){
-                termUsed = true;
-            }
-            if(!termUsed){
-                termUsed = markets.sellPower(myCities[i], buyOrders);
-            }
-            let memory = Game.spawns[myCities[i].memory.city].memory;
-            let level = memory.ferryInfo.factoryInfo.factoryLevel;
-            //cities w/o level send all base resources to non levelled cities
-            //base mins are NOT sold, they are made into bars instead.
-            //bars can be sold if in excess
-            //if any base mineral (besides ghodium) is low, an order for it will be placed on the market. If an order already exists, update quantity
-            //if an order already exists and is above threshold (arbitrary?), increase price
-            if(!level){
-                //buy minerals as needed
-                markets.buyMins(myCities[i], baseMins);
-                if(!termUsed){
-                    termUsed = markets.sellBars(myCities[i], bars, buyOrders);
-                }
+    },
 
+    manageMarket: function manageMarket(myCities){//this function is now in charge of all terminal acitivity
+        if(Game.time % 10 != 0){
+            return;
+        }
+        const termCities = _.filter(myCities, city => city.terminal)
+        //send coms (every 10 ticks)
+        markets.sendComs(termCities);
+        //relocate base mins (every 1k ticks)
+        if(Game.time % 1000 === 0){
+            markets.relocateBaseMins(termCities);
+        }
+        //distribure minerals (every 50 ticks)
+        if(Game.time % 50 === 0){
+            markets.distributeMinerals(termCities);
+        }
+        //distribute energy (every 200 ticks)
+        if(Game.time % 200 === 0){
+            markets.distributeEnergy(termCities);
+        }
+        //distribute power (every 200 ticks, offset by 10)
+        if(Game.time % 200 === 10){
+            markets.distributePower(termCities);
+        }
+        //distribute upgrade boost (every 200, offset by 20)
+        if(Game.time % 200 === 20){
+            markets.distributeUpgrade(termCities);
+        }
+        //regular market stuff (every 200 ticks, offset by 30)
+        if(Game.time % 200 === 30){
+            for(var i = 0; i < Object.keys(Game.market.orders).length; i++){
+                if(!Game.market.orders[Object.keys(Game.market.orders)[i]].active){
+                    Game.market.cancelOrder(Object.keys(Game.market.orders)[i])
+                }
             }
-            //buy/sell energy
-            termUsed = markets.processEnergy(myCities[i], termUsed, highEnergyOrder);
+            const orders = Game.market.getAllOrders();
+            global.marketHistory = _.groupBy(Game.market.getHistory(), history => history.resourceType)
+            const sellOrders = _.groupBy(_.filter(orders, order => order.type == ORDER_SELL), order => order.resourceType)
+            const buyOrders = _.groupBy(_.filter(orders, order => order.type == ORDER_BUY), order => order.resourceType)
+            const highEnergyOrder = markets.sortOrder(buyOrders[RESOURCE_ENERGY]).reverse()[0];
+            const baseMins = [RESOURCE_HYDROGEN, RESOURCE_OXYGEN, RESOURCE_UTRIUM, RESOURCE_LEMERGIUM, RESOURCE_KEANIUM, RESOURCE_ZYNTHIUM, RESOURCE_CATALYST];
+            const bars = [RESOURCE_UTRIUM_BAR, RESOURCE_LEMERGIUM_BAR, RESOURCE_ZYNTHIUM_BAR, RESOURCE_KEANIUM_BAR, RESOURCE_GHODIUM_MELT, 
+                    RESOURCE_OXIDANT, RESOURCE_REDUCTANT, RESOURCE_PURIFIER, RESOURCE_CELL, RESOURCE_WIRE, RESOURCE_ALLOY, RESOURCE_CONDENSATE];
+            for (var i = 0; i < myCities.length; i++){
+                //if no terminal continue
+                if(!myCities[i].terminal || !Game.spawns[myCities[i].memory.city].memory.ferryInfo){
+                    continue;
+                }
+                let termUsed = false; //only one transaction can be run using each cities terminal
+                if(myCities[i].terminal.cooldown){
+                    termUsed = true;
+                }
+                if(!termUsed){
+                    termUsed = markets.sellPower(myCities[i], buyOrders);
+                }
+                let memory = Game.spawns[myCities[i].memory.city].memory;
+                let level = memory.ferryInfo.factoryInfo.factoryLevel;
+                //cities w/o level send all base resources to non levelled cities
+                //base mins are NOT sold, they are made into bars instead.
+                //bars can be sold if in excess
+                //if any base mineral (besides ghodium) is low, an order for it will be placed on the market. If an order already exists, update quantity
+                //if an order already exists and is above threshold (arbitrary?), increase price
+                if(!level){
+                    //buy minerals as needed
+                    markets.buyMins(myCities[i], baseMins);
+                    if(!termUsed){
+                        termUsed = markets.sellBars(myCities[i], bars, buyOrders);
+                    }
+
+                }
+                //buy/sell energy
+                termUsed = markets.processEnergy(myCities[i], termUsed, highEnergyOrder);
+            }
         }
     }
 };

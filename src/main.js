@@ -54,25 +54,6 @@ module.exports.loop = function () {
             rPC.run(powerCreep)
         })
 
-        //distribute energy, power and upgrade boost
-        if (Game.time % 100 === 10) {
-            m.distributeEnergy(myCities);
-            m.distributePower(myCities);
-            m.distributeUpgrade(myCities);
-        }
-
-        if (Game.time % 50 === 20) {
-            m.distributeMinerals(myCities);
-        }
-
-        if(Game.time % 1000 === 30){
-            m.relocateBaseMins(myCities);
-        }
-
-
-        // if(Game.time % 100000 === 0){
-        //     Game.market.deal('5ce88792b30b0336207a07f3', amount, [yourRoomName])
-        // }
         //clear old creeps
         if (Game.time % 100 === 0) {
             for (let name in Memory.creeps) {
@@ -93,9 +74,7 @@ module.exports.loop = function () {
         }
 
         //market (seems to use about 3 cpu, so we can make this run every few ticks when we start needing cpu)
-        if (Game.time % 200 === 0) {
-            m.manageMarket(myCities);
-        }
+        m.manageMarket(myCities);
 
         //rp.findRooms();
         //rp.planRooms();
