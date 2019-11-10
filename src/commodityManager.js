@@ -31,7 +31,7 @@ var cM = {
 		            }
 		            if(go){
 		                //create delivery orders in comSend
-		                storeByLvl = cM.scheduleDeliveries(products[k], rate, storeByLvl, factCities, factCities[i][j])
+		                storeByLvl = cM.scheduleDeliveries(products[k], rate, storeByLvl, factCities, factCities[i][j].name)
 		                break; // go to next city
 		            }
 		        }		
