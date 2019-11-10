@@ -23,7 +23,7 @@ var fact = {
         }
         if(!Game.spawns[city].memory.ferryInfo.factoryInfo){
             Game.spawns[city].memory.ferryInfo.factoryInfo = {};
-            Game.spawns[city].memory.ferryInfo.comSend = null;//list of commodities to be delivered as soon as the terminal is ready
+            Game.spawns[city].memory.ferryInfo.comSend = [];//list of commodities to be delivered as soon as the terminal is ready
             Game.spawns[city].memory.ferryInfo.factoryInfo.produce = null;
             Game.spawns[city].memory.ferryInfo.factoryInfo.factoryLevel = null;
             Game.spawns[city].memory.ferryInfo.factoryInfo.transfer = [];
@@ -99,7 +99,7 @@ var fact = {
             let rate = fact.findRateLimit(components, products[i])
             let go = true;
             for (var j = 0; j < components.length; j++) {
-                if((COMMODITIES[products[i]].components[components[j]] * rate) > city.terminal.store[components[i]]){
+                if((COMMODITIES[products[i]].components[components[j]] * rate) > city.terminal.store[components[j]]){
                     go = false;
                 }
             }
