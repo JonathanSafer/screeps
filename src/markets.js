@@ -268,7 +268,7 @@ var markets = {
         return termUsed;
     },
 
-    sendComs(cities){
+    sendComs: function(cities){
         for(var i = 0; i < cities.length; i++){
             const memory = Game.spawns[cities[i].memory.city].memory
             if(memory.ferryInfo.factoryInfo && memory.ferryInfo.comSend.length){
@@ -276,7 +276,7 @@ var markets = {
                 if(cities[i].terminal.store[comSend[0]] >= comSend[1] && !cities[i].terminal.termUsed){
                     cities[i].terminal.send(comSend[0], comSend[1], comSend[2])
                     cities[i].terminal.termUsed = true;
-                    _.drop(memory.ferryInfo.comSend);
+                    memory.ferryInfo.comSend = _.drop(memory.ferryInfo.comSend)
                 } else {
                     console.log("Error sending " + comSend[0] + " from: " + cities[i].name)
                 }
@@ -284,7 +284,7 @@ var markets = {
         }
     },
 
-    manageMarket: function manageMarket(myCities){//this function is now in charge of all terminal acitivity
+    manageMarket: function(myCities){//this function is now in charge of all terminal acitivity
         if(Game.time % 10 != 0){
             return;
         }
