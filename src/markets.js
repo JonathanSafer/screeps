@@ -276,6 +276,7 @@ var markets = {
                 if(cities[i].terminal.store[comSend[0]] >= comSend[1] && !cities[i].terminal.termUsed){
                     cities[i].terminal.send(comSend[0], comSend[1], comSend[2])
                     cities[i].terminal.termUsed = true;
+                    _.drop(memory.ferryInfo.comSend);
                 } else {
                     console.log("Error sending " + comSend[0] + " from: " + cities[i].name)
                 }
