@@ -73,7 +73,7 @@ var cM = {
      			Game.notify("Problem sending " + components[i] + " to " + destination);
      		}
 		}
-	}
+	},
 
 	groupByLevel: function(cities){
 		let factCities = []
