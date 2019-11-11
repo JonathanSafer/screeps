@@ -1,4 +1,5 @@
 var u = require('utils');
+var cM = require('commodityManager')
 var rPC = require('powerCreep');
 var c = require('city');
 var m = require('markets');
@@ -82,6 +83,9 @@ module.exports.loop = function () {
             rp.buildConstructionSites(); 
         }// TODO: this could go in run city?
         s.collectStats();
+        if(Game.time % 400 == 39){//run commodity manager every 400 (lower than lowest batched reaction time, on the 39 so it'll be before dormant period ends)
+            cM.runManager(myCities);
+        }
         
         //calc for deposit mining
         function calcCooldown(harvested) {
