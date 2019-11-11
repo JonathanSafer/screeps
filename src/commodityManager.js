@@ -41,7 +41,7 @@ var cM = {
 	},
 
 	scheduleDeliveries: function(product, rate, storeByLvl, factCities, destination){
-		const components = _.without(Object.keys(COMMODITIES[product.components), RESOURCE_ENERGY)
+		const components = _.without(Object.keys(COMMODITIES[product].components), RESOURCE_ENERGY)
 		for(var i = 0; i < components.length; i++){
 			let compLvl = COMMODITIES[components[i]].level
         	if(!compLvl){//if comp doesn't need a leveled factory, set to 0
