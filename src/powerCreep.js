@@ -148,7 +148,8 @@ var rPC = {
         let sourceIds = Object.keys(Game.spawns[creep.memory.city + "0"].memory.sources)
         for (let sourceId of sourceIds) {
             let source = Game.getObjectById(sourceId)
-            if (!source.effects || source.effects.length == 0) {
+            if (!source.effects || source.effects.length == 0 ||
+                source.effects[0].ticksRemaining < 30) {
                 creep.memory.target = sourceId
                 return true
             }
