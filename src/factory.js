@@ -106,6 +106,7 @@ var fact = {
             }
             if(go){
                 fact.requestComponents(city, components, products[i])
+                Game.spawns[city].memory.ferryInfo.factoryInfo.produce = products[i];
                 return true;
             }
         }
