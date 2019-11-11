@@ -148,7 +148,7 @@ var rPC = {
         let sourceIds = Object.keys(Game.spawns[creep.memory.city + "0"].memory.sources)
         for (let sourceId of sourceIds) {
             let source = Game.getObjectById(sourceId)
-            if (source.effects.length == 0) {
+            if (!sources.effects || source.effects.length == 0) {
                 creep.memory.target = sourceId
                 return true
             }
@@ -161,7 +161,7 @@ var rPC = {
             filter: { structureType: STRUCTURE_FACTORY }
         })
         if (factories.length > 0 &&
-            (factories[0].effects || factories[0].effects.length == 0) &&
+            (!factories[0].effects || factories[0].effects.length == 0) &&
             factories[0].cooldown < 30 &&
             creep.powers[PWR_OPERATE_FACTORY] &&
             creep.powers[PWR_OPERATE_FACTORY].cooldown == 0 &&
