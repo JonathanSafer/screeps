@@ -520,7 +520,7 @@ function updateBuilder(rcl, memory, spawn, rooms, rcl8) {
         const walls = _.filter(spawn.room.find(FIND_STRUCTURES), struct => struct.structureType === STRUCTURE_RAMPART || struct.structureType === STRUCTURE_WALL)
         if(walls.length){//find lowest hits wall
             sortedWalls = _.sortBy(walls, wall => wall.hits)
-            if(sortedWalls[0].hits < 5000000){
+            if(sortedWalls[0].hits < 500000){
                 memory[rB.name] = 1;
             }
         }
