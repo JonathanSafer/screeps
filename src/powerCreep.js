@@ -8,7 +8,8 @@ var CreepState = {
   WORK_SOURCE: 4,
   WORK_GENERATE_OPS: 5,
   WORK_RENEW: 6,
-  WORK_DECIDE: 7
+  WORK_DECIDE: 7,
+  WORK_FACTORY: 8
 };
 var CS = CreepState;
 
@@ -40,10 +41,12 @@ var rPC = {
                 creep.usePower(PWR_GENERATE_OPS)
                 break
             case CS.WORK_DECIDE:
-                rPC.updateSource(creep)
                 break
             case CS.WORK_RENEW:
                 a.renewPowerCreep(creep, Game.getObjectById(creep.memory.powerSpawn))
+                break
+            case CS.WORK_FACTORY:
+                a.powerFactory(creep, Game.getObjectById(creep.memory.target))
                 break
 
         }
@@ -57,6 +60,7 @@ var rPC = {
                 rPC.isPowerEnabled(creep) ? CS.ENABLE_POWER : rPC.getNextWork(creep)
             case CS.ENABLE_POWER: return rPC.atTarget(creep) ? rPC.getNextWork(creep) : CS.ENABLE_POWER
             case CS.WORK_SOURCE: return rPC.atTarget(creep) ? rPC.getNextWork(creep) : CS.WORK_SOURCE
+            case CS.WORK_FACTORY: return rPC.atTarget(creep) ? rPC.getNextWork(creep) : CS.WORK_FACTORY
             case CS.WORK_GENERATE_OPS: return rPC.getNextWork(creep)
             case CS.WORK_DECIDE: return rPC.getNextWork(creep)
             case CS.WORK_RENEW: return rPC.atTarget(creep) ? rPC.getNextWork(creep) : CS.WORK_RENEW
@@ -100,6 +104,7 @@ var rPC = {
         var distance = 1
         switch (creep.memory.state) {
             case CS.WORK_SOURCE:
+            case CS.WORK_FACTORY:
                 target = Game.getObjectById(creep.memory.target)
                 distance = 3
                 break
@@ -113,10 +118,18 @@ var rPC = {
         return creep.pos.inRangeTo(target, distance)
     },
 
+    /*
+     * Get next job. Priorities:
+     * 1. Renew (extend life if time to live is low)
+     * 2. Generate Ops (generate additional ops to spend on other work)
+     * 3. Power sources (power up any source that requires it. Cost 0)
+     * 4. Power factories (power a factor. cost 100)
+     */
     getNextWork: function(creep) {
         return (creep.ticksToLive < 300) ? CS.WORK_RENEW :
             rPC.canGenerateOps(creep) ? CS.WORK_GENERATE_OPS :
-            rPC.hasSourceUpdate() ? CS.WORK_SOURCE : CS.WORK_DECIDE
+            rPC.hasSourceUpdate(creep) ? CS.WORK_SOURCE : 
+            rPC.canOperateFactory(creep) ? CS.WORK_FACTORY : CS.WORK_DECIDE
     },
 
     isPowerEnabled: function(creep) {
@@ -125,19 +138,36 @@ var rPC = {
     },
 
     canGenerateOps: function(creep) {
-        return creep.powers[PWR_GENERATE_OPS].cooldown < 1 && _.sum(creep.carry) < creep.carryCapacity
+        return creep.powers[PWR_GENERATE_OPS].cooldown < 1 && _.sum(creep.store) < creep.store.getCapacity()
     },
 
-    hasSourceUpdate: function() {
-        return Game.time % 125 == 0
-    },
-
-    updateSource: function(creep) {
-        if (rPC.hasSourceUpdate()) {
-            creep.memory.source = creep.memory.source == 0 ? 1 : 0
-            let sources = Object.keys(Game.spawns[creep.memory.city + "0"].memory.sources)
-            creep.memory.target = sources[creep.memory.source] 
+    hasSourceUpdate: function(creep) {
+        // powerup runs out every 300 ticks
+        // get all sources
+        // if there is no effect on source then choose it
+        let sourceIds = Object.keys(Game.spawns[creep.memory.city + "0"].memory.sources)
+        for (let sourceId of sourceIds) {
+            let source = Game.getObjectById(sourceId)
+            if (source.effects.length == 0) {
+                creep.memory.target = sourceId
+                return true
+            }
         }
+        return false
+    },
+
+    canOperateFactory: function(creep) {
+        let factories = creep.room.find(FIND_MY_STRUCTURES, {
+            filter: { structureType: STRUCTURE_EXTENSION }
+        })
+        if (factories.length > 0 && 
+            factory[0].effects.length == 0 &&
+            factory[0].cooldown < 30 &&
+            creep.store[RESOURCE_OPS] >= POWER_INFO[PWR_OPERATE_FACTORY].ops) {
+            creep.memory.target = factory[0].id
+            return true
+        }
+        return false
     }
 };
 module.exports = rPC;
