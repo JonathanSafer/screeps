@@ -99,7 +99,8 @@ var fact = {
             let rate = fact.findRateLimit(components, products[i])
             let go = true;
             for (var j = 0; j < components.length; j++) {
-                if((COMMODITIES[products[i]].components[components[j]] * rate) > city.terminal.store[components[j]]){
+                let room = Game.spawns[city].room
+                if((COMMODITIES[products[i]].components[components[j]] * rate) > room.terminal.store[components[j]]){
                     go = false;
                 }
             }

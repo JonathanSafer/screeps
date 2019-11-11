@@ -158,10 +158,10 @@ var rPC = {
 
     canOperateFactory: function(creep) {
         let factories = creep.room.find(FIND_MY_STRUCTURES, {
-            filter: { structureType: STRUCTURE_EXTENSION }
+            filter: { structureType: STRUCTURE_FACTORY }
         })
-        if (factories.length > 0 && 
-            factories[0].effects.length == 0 &&
+        if (factories.length > 0 &&
+            (factories[0].effects || factories[0].effects.length == 0) &&
             factories[0].cooldown < 30 &&
             creep.store[RESOURCE_OPS] >= POWER_INFO[PWR_OPERATE_FACTORY].ops) {
             creep.memory.target = factories[0].id
