@@ -17,7 +17,7 @@ var cM = {
 					if(factCities[i][j].terminal.store[products[k]] > 2000){
 						continue;//if city's store of produce is above 2k, don't produce any more
 					}
-					let components = Object.keys(COMMODITIES[products[k]].components);
+					let components = _.without(Object.keys(COMMODITIES[products[k]].components), RESOURCE_ENERGY)
 		            let rate = fact.findRateLimit(components, products[k]) //find rate limit, and use that to find quantity of each resource needed 
 		            let go = true; //(possibly batched in addition based on reaction time)
 		            for (var l = 0; l < components.length; l++) {//go through each component and check if we have in empire store
@@ -41,7 +41,7 @@ var cM = {
 	},
 
 	scheduleDeliveries: function(product, rate, storeByLvl, factCities, destination){
-		const components = Object.keys(COMMODITIES[product].components);
+		const components = _.without(Object.keys(COMMODITIES[product.components), RESOURCE_ENERGY)
 		for(var i = 0; i < components.length; i++){
 			let compLvl = COMMODITIES[components[i]].level
         	if(!compLvl){//if comp doesn't need a leveled factory, set to 0
