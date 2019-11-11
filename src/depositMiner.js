@@ -10,7 +10,6 @@ var rDM = {
     /** @param {Creep} creep **/
     run: function(creep) {
         if (_.sum(creep.store) === 0 && creep.ticksToLive < 500){//if old and no store, suicide
-            Game.notify("Deposit Miner completed job with " + creep.ticksToLive + " TTL, carrying: " + creep.store.getCapacity(), 1440)
             creep.suicide()
             return;
         }
