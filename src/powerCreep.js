@@ -161,10 +161,10 @@ var rPC = {
             filter: { structureType: STRUCTURE_EXTENSION }
         })
         if (factories.length > 0 && 
-            factory[0].effects.length == 0 &&
-            factory[0].cooldown < 30 &&
+            factories[0].effects.length == 0 &&
+            factories[0].cooldown < 30 &&
             creep.store[RESOURCE_OPS] >= POWER_INFO[PWR_OPERATE_FACTORY].ops) {
-            creep.memory.target = factory[0].id
+            creep.memory.target = factories[0].id
             return true
         }
         return false
