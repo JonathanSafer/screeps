@@ -95,7 +95,7 @@ var fact = {
     checkTerminal: function(factory, city){
         const products = _.filter(Object.keys(COMMODITIES), key => COMMODITIES[key].level === factory.level)
         for (var i = 0; i < products.length; i++) {
-            let components = Object.keys(COMMODITIES[products[i]].components);
+            let components = _.without(Object.keys(COMMODITIES[products[i]].components), RESOURCE_ENERGY)
             let rate = fact.findRateLimit(components, products[i])
             let go = true;
             for (var j = 0; j < components.length; j++) {
