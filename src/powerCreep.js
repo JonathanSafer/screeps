@@ -163,6 +163,8 @@ var rPC = {
         if (factories.length > 0 &&
             (factories[0].effects || factories[0].effects.length == 0) &&
             factories[0].cooldown < 30 &&
+            creep.powers[PWR_OPERATE_FACTORY] &&
+            creep.powers[PWR_OPERATE_FACTORY].cooldown == 0 &&
             creep.store[RESOURCE_OPS] >= POWER_INFO[PWR_OPERATE_FACTORY].ops) {
             creep.memory.target = factories[0].id
             return true
