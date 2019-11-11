@@ -21,11 +21,12 @@ var cM = {
 		            let rate = fact.findRateLimit(components, products[k]) //find rate limit, and use that to find quantity of each resource needed 
 		            let go = true; //(possibly batched in addition based on reaction time)
 		            for (var l = 0; l < components.length; l++) {//go through each component and check if we have in empire store
-		            	const compLvl = COMMODITIES[components[l]].level
+		            	let compLvl = COMMODITIES[components[l]].level
 		            	if(!compLvl){//if comp doesn't need a leveled factory, set to 0
 		            		compLvl = 0;
 		            	}
-		                if((COMMODITIES[products[k]].components[components[l]] * rate) > storeByLvl[compLvl][components[l]]){
+		                if((COMMODITIES[products[k]].components[components[l]] * rate) > storeByLvl[compLvl][components[l]] 
+		                		|| factCities[i][j].terminal.store[components[l]] > 2000){
 		                    go = false;//if we don't have enough of the comp, we are no go for this product (move on to next product)
 		                }
 		            }
@@ -42,7 +43,7 @@ var cM = {
 	scheduleDeliveries: function(product, rate, storeByLvl, factCities, destination){
 		const components = Object.keys(COMMODITIES[product].components);
 		for(var i = 0; i < components.length; i++){
-			const compLvl = COMMODITIES[components[i]].level
+			let compLvl = COMMODITIES[components[i]].level
         	if(!compLvl){//if comp doesn't need a leveled factory, set to 0
         		compLvl = 0;
         	}
@@ -82,7 +83,7 @@ var cM = {
 		}
 		for(var i = 0; i < cities.length; i++){
 			const factory = _.find(cities[i].find(FIND_MY_STRUCTURES), struct => struct.structureType === STRUCTURE_FACTORY)
-			if(!factory || !factCities[i].terminal){
+			if(!factory || !cities[i].terminal){
 				continue;
 			}
 			if(!factory.level){
