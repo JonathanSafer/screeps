@@ -92,7 +92,6 @@ var rR = {
               var target = Game.getObjectById(creep.memory.location)
               if (target){
                   if (actions.charge(creep, target) == ERR_FULL) {
-                        console.log('Container Full');
                         var locations = u.getTransferLocations(creep)
                         var nextLocation = u.getNextLocation(creep.memory.target, locations);
                         if (locations[nextLocation] == undefined){
