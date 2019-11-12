@@ -27,7 +27,7 @@ var rSB = {
                 let extensions = _.filter(creep.room.find(FIND_MY_STRUCTURES), structure => structure.structureType == STRUCTURE_EXTENSION)
                 let cSites = creep.room.find(FIND_MY_CONSTRUCTION_SITES)
                 if (extensions.length > 4 && !cSites.length){
-                    Game.flags.claim = null
+                    Game.flags.claim.remove();
                 }
             }
             if(creep.carry.energy == 0 && creep.memory.building){
