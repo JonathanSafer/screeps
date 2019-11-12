@@ -52,7 +52,7 @@ var cM = {
         	storeByLvl[compLvl][components[i]] = storeByLvl[compLvl][components[i]] - quantity;
         	for(var j = 0; j < factCities[compLvl].length; j++){//for each city at the relevant level, send resources until the quantity is satisfied
         		const memory = Game.spawns[factCities[compLvl][j].memory.city].memory;
-        		if(factCities[compLvl][j].terminal.store[components[i]] > quantity){
+        		if(factCities[compLvl][j].terminal.store[components[i]] >= quantity){
         			//make order for quantity
         			memory.ferryInfo.comSend.push([components[i], quantity, destination]);
         			//remove quantity from city's store
@@ -62,8 +62,8 @@ var cM = {
         			//make order for full store of comp
         			memory.ferryInfo.comSend.push([components[i], factCities[compLvl][j].terminal.store[components[i]], destination]);
         			//remove used amount from city's store
-        			factCities[compLvl][j].terminal.store[components[i]] = 0
         			quantity = quantity - factCities[compLvl][j].terminal.store[components[i]];
+        			factCities[compLvl][j].terminal.store[components[i]] = 0
         		}
         		if(quantity === 0){
         			break;
