@@ -235,7 +235,7 @@ var markets = {
             return termUsed;
         }
         if(storage.store[RESOURCE_ENERGY] < 400000){//buy energy if it's cheap
-            if(highEnergyOrder.price <= 0.002){
+            if(!highEnergyOrder || highEnergyOrder.price <= 0.002){
                 //buy energy
                 let orderId = _.find(Object.keys(Game.market.orders),
                         order => Game.market.orders[order].roomName === city.name && Game.market.orders[order].resourceType === RESOURCE_ENERGY);
