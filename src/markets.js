@@ -256,7 +256,7 @@ var markets = {
             }
         }
         if(!termUsed){
-            if(storage.store[RESOURCE_ENERGY] > 600000 && highEnergyOrder.price > .05){//sell if expensive
+            if(storage.store[RESOURCE_ENERGY] > 600000 && highEnergyOrder && highEnergyOrder.price > .05){//sell if expensive
                 Game.market.deal(highEnergyOrder.id, Math.min(highEnergyOrder.remainingAmount, terminal.store.energy / 2), city.name)
                 return true;
             }
