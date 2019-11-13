@@ -181,6 +181,7 @@ function runTowers(city){
         var hostiles = hostilePower.concat(hostileCreep);
         var injured = injuredPower.concat(injuredCreep)
         var notWalls = [];
+        let target = null;
         if (Game.time % 10 === 0) {
             var damaged = Game.spawns[city].room.find(FIND_STRUCTURES, {
                     filter: (structure) => {
@@ -192,12 +193,13 @@ function runTowers(city){
         if(hostiles.length > 0){
             console.log('Towers up in ' + city)
             Game.spawns[city].memory.towersActive = true
+            //identify target 
+            target = t.chooseTarget(towers, hostiles);
         } else {
             Game.spawns[city].memory.towersActive = false
         }
         for (let i = 0; i < towers.length; i++){
-            if(hostiles.length > 0){
-                let target = towers[i].pos.findClosestByRange(hostiles);
+            if(target){
                 towers[i].attack(target);
             } else if (injured.length > 0){
                 towers[i].heal(injured[0])
