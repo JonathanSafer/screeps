@@ -38,7 +38,7 @@ var T = {
         let damage = 0;
         for(let i = 0; i < towers.length; i++){
             if(towers[i].energy >= TOWER_ENERGY_COST){
-                let distance = towers[i].pos.getRangeTo(creep.pos)
+                let distance = towers[i].pos.getRangeTo(target.pos)
                 let damage_distance = Math.max(TOWER_OPTIMAL_RANGE, Math.min(distance, TOWER_FALLOFF_RANGE))
                 let steps = TOWER_FALLOFF_RANGE - TOWER_OPTIMAL_RANGE
                 let step_size = TOWER_FALLOFF * TOWER_POWER_ATTACK / steps
@@ -67,13 +67,13 @@ var T = {
         } else {
             return 0;
         }
-    }
+    },
 
     calcHeal: function(creep, healMap){
         let heal = 0;
         for(var i = creep.pos.x - 1; i <= creep.pos.x + 1; i++){
             for(var j = creep.pos.y - 1; j <= creep.pos.y + 1; j++){
-                heal = heal + map[i][j]
+                heal = heal + healMap[i][j]
             }
         }
         return heal
