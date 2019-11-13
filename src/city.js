@@ -734,7 +734,7 @@ function runObs(city){
             let structures = Game.rooms[roomName].find(FIND_STRUCTURES)
             let powerBank = _.find(structures, structure => structure.structureType === STRUCTURE_POWER_BANK);
             let flagName = city + 'powerMine'
-            if (powerBank && Game.cpu.bucket > 6000 && powerBank.ticksToDecay > 2500 && !Game.flags[flagName] &&
+            if (powerBank && powerBank.power > 1500 && Game.cpu.bucket > 6000 && powerBank.ticksToDecay > 2800 && !Game.flags[flagName] &&
                     structures.length < 30 && Game.spawns[city].room.storage.store.energy > 600000){
                 let walls = 0
                 let terrain = Game.rooms[roomName].getTerrain();
