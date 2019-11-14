@@ -345,13 +345,10 @@ var markets = {
                 //bars can be sold if in excess
                 //if any base mineral (besides ghodium) is low, an order for it will be placed on the market. If an order already exists, update quantity
                 //if an order already exists and is above threshold (arbitrary?), increase price
-                if(!level){
-                    //buy minerals as needed
-                    markets.buyMins(myCities[i], baseMins);
-                    if(!termUsed){
-                        termUsed = markets.sellBars(myCities[i], bars, buyOrders);
-                    }
-
+                //buy minerals as needed
+                markets.buyMins(myCities[i], baseMins);
+                if(!level && !termUsed){
+                    termUsed = markets.sellBars(myCities[i], bars, buyOrders);
                 }
                 //buy/sell energy
                 termUsed = markets.processEnergy(myCities[i], termUsed, highEnergyOrder);
