@@ -49,6 +49,9 @@ var T = {
     }, 
 
     findToughs: function(creep){
+        if(creep.className){//creep is PC
+            return 0;
+        }
         const toughs = creep.getActiveBodyparts(TOUGH);
         if(toughs == 0){
             return 0;
@@ -88,6 +91,9 @@ var T = {
             }
         }
         for(var i = 0; i < hostiles.length; i++){
+            if(creep.className){//creep is PC
+                continue;
+            }
             //check each hostile for heals, and put them at creep's pos
             const heals = hostiles[i].getActiveBodyparts(HEAL);
             if(heals == 0){

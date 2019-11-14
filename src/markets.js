@@ -1,3 +1,4 @@
+var cM = require('commodityManager')
 
 var markets = {
     sortOrder: function(orders) {
@@ -284,6 +285,45 @@ var markets = {
         }
     },
 
+    updateSellPoint: function(resources, cities, buyOrders){
+        if(!Memory.sellPoint){
+            Memory.selLPoint = {}
+        }
+        const empireStore = cM.empireStore(cities);
+        for(var i = 0; i < resources.length; i++){
+            if(!Memory.sellPoint[resources[i]]){
+                Memory.sellPoint[resources[i]] === 0;
+            }
+            let store = empireStore[resources[i]]
+            let orders = markets.sortOrder(buyOrders[resources[i]]).reverse()
+            if(orders.length && orders[0].price > Memory.sellPoint[resources[i]]){
+                //if there is a higher order than what we are willing to sell for, get pickier
+                Memory.sellPoint[resources[i]] = orders[0].price
+                continue;
+            }
+            //otherwise, walk down sell price proportionally to how badly we need to sell
+            Memory.sellPoint[resources[i]] = Memory.sellPoint[resources[i]] * (1 - (empireStore[resources[i]] / 10000000))
+        }
+
+    },
+
+    sellProducts: function(city, termUsed, buyOrders, products){
+        if(termUsed){
+            return termUsed;
+        }
+        const store = city.terminal.store;
+        for(var i = 0; i < products.length; i++){
+            if(store[products[i]]){
+                let orders = markets.sortOrder(buyOrders[products[i]]).reverse();
+                if(orders.length && orders[0].price >= Memory.sellPoint[products[i]]){
+                    //Game.market.deal(orders[0].id, Math.min(orders[0].remainingAmount, store[products[i]]), city.name)
+                    console.log("Sold ", products[i], " for: ", orders[0].price)
+                    return true;
+                }
+            }
+        }
+    },
+
     manageMarket: function(myCities){//this function is now in charge of all terminal acitivity
         if(Game.time % 10 != 0){
             return;
@@ -326,6 +366,8 @@ var markets = {
             const baseMins = [RESOURCE_HYDROGEN, RESOURCE_OXYGEN, RESOURCE_UTRIUM, RESOURCE_LEMERGIUM, RESOURCE_KEANIUM, RESOURCE_ZYNTHIUM, RESOURCE_CATALYST];
             const bars = [RESOURCE_UTRIUM_BAR, RESOURCE_LEMERGIUM_BAR, RESOURCE_ZYNTHIUM_BAR, RESOURCE_KEANIUM_BAR, RESOURCE_GHODIUM_MELT, 
                     RESOURCE_OXIDANT, RESOURCE_REDUCTANT, RESOURCE_PURIFIER, RESOURCE_CELL, RESOURCE_WIRE, RESOURCE_ALLOY, RESOURCE_CONDENSATE];
+            const highTier = [RESOURCE_ORGANISM, RESOURCE_MACHINE, RESOURCE_DEVICE, RESOURCE_ESSENCE, RESOURCE_PHLEGM, RESOURCE_CONCENTRATE];
+            markets.updateSellPoint(highTier, termCities, buyOrders);
             for (var i = 0; i < myCities.length; i++){
                 //if no terminal continue
                 if(!myCities[i].terminal || !Game.spawns[myCities[i].memory.city].memory.ferryInfo){
@@ -352,6 +394,8 @@ var markets = {
                 }
                 //buy/sell energy
                 termUsed = markets.processEnergy(myCities[i], termUsed, highEnergyOrder);
+                //sell products
+                termUsed = markets.sellProducts(myCities[i], termUsed, buyOrders, highTier)
             }
         }
     }
