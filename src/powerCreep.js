@@ -17,6 +17,10 @@ var rPC = {
 
     /** @param {Creep} creep **/
     run: function(creep) {
+        if(creep.hits < creep.hitsMax && creep.memory.city){
+            creep.moveTo(Game.rooms[creep.memory.city].storage)
+            return;
+        }
         if (!rPC.hasValidState(creep)) {
             if (creep.ticksToLive > 0) {
                 // disabled suicide bc 8 hour delay. creep.suicide()

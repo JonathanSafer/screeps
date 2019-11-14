@@ -9,6 +9,10 @@ var rM = {
 
     /** @param {Creep} creep **/
     run: function(creep) {
+        if(creep.hits < creep.hitsMax){
+            creep.moveTo(Game.spawns[creep.memory.city])
+            return;
+        }
         if(creep.memory.source == null) {
   			rM.nextSource(creep);
         } else if (Game.getObjectById(creep.memory.source) == null){

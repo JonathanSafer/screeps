@@ -134,7 +134,7 @@ function updateCountsCity(city, creeps, rooms, closestRoom) {
             }
             makeEmergencyCreeps(extensions, creeps, city, rcl8, emergencyTime); 
         }
-        updateAttacker(rooms, memory);
+        updateAttacker(rooms, memory, rcl8);
     }
 }
 
@@ -201,7 +201,7 @@ function runTowers(city){
         for (let i = 0; i < towers.length; i++){
             if(target){
                 towers[i].attack(target);
-            } else if (injured.length > 0){
+            } else if (injured.length > 0 && !hostiles.length){
                 towers[i].heal(injured[0])
             } else if (Game.time % 10 === 0 && notWalls.length > 0){
                 towers[i].repair(notWalls[0])
@@ -376,6 +376,10 @@ function updateColonizers(city, memory, closestRoom) {
 // Automated attacker count for defense
 function updateAttacker(rooms, memory) {
     if (Game.time % 30 == 0) {
+        if(rcl8){
+            memory[rA.name] = 0;
+            return;
+        }
         var enemyCounts = _.map(rooms, room => {
             var allBadCreeps = room.find(FIND_HOSTILE_CREEPS);
             var invaders = _.reject(allBadCreeps, creep => creep.owner.username == "Source Keeper");
@@ -383,7 +387,6 @@ function updateAttacker(rooms, memory) {
         });
         memory[rA.name] = _.sum(enemyCounts);
     }
-    //memory[rA.name] = 0;
 }
 
 function updateScout(city, rcl, rcl8, rcl8Room, memory){
