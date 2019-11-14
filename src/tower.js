@@ -91,7 +91,7 @@ var T = {
             }
         }
         for(var i = 0; i < hostiles.length; i++){
-            if(creep.className){//creep is PC
+            if(hostiles[i].className){//creep is PC
                 continue;
             }
             //check each hostile for heals, and put them at creep's pos

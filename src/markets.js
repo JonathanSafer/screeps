@@ -287,7 +287,7 @@ var markets = {
 
     updateSellPoint: function(resources, cities, buyOrders){
         if(!Memory.sellPoint){
-            Memory.selLPoint = {}
+            Memory.sellPoint = {}
         }
         const empireStore = cM.empireStore(cities);
         for(var i = 0; i < resources.length; i++){
