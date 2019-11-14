@@ -374,7 +374,7 @@ function updateColonizers(city, memory, closestRoom) {
 }
 
 // Automated attacker count for defense
-function updateAttacker(rooms, memory) {
+function updateAttacker(rooms, memory, rcl8) {
     if (Game.time % 30 == 0) {
         if(rcl8){
             memory[rA.name] = 0;
