@@ -316,7 +316,7 @@ var markets = {
             if(store[products[i]]){
                 let orders = markets.sortOrder(buyOrders[products[i]]).reverse();
                 if(orders.length && orders[0].price >= Memory.sellPoint[products[i]]){
-                    //Game.market.deal(orders[0].id, Math.min(orders[0].remainingAmount, store[products[i]]), city.name)
+                    Game.market.deal(orders[0].id, Math.min(orders[0].remainingAmount, store[products[i]]), city.name)
                     console.log("Sold ", products[i], " for: ", orders[0].price)
                     return true;
                 }
