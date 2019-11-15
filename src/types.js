@@ -59,6 +59,7 @@ function getRecipe(type, energyAvailable, room){
     		d['spawnBuilder'] = body([5, 10, 15], [WORK, CARRY, MOVE]);
     		d['trooper'] = body([6, 6], [RANGED_ATTACK, MOVE]);
     		d['medic'] = body([5, 5], [MOVE, HEAL]);
+            d['robber'] = body([15, 15], [CARRY, MOVE]); 
     		break;
 		case 2000: // 2300
         case 2500:
