@@ -13,8 +13,8 @@ var rRo = {
           if(creep.ticksToLive < 150){
               creep.suicide();
           }
-          var target = Game.getObjectById('5d56ea99dc8788211b62a46d');
-          let mineral = RESOURCE_OXYGEN
+          var target = Game.getObjectById('5d86e27a2a6b4021bee17629');
+          let mineral = RESOURCE_ENERGY
           if (target){
               if(!target.store[mineral]){
                   Game.notify("Robbery complete")
