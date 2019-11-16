@@ -74,6 +74,7 @@ var cM = {
      			Game.notify("Problem sending " + components[i] + " to " + destination);
      		}
 		}
+		return storeByLvl;
 	},
 
 	groupByLevel: function(cities){
