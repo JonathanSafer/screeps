@@ -732,6 +732,9 @@ function runObs(city){
             let roomNum = ((Game.time - 1) % (Game.spawns[city].memory.powerRooms.length * 100))/100
             let roomName = Game.spawns[city].memory.powerRooms[roomNum]
             console.log('Scanning: ' + roomName)
+            if(!Game.rooms[roomName]){//early return if room wasn't scanned
+                return;
+            }
             if (Game.rooms[roomName].controller){
                 Game.spawns[city].memory.powerRooms.splice(roomNum, 1);
                 return;
