@@ -93,6 +93,7 @@ function runCity(city, creeps){
         runPowerSpawn(city);
         labs.runLabs(city);
         fact.runFactory(city);
+        checkNukes(room);
     }
 }
 //updateCountsCity function
@@ -135,6 +136,15 @@ function updateCountsCity(city, creeps, rooms, closestRoom) {
             makeEmergencyCreeps(extensions, creeps, city, rcl8, emergencyTime); 
         }
         updateAttacker(rooms, memory, rcl8);
+    }
+}
+
+function checkNukes(room){
+    if(Game.time % 1000 === 3){
+        const nukes = room.find(FIND_NUKES);
+        if(nukes.length){
+            Game.notify("Nuclear launch detected in " + room.name)
+        }
     }
 }
 
