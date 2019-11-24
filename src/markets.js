@@ -302,7 +302,7 @@ var markets = {
                 continue;
             }
             //otherwise, walk down sell price proportionally to how badly we need to sell
-            Memory.sellPoint[resources[i]] = Memory.sellPoint[resources[i]] * (1 - (empireStore[resources[i]] / 10000000))
+            Memory.sellPoint[resources[i]] = Memory.sellPoint[resources[i]] * (1 - (Math.pow(empireStore[resources[i]], 2)/ 100000000))//100 million (subject to change)
         }
 
     },
@@ -315,7 +315,7 @@ var markets = {
         for(var i = 0; i < products.length; i++){
             if(store[products[i]]){
                 let orders = markets.sortOrder(buyOrders[products[i]]).reverse();
-                if(orders.length && orders[0].price >= Memory.sellPoint[products[i]]){
+                if(orders.length && orders[0].price > Memory.sellPoint[products[i]] * 0.9){
                     Game.market.deal(orders[0].id, Math.min(orders[0].remainingAmount, store[products[i]]), city.name)
                     console.log("Sold ", products[i], " for: ", orders[0].price)
                     return true;
