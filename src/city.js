@@ -111,6 +111,9 @@ function updateCountsCity(city, creeps, rooms, closestRoom) {
 
         let emergencyTime = spawn.room.storage && spawn.room.storage.store.energy < 5000
         let logisticsTime = rcl8 && !emergencyTime ? 500 : 50;
+        if(Game.time % 200 == 0){
+            updateMilitary(city, memory, rooms);
+        }
         if (Game.time % logisticsTime == 0) {
             let rcl8Room = _.find(Game.rooms, room => room.controller && room.controller.owner && room.controller.owner.username == "Yoner" && room.controller.level == 8)
             updateScout(city, rcl, rcl8, rcl8Room, memory);
@@ -122,7 +125,6 @@ function updateCountsCity(city, creeps, rooms, closestRoom) {
                 runNuker(city)
                 checkLabs(city)
                 updateTransporter(extensions, memory);
-                updateMilitary(city, memory, rooms);
                 updateColonizers(city, memory, closestRoom);
                 updateUpgrader(city, controller, memory, rcl8, creeps);
                 updateBuilder(rcl, memory, spawn, rooms, rcl8);

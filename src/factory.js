@@ -137,9 +137,12 @@ var fact = {
             for(i = 0; i < bars.length; i++){
                 let components = _.without(Object.keys(COMMODITIES[bars[i]].components), RESOURCE_ENERGY);
                 if(terminal.store[components[0]] >= 9000){
+                    if(components[0] == RESOURCE_GHODIUM && terminal.store[components[0]] < 20000){
+                        continue;
+                    }
                     Game.spawns[city].memory.ferryInfo.factoryInfo.produce = bars[i];
-                    let components = _.without(Object.keys(COMMODITIES[bars[i]].components), RESOURCE_ENERGY); //ferry shouldn't deliver energy
-                    fact.requestComponents(city, components, bars[i])
+                    let coms = _.without(Object.keys(COMMODITIES[bars[i]].components), RESOURCE_ENERGY); //ferry shouldn't deliver energy
+                    fact.requestComponents(city, coms, bars[i])
                     return;
                 }
             }
