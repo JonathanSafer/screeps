@@ -25,7 +25,6 @@ var stats = {
             //activate segment
             RawMemory.setActiveSegments([0])
         }
-        console.log(RawMemory.segments)
         if (Game.time % 19 == 1){
             RawMemory.setActiveSegments([])
             let stats = {}
