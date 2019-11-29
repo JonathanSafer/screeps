@@ -23,7 +23,7 @@ var rMe = {
     	    }
     	}
     	if (!breaker){
-            if(creep.ticksToLive < 150){
+            if(creep.ticksToLive < 1000){
                 creep.suicide();
             }
 	   		var allCreeps = u.splitCreepsByCity();
