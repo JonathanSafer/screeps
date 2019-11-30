@@ -10,7 +10,8 @@ var CreepState = {
   WORK_RENEW: 6,
   WORK_DECIDE: 7,
   WORK_FACTORY: 8,
-  WORK_BALANCE_OPS: 9
+  WORK_BALANCE_OPS: 9,
+  SLEEP: 10
 };
 var CS = CreepState;
 
@@ -59,6 +60,9 @@ var rPC = {
                 } else {
                     a.withdraw(creep, creep.room.terminal, RESOURCE_OPS)
                 }
+                break
+            case CS.SLEEP:
+                break
         }
         creep.memory.state = rPC.getNextState(creep)
     },
@@ -75,6 +79,7 @@ var rPC = {
             case CS.WORK_DECIDE: return rPC.getNextWork(creep)
             case CS.WORK_RENEW: return rPC.atTarget(creep) ? rPC.getNextWork(creep) : CS.WORK_RENEW
             case CS.WORK_BALANCE_OPS: return rPC.atTarget(creep) ? rPC.getNextWork(creep) : CS.WORK_BALANCE_OPS
+            case CS.SLEEP: return Game.time % 10 == 0 ? rPC.getNextWork(creep) : CS.SLEEP
         }
         // If state is unknown then restart
         return CS.START
