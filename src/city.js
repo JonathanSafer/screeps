@@ -130,10 +130,7 @@ function updateCountsCity(city, creeps, rooms, closestRoom) {
                 updateBuilder(rcl, memory, spawn, rooms, rcl8);
                 updateMineralMiner(rcl, structures, spawn, memory);
                 updatePowerSpawn(city, memory)
-
-                if (rcl8) {
-                    updateStorageLink(spawn, memory, structures);
-                }
+                updateStorageLink(spawn, memory, structures);
             }
             makeEmergencyCreeps(extensions, creeps, city, rcl8, emergencyTime); 
         }

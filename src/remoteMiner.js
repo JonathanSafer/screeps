@@ -22,7 +22,7 @@ var rM = {
                 rM.harvestTarget(creep);
             }
             if (Game.time % 50 === 0){
-            	if (Game.spawns[creep.memory.city].room.controller.level > 7){
+            	if (Game.spawns[creep.memory.city].room.controller.level > 6){
             		if (!creep.memory.link){
             			//find link
             			var source = Game.getObjectById(creep.memory.source);
