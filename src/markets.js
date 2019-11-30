@@ -127,6 +127,22 @@ var markets = {
             }
         }
     },
+
+    distributeOps: function(myCities){
+        var receiver = null
+        var needOps = _.filter(myCities, city => city.controller.level == 8 && city.terminal && city.terminal.store[RESOURCE_OPS] < 300)
+        if (needOps.length){
+            receiver = needOps[0].name
+            for (var i = 0; i < myCities.length; i++){
+                if (myCities[i].terminal && myCities[i].terminal.store[RESOURCE_OPS] > 7000 && !myCities[i].terminal.termUsed){
+                    myCities[i].terminal.send(RESOURCE_OPS, 5000, receiver);
+                    myCities[i].terminal.termUsed = true;
+                    console.log('Sending power to ' + receiver)
+                    return;
+                }
+            }
+        }
+    },
     
     sellPower: function(city, buyOrders){
         let terminal = city.terminal
@@ -334,6 +350,9 @@ var markets = {
         //relocate base mins (every 1k ticks)
         if(Game.time % 1000 === 0){
             markets.relocateBaseMins(termCities);
+        }
+        if(Game.time % 1000 === 40){
+            markets.distributeOps(myCities);
         }
         //distribure minerals (every 50 ticks)
         if(Game.time % 50 === 0){
