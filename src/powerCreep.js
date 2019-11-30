@@ -175,11 +175,13 @@ var rPC = {
         let factories = creep.room.find(FIND_MY_STRUCTURES, {
             filter: { structureType: STRUCTURE_FACTORY }
         })
+        let city = creep.memory.city
         if (factories.length > 0 &&
             (!factories[0].effects || factories[0].effects.length == 0) &&
             factories[0].cooldown < 30 &&
             creep.powers[PWR_OPERATE_FACTORY] &&
-            creep.powers[PWR_OPERATE_FACTORY].cooldown == 0) {
+            creep.powers[PWR_OPERATE_FACTORY].cooldown == 0 &&
+            Game.spawns[city].memory.ferryInfo.factoryInfo.produce !== 'dormant') {
             creep.memory.target = factories[0].id
             return true
         }
