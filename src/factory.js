@@ -3,10 +3,10 @@ var fact = {
     runFactory: function(city) {
         fact.initFactoryMem(city);
         if(Game.spawns[city].memory.ferryInfo.factoryInfo.produce === 'dormant' || !Game.spawns[city].memory.ferryInfo.factoryInfo.produce){
-            if(Game.time % 100 === 0){
-                Game.spawns[city].memory.ferryInfo.factoryInfo.produce = RESOURCE_ORGANISM;//will result in reset
+            if(Game.time % 100 != 0){
+                return;
             }
-            return;
+            Game.spawns[city].memory.ferryInfo.factoryInfo.produce = RESOURCE_ORGANISM;//will result in reset
         }
         let factory = fact.findFactory(city);
         if(!factory){
