@@ -542,7 +542,7 @@ function updateBuilder(rcl, memory, spawn, rooms, rcl8) {
 }
 
 function updateRunner(creeps, spawn, extensions, memory, rcl, emergencyTime) {
-    if (rcl > 6 && emergencyTime) {
+    if (rcl > 6 && !emergencyTime) {
         memory[rR.name] = 0;
         return;
     }
