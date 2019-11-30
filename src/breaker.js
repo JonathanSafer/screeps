@@ -56,7 +56,8 @@ var rBr = {
             return a.retreat(creep);
         }
         if(creep.room.find(FIND_HOSTILE_STRUCTURES).length > 0) {
-            a.breakStuff(creep)
+            var badStuff = creep.pos.findClosestByPath(FIND_HOSTILE_STRUCTURES)
+            a.dismantle(creep, badStuff)
         }
         
     	var rallyFlag = creep.memory.city + 'breakerRally1'
