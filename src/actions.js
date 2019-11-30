@@ -293,7 +293,7 @@ var actions = {
             var breakThese = structGroups[type];
             if (breakThese) {
                 creep.memory.target = breakThese[0].id;
-                return actions.dismantle(creep, breakThese[0]);
+                return actions.dismantle(creep, breakThese[0]); // TODO break things in your way
             }
         }     
     },

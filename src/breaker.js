@@ -55,6 +55,9 @@ var rBr = {
         if(creep.memory.retreat) {
             return a.retreat(creep);
         }
+        if(creep.room.find(FIND_HOSTILE_STRUCTURES).length > 0) {
+            a.breakStuff(creep)
+        }
         
     	var rallyFlag = creep.memory.city + 'breakerRally1'
         if (Game.flags[rallyFlag] && !creep.memory.rally1){
