@@ -9,7 +9,8 @@ var CreepState = {
   WORK_GENERATE_OPS: 5,
   WORK_RENEW: 6,
   WORK_DECIDE: 7,
-  WORK_FACTORY: 8
+  WORK_FACTORY: 8,
+  WORK_BALANCE_OPS: 9
 };
 var CS = CreepState;
 
@@ -52,7 +53,12 @@ var rPC = {
             case CS.WORK_FACTORY:
                 a.powerFactory(creep, Game.getObjectById(creep.memory.target))
                 break
-
+            case CS.WORK_BALANCE_OPS:
+                if (creep.store[RESOURCE_OPS] < POWER_INFO[PWR_OPERATE_FACTORY].ops) {
+                    a.charge(creep, creep.room.terminal)
+                } else {
+                    a.withdraw(creep, creep.room.terminal, RESOURCE_OPS)
+                }
         }
         creep.memory.state = rPC.getNextState(creep)
     },
@@ -68,6 +74,7 @@ var rPC = {
             case CS.WORK_GENERATE_OPS: return rPC.getNextWork(creep)
             case CS.WORK_DECIDE: return rPC.getNextWork(creep)
             case CS.WORK_RENEW: return rPC.atTarget(creep) ? rPC.getNextWork(creep) : CS.WORK_RENEW
+            case CS.WORK_BALANCE_OPS: return rPC.atTarget(creep) ? rPC.getNextWork(creep) : CS.WORK_BALANCE_OPS
         }
         // If state is unknown then restart
         return CS.START
@@ -112,6 +119,9 @@ var rPC = {
                 target = Game.getObjectById(creep.memory.target)
                 distance = 3
                 break
+            case CS.WORK_BALANCE_OPS:
+                target = creep.room.terminal
+                break
             case CS.ENABLE_POWER:
                 target = creep.room.controller
                 break
@@ -133,7 +143,7 @@ var rPC = {
         return (creep.ticksToLive < 300) ? CS.WORK_RENEW :
             rPC.canGenerateOps(creep) ? CS.WORK_GENERATE_OPS :
             rPC.hasSourceUpdate(creep) ? CS.WORK_SOURCE : 
-            rPC.canOperateFactory(creep) ? CS.WORK_FACTORY : CS.WORK_DECIDE
+            rPC.canOperateFactory(creep) ? rPC.getFactoryJob(creep) : CS.WORK_DECIDE
     },
 
     isPowerEnabled: function(creep) {
@@ -169,12 +179,16 @@ var rPC = {
             (!factories[0].effects || factories[0].effects.length == 0) &&
             factories[0].cooldown < 30 &&
             creep.powers[PWR_OPERATE_FACTORY] &&
-            creep.powers[PWR_OPERATE_FACTORY].cooldown == 0 &&
-            creep.store[RESOURCE_OPS] >= POWER_INFO[PWR_OPERATE_FACTORY].ops) {
+            creep.powers[PWR_OPERATE_FACTORY].cooldown == 0) {
             creep.memory.target = factories[0].id
             return true
         }
         return false
+    },
+
+    getFactoryJob: function(creep) {
+        return creep.store[RESOURCE_OPS] >= POWER_INFO[PWR_OPERATE_FACTORY].ops ?
+            CS.WORK_FACTORY : CS.WORK_BALANCE_OPS
     }
 };
 module.exports = rPC;
