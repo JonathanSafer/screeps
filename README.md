@@ -34,22 +34,22 @@ Functional screeps AI.
 1. Upgrader           - upgrade base level
 
 ### Military
-1. Attacker           - todo
-1. (big)Breaker       - destroys enemy buildings
+1. Attacker           - attack enemy invaders (defensive unit)
+1. (big)Breaker       - destroys enemy buildings. Pair with healer.
 1. (big)Medic         - heals other military units
-1. (big)Trooper       - ranged unit
-1. Defender           - todo
-1. Harasser           - todo
+1. (big)Trooper       - ranged unit. Pair with healer.
+1. Defender           - Melee attack unit. High damage unit for attacking enemy bases. Pair with healer.
+1. Harasser           - Small attacking unit for cheap damage to enemy remote miners
 1. Robber             - takes resources from storage in enemy rooms
 
 ### Other
 1. Claimer            - claims rooms for new cities or remote mining
 1. Deposit Miner      - todo
-1. Ferry              - todo
+1. Ferry              - Carry heavy unit for operating labs, storage, terminal, factory, etc
 1. Mineral Miner      - mine mineral source in the room (minerals are used for powerups for creeps)
 1. Power Creep        - boost other creeps/resources in a room
 1. Power Miner        - mine power for upgrading the power creep
-1. Scout              - todo
+1. Scout              - not in use. small unit for exploring rooms (replaced by boosted observer)
 1. Spawn Builder      - build initial buildings in a new city
 
 
