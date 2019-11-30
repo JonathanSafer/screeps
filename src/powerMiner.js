@@ -27,6 +27,12 @@ var rPM = {
     		if ((!creep.pos.isNearTo(medic.pos) && !(creep.pos.x == 0 || creep.pos.x == 49 || creep.pos.y == 0 || creep.pos.y == 49)) || (medic.fatigue > 0)){
     			return;
     		}
+            if (Game.time % 50 == 1){
+                if (Game.spawns[creep.memory.city].memory.powerMiner == 0){
+                    medic.suicide();
+                    creep.suicide();
+                }
+            }
     	} else {
     		//look for medics
     		var allCreeps = u.splitCreepsByCity();
