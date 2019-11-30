@@ -55,9 +55,14 @@ var rBr = {
         if(creep.memory.retreat) {
             return a.retreat(creep);
         }
-        if(creep.room.find(FIND_HOSTILE_STRUCTURES).length > 0) {
-            var badStuff = creep.pos.findClosestByPath(FIND_HOSTILE_STRUCTURES)
+        const badStuff = creep.pos.findClosestByPath(FIND_HOSTILE_STRUCTURES, {
+            filter: function(object) {
+                return object.structureType !== STRUCTURE_CONTROLLER;
+            }
+        })
+        if(badStuff != null) { // TODO ignore target room
             a.dismantle(creep, badStuff)
+            return
         }
         
     	var rallyFlag = creep.memory.city + 'breakerRally1'
