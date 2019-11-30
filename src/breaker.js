@@ -56,11 +56,19 @@ var rBr = {
             return a.retreat(creep);
         }
         
-    	var rallyFlag = creep.memory.city + 'breakerRally'
-        if (Game.flags[rallyFlag] && !creep.memory.rally){
+    	var rallyFlag = creep.memory.city + 'breakerRally1'
+        if (Game.flags[rallyFlag] && !creep.memory.rally1){
             creep.moveTo(Game.flags[rallyFlag], {reusePath: 50})
             if (Game.flags[rallyFlag].pos.x == creep.pos.x && Game.flags[rallyFlag].pos.y == creep.pos.y && Game.flags[rallyFlag].pos.roomName == creep.pos.roomName){
-                creep.memory.rally = true
+                creep.memory.rally1 = true
+            }
+            return;
+        }
+        var rallyFlag2 = creep.memory.city + 'breakerRally2'
+        if (Game.flags[rallyFlag] && !creep.memory.rally2){
+            creep.moveTo(Game.flags[rallyFlag], {reusePath: 50})
+            if (Game.flags[rallyFlag].pos.x == creep.pos.x && Game.flags[rallyFlag].pos.y == creep.pos.y && Game.flags[rallyFlag].pos.roomName == creep.pos.roomName){
+                creep.memory.rally2 = true
             }
             return;
         }
