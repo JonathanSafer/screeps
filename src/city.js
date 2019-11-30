@@ -117,7 +117,7 @@ function updateCountsCity(city, creeps, rooms, closestRoom) {
         if (Game.time % logisticsTime == 0) {
             let rcl8Room = _.find(Game.rooms, room => room.controller && room.controller.owner && room.controller.owner.username == "Yoner" && room.controller.level == 8)
             updateScout(city, rcl, rcl8, rcl8Room, memory);
-            updateRunner(creeps, spawn, extensions, memory, rcl8);
+            updateRunner(creeps, spawn, extensions, memory, rcl, emergencyTime);
             updateFerry(spawn, memory, rcl8);
             updateMiner(rooms, rcl8Room, memory, spawn);
         
@@ -541,8 +541,8 @@ function updateBuilder(rcl, memory, spawn, rooms, rcl8) {
     }
 }
 
-function updateRunner(creeps, spawn, extensions, memory, rcl8) {
-    if (rcl8 && extensions > 55 && spawn.room.storage && spawn.room.storage.store.energy > 50000) {
+function updateRunner(creeps, spawn, extensions, memory, rcl, emergencyTime) {
+    if (rcl > 6 && emergencyTime) {
         memory[rR.name] = 0;
         return;
     }
