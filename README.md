@@ -25,6 +25,12 @@ Functional screeps AI.
 1. Wait ~500 ticks for the claim flag to be recognized and processed. The closest room (greater than rcl 4) will create claimers to claim the room and spawnBuilders to build the spawn & get the room started.
 1. The plan flag will be replaced with construction sites for core buildings in the room after the room has been claimed.
 
+## Attacking
+### Breaker attack (destroy buildings in city), with medic support
+1. Place a flag citynamebigBreak in the target city. Example: E11N140bigBreak will send a breaker from E11N140
+1. (optional) A flag, citynamebreakTarget on a wall on the edge of the city to focus on. For example E11N140breakTarget
+1. (optional) Rally flag for avoiding enemies en route to target. citynamebreakerRally. Example: E11N140breakerRally
+
 ## Current Roles
 ### Core Roles
 1. Builder            - build buildings from constructions sites, repair roads/walls
