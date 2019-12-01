@@ -148,7 +148,9 @@ var rPC = {
         return (creep.ticksToLive < 300) ? CS.WORK_RENEW :
             rPC.canGenerateOps(creep) ? CS.WORK_GENERATE_OPS :
             rPC.hasSourceUpdate(creep) ? CS.WORK_SOURCE : 
-            rPC.canOperateFactory(creep) ? rPC.getFactoryJob(creep) : CS.WORK_DECIDE
+            rPC.canOperateFactory(creep) ? rPC.getFactoryJob(creep) :
+            rPC.hasExtraOps(creep) ? CS.WORK_BALANCE_OPS :
+            CS.SLEEP
     },
 
     isPowerEnabled: function(creep) {
@@ -191,6 +193,10 @@ var rPC = {
             return true
         }
         return false
+    },
+
+    hasExtraOps: function(creep) {
+        return creep.store[RESOURCE_OPS] == creep.store.getCapacity()
     },
 
     getFactoryJob: function(creep) {
