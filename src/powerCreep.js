@@ -55,7 +55,7 @@ var rPC = {
                 a.powerFactory(creep, Game.getObjectById(creep.memory.target))
                 break
             case CS.WORK_BALANCE_OPS:
-                if (creep.store[RESOURCE_OPS] < POWER_INFO[PWR_OPERATE_FACTORY].ops) {
+                if (creep.store[RESOURCE_OPS] > POWER_INFO[PWR_OPERATE_FACTORY].ops) {
                     a.charge(creep, creep.room.terminal)
                 } else {
                     a.withdraw(creep, creep.room.terminal, RESOURCE_OPS)
@@ -78,7 +78,7 @@ var rPC = {
             case CS.WORK_GENERATE_OPS: return rPC.getNextWork(creep)
             case CS.WORK_DECIDE: return rPC.getNextWork(creep)
             case CS.WORK_RENEW: return rPC.atTarget(creep) ? rPC.getNextWork(creep) : CS.WORK_RENEW
-            case CS.WORK_BALANCE_OPS: return rPC.atTarget(creep) ? rPC.getNextWork(creep) : CS.WORK_BALANCE_OPS
+            case CS.WORK_BALANCE_OPS: return rPC.atTarget(creep) ? CS.SLEEP : CS.WORK_BALANCE_OPS
             case CS.SLEEP: return Game.time % 10 == 0 ? rPC.getNextWork(creep) : CS.SLEEP
         }
         // If state is unknown then restart
