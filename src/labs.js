@@ -68,6 +68,7 @@ var labs = {
     chooseBoost: function(currentBoost, spawn) {
         if(spawn.room.terminal.store['G'] < 15000){
             spawn.memory.ferryInfo.labInfo[6] = 'G';
+            return;
         }
         let boostsList = ['G', 'XKHO2', 'XLHO2', 'XZHO2', 'XGHO2', 'XZH2O', 'XGH2O']
         if (boostsList.includes(currentBoost) && spawn.room.terminal.store[currentBoost] > 5000){
