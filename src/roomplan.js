@@ -93,26 +93,69 @@ let p = {
             wallSpots.push(location2)
         }
         const terrain = new Room.Terrain(room.name);
+
+        let costs = new PathFinder.CostMatrix;
+        _.forEach(wallSpots, function(wallSpot) {//CM of just walls
+            costs.set(wallSpot.x, wallSpot.y, 0xff)
+        })
+        room.wallCosts = costs;
+
+        let roomExits = p.getRoomExits(room.name);//list of list of room exits
+
         for(var i = 0; i < wallSpots.length; i++){//build stuff
             if(terrain.get(wallSpots[i].x, wallSpots[i].y) === TERRAIN_MASK_WALL){
                 continue;
             }
             let structures = room.lookForAt(LOOK_STRUCTURES, wallSpots[i])
+            let wall = false;
             for(var j = 0; j < structures.length; j++){
                 if(structures[j].structureType === STRUCTURE_WALL || structures[j].structureType === STRUCTURE_RAMPART){
+                    wall = true;
                     continue;
                 }
-                //if not wall or ramp, place a ramp
+            }
+            if(wall){
+                continue;
+            }
+            //if we make it here, no wall or rampart has been placed on this spot
+            //first we will check to see if we even need a barrier
+            //then, if we do need one, it'll be a ramp if structures.length, else it'll bbe a wall
+
+            //check by attempting to path to all exits
+            let wallNeeded = false;
+            for(var j = 0; j < roomExits.length; j++){
+                if(roomExits[j].length){
+                    //we only need to path to one of the exit points (it does not matter which one)
+                    let origin = new RoomPosition(wallSpots[i].x, wallSpots[i].y, room.name)
+                    let path = pathfinder.search(origin, roomExits[j][0], {
+                        plainCost: 1,
+                        swampCost: 1,
+                        maxOps: 1000,
+                        maxRooms: 1,
+                        roomCallback: function(roomName) {
+                            return Game.rooms[roomName].wallCosts;
+                        }
+                    })
+                    //if path is complete, we need a wall
+                    if(!path.incomplete){
+                        wallNeeded = true;
+                        break;
+                    }
+                }
+            }
+            if(!wallNeeded){//at this point we will not build a wall if a path cannot be achieved outside anyway
+                break;
+            }
+
+            //now we need a wall
+            if(structures.length){//rampart
                 room.createConstructionSite(wallSpots[i], STRUCTURE_RAMPART)
                 room.visual.circle(wallSpots[i], {fill: 'transparent', radius: 0.25, stroke: 'green'});
-            }
-            if(!structures.length){
-                //place wall
+            } else {//wall
                 room.createConstructionSite(wallSpots[i], STRUCTURE_WALL)
                 room.visual.circle(wallSpots[i], {fill: 'transparent', radius: 0.25, stroke: 'blue'});
             }
         }
-
     },
 
     buildRoads: function(room, plan){
@@ -145,6 +188,7 @@ let p = {
                 // Favor roads over plain tiles
                 costs.set(struct.pos.x, struct.pos.y, 1);
             } else if (struct.structureType !== STRUCTURE_CONTAINER &&
+                        (struct.structureType !== STRUCTURE_WALL) && //allow roads on walls so that path to controller still works
                          (struct.structureType !== STRUCTURE_RAMPART)) {
                 // Can't walk through non-walkable buildings
                 costs.set(struct.pos.x, struct.pos.y, 0xff);
@@ -164,7 +208,7 @@ let p = {
                     return room.costs;
                 },
             })
-            for(var j = 1; j < sourcePath.path.length; j++){// don't include first path (not needed)
+            for(var j = 0; j < sourcePath.path.length; j++){
                 roads.push(sourcePath.path[j]);
             }
         }
@@ -177,7 +221,7 @@ let p = {
                 return room.costs;
             },
         })
-        for(var i = 1; i < mineralPath.path.length; i++){// don't include first path (not needed)
+        for(var i = 0; i < mineralPath.path.length; i++){
             roads.push(mineralPath.path[i]);
         } 
 
@@ -196,36 +240,7 @@ let p = {
         } 
 
         //roads from exits
-        const terrain = Game.map.getRoomTerrain(room.name)
-        let nExits = []
-        let sExits = []
-        let eExits = []
-        let wExits = []
-        for(var i = 0; i < 50; i++){
-            if(terrain.get(0,i) !== TERRAIN_MASK_WALL){
-                let pos = new RoomPosition(0, i, room.name)
-                wExits.push(pos)
-            }
-        }
-        for(var i = 0; i < 50; i++){
-            if(terrain.get(i,0) !== TERRAIN_MASK_WALL){
-                let pos = new RoomPosition(i, 0, room.name)
-                nExits.push(pos)
-            }
-        }
-        for(var i = 0; i < 50; i++){
-            if(terrain.get(49,i) !== TERRAIN_MASK_WALL){
-                let pos = new RoomPosition(49, i, room.name)
-                eExits.push(pos)
-            }
-        }
-        for(var i = 0; i < 50; i++){
-            if(terrain.get(i,49) !== TERRAIN_MASK_WALL){
-                let pos = new RoomPosition(i, 49, room.name)
-                sExits.push(pos)
-            }
-        }
-        let roomExits = [nExits, sExits, eExits, wExits];
+        let roomExits = p.getRoomExits(room.name);
 
         let startPoint = template.buildings.storage.pos[0];
         let startPos = new RoomPosition(plan.x + startPoint.x - template.offset.x, plan.y + startPoint.y - template.offset.y, room.name)
@@ -272,6 +287,39 @@ let p = {
         _.forEach(structures, structure => {
             structure.destroy();
         })
+    },
+
+    getRoomExits: function(roomName){
+        const terrain = Game.map.getRoomTerrain(roomName)
+        let nExits = []
+        let sExits = []
+        let eExits = []
+        let wExits = []
+        for(var i = 0; i < 50; i++){
+            if(terrain.get(0,i) !== TERRAIN_MASK_WALL){
+                let pos = new RoomPosition(0, i, roomName)
+                wExits.push(pos)
+            }
+        }
+        for(var i = 0; i < 50; i++){
+            if(terrain.get(i,0) !== TERRAIN_MASK_WALL){
+                let pos = new RoomPosition(i, 0, roomName)
+                nExits.push(pos)
+            }
+        }
+        for(var i = 0; i < 50; i++){
+            if(terrain.get(49,i) !== TERRAIN_MASK_WALL){
+                let pos = new RoomPosition(49, i, roomName)
+                eExits.push(pos)
+            }
+        }
+        for(var i = 0; i < 50; i++){
+            if(terrain.get(i,49) !== TERRAIN_MASK_WALL){
+                let pos = new RoomPosition(i, 49, roomName)
+                sExits.push(pos)
+            }
+        }
+        return [nExits, sExits, eExits, wExits];
     },
 
     planRoom: function(roomName) {
