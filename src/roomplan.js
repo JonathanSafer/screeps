@@ -127,7 +127,7 @@ let p = {
                 if(roomExits[j].length){
                     //we only need to path to one of the exit points (it does not matter which one)
                     let origin = new RoomPosition(wallSpots[i].x, wallSpots[i].y, room.name)
-                    let path = Pathfinder.search(origin, roomExits[j][0], {
+                    let path = PathFinder.search(origin, roomExits[j][0], {
                         plainCost: 1,
                         swampCost: 1,
                         maxOps: 1000,
