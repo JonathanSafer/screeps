@@ -118,7 +118,7 @@ function updateCountsCity(city, creeps, rooms, closestRoom) {
             let rcl8Room = _.find(Game.rooms, room => room.controller && room.controller.owner && room.controller.owner.username == "Yoner" && room.controller.level == 8)
             updateScout(city, rcl, rcl8, rcl8Room, memory);
             updateRunner(creeps, spawn, extensions, memory, rcl, emergencyTime);
-            updateFerry(spawn, memory, rcl8);
+            updateFerry(spawn, memory, rcl);
             updateMiner(rooms, rcl8Room, memory, spawn);
         
             if (Game.time % 500 === 0) {
@@ -561,22 +561,16 @@ function updateRunner(creeps, spawn, extensions, memory, rcl, emergencyTime) {
     memory[rR.name] = Math.min(8, Math.max(Math.ceil(energyProduced / energyCarried), 2));
 }
 
-function updateFerry(spawn, memory, rcl8) {
-    if (rcl8) {
+function updateFerry(spawn, memory, rcl) {
+    if (rcl >= 7) {
         memory[rF.name] = 1;
         return;
     }
     //check if we have a terminal
     var terminal = spawn.room.terminal
     var storage = spawn.room.storage;
-    if (terminal !== undefined) {
-        if (terminal.store.energy < 150000){
-            memory[rF.name] = 1;
-        } else if (Object.keys(storage.store).length > 1){
-            memory[rF.name] = 1;
-        } else if (terminal.store.energy > 151000){
-            memory[rF.name] = 1;
-        } else if (terminal.store.power && storage.store.energy > 150000 && memory.ferryInfo.needPower === true){
+    if (terminal && storage) {
+        if (terminal.store.energy < 50000 || Object.keys(storage.store).length > 1 || terminal.store.energy > 51000){
             memory[rF.name] = 1;
         } else {
             memory[rF.name] = 0;
