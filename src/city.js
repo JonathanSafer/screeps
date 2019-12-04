@@ -126,7 +126,7 @@ function updateCountsCity(city, creeps, rooms, closestRoom) {
                 checkLabs(city)
                 updateTransporter(extensions, memory);
                 updateColonizers(city, memory, closestRoom);
-                updateUpgrader(city, controller, memory, rcl8, creeps);
+                updateUpgrader(city, controller, memory, rcl8, creeps, rcl);
                 updateBuilder(rcl, memory, spawn, rooms, rcl8);
                 updateMineralMiner(rcl, structures, spawn, memory);
                 updatePowerSpawn(city, memory)
@@ -483,7 +483,7 @@ function updateTransporter(extensions, memory) {
     }
 }
 
-function updateUpgrader(city, controller, memory, rcl8, creeps) {
+function updateUpgrader(city, controller, memory, rcl8, creeps, rcl) {
     if (rcl8){
         var modifier = Math.random() * 2000;
         if (controller.ticksToDowngrade < 100000 || (controller.room.storage.store.energy > 720000 && Game.cpu.bucket > (7500 + modifier))){
@@ -492,6 +492,12 @@ function updateUpgrader(city, controller, memory, rcl8, creeps) {
             Game.spawns[city].memory[rU.name] = 0;
         }
     } else {
+        if(rcl >= 6 && Game.spawns[city].room.storage && Game.spawns[city].room.storage.store[RESOURCE_ENERGY] < 220000
+                && Game.spawns[city].room.terminal && Game.spawns[city].room.terminal.store[RESOURCE_CATALYZED_GHODIUM_ACID] < 1000
+                && controller.ticksToDowngrade > CONTROLLER_DOWNGRADE['1']/2){
+            memory[rU.name] = 0;
+            return;
+        }
         let constructionSites = Game.spawns[city].room.find(FIND_MY_CONSTRUCTION_SITES)
         if(constructionSites.length){
             memory[rU.name] = 1;
