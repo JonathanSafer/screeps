@@ -494,7 +494,7 @@ function updateUpgrader(city, controller, memory, rcl8, creeps, rcl) {
     } else {
         if(rcl >= 6 && Game.spawns[city].room.storage && Game.spawns[city].room.storage.store[RESOURCE_ENERGY] < 220000
                 && Game.spawns[city].room.terminal && Game.spawns[city].room.terminal.store[RESOURCE_CATALYZED_GHODIUM_ACID] < 1000
-                && controller.ticksToDowngrade > CONTROLLER_DOWNGRADE['1']/2){
+                && controller.ticksToDowngrade > CONTROLLER_DOWNGRADE[rcl.toString()]/2){
             memory[rU.name] = 0;
             return;
         }
