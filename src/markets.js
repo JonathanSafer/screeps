@@ -172,6 +172,34 @@ var markets = {
         return false;
     },
 
+    sellOps: function(city, buyOrders){
+        let terminal = city.terminal
+        if (terminal.store[RESOURCE_OPS] > 20000){
+            var goodOrders = markets.sortOrder(buyOrders['power']);
+            if (goodOrders.length){
+                Game.market.deal(goodOrders[goodOrders.length - 1].id, Math.min(goodOrders[goodOrders.length - 1].remainingAmount,  Math.max(0, terminal.store[RESOURCE_OPS] - 20000)), city.name)
+                console.log(Math.min(goodOrders[goodOrders.length - 1].remainingAmount,  Math.max(0, terminal.store[RESOURCE_OPS] - 20000)) + " " + 'ops' + " sold for " + goodOrders[goodOrders.length - 1].price)
+                return true;
+            } else {
+                //make a sell order
+                let orderId = _.find(Object.keys(Game.market.orders),
+                        order => Game.market.orders[order].roomName === city.name && Game.market.orders[order].resourceType === RESOURCE_OPS);
+                let order = Game.market.orders[orderId];
+                if(!order){
+                    let sellPrice = markets.getPrice(RESOURCE_OPS) * .90
+                    Game.market.createOrder({
+                        type: ORDER_SELL,
+                        resourceType: RESOURCE_OPS,
+                        price: sellPrice,
+                        totalAmount: 5000,
+                        roomName: city.name   
+                    });
+                }
+            }
+        }
+        return false;
+    },
+
     buyMins: function(city, minerals){
         let terminal = city.terminal
         for(var i = 0; i < minerals.length; i++){
@@ -398,6 +426,9 @@ var markets = {
                 }
                 if(!termUsed){
                     termUsed = markets.sellPower(myCities[i], buyOrders);
+                }
+                if(!termUsed){
+                    termUsed = markets.sellOps(myCities[i], buyOrders);
                 }
                 let memory = Game.spawns[myCities[i].memory.city].memory;
                 let level = memory.ferryInfo.factoryInfo.factoryLevel;
