@@ -175,7 +175,7 @@ var markets = {
     sellOps: function(city, buyOrders){
         let terminal = city.terminal
         if (terminal.store[RESOURCE_OPS] > 20000){
-            var goodOrders = markets.sortOrder(buyOrders['power']);
+            var goodOrders = markets.sortOrder(buyOrders[RESOURCE_OPS]);
             if (goodOrders.length){
                 Game.market.deal(goodOrders[goodOrders.length - 1].id, Math.min(goodOrders[goodOrders.length - 1].remainingAmount,  Math.max(0, terminal.store[RESOURCE_OPS] - 20000)), city.name)
                 console.log(Math.min(goodOrders[goodOrders.length - 1].remainingAmount,  Math.max(0, terminal.store[RESOURCE_OPS] - 20000)) + " " + 'ops' + " sold for " + goodOrders[goodOrders.length - 1].price)
