@@ -38,6 +38,9 @@ module.exports.loop = function () {
         for (let i = 0; i < myCities.length; i += 1) {
             try {
                 var city = myCities[i].memory.city
+                if(!city){
+                    myCities[i].memory.city = myCities[i].name + '0'
+                }
                 if (city !== "pit") {
                     c.runCity(city, localCreeps[city])
                     c.updateCountsCity(city, localCreeps[city], localRooms[city], closestRoom)

@@ -285,7 +285,9 @@ let p = {
     clearAllStructures: function(room) {
         let structures = room.find(FIND_STRUCTURES);
         _.forEach(structures, structure => {
-            structure.destroy();
+            if(!structure.my){
+                structure.destroy();
+            }
         })
     },
 
