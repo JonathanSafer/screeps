@@ -40,7 +40,7 @@ var rT = {
             let result = actions.charge(creep, target)
             if(result === 1){//successful deposit
                 //if creep still has energy, start moving to next target
-                if(creep.store[RESOURCE_ENERGY] > EXTENSION_ENERGY_CAPACITY[creep.room.controller.level]){
+                if(creep.store[RESOURCE_ENERGY] > target.store.getFreeCapacity(RESOURCE_ENERGY)){
                     //start moving to next target if target not already in range
                     newTarget = rT.findTarget(creep, target)//make sure to remove current target from search list
                     if(!newTarget){
