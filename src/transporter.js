@@ -142,7 +142,7 @@ var rT = {
             return
         }
         //1 === forwards, 2 === backwards
-        let transporter = _.filter(creep.room.find(FIND_MY_CREEPS), creep => creep.memory.role == 'transporter' && creep.memory.direction)
+        let transporter = _.find(creep.room.find(FIND_MY_CREEPS), creep => creep.memory.role == 'transporter' && creep.memory.direction)
         if(transporter){
             creep.memory.direction = 3 - transporter.memory.direction;
         } else {
@@ -200,7 +200,7 @@ var rT = {
         }
         for(var i = creep.memory.target; i < extensions.length; i++){//look at each element starting at memory point
             //once target is found, save (i + 1) so creep knows not to recheck location it is already depositing at
-            target = Game.getObjectById(memory.extensions[i])
+            target = Game.getObjectById(extensions[i])
             if(rT.needsEnergy(target)){
                 //target found
                 creep.memory.targetId = target.id
