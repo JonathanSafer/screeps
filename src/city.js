@@ -104,17 +104,14 @@ function updateCountsCity(city, creeps, rooms, closestRoom) {
         let controller = spawn.room.controller;
         let rcl = controller.level;
         let rcl8 = rcl > 7;
-        var extensions = _.filter(Game.structures, 
-            (structure) => (structure.structureType == STRUCTURE_EXTENSION) &&
-            (structure.room.memory.city == [city])).length;
-        var structures = spawn.room.find(FIND_STRUCTURES);
-
         let emergencyTime = spawn.room.storage && spawn.room.storage.store.energy < 5000
         let logisticsTime = rcl8 && !emergencyTime ? 500 : 50;
         if(Game.time % 200 == 0){
             updateMilitary(city, memory, rooms);
         }
         if (Game.time % logisticsTime == 0) {
+            const structures = spawn.room.find(FIND_STRUCTURES);
+            const extensions = _.filter(structures, structure => structure.structureType == STRUCTURE_EXTENSION).length;
             let rcl8Room = _.find(Game.rooms, room => room.controller && room.controller.owner && room.controller.owner.username == "Yoner" && room.controller.level == 8)
             updateScout(city, rcl, rcl8, rcl8Room, memory);
             updateRunner(creeps, spawn, extensions, memory, rcl, emergencyTime);
@@ -122,6 +119,7 @@ function updateCountsCity(city, creeps, rooms, closestRoom) {
             updateMiner(rooms, rcl8Room, memory, spawn);
         
             if (Game.time % 500 === 0) {
+                updateExtensions(spawn, memory, structures)
                 runNuker(city)
                 checkLabs(city)
                 updateTransporter(extensions, memory);
@@ -695,6 +693,45 @@ function runNuker(city){
         Game.flags[flag].remove();
     }
 }
+
+function updateExtensions(spawn, memory, structures){
+    if(!memory.extensions){
+        memory.extensions = [];
+    }
+    let extensions = _.filter(structures, struct => struct.structureType === STRUCTURE_EXTENSION
+                || struct.structureType === STRUCTURE_SPAWN
+                || struct.structureType === STRUCTURE_LAB
+                || struct.structureType === STRUCTURE_NUKER
+                || struct.structureType === STRUCTURE_POWER_SPAWN
+                || struct.structureType === STRUCTURE_FACTORY
+                || struct.structureType === STRUCTURE_TOWER
+    )
+    if(extensions.length === memory.extensions.length){//if number of fill locations hasn't changed, fill order shouldn't change either
+        return;
+    }
+    //make list of deposit sites in order using fcbp from spawn.
+    //after a site is found, use pathfinder from spawn to site and save last pos (range 1)
+    //remove site from  extensions list, push site id to ordered list, and do calc again using saved pos as start pos
+    memory.extensions = []
+    extensionPath(memory.extensions, spawn.pos, extensions)
+}
+
+function extensionPath(sortedList, startPos, extensions){
+    if(!extensions.length){
+        return
+    }
+    const target = startPos.findClosestByPath(extensions, {range: 1, ignoreCreeps: true})
+    sortedList.push(target.id)
+    extensions = _.remove(extensions, target)
+    const path = target.room.findPath(startPos, target.pos, {range: 1, ignoreCreeps: true})
+    if(path.length){
+        const point = path[path.length - 1]
+        startPos = new RoomPosition(point.x, point.y, target.pos.roomName)
+    }
+    extensionPath(sortedList, startPos, extensions)
+    return
+}
+
 function runObs(city){
     if(Game.time % 100 == 0){
         //check for Obs
