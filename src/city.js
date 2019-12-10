@@ -713,13 +713,13 @@ function updateExtensions(spawn, memory, structures){
     //after a site is found, use pathfinder from spawn to site and save last pos (range 1)
     //remove site from  extensions list, push site id to ordered list, and do calc again using saved pos as start pos
     memory.extensions = []
-    extensionPath(memory.extensions, spawn.pos, extensions)
+    let startPos = spawn.pos
+    while(extensions.length){
+        startPos = extensionPath(memory.extensions, startPos, extensions)
+    }
 }
 
 function extensionPath(sortedList, startPos, extensions){
-    if(!extensions.length){
-        return
-    }
     const target = startPos.findClosestByPath(extensions, {range: 1, ignoreCreeps: true})
     sortedList.push(target.id)
     extensions = _.remove(extensions, target)
@@ -728,8 +728,7 @@ function extensionPath(sortedList, startPos, extensions){
         const point = path[path.length - 1]
         startPos = new RoomPosition(point.x, point.y, target.pos.roomName)
     }
-    extensionPath(sortedList, startPos, extensions)
-    return
+    return startPos
 }
 
 function runObs(city){
