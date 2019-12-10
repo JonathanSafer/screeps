@@ -11,6 +11,7 @@ var rT = {
     run: function(creep) {
         var city = creep.memory.city;
         if(city == "E9N10"){//new transporter only in this room fort now so we can profile and compare
+            rT.init(creep)
             if (creep.saying > 0){
                 creep.say(creep.saying - 1)
                 return;
@@ -22,7 +23,7 @@ var rT = {
                 //refill on energy
                 if(rT.refill(creep, city) === 1){
                     //start moving to target
-                    let target = Game.getObjectByID(creep.memory.targetId)
+                    let target = Game.getObjectById(creep.memory.targetId)
                     if(!target || !rT.needsEnergy(target)){//if no target or current target doesn't need energy, try to get a new target
                         target = rT.getNextTarget(creep)
                     }
@@ -35,7 +36,7 @@ var rT = {
                     }
                 }
             } else {
-                let target = Game.getObjectByID(creep.memory.targetId)
+                let target = Game.getObjectById(creep.memory.targetId)
                 if(!target || !rT.needsEnergy(target)){//if no target or current target doesn't need energy, try to get a new target
                     target = rT.getNextTarget(creep)
                 }
@@ -136,6 +137,19 @@ var rT = {
         }
     },
 
+    init: function(creep){//set a transporter to a direction to parse the extension list
+        if(creep.memory.direction){
+            return
+        }
+        //1 === forwards, 2 === backwards
+        let transporter = _.filter(creep.room.find(FIND_MY_CREEPS), creep => creep.memory.role == 'transporter' && creep.memory.direction)
+        if(transporter){
+            creep.memory.direction = 3 - transporter.memory.direction;
+        } else {
+            creep.memory.direction = 1;
+        }
+    },
+
     needsEnergy: function(structure){
         switch(structure.structureType){
             case STRUCTURE_EXTENSION:
@@ -174,17 +188,20 @@ var rT = {
 
     getNextTarget: function(creep){
         let target = null;
-        let memory = Game.spawns[creep.memory.city].memory
+        let extensions = Game.spawns[creep.memory.city].memory.extensions
         if(!creep.memory.target){
             creep.memory.target = 0;
         }
-        if(!memory.extensions){
+        if(!extensions){
             return null;
         }
-        for(var i = creep.memory.target; i < memory.extensions.length; i++){//look at each element starting at memory point
+        if(creep.memory.direction === 2){
+            extensions.reverse();
+        }
+        for(var i = creep.memory.target; i < extensions.length; i++){//look at each element starting at memory point
             //once target is found, save (i + 1) so creep knows not to recheck location it is already depositing at
-            target = Game.getObjectByID(memory.extensions[i])
-            if(needsEnergy(target)){
+            target = Game.getObjectById(memory.extensions[i])
+            if(rT.needsEnergy(target)){
                 //target found
                 creep.memory.targetId = target.id
                 creep.memory.target = i + 1
