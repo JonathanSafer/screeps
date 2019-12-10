@@ -218,6 +218,12 @@ var rT = {
         let result = 0;
         if (creep.memory.location){
             var bucket = Game.getObjectById(creep.memory.location);
+            if(creep.carry.getUsedCapacity() > 0){
+                if(!creep.pos.isNearTo(location.pos)){
+                    creep.moveTo(location, {reusePath: 15, range: 1});
+                }
+                return result;
+            }
             result = actions.withdraw(creep, bucket)
             if (result == ERR_NOT_ENOUGH_RESOURCES){
                 var targets = u.getWithdrawLocations(creep);
@@ -236,6 +242,12 @@ var rT = {
                 creep.memory.noContainers = false;
             }
             creep.memory.location = location.id;
+            if(creep.carry.getUsedCapacity() > 0){
+                if(!creep.pos.isNearTo(location.pos)){
+                    creep.moveTo(location, {reusePath: 15, range: 1});
+                }
+                return result;
+            }
             result = actions.withdraw(creep, location)
             if (result == ERR_NOT_ENOUGH_RESOURCES){
                 creep.memory.target = u.getNextLocation(creep.memory.target, targets);
