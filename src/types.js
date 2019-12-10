@@ -113,7 +113,7 @@ function getRecipe(type, energyAvailable, room){
     		d['normal'] = body([15, 15, 15],[WORK, CARRY, MOVE]);
     		d['builder'] = body([15, 18, 17], [WORK, CARRY, MOVE]);
     		d['ferry'] = body([20, 10], [CARRY, MOVE]);
-    		d['transporter'] = body([8, 4],[CARRY, MOVE]);
+    		d['transporter'] = body([20, 10],[CARRY, MOVE]);
     		d['miner'] = body([20, 8, 10],[WORK, CARRY, MOVE]);
     		d['mineralMiner'] = body([22, 10, 16], [WORK, CARRY, MOVE]);
     		d['scout'] = body([20, 8], [MOVE, CLAIM]);
