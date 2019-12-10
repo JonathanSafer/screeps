@@ -219,8 +219,8 @@ var rT = {
         if (creep.memory.location){
             var bucket = Game.getObjectById(creep.memory.location);
             if(creep.carry.getUsedCapacity() > 0){
-                if(!creep.pos.isNearTo(location.pos)){
-                    creep.moveTo(location, {reusePath: 15, range: 1});
+                if(!creep.pos.isNearTo(bucket.pos)){
+                    creep.moveTo(bucket, {reusePath: 15, range: 1});
                 }
                 return result;
             }
