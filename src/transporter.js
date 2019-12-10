@@ -44,7 +44,7 @@ var rT = {
                     //start moving to next target if target not already in range
                     newTarget = rT.findTarget(creep, target)//make sure to remove current target from search list
                     if(!newTarget){
-                        creep.say(creep.saying - 1)
+                        creep.say(20)
                         return;
                     }
                     if(!newTarget.pos.isNearTo(creep.pos)){

@@ -604,7 +604,6 @@ function updateDefender(flag, memory) {
 function updatePowerMine(flag, memory) {
     memory[rPM.name] = flag ? 2 : 0;
     if (flag) memory[rMe.name] += 2;
-    if (flag) memory[rT.name] = 4;
 }
 
 function updateDepositMiner(flag, memory) {
