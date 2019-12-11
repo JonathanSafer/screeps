@@ -39,8 +39,14 @@ var labs = {
     },
 
     updateLabs: function(lab0, lab1, lab2, lab3, lab4, lab5, spawn) {
-        if(lab5.mineralType == spawn.memory.ferryInfo.labInfo[6]){
+        if(spawn.memory.ferryInfo.labInfo[6] == 'dormant' && Game.time % 500 != 0){
+            return;
+        }
+        if(lab5.mineralType == spawn.memory.ferryInfo.labInfo[6] || spawn.memory.ferryInfo.labInfo[6] == 'dormant'){
             labs.chooseBoost(spawn.memory.ferryInfo.labInfo[6], spawn)
+            if(spawn.memory.ferryInfo.labInfo[6] == 'dormant'){
+                return;
+            }
         }
         let receivers = [lab2, lab3, lab4, lab5];
         for (i = 0; i < receivers.length; i++){
@@ -80,8 +86,8 @@ var labs = {
                 return;
             }
         }
-        //make ghodium with excess time
-        spawn.memory.ferryInfo.labInfo[6] = 'G';
+        //go dormant
+        spawn.memory.ferryInfo.labInfo[6] = 'dormant';
     },
 
     chooseMineral: function(mineral, spawn) {
