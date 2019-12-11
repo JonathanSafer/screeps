@@ -116,7 +116,7 @@ var rT = {
         if(oldTarget){
             id = oldTarget.id
         }
-        let locations = creep.room.find(FIND_STRUCTURES, {
+        return creep.pos.findClosestByPath(FIND_STRUCTURES, {
                 filter: (structure) => {
                     return (structure.id !== id && 
                         (((structure.structureType == STRUCTURE_EXTENSION 
@@ -128,13 +128,9 @@ var rT = {
                             || (structure.structureType == STRUCTURE_FACTORY && structure.store.getUsedCapacity(RESOURCE_ENERGY) < 10000)
                             || (structure.structureType == STRUCTURE_TOWER && structure.energy < (structure.energyCapacity - 400)))
                     );
-                }
+                },
+                maxOps: 30
         });
-        if(locations.length){
-            return creep.pos.findClosestByPath(locations)
-        } else {
-            return false;
-        }
     },
 
     init: function(creep){//set a transporter to a direction to parse the extension list
