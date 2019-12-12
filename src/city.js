@@ -388,7 +388,10 @@ function updateAttacker(rooms, memory, rcl8) {
             return;
         }
         var enemyCounts = _.map(rooms, room => {
-            var allBadCreeps = room.find(FIND_HOSTILE_CREEPS);
+            var allBadCreeps = _.filter(room.find(FIND_HOSTILE_CREEPS), creep => creep.getActiveBodyparts(ATTACK) > 0
+                    || creep.getActiveBodyparts(RANGED_ATTACK) > 0 
+                    || creep.getActiveBodyparts(CLAIM) > 0
+                    || creep.getActiveBodyparts(HEAL) > 0)
             var invaders = _.reject(allBadCreeps, creep => creep.owner.username == "Source Keeper");
             return invaders.length;
         });
