@@ -10,7 +10,7 @@ var rT = {
     /** @param {Creep} creep **/
     run: function(creep) {
         var city = creep.memory.city;
-        if(city == "E9N10"){//new transporter only in this room fort now so we can profile and compare
+        if(false) { //city == "E9N10"){//new transporter only in this room fort now so we can profile and compare
             rT.init(creep)
             if (creep.saying > 0){
                 creep.say(creep.saying - 1)
@@ -129,7 +129,7 @@ var rT = {
                             || (structure.structureType == STRUCTURE_TOWER && structure.energy < (structure.energyCapacity - 400)))
                     );
                 },
-                maxOps: 30
+                maxOps: 10
         });
     },
 
