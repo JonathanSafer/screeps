@@ -127,6 +127,9 @@ var rTr = {
         if(creep.hits < creep.hitsMax * 0.85){
             creep.memory.retreat = true
         }
+        if(creep.room.controller && creep.room.controller.owner && !creep.room.controller.my && creep.room.controller.safeMode){
+            creep.memory.retreat = true
+        }
         if(creep.memory.retreat) {
             let medic = Game.getObjectById(creep.memory.medic)
             if(medic && creep.memory.tolerance){
