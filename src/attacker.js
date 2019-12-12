@@ -23,7 +23,7 @@ var rA = {
     	    var localRooms = u.splitRoomsByCity();
     	    let rooms = _.filter(localRooms[city], room => room.find(FIND_HOSTILE_CREEPS) != 0);
     	    if (rooms.length){
-    	        var enemies = rooms[0].find(FIND_HOSTILE_CREEPS);
+    	        var enemies = _.filter(rooms[0].find(FIND_HOSTILE_CREEPS), enemy => enemy.owner.username != 'TuN9aN0')
     	        if (enemies.length) {
     	            console.log(enemies);
     	            a.attack(creep, enemies[0]);
