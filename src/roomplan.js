@@ -158,7 +158,7 @@ let p = {
         }
     },
 
-    makeRoadMatrix(room, plan){
+    makeRoadMatrix: function(room, plan){
         let costs = new PathFinder.CostMatrix;
         _.forEach(template.buildings, function(locations, structureType) {//don't make roads anywhere that a structure needs to go
             locations.pos.forEach(location => {
@@ -188,11 +188,10 @@ let p = {
                 costs.set(struct.pos.x, struct.pos.y, 1);
             }
         });
-        room.costs = costs;
         return costs;
     },
 
-    getSourcePaths(room, exits, roadMatrix){
+    getSourcePaths: function(room, exits, roadMatrix){
         const sources = Object.keys(Game.spawns[room.memory.city].memory.sources)
         let sourcePaths = []
         for (var i = 0; i < sources.length; i++) {
@@ -200,7 +199,7 @@ let p = {
             let sourcePath = PathFinder.search(sourcePos, exits, {
                 plainCost: 4, swampCost: 4, maxRooms: 1, 
                 roomCallback: function(roomName) {
-                    return room.costs;
+                    return roadMatrix;
                 },
             })
             for(var j = 0; j < sourcePath.path.length; j++){
@@ -210,18 +209,18 @@ let p = {
         return sourcePaths.reverse()
     },
 
-    getMineralPath(room, exits, roadMatrix){
+    getMineralPath: function(room, exits, roadMatrix){
         const mineralPos = room.find(FIND_MINERALS)[0].pos;
         let mineralPath = PathFinder.search(mineralPos, exits, {
             plainCost: 4, swampCost: 4, maxRooms: 1, 
             roomCallback: function(roomName) {
-                return room.costs;
+                return roadMatrix;
             },
         })
         return mineralPath.path.reverse()
     },
 
-    getControllerPath(room, exits, roadMatrix){
+    getControllerPath: function(room, exits, roadMatrix){
         let path = []
         const structures = room.find(FIND_MY_STRUCTURES);
         const controller = _.find(structures, structure => structure.structureType === STRUCTURE_CONTROLLER);
@@ -229,7 +228,7 @@ let p = {
         let controllerPath = PathFinder.search(controllerPos, exits, {
             plainCost: 4, swampCost: 4, maxRooms: 1, 
             roomCallback: function(roomName) {
-                return room.costs;
+                return roadMatrix;
             },
         })
         for(var i = 2; i < controllerPath.path.length; i++){// don't include first two paths (not needed)
@@ -238,7 +237,7 @@ let p = {
         return path.reverse()
     },
 
-    getExitPaths(room, exits, plan){
+    getExitPaths: function(room, exits, plan){
         let roomExits = p.getRoomExits(room.name);
         let path = [];
 
@@ -249,7 +248,7 @@ let p = {
                 let exitPath0 = PathFinder.search(startPos, roomExits[i], {
                     plainCost: 4, swampCost: 4, maxRooms: 1, 
                     roomCallback: function(roomName) {
-                        return room.costs;
+                        return roadMatrix;
                     },
                 })
                 let exitPoint = exitPath0.path[exitPath0.path.length - 1];
@@ -257,7 +256,7 @@ let p = {
                 let exitPath = PathFinder.search(exitPoint, exits, {
                     plainCost: 4, swampCost: 4, maxRooms: 1, 
                     roomCallback: function(roomName) {
-                        return room.costs;
+                        return roadMatrix;
                     },
                 })
                 let exitPathPath = exitPath.path
@@ -270,7 +269,7 @@ let p = {
         return path
     },
 
-    compileRoads(a, b, c, d){
+    compileRoads: function(a, b, c, d){
         return a.concat(b, c, d)
     },
 
