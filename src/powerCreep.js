@@ -71,7 +71,7 @@ var rPC = {
         switch (creep.memory.state) {
             case CS.START: return CS.SPAWN
             case CS.SPAWN: return (creep.spawnCooldownTime > Date.now()) ? CS.SPAWN :
-                rPC.isPowerEnabled(creep) ? CS.ENABLE_POWER : rPC.getNextWork(creep)
+                rPC.isPowerEnabled(creep) ? rPC.getNextWork(creep) : CS.ENABLE_POWER
             case CS.ENABLE_POWER: return rPC.atTarget(creep) ? rPC.getNextWork(creep) : CS.ENABLE_POWER
             case CS.WORK_SOURCE: return rPC.atTarget(creep) ? rPC.getNextWork(creep) : CS.WORK_SOURCE
             case CS.WORK_FACTORY: return rPC.atTarget(creep) ? rPC.getNextWork(creep) : CS.WORK_FACTORY
