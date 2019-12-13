@@ -37,6 +37,10 @@ var fact = {
             return 0;
         }
         if(factory.level !== Game.spawns[city].memory.ferryInfo.factoryInfo.factoryLevel){
+            if(!Game.spawns[city].memory.ferryInfo.factoryInfo.factoryLevel){
+                //schedule removal of all commodities
+                fact.removeJunk(city, Game.spawns[city].room.terminal, factory.level)
+            }
             Game.spawns[city].memory.ferryInfo.factoryInfo.factoryLevel = factory.level;
         }
         return factory;
@@ -185,6 +189,18 @@ var fact = {
             Game.spawns[city].memory.ferryInfo.factoryInfo.transfer.push([components[i], 1, requestAmount])
         }
 
+    },
+
+    moveJunk: function(city, terminal, factLevel){
+        const coms = _.without(_.difference(Object.keys(COMMODITIES), Object.keys(REACTIONS)), RESOURCE_ENERGY)
+        const destination = _.find(Game.structures, struct => struct.structureType == STRUCTURE_FACTORY
+                 && struct.my && !struct.level && struct.room.terminal && struct.room.controller.level >= 7).room.name
+        for(var i = 0; i < Object.keys(terminal.store).length; i++){
+            if(_.includes(coms, Object.keys(terminal.store)[i])){
+                //send com to a level 0 room
+                Game.spawns[city].memory.ferryInfo.comSend.push([Object.keys(terminal.store)[i], terminal.store[Object.keys(terminal.store)[i]], destination]);
+            }
+        }
     }
 
 };

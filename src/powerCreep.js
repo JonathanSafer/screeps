@@ -182,13 +182,11 @@ var rPC = {
     },
 
     canOperateFactory: function(creep) {
-        let factories = creep.room.find(FIND_MY_STRUCTURES, {
-            filter: { structureType: STRUCTURE_FACTORY }
-        })
+        let factory = _.find(creep.room.find(FIND_MY_STRUCTURES), struct => struct.structureType == STRUCTURE_FACTORY)
         let city = creep.memory.city + "0"
-        if (factories.length > 0 &&
-            (!factories[0].effects || factories[0].effects.length == 0) &&
-            factories[0].cooldown < 30 &&
+        if (factory &&
+            (!factory.effects || factory.effects.length == 0) &&
+            factory.cooldown < 30 &&
             creep.powers[PWR_OPERATE_FACTORY] &&
             creep.powers[PWR_OPERATE_FACTORY].cooldown == 0 &&
             Game.spawns[city].memory.ferryInfo.factoryInfo.produce !== 'dormant') {
