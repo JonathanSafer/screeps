@@ -190,7 +190,7 @@ var rPC = {
             creep.powers[PWR_OPERATE_FACTORY] &&
             creep.powers[PWR_OPERATE_FACTORY].cooldown == 0 &&
             Game.spawns[city].memory.ferryInfo.factoryInfo.produce !== 'dormant') {
-            creep.memory.target = factories[0].id
+            creep.memory.target = factory.id
             return true
         }
         return false

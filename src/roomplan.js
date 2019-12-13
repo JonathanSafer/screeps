@@ -158,21 +158,7 @@ let p = {
         }
     },
 
-    buildRoads: function(room, plan){
-        //need roads to sources, mineral, controller (3 spaces away), exits (nearest exit point for each)
-        let roads = [];
-        if(!(room.memory.city && Game.spawns[room.memory.city] && Game.spawns[room.memory.city].memory.sources)){
-            return;
-        }
-        let exits = [];
-        for(var i = 0; i < template.exits.length; i++){
-            let posX = plan.x + template.exits[i].x - template.offset.x;
-            let posY = plan.y + template.exits[i].y - template.offset.y;
-            let roomPos = new RoomPosition(posX, posY, room.name)
-            exits.push(roomPos);
-        }//exits now filled with roomPos of all exits from template
-
-        //can this be its own function?
+    makeRoadMatrix(room, plan){
         let costs = new PathFinder.CostMatrix;
         _.forEach(template.buildings, function(locations, structureType) {//don't make roads anywhere that a structure needs to go
             locations.pos.forEach(location => {
@@ -196,10 +182,19 @@ let p = {
                 costs.set(struct.pos.x, struct.pos.y, 5);
             }
         });
+        room.find(FIND_MY_CONSTRUCTION_SITES).forEach(function(site) {
+            if (site.structureType === STRUCTURE_ROAD) {
+                // Favor roads over plain tiles
+                costs.set(struct.pos.x, struct.pos.y, 1);
+            }
+        });
         room.costs = costs;
+        return costs;
+    },
 
-        //roads from sources
+    getSourcePaths(room, exits, roadMatrix){
         const sources = Object.keys(Game.spawns[room.memory.city].memory.sources)
+        let sourcePaths = []
         for (var i = 0; i < sources.length; i++) {
             let sourcePos = Game.getObjectById(sources[i]).pos;
             let sourcePath = PathFinder.search(sourcePos, exits, {
@@ -209,11 +204,13 @@ let p = {
                 },
             })
             for(var j = 0; j < sourcePath.path.length; j++){
-                roads.push(sourcePath.path[j]);
+                sourcePaths.push(sourcePath.path[j]);
             }
         }
+        return sourcePaths.reverse()
+    },
 
-        //road from mineral
+    getMineralPath(room, exits, roadMatrix){
         const mineralPos = room.find(FIND_MINERALS)[0].pos;
         let mineralPath = PathFinder.search(mineralPos, exits, {
             plainCost: 4, swampCost: 4, maxRooms: 1, 
@@ -221,11 +218,11 @@ let p = {
                 return room.costs;
             },
         })
-        for(var i = 0; i < mineralPath.path.length; i++){
-            roads.push(mineralPath.path[i]);
-        } 
+        return mineralPath.path.reverse()
+    },
 
-        //road from controller
+    getControllerPath(room, exits, roadMatrix){
+        let path = []
         const structures = room.find(FIND_MY_STRUCTURES);
         const controller = _.find(structures, structure => structure.structureType === STRUCTURE_CONTROLLER);
         const controllerPos = controller.pos;
@@ -236,11 +233,14 @@ let p = {
             },
         })
         for(var i = 2; i < controllerPath.path.length; i++){// don't include first two paths (not needed)
-            roads.push(controllerPath.path[i]);
+            path.push(controllerPath.path[i]);
         } 
+        return path.reverse()
+    },
 
-        //roads from exits
+    getExitPaths(room, exits, plan){
         let roomExits = p.getRoomExits(room.name);
+        let path = [];
 
         let startPoint = template.buildings.storage.pos[0];
         let startPos = new RoomPosition(plan.x + startPoint.x - template.offset.x, plan.y + startPoint.y - template.offset.y, room.name)
@@ -260,20 +260,68 @@ let p = {
                         return room.costs;
                     },
                 })
-                for(var j = 0; j < exitPath.path.length; j++){
-                    roads.push(exitPath.path[j]);
+                let exitPathPath = exitPath.path
+                exitPathPath.reverse()
+                for(var j = 0; j < Math.min(exitPath.path.length, 4); j++){
+                    path.push(exitPath.path[j]);
                 }
             }
         }
+        return path
+    },
+
+    compileRoads(a, b, c, d){
+        return a.concat(b, c, d)
+    },
+
+    buildRoads: function(room, plan){
+        //need roads to sources, mineral, controller (3 spaces away), exits (nearest exit point for each)
+        if(!(room.memory.city && Game.spawns[room.memory.city] && Game.spawns[room.memory.city].memory.sources)){
+            return;
+        }
+        let exits = [];
+        for(var i = 0; i < template.exits.length; i++){
+            let posX = plan.x + template.exits[i].x - template.offset.x;
+            let posY = plan.y + template.exits[i].y - template.offset.y;
+            let roomPos = new RoomPosition(posX, posY, room.name)
+            exits.push(roomPos);
+        }//exits now filled with roomPos of all exits from template
+
+        //generateCM
+        const roadMatrix = p.makeRoadMatrix(room, plan);
+
+        //roads from sources
+        const sourcePaths = p.getSourcePaths(room, exits, roadMatrix)
+
+        for(var i = 0; i < sourcePaths.path.length; j++){
+            roads.push(sourcePaths.path[j]);
+        }
+
+        //road from mineral
+        const mineralPath = p.getMineralPath(room, exits, roadMatrix)
+
+        //road from controller
+        const controllerPath = p.getControllerPath(room, exits, roadMatrix)
+
+        //roads from exits
+        const exitPaths = p.getExitPaths(room, exits, plan)
+
+        //push all paths onto big list
+        const roads = p.compileRoads(sourcePaths, mineralPath, controllerPath, exitPaths)
+        
+        //place Csites
         let counter = 0;
-        roads = roads.reverse();
         let csites = room.find(FIND_MY_CONSTRUCTION_SITES);
         if(csites.length){
             counter = csites.length;
         }
         for(var i = 0; i < roads.length; i++){
-            room.visual.circle(roads[i], {fill: 'transparent', radius: 0.25, stroke: 'red'});
+            room.visual.circle(roads[i], {fill: '#ff1111', radius: 0.1, stroke: 'red'});
             if(counter < 20){//doesn't update during the tick
+                let look = room.lookForAt(LOOK_STRUCTURES, roads[i])
+                if(look.length){
+                    continue
+                }
                 if(!room.createConstructionSite(roads[i], STRUCTURE_ROAD)){
                     counter++
                 }
