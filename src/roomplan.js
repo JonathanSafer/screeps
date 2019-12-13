@@ -237,7 +237,7 @@ let p = {
         return path.reverse()
     },
 
-    getExitPaths: function(room, exits, plan){
+    getExitPaths: function(room, exits, plan, roadMatrix){
         let roomExits = p.getRoomExits(room.name);
         let path = [];
 
@@ -299,7 +299,7 @@ let p = {
         const controllerPath = p.getControllerPath(room, exits, roadMatrix)
 
         //roads from exits
-        const exitPaths = p.getExitPaths(room, exits, plan)
+        const exitPaths = p.getExitPaths(room, exits, plan, roadMatrix)
 
         //push all paths onto big list
         const roads = p.compileRoads(sourcePaths, mineralPath, controllerPath, exitPaths)
