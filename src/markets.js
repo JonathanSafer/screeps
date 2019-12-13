@@ -8,7 +8,7 @@ var markets = {
     
     distributeEnergy: function(myCities){
         var receiver = null
-    	var needEnergy = _.filter(myCities, city => city.storage && city.storage.store.energy < 200000 && city.terminal)
+    	var needEnergy = _.filter(myCities, city => city.storage && city.storage.store.energy < 350000 && city.terminal)
     	if (needEnergy.length){
     		var sortedCities = _.sortBy(needEnergy, city => city.storage.store.energy)
     		receiver = sortedCities[0].name
