@@ -293,10 +293,6 @@ let p = {
         //roads from sources
         const sourcePaths = p.getSourcePaths(room, exits, roadMatrix)
 
-        for(var i = 0; i < sourcePaths.path.length; j++){
-            roads.push(sourcePaths.path[j]);
-        }
-
         //road from mineral
         const mineralPath = p.getMineralPath(room, exits, roadMatrix)
 
