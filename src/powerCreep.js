@@ -159,13 +159,16 @@ var rPC = {
     },
 
     canGenerateOps: function(creep) {
-        return creep.powers[PWR_GENERATE_OPS].cooldown < 1 && _.sum(creep.store) < creep.store.getCapacity()
+        return creep.powers[PWR_GENERATE_OPS] && creep.powers[PWR_GENERATE_OPS].cooldown < 1 && _.sum(creep.store) < creep.store.getCapacity()
     },
 
     hasSourceUpdate: function(creep) {
         // powerup runs out every 300 ticks
         // get all sources
         // if there is no effect on source then choose it
+        if(!creep.powers[PWR_REGEN_SOURCE]){
+            return false;
+        }
         let sourceIds = Object.keys(Game.spawns[creep.memory.city + "0"].memory.sources)
         for (let sourceId of sourceIds) {
             let source = Game.getObjectById(sourceId)
