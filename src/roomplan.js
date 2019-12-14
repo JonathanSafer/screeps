@@ -185,7 +185,7 @@ let p = {
         room.find(FIND_MY_CONSTRUCTION_SITES).forEach(function(site) {
             if (site.structureType === STRUCTURE_ROAD) {
                 // Favor roads over plain tiles
-                costs.set(struct.pos.x, struct.pos.y, 1);
+                costs.set(site.pos.x, site.pos.y, 1);
             }
         });
         return costs;
