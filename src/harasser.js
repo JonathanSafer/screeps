@@ -54,7 +54,7 @@ var rH = {
         if(target){
             creep.rangeAttack(target)
         }
-    }
+    },
 
     dormant: function(creep){
         if(creep.memory.dormant){
