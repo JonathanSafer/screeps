@@ -54,9 +54,9 @@ var rH = {
                 return;
             }
         }
-        let target = _.find(hostiles, h => h.pos.inRangeTo(creep.pos), 3)
-        if(target){
-            creep.rangedAttack(target)
+        let newTarget = _.find(hostiles, h => h.pos.inRangeTo(creep.pos), 3)
+        if(newTarget){
+            creep.rangedAttack(newTarget)
         }
     },
 
