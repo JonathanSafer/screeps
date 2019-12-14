@@ -43,6 +43,10 @@ var rDM = {
                     Game.flags[flagName].remove();
                     return;
                 }
+                //check for enemies. if there is an enemy, call in harasser
+                if(creep.pos.roomName == Game.flags[flagName].pos.roomName){
+                    rDM.checkEnemies(creep, deposit[0])
+                }
                 //move towards and mine deposit (actions.harvest)
                 if(actions.harvest(creep, deposit[0]) === 1){
                     //record amount harvested
@@ -68,6 +72,28 @@ var rDM = {
 
         }
     },
+
+    checkEnemies: function(creep, deposit){
+        if(Game.time == 50 || creep.hits < creep.hitsMax){
+            //scan room for hostiles
+            const hostiles = creep.room.find(FIND_HOSTILE_CREEPS)
+            const dangerous = _.find(hostiles, h => h.getActiveBodyparts(ATTACK) > 0 || h.getActiveBodyparts(RANGED_ATTACK) > 0)
+            
+            //check for tampering with deposit
+            const mined = Math.floor(Math.pow((deposit.lastCooldown / 0.001), 1/1.2))
+            let expected = Game.spawns[creep.memory.city].memory.deposit
+            if(mined > expected){
+                Game.spawns[creep.memory.city].memory.deposit
+            }
+            if(mined > expected || dangerous){
+                //call in harasser
+                let flagName = creep.memory.city + 'harass'
+                if(!Game.flags[flagName]){
+                    creep.room.createFlag(25, 25, flagName)
+                }
+            }
+        }
+    }
 
 };
 module.exports = rDM;

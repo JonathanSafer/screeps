@@ -10,6 +10,10 @@ var rH = {
 
     /** @param {Creep} creep **/
     run: function(creep) {
+        if(Game.time % 50 == 0){
+            //check to remove flag
+            rH.removeFlag(creep)
+        }
         if(rH.dormant(creep)){
             return
         }
@@ -131,6 +135,22 @@ var rH = {
             creep.memory.target = target.id
         }
         //move toward an enemy
+    },
+
+    removeFlag: function(creep){
+        let flagName = creep.memory.city + 'harass'
+        if(!Game.flags[flagName]){
+            return
+        }
+        if(creep.pos.roomName == Game.flags[flagName].pos.roomName){
+            let flags = creep.room.find(FIND_FLAGS)
+            for(var i = 0; i < flags.length; i++){
+                if(flags[i].name.includes('deposit') || flags[i].name.includes('powerMine')){
+                    return
+                }
+            }
+            Game.flags[flagName].remove()
+        }
     },
 
     init: function(creep){
