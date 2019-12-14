@@ -32,7 +32,7 @@ var rH = {
         } else {
             needRetreat = rH.maybeRetreat(creep, hostiles)
         }
-        if(!needRetreat){
+        if(!needRetreat && hostiles.length){
             rH.aMove(creep, hostiles)
         }
         rH.shoot(creep, hostiles)
@@ -41,7 +41,7 @@ var rH = {
     shoot: function(creep, hostiles){
         //RMA if anybody is touching
         for(var i = 0; i < hostiles.length; i++){
-            if(hostiles[0].pos.isNearTo(creep.pos)){
+            if(hostiles[i].pos.isNearTo(creep.pos)){
                 creep.rangedMassAttack()
                 return
             }
@@ -56,7 +56,7 @@ var rH = {
         }
         let target = _.find(hostiles, h => h.pos.inRangeTo(creep.pos), 3)
         if(target){
-            creep.rangeAttack(target)
+            creep.rangedAttack(target)
         }
     },
 
@@ -74,7 +74,7 @@ var rH = {
     },
 
     maybeRetreat: function(creep, hostiles) {
-        const attacker = _.find(hostiles, h.getActiveBodyparts(ATTACK) > 0
+        const attacker = _.find(hostiles, h => h.getActiveBodyparts(ATTACK) > 0
                 && (h.fatigue === 0 || h.pos.isNearTo(creep.pos))
                 && h.pos.inRangeTo(creep.pos, 2))
         if(attacker){
@@ -105,7 +105,7 @@ var rH = {
     },
 
     aMove: function(creep, hostiles){
-        const attacker = _.find(hostiles, h.getActiveBodyparts(ATTACK) > 0
+        const attacker = _.find(hostiles, h => h.getActiveBodyparts(ATTACK) > 0
                 && (h.fatigue === 0 || h.pos.isNearTo(creep.pos))
                 && h.pos.inRangeTo(creep.pos, 3))
         if(attacker){
@@ -130,7 +130,7 @@ var rH = {
                     return;
                 }
             }
-            let target = findClosestByRange(hostiles)
+            let target = creep.pos.findClosestByRange(hostiles)
             creep.moveTo(target)
             creep.memory.target = target.id
         }
@@ -163,7 +163,7 @@ var rH = {
     },
 
     maybeHeal: function(creep, hostiles){
-        const damager = _.find(hostiles, c => c.getActiveBodyparts(ATTACK) > 0 || getActiveBodyparts(RANGED_ATTACK) > 0)
+        const damager = _.find(hostiles, c => c.getActiveBodyparts(ATTACK) > 0 || c.getActiveBodyparts(RANGED_ATTACK) > 0)
         if(creep.hits < creep.hitMax || damager){
             creep.heal(creep)
         }
