@@ -52,7 +52,7 @@ function getRecipe(type, energyAvailable, room){
     		d['normal'] = body([12, 4, 8], [WORK, CARRY, MOVE]);
     		d['builder'] = body([5, 9, 7], [WORK, CARRY, MOVE]);
     		d['ferry'] = body([6, 3], [CARRY, MOVE]);
-    		d['transporter'] = body([8, 4], [CARRY, MOVE]);
+    		d['transporter'] = body([12, 6], [CARRY, MOVE]);
     		d['miner'] = body([3, 5], [MOVE, WORK]);
     		d['scout'] = body([5, 2], [MOVE, CLAIM]);
     		d['attacker'] = body([2, 4, 6], [TOUGH, MOVE, ATTACK]);
@@ -72,7 +72,7 @@ function getRecipe(type, energyAvailable, room){
     		d['normal'] = body([12, 8, 10], [WORK, CARRY, MOVE]);
     		d['builder'] = body([5, 9, 7], [WORK, CARRY, MOVE]);
     		d['ferry'] = body([6, 3], [CARRY, MOVE]);
-    		d['transporter'] = body([8, 4], [CARRY, MOVE]);
+    		d['transporter'] = body([12, 6], [CARRY, MOVE]);
     		d['miner'] = body([3, 5], [MOVE, WORK]);
     		d['mineralMiner'] = body([12, 6, 9], [WORK, CARRY, MOVE]);
     		d['scout'] = body([8, 3], [MOVE, CLAIM]);
@@ -87,7 +87,7 @@ function getRecipe(type, energyAvailable, room){
     		d['normal'] = body([20, 12, 16], [WORK, CARRY, MOVE]);
     		d['builder'] = body([5, 9, 7], [WORK, CARRY, MOVE]);
     		d['ferry'] = body([20, 10], [CARRY, MOVE]);
-    		d['transporter'] = body([8, 4], [CARRY, MOVE]);
+    		d['transporter'] = body([12, 6], [CARRY, MOVE]);
     		d['miner'] = body([5, 8, 10], [MOVE, CARRY, WORK]);
     		d['mineralMiner'] = body([22, 10, 16], [WORK, CARRY, MOVE]);
     		d['scout'] = body([15, 6], [MOVE, CLAIM]);

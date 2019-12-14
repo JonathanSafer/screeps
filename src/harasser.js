@@ -10,66 +10,170 @@ var rH = {
 
     /** @param {Creep} creep **/
     run: function(creep) {
-        if (creep.hits < creep.hitsMax){
-            creep.heal(creep);
+        if(rH.dormant(creep)){
+            return
         }
-        var rallyFlag = creep.memory.city + 'harasserRally'
+        rH.init(creep)
+        const hostiles = creep.room.find(FIND_HOSTILE_CREEPS)
+        rH.maybeHeal(creep, hostiles)
+        if(!hostiles.length){
+            if(rH.rally(creep)){
+                return
+            }
+        }
+        creep.memory.dormant = false
+        let needRetreat = creep.hits < creep.hitsMax*0.75
+        if(needRetreat){
+            rH.goHome(creep)
+        } else {
+            needRetreat = rH.maybeRetreat(creep, hostiles)
+        }
+        if(!needRetreat){
+            rH.aMove(creep, hostiles)
+        }
+        rH.shoot(creep, hostiles)
+    },
+
+    shoot: function(creep, hostiles){
+        //RMA if anybody is touching
+        for(var i = 0; i < hostiles.length; i++){
+            if(hostiles[0].pos.isNearTo(creep.pos)){
+                creep.rangedMassAttack()
+                return
+            }
+        }
+        //if target and in range, shoot target, otherwise shoot anybody in range
+        if(creep.memory.target){
+            let target = Game.getObjectById(creep.memory.target)
+            if(target && target.pos.inRangeTo(creep.pos), 3){
+                creep.rangedAttack(target)
+                return;
+            }
+        }
+        let target = _.find(hostiles, h => h.pos.inRangeTo(creep.pos), 3)
+        if(target){
+            creep.rangeAttack(target)
+        }
+    }
+
+    dormant: function(creep){
+        if(creep.memory.dormant){
+            if(Game.time % 5 != 0){
+                return true
+            }
+        }
+        return false
+    },
+
+    goHome: function(creep){
+        creep.moveTo(Game.spawns[creep.memory.city], {maxOps: 50, ignoreRoads: true})
+    },
+
+    maybeRetreat: function(creep, hostiles) {
+        const attacker = _.find(hostiles, h.getActiveBodyparts(ATTACK) > 0
+                && (h.fatigue === 0 || h.pos.isNearTo(creep.pos))
+                && h.pos.inRangeTo(creep.pos, 2))
+        if(attacker){
+            //retreat
+            if(creep.saying === 'hold'){
+                //get less angry
+                creep.memory.anger = creep.memory.anger/2
+            }
+            let dangerous = _.filter(hostiles, h.getActiveBodyparts(ATTACK) > 0 || h.getActiveBodyparts(RANGED_ATTACK) > 0)
+            let goals = _.map(dangerous, function(d) {
+            return { pos: d.pos, range: 3 };
+            });
+            const retreatPath = PathFinder.search(creep.pos, goals, {maxOps: 100, flee: true, maxRooms: 1,
+                roomCallBack: function(roomName){
+                    let room = Game.rooms[roomName]
+                    let costs = new PathFinder.CostMatrix
+                    room.find(FIND_CREEPS).forEach(function(creep) {
+                      costs.set(creep.pos.x, creep.pos.y, 0xff);
+                    });
+
+                    return costs;
+                }
+            })
+            creep.moveByPath(retreatPath.path)
+            return true
+        }
+        return false
+    },
+
+    aMove: function(creep, hostiles){
+        const attacker = _.find(hostiles, h.getActiveBodyparts(ATTACK) > 0
+                && (h.fatigue === 0 || h.pos.isNearTo(creep.pos))
+                && h.pos.inRangeTo(creep.pos, 3))
+        if(attacker){
+            if(creep.saying === 'attack'){
+                //get more angry
+                creep.memory.anger++
+            }
+            let rand = Math.floor(Math.random() * 101)
+            if(creep.memory.anger > rand){
+                //give chase
+                creep.say('attack')
+                creep.moveTo(attacker)
+            } else {
+                //hold position
+                creep.say('hold')
+            }
+        } else {
+            if(creep.memory.target){
+                let target = Game.getObjectById(creep.memory.target)
+                if(target){
+                    creep.moveTo(target)
+                    return;
+                }
+            }
+            let target = findClosestByRange(hostiles)
+            creep.moveTo(target)
+            creep.memory.target = target.id
+        }
+        //move toward an enemy
+    },
+
+    init: function(creep){
+        if(!creep.memory.target){
+            creep.memory.target = null;
+        }
+        if(!creep.memory.anger){//the more angry the creep gets, the more aggressive it'll get
+            creep.memory.anger = 0//anger increases when hostiles run away, and decreases when hostiles give chase
+        }
+    },
+
+    maybeHeal: function(creep, hostiles){
+        const damager = _.find(hostiles, c => c.getActiveBodyparts(ATTACK) > 0 || getActiveBodyparts(RANGED_ATTACK) > 0)
+        if(creep.hits < creep.hitMax || damager){
+            creep.heal(creep)
+        }
+    },
+
+    rally: function(creep){
+        const rallyFlag = creep.memory.city + 'harasserRally'
         if (Game.flags[rallyFlag] && !creep.memory.rally){
             creep.moveTo(Game.flags[rallyFlag], {reusePath: 50})
             if (Game.flags[rallyFlag].pos.x == creep.pos.x && Game.flags[rallyFlag].pos.y == creep.pos.y && Game.flags[rallyFlag].pos.roomName == creep.pos.roomName){
                 creep.memory.rally = true
             }
-            return;
+        } else {
+            const destFlag = creep.memory.city + 'harass'
+            if(Game.flags[destFlag]){
+                if(creep.pos.roomName === Game.flags[destFlag].pos.roomName){
+                    //move to center of room
+                    if(!creep.pos.inRangeTo(25, 25, 8)){
+                        creep.moveTo(25, 25, {range: 5})
+                    } else {
+                        creep.memory.dormant = true;
+                        return true
+                    }
+                } else {
+                    //move to flag
+                    creep.moveTo(Game.flags[destFlag], {reusePath: 50})
+                }
+            }
         }
-    	var target = Game.getObjectById(creep.memory.target);
-    	if (target){
-    	    newTarget = creep.pos.findClosestByRange(FIND_HOSTILE_CREEPS, creep =>  RANGED_ATTACK in creep.body || ATTACK in creep.body);
-    	    if (newTarget && creep.pos.inRangeTo(newTarget, 3)){
-    	        creep.memory.target = newTarget.id;
-    	        return a.rangedAttack(creep, newTarget);
-    	    } else {
-    		    return a.rangedAttack(creep, target);
-    	    }
-    	}
-    	var city = creep.memory.city;
-    	var flagName = city + 'harass';
-    	if(Game.flags[flagName]){
-    		if(creep.pos.roomName === Game.flags[flagName].pos.roomName){
-    			//harass
-    			var enemies = creep.room.find(FIND_HOSTILE_CREEPS, creep =>  RANGED_ATTACK in creep.body || ATTACK in creep.body);
-    			var harmless = creep.room.find(FIND_HOSTILE_CREEPS);
-    			if (enemies.length) {
-    				creep.memory.target = enemies[0].id
-    				a.rangedAttack(creep, enemies[0]);
-    			} else if (harmless.length){
-    			    creep.memory.target = harmless[0].id
-    				a.rangedAttack(creep, harmless[0]);
-    			} else {
-    			    var hostileStructures = creep.room.find(FIND_HOSTILE_STRUCTURES)
-    			    var notController = _.reject(hostileStructures, structure => structure.structureType == STRUCTURE_CONTROLLER)
-    			    if (notController.length){
-    			        creep.memory.target = notController[0].id;
-    			        a.rangedAttack(creep, notController[0])
-    			        return;
-    			    }
-    			    var structures = creep.room.find(FIND_STRUCTURES)
-    			    var walls = _.filter(structures, structure => structure.structureType == STRUCTURE_WALL)
-    			    if (walls.length){
-    			        creep.memory.target = walls[0].id;
-    			        a.rangedAttack(creep, walls[0])
-    			    }
-    			}
-    		} else {
-    			creep.moveTo(Game.flags[flagName].pos, {reusePath: 30});
-    		}
-    	} else {
-    		//harass
-    		var enemies = creep.room.find(FIND_HOSTILE_CREEPS);
-    			if (enemies.length) {
-    				creep.memory.target = enemies[0].id
-    				a.rangedAttack(creep, enemies[0]);
-				}
-    	}
+        return false
     }
    
 };
