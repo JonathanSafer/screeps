@@ -164,7 +164,7 @@ var rH = {
 
     maybeHeal: function(creep, hostiles){
         const damager = _.find(hostiles, c => c.getActiveBodyparts(ATTACK) > 0 || c.getActiveBodyparts(RANGED_ATTACK) > 0)
-        if(creep.hits < creep.hitMax || damager){
+        if(creep.hits < creep.hitsMax || damager){
             creep.heal(creep)
         }
     },
