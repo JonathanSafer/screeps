@@ -27,8 +27,17 @@ let p = {
     },
 
     buildConstructionSites: function() {
+        let firstRoom = Object.keys(Game.rooms).length == 1
+
         Object.keys(Game.rooms).forEach((roomName) => {
             var room = Game.rooms[roomName]
+            if (firstRoom && !room.memory.plan) {
+                let spawnPos = Game.spawns[roomName + "0"].pos
+                room.memory.plan = {}
+                room.memory.plan.x = spawnPos.x - 5 // TODO get these values from the template
+                room.memory.plan.y = spawnPos.y - 3
+            }
+
             if(Game.flags.plan && Game.flags.plan.pos.roomName == roomName && room.controller.owner && room.controller.owner.username == "Yoner"){
                 room.memory.plan = {}
                 room.memory.plan.x = Game.flags.plan.pos.x
