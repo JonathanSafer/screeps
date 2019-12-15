@@ -4,8 +4,11 @@ Screeps AI
 Functional screeps AI.
 
 ## Instructions
-1. Place flags to attack and claim rooms.
+### Startup
+1. Place your spawn in a large open area. Name it roomName0, for example, if the room is called E12N14, the spawn should be E12N140. The spawn should have 6 open squares on each side (13 by 13 square with spawn in the middle).
 
+### Claiming and Attacking (see "New City" section below and "Attacking" section below)
+TLDR place flags in other rooms like "claim" (claim room), "plan" (build base at flag location), "break" (break buildings), "shoot" (send ranged troops).
 
 ## Features
 1. Cities can mine remote rooms.
