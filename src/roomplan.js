@@ -120,7 +120,7 @@ let p = {
             for(var j = 0; j < structures.length; j++){
                 if(structures[j].structureType === STRUCTURE_WALL || structures[j].structureType === STRUCTURE_RAMPART){
                     wall = true;
-                    continue;
+                    break;
                 }
             }
             if(wall){
@@ -128,7 +128,7 @@ let p = {
             }
             //if we make it here, no wall or rampart has been placed on this spot
             //first we will check to see if we even need a barrier
-            //then, if we do need one, it'll be a ramp if structures.length, else it'll bbe a wall
+            //then, if we do need one, it'll be a ramp if structures.length, else it'll be a wall
 
             //check by attempting to path to all exits
             let wallNeeded = false;
@@ -153,7 +153,7 @@ let p = {
                 }
             }
             if(!wallNeeded){//at this point we will not build a wall if a path cannot be achieved outside anyway
-                break;
+                continue;
             }
 
             //now we need a wall
