@@ -20,6 +20,7 @@ var cM = {
 					let components = _.without(Object.keys(COMMODITIES[products[k]].components), RESOURCE_ENERGY)
 		            let rate = fact.findRateLimit(components, products[k]) //find rate limit, and use that to find quantity of each resource needed 
 		            let go = true; //(possibly batched in addition based on reaction time)
+		            let highTier = false;
 		            for (var l = 0; l < components.length; l++) {//go through each component and check if we have in empire store
 		            	let compLvl = COMMODITIES[components[l]].level
 		            	if(!compLvl){//if comp doesn't need a leveled factory, set to 0
@@ -28,19 +29,30 @@ var cM = {
 		                if((COMMODITIES[products[k]].components[components[l]] * rate) > storeByLvl[compLvl][components[l]] 
 		                		|| factCities[i][j].terminal.store[components[l]] > 2000){
 		                    go = false;//if we don't have enough of the comp, we are no go for this product (move on to next product)
+		                } else {
+		                	if(compLvl === COMMODITIES[products[k]].level - 1){
+		                		highTier = true;
+		                	}
 		                }
 		            }
 		            if(go){
 		                //create delivery orders in comSend
-		                storeByLvl = cM.scheduleDeliveries(products[k], rate, storeByLvl, factCities, factCities[i][j].name)
+		                storeByLvl = cM.scheduleDeliveries(products[k], rate, storeByLvl, factCities, factCities[i][j].name, false)
 		                break; // go to next city
+		            } else {
+		            	if(highTier){
+		            		//we have enough of the highest tier commodity to do the reaction, but not enough of something else
+		            		//remove needed resources from empire store like we are using it, so that no other city will use it
+		            		storeByLvl = cM.scheduleDeliveries(products[k], rate, storeByLvl, factCities, factCities[i][j].name, true)
+		            		//don't need to break since we can still get another shipment scheduled
+		            	}
 		            }
 		        }		
 			}
 		}
 	},
 
-	scheduleDeliveries: function(product, rate, storeByLvl, factCities, destination){
+	scheduleDeliveries: function(product, rate, storeByLvl, factCities, destination, dryrun){
 		const components = _.without(Object.keys(COMMODITIES[product].components), RESOURCE_ENERGY)
 		for(var i = 0; i < components.length; i++){
 			let compLvl = COMMODITIES[components[i]].level
@@ -50,6 +62,9 @@ var cM = {
         	let quantity = COMMODITIES[product].components[components[i]] * rate;
         	//remove quantity from total store
         	storeByLvl[compLvl][components[i]] = storeByLvl[compLvl][components[i]] - quantity;
+        	if(dryrun){
+        		continue;
+        	}
         	for(var j = 0; j < factCities[compLvl].length; j++){//for each city at the relevant level, send resources until the quantity is satisfied
         		const memory = Game.spawns[factCities[compLvl][j].memory.city].memory;
         		if(factCities[compLvl][j].terminal.store[components[i]] >= quantity){
