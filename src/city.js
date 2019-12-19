@@ -344,7 +344,7 @@ function chooseColonizerRoom(myCities){
     let claimRoom = Game.flags.unclaim ? Game.flags.unclaim.pos.roomName: Game.flags.claim.pos.roomName
     let closestRoom = goodCities[0].name;
     for (let i = 0; i < goodCities.length; i += 1){
-        if(Game.map.getRoomLinearDistance(goodCities[i].name, claimRoom) < Game.map.getRoomLinearDistance(closestRoom, claimRoom)){
+        if(Game.map.getRoomLinearDistance(goodCities[i].name, claimRoom) < Game.map.getRoomLinearDistance(closestRoom, claimRoom) && goodCities[i].name != claimRoom){
             closestRoom =  goodCities[i].name;
         }
     }
