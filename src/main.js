@@ -7,6 +7,7 @@ var s = require('stats');
 var rp = require('roomplan');
 var er = require('error');
 var em = require('empire');
+var settings = require('settings');
 const profiler = require('screeps-profiler');
 
 profiler.registerObject(c, 'city');
@@ -144,7 +145,7 @@ module.exports.loop = function () {
 
         //rp.findRooms();
         //rp.planRooms();
-        if (Game.time % 500 == 155){
+        if (Game.time % settings.roomplanTime == settings.roomplanOffset){
             rp.buildConstructionSites(); 
         }// TODO: this could go in run city?
         s.collectStats();
