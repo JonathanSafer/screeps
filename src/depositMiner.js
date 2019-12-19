@@ -74,7 +74,7 @@ var rDM = {
     },
 
     checkEnemies: function(creep, deposit){
-        if(Game.time == 50 || creep.hits < creep.hitsMax){
+        if(Game.time % 50 == 0 || creep.hits < creep.hitsMax){
             //scan room for hostiles
             const hostiles = creep.room.find(FIND_HOSTILE_CREEPS)
             const dangerous = _.find(hostiles, h => h.getActiveBodyparts(ATTACK) > 0 || h.getActiveBodyparts(RANGED_ATTACK) > 0)
