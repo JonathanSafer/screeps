@@ -80,12 +80,13 @@ var rDM = {
             const dangerous = _.find(hostiles, h => h.getActiveBodyparts(ATTACK) > 0 || h.getActiveBodyparts(RANGED_ATTACK) > 0)
             
             //check for tampering with deposit
-            const mined = Math.floor(Math.pow((deposit.lastCooldown / 0.001), 1/1.2))
-            let expected = Game.spawns[creep.memory.city].memory.deposit
-            if(mined > expected){
-                Game.spawns[creep.memory.city].memory.deposit
+            const cooldown = deposit.lastCooldown
+            let expected = Math.ceil(0.001*Math.pow(Game.spawns[creep.memory.city].memory.deposit,1.2))
+
+            if(cooldown > expected){
+                Game.spawns[creep.memory.city].memory.deposit = Math.floor(Math.pow((deposit.lastCooldown / 0.001), 1/1.2))
             }
-            if(mined > expected || dangerous){
+            if(cooldown > expected || dangerous){
                 //call in harasser
                 let flagName = creep.memory.city + 'harass'
                 if(!Game.flags[flagName]){
