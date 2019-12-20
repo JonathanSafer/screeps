@@ -76,7 +76,7 @@ var labs = {
             spawn.memory.ferryInfo.labInfo[6] = 'G';
             return;
         }
-        let boostsList = ['G', 'XKHO2', 'XLHO2', 'XZHO2', 'XGHO2', 'XZH2O', 'XGH2O']
+        let boostsList = ['G', 'XKHO2', 'XLHO2', 'XZHO2', 'XGHO2', 'XZH2O', 'XGH2O', 'XLH2O']
         if (boostsList.includes(currentBoost) && spawn.room.terminal.store[currentBoost] > 5000){
             boostsList.splice(boostsList.indexOf(currentBoost), 1);
         }

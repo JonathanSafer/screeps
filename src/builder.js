@@ -1,6 +1,7 @@
 var a = require('actions');
 var t = require('types');
 var u = require('utils');
+var rU = require('upgrader');
 
 var rB = {
     name: "builder",
@@ -9,6 +10,18 @@ var rB = {
 
     /** @param {Creep} creep **/
     run: function(creep) {
+        //get boosted if needed
+        const city = creep.memory.city;
+        if(!creep.memory.state){
+          creep.memory.state = 0
+        }
+        const boost = 'XLH2O'
+        rU.checkBoost(creep, city, boost);
+        rU.getBoosted(creep, city, boost);
+        if (creep.memory.state != 2){
+            return;
+        }
+        
         if(Game.spawns[creep.memory.city].room.controller.level === 8){//at RCL 8, only build, or repair ramparts and walls
             rB.decideWhetherToBuild(creep);
             if(creep.memory.building){

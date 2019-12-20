@@ -13,8 +13,9 @@ var rU = {
       if(!creep.memory.state){
         creep.memory.state = 0
       }
-      rU.checkBoost(creep, city);
-      rU.getBoosted(creep, city);
+      const boost = 'XGH2O'
+      rU.checkBoost(creep, city, boost);
+      rU.getBoosted(creep, city, boost);
 
       if (creep.memory.state == 2){
         if(creep.memory.upgrading && creep.carry.energy == 0) {
@@ -34,7 +35,7 @@ var rU = {
     },
 
 
-    checkBoost: function(creep, city){
+    checkBoost: function(creep, city, boost){
       if(creep.memory.state != 0){
         return;
       }
@@ -59,7 +60,7 @@ var rU = {
           return;
       }
       let lab = Game.getObjectById(Game.spawns[city].memory.ferryInfo.boosterInfo[0][0])
-      if(lab != null && rU.checkMaterials(lab, creep)){
+      if(lab != null && rU.checkMaterials(lab, creep, boost)){
             creep.memory.lab = lab.id
             creep.memory.state = 1
       } else {
@@ -67,10 +68,10 @@ var rU = {
       }
     },
 
-    checkMaterials: function(lab, creep){
+    checkMaterials: function(lab, creep, boost){
       let terminal = lab.room.terminal
-      let work = _.filter(creep.body, bodypart => bodypart.type == WORK).length
-      if(terminal.store['XGH2O'] > (LAB_BOOST_MINERAL * work) && lab.mineralAmount == 0){
+      let work = creep.getActiveBodyparts(WORK)
+      if(terminal.store[boost] > (LAB_BOOST_MINERAL * work) && lab.mineralAmount == 0){
         return 1
       } else {
         return 0
@@ -78,7 +79,7 @@ var rU = {
     },
 
 
-    getBoosted: function(creep, city){
+    getBoosted: function(creep, city, boost){
       if(creep.memory.state != 1){
         return;
       }
@@ -88,8 +89,8 @@ var rU = {
           creep.memory.state = 0
           return;
         }
-        let work = _.filter(creep.body, bodypart => bodypart.type == WORK).length
-        actions.withdraw(creep, creep.room.terminal, 'XGH2O', LAB_BOOST_MINERAL * work)
+        let work = creep.getActiveBodyparts(WORK)
+        actions.withdraw(creep, creep.room.terminal, boost, LAB_BOOST_MINERAL * work)
         return;
       }
       if(_.sum(creep.carry) > 0){
