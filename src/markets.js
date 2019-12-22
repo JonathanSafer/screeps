@@ -310,7 +310,7 @@ var markets = {
                     highPrice = highEnergyOrder.price
                 }
                 if(!order){
-                    let buyPrice = Math.min(markets.getPrice(RESOURCE_ENERGY) * 0.7, highPrice)
+                    let buyPrice = Math.max(Math.min(markets.getPrice(RESOURCE_ENERGY), highPrice), 0.001)
                     Game.market.createOrder({
                         type: ORDER_BUY,
                         resourceType: RESOURCE_ENERGY,
