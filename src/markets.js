@@ -1,4 +1,5 @@
 var cM = require('commodityManager')
+var settings = require('settings')
 
 var markets = {
     sortOrder: function(orders) {
@@ -299,9 +300,35 @@ var markets = {
                     });
                 }
             }
+        } else if(storage.store[RESOURCE_ENERGY] < 600000){//buy energy with excess credits
+            if(Game.market.credits > settings.creditMin){//arbitrary
+                let orderId = _.find(Object.keys(Game.market.orders),
+                        order => Game.market.orders[order].roomName === city.name && Game.market.orders[order].resourceType === RESOURCE_ENERGY);
+                let order = Game.market.orders[orderId];
+                let highPrice = 0
+                if(highEnergyOrder){
+                    highPrice = highEnergyOrder.price
+                }
+                if(!order){
+                    let buyPrice = Math.min(markets.getPrice(RESOURCE_ENERGY) * 0.7, highPrice)
+                    Game.market.createOrder({
+                        type: ORDER_BUY,
+                        resourceType: RESOURCE_ENERGY,
+                        price: buyPrice,
+                        totalAmount: 50000,
+                        roomName: city.name   
+                    });
+                } else {//update order occasionally
+                    if(Math.random() < 0.1 && order.price < highPrice){
+                        Game.market.changeOrderPrice(orderId, (order.price + 0.001))
+                    }
+                }
+
+            }
+
         }
         if(!termUsed){
-            if(storage.store[RESOURCE_ENERGY] > 600000 && highEnergyOrder && highEnergyOrder.price > .05){//sell if expensive
+            if(storage.store[RESOURCE_ENERGY] > 700000 && highEnergyOrder && highEnergyOrder.price > .05){//sell if expensive
                 Game.market.deal(highEnergyOrder.id, Math.min(highEnergyOrder.remainingAmount, terminal.store.energy / 2), city.name)
                 return true;
             }
