@@ -273,7 +273,7 @@ var markets = {
         return price;
     },
 
-    processEnergy: function(city, termUsed, highEnergyOrder){
+    processEnergy: function(city, termUsed, highEnergyOrder, energyOrders){
         //can't sell if terminal has been used
         let terminal = city.terminal;
         let storage = city.storage;
@@ -298,7 +298,7 @@ var markets = {
                     roomName: city.name   
                 });
             }
-        } else if(storage.store[RESOURCE_ENERGY] < 600000){//buy energy with excess credits
+        } else if(storage.store[RESOURCE_ENERGY] < 650000){//buy energy with excess credits
             if(Game.market.credits > settings.creditMin){//arbitrary
                 let orderId = _.find(Object.keys(Game.market.orders),
                         order => Game.market.orders[order].roomName === city.name && Game.market.orders[order].resourceType === RESOURCE_ENERGY);
@@ -325,14 +325,18 @@ var markets = {
             }
 
         }
-        if(!termUsed){
-            if(storage.store[RESOURCE_ENERGY] > 700000 && highEnergyOrder && highEnergyOrder.price > .05){//sell if expensive
+        if(!termUsed){//don't deal to rooms we have vision of
+            if(storage.store[RESOURCE_ENERGY] > 700000 && highEnergyOrder && highEnergyOrder.price > .05 && !Game.rooms[highEnergyOrder.roomName]){//sell if expensive
                 Game.market.deal(highEnergyOrder.id, Math.min(highEnergyOrder.remainingAmount, terminal.store.energy / 2), city.name)
                 return true;
             }
             else if(storage.store[RESOURCE_ENERGY] > 900000){
-                Game.market.deal(highEnergyOrder.id, Math.min(highEnergyOrder.remainingAmount, terminal.store.energy / 2), city.name)
-                return true;
+                for(var i = 0; i < energyOrders.length; i++){
+                    if(!Game.rooms[energyOrders[i].roomName]){
+                        Game.market.deal(energyOrders[i].id, Math.min(energyOrders[i].remainingAmount, terminal.store.energy / 2), city.name)
+                        return true;
+                    }
+                }
             }
         }
         return termUsed;
@@ -434,7 +438,8 @@ var markets = {
             global.marketHistory = _.groupBy(Game.market.getHistory(), history => history.resourceType)
             const sellOrders = _.groupBy(_.filter(orders, order => order.type == ORDER_SELL), order => order.resourceType)
             const buyOrders = _.groupBy(_.filter(orders, order => order.type == ORDER_BUY), order => order.resourceType)
-            const highEnergyOrder = markets.sortOrder(buyOrders[RESOURCE_ENERGY]).reverse()[0];
+            const energyOrders = markets.sortOrder(buyOrders[RESOURCE_ENERGY]).reverse();
+            const highEnergyOrder = energyOrders[0];
             const baseMins = [RESOURCE_HYDROGEN, RESOURCE_OXYGEN, RESOURCE_UTRIUM, RESOURCE_LEMERGIUM, RESOURCE_KEANIUM, RESOURCE_ZYNTHIUM, RESOURCE_CATALYST];
             const bars = [RESOURCE_UTRIUM_BAR, RESOURCE_LEMERGIUM_BAR, RESOURCE_ZYNTHIUM_BAR, RESOURCE_KEANIUM_BAR, RESOURCE_GHODIUM_MELT, 
                     RESOURCE_OXIDANT, RESOURCE_REDUCTANT, RESOURCE_PURIFIER, RESOURCE_CELL, RESOURCE_WIRE, RESOURCE_ALLOY, RESOURCE_CONDENSATE];
@@ -468,7 +473,7 @@ var markets = {
                     termUsed = markets.sellBars(myCities[i], bars, buyOrders);
                 }
                 //buy/sell energy
-                termUsed = markets.processEnergy(myCities[i], termUsed, highEnergyOrder);
+                termUsed = markets.processEnergy(myCities[i], termUsed, highEnergyOrder, energyOrders);
                 //sell products
                 termUsed = markets.sellProducts(myCities[i], termUsed, buyOrders, highTier)
             }
