@@ -280,25 +280,23 @@ var markets = {
         if(!storage){
             return termUsed;
         }
-        if(storage.store[RESOURCE_ENERGY] < 400000){//buy energy if it's cheap
-            if(!highEnergyOrder || highEnergyOrder.price <= 0.002){
-                //buy energy
-                let orderId = _.find(Object.keys(Game.market.orders),
-                        order => Game.market.orders[order].roomName === city.name && Game.market.orders[order].resourceType === RESOURCE_ENERGY);
-                let order = Game.market.orders[orderId];
-                if(order && order.remainingAmount === 0){
-                    //update order quantity
-                    Game.market.extendOrder(orderId, 50000)
-                } else if(!order){
-                    let buyPrice = 0.002
-                    Game.market.createOrder({
-                        type: ORDER_BUY,
-                        resourceType: RESOURCE_ENERGY,
-                        price: buyPrice,
-                        totalAmount: 50000,
-                        roomName: city.name   
-                    });
-                }
+        if(storage.store[RESOURCE_ENERGY] < 400000 && (!highEnergyOrder || highEnergyOrder.price <= 0.002)){//buy energy if it's cheap
+            //buy energy
+            let orderId = _.find(Object.keys(Game.market.orders),
+                    order => Game.market.orders[order].roomName === city.name && Game.market.orders[order].resourceType === RESOURCE_ENERGY);
+            let order = Game.market.orders[orderId];
+            if(order && order.remainingAmount === 0){
+                //update order quantity
+                Game.market.extendOrder(orderId, 50000)
+            } else if(!order){
+                let buyPrice = 0.002
+                Game.market.createOrder({
+                    type: ORDER_BUY,
+                    resourceType: RESOURCE_ENERGY,
+                    price: buyPrice,
+                    totalAmount: 50000,
+                    roomName: city.name   
+                });
             }
         } else if(storage.store[RESOURCE_ENERGY] < 600000){//buy energy with excess credits
             if(Game.market.credits > settings.creditMin){//arbitrary
