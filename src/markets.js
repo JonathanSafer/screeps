@@ -277,6 +277,10 @@ var markets = {
         //can't sell if terminal has been used
         let terminal = city.terminal;
         let storage = city.storage;
+        let buyThreshold = 600000;
+        if(terminal.store[RESOURCE_POWER] > 2000){
+            buyThreshold = 650000;//if excess power, buy energy
+        }
         if(!storage){
             return termUsed;
         }
@@ -298,7 +302,7 @@ var markets = {
                     roomName: city.name   
                 });
             }
-        } else if(storage.store[RESOURCE_ENERGY] < 650000){//buy energy with excess credits
+        } else if(storage.store[RESOURCE_ENERGY] < buyThreshold){//buy energy with excess credits
             if(Game.market.credits > settings.creditMin){//arbitrary
                 let orderId = _.find(Object.keys(Game.market.orders),
                         order => Game.market.orders[order].roomName === city.name && Game.market.orders[order].resourceType === RESOURCE_ENERGY);
