@@ -186,7 +186,7 @@ var rT = {
     },
 
     endLife: function(creep){
-        if(creep.tickToLive > 10 || !creep.room.storage){
+        if(creep.ticksToLive > 10 || !creep.room.storage){
             return false
         }
         if(creep.store.getFreeCapacity() > 0){
