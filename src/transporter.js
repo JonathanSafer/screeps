@@ -9,6 +9,9 @@ var rT = {
 
     /** @param {Creep} creep **/
     run: function(creep) {
+        if(rT.endLife(creep)){
+            return
+        }
         var city = creep.memory.city;
         if(false) { //city == "E9N10"){//new transporter only in this room fort now so we can profile and compare
             rT.init(creep)
@@ -180,6 +183,18 @@ var rT = {
                     return false;
                 }
         }
+    },
+
+    endLife: function(creep){
+        if(creep.tickToLive > 10 || !creep.room.storage){
+            return false
+        }
+        if(creep.store.getFreeCapacity() > 0){
+            actions.charge(creep, creep.room.storage)
+        } else {
+            creep.suicide()
+        }
+        return true
     },
 
     getNextTarget: function(creep){
