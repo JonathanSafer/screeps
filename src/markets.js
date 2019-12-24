@@ -129,6 +129,22 @@ var markets = {
         }
     },
 
+    distributeRepair: function(myCities){
+        var receiver = null
+        var needRepair = _.filter(myCities, city => city.controller.level > 5 && city.terminal && city.terminal.store['XLH2O'] < 1000)
+        if (needRepair.length){
+            receiver = needRepair[0].name
+            for (var i = 0; i < myCities.length; i++){
+                if (myCities[i].terminal && myCities[i].terminal.store['XLH2O'] > 7000 && !myCities[i].terminal.termUsed){
+                    myCities[i].terminal.send('XLH2O', 3000, receiver);
+                    myCities[i].terminal.termUsed = true;
+                    console.log('Sending repair boost to ' + receiver)
+                    return;
+                }
+            }
+        }
+    },
+
     distributeOps: function(myCities){
         var receiver = null
         var needOps = _.filter(myCities, city => city.controller.level == 8 && city.terminal && city.terminal.store[RESOURCE_OPS] < 300)
@@ -413,7 +429,10 @@ var markets = {
             markets.relocateBaseMins(termCities);
         }
         if(Game.time % 1000 === 40){
-            markets.distributeOps(myCities);
+            markets.distributeOps(termCities);
+        }
+        if(Game.time % 1000 === 50){
+            markets.distributeRepair(termCities)
         }
         //distribure minerals (every 50 ticks)
         if(Game.time % 50 === 0){
