@@ -191,7 +191,7 @@ var fact = {
 
     },
 
-    moveJunk: function(city, terminal, factLevel){
+    removeJunk: function(city, terminal, factLevel){
         const coms = _.without(_.difference(Object.keys(COMMODITIES), Object.keys(REACTIONS)), RESOURCE_ENERGY)
         const destination = _.find(Game.structures, struct => struct.structureType == STRUCTURE_FACTORY
                  && struct.my && !struct.level && struct.room.terminal && struct.room.controller.level >= 7).room.name
