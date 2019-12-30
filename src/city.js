@@ -111,7 +111,6 @@ function updateCountsCity(city, creeps, rooms, closestRoom) {
             const structures = spawn.room.find(FIND_STRUCTURES);
             const extensions = _.filter(structures, structure => structure.structureType == STRUCTURE_EXTENSION).length;
             let rcl8Room = _.find(Game.rooms, room => room.controller && room.controller.owner && room.controller.owner.username == "Yoner" && room.controller.level == 8)
-            updateScout(city, rcl, rcl8, rcl8Room, memory);
             updateRunner(creeps, spawn, extensions, memory, rcl, emergencyTime);
             updateFerry(spawn, memory, rcl);
             updateMiner(rooms, rcl8Room, memory, spawn);

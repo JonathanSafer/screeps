@@ -76,7 +76,7 @@ var stats = {
                 stats['cities.' + city + '.minerals'] = 0
             });
             // Mining stats
-            Game.creeps.forEach(creep => {
+            _.forEach(Game.creeps, creep => {
                 let city = creep.memory.city
                 if (creep.memory.role == rDM.name) {
                     stats['cities.' + city + '.deposits'] += creep.memory.mined
