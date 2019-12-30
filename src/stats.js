@@ -12,7 +12,6 @@ var rR = require('runner');
 var rBr = require('breaker');
 var rT = require('transporter');
 var rM = require('remoteMiner');
-var rS = require('scout');
 var rA = require('attacker');
 var u = require('utils');
 var rD = require('defender');
@@ -57,7 +56,7 @@ var stats = {
               }
             })
             var counts = _.countBy(Game.creeps, creep => creep.memory.role);
-            var roles = [rA, rT, rM, rR, rU, rB, rS, rMM, rF, rC, rSB, rH, rMe, rD, rBr, rPM, rRo] 
+            var roles = [rA, rT, rM, rR, rU, rB, rMM, rF, rC, rSB, rH, rMe, rD, rBr, rPM, rRo] 
             _.forEach(roles, function(role){
                 if (counts[role.name]){
                     stats['creeps.' + role.name + '.count'] = counts[role.name]

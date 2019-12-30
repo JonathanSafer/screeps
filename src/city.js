@@ -8,7 +8,6 @@ var rBB = require('bigBreaker')
 var rH = require('harasser');
 var rSB = require('spawnBuilder');
 var rC = require('claimer');
-var rE = require('eye');
 var rRo = require('robber');
 var rF = require('ferry');
 var rMM = require('mineralMiner');
@@ -18,7 +17,6 @@ var rR = require('runner');
 var rBr = require('breaker');
 var rT = require('transporter');
 var rM = require('remoteMiner');
-var rS = require('scout');
 var rA = require('attacker');
 var types = require('types');
 var u = require('utils');
@@ -65,7 +63,7 @@ function runCity(city, creeps){
 
         // Only build required roles during financial stress
         var coreRoles = [rF, rA, rT, rM, rR, rU, rB]
-        var allRoles = [rF, rA, rT, rM, rR, rU, rB, rS, rMM, rC, rSB, rH, rBM, rD, rBB, rBT, rMe, rTr, rBr, rPM, rRo, rDM] // order roles for priority
+        var allRoles = [rF, rA, rT, rM, rR, rU, rB, rMM, rC, rSB, rH, rBM, rD, rBB, rBT, rMe, rTr, rBr, rPM, rRo, rDM] // order roles for priority
         var roles = (room.storage && room.storage.store.energy < 50000) ? coreRoles : allRoles
 
         var nameToRole = _.groupBy(allRoles, role => role.name); // map from names to roles
@@ -119,7 +117,6 @@ function updateCountsCity(city, creeps, rooms, closestRoom) {
             updateMiner(rooms, rcl8Room, memory, spawn);
         
             if (Game.time % 500 === 0) {
-                updateExtensions(spawn, memory, structures)
                 runNuker(city)
                 checkLabs(city)
                 updateTransporter(extensions, memory);
@@ -399,34 +396,6 @@ function updateAttacker(rooms, memory, rcl8) {
     }
 }
 
-function updateScout(city, rcl, rcl8, rcl8Room, memory){
-    if (rcl8) {
-        memory[rS.name] = 0;
-        return;
-    }
-    if (rcl8Room){
-        memory[rS.name] = 0;
-        return;
-    }
-    let scouts = 0;
-    _.each(memory.remoteRooms, function(roomInfo, room) {
-        if (roomInfo.reinforceTime < Game.time){
-            scouts++
-        }
-    })
-    if (rcl > 3){
-        if (!memory.remoteRooms || Object.keys(memory.remoteRooms).length < 1){
-            scouts = 1;
-        }
-    }
-    if (rcl > 4){
-        if (!memory.remoteRooms || Object.keys(memory.remoteRooms).length < 2){
-            scouts = 2;
-        }
-    }
-    memory[rS.name] = scouts;
-}
-
 function updateMiner(rooms, rcl8Room, memory, spawn){
     if (!memory.sources) memory.sources = {};
     if (rcl8Room && _.keys(memory.sources).length > 2) memory.sources = {};
@@ -691,43 +660,6 @@ function runNuker(city){
         nuker.launchNuke(Game.flags[flag].pos);
         Game.flags[flag].remove();
     }
-}
-
-function updateExtensions(spawn, memory, structures){
-    if(!memory.extensions){
-        memory.extensions = [];
-    }
-    let extensions = _.filter(structures, struct => struct.structureType === STRUCTURE_EXTENSION
-                || struct.structureType === STRUCTURE_SPAWN
-                || struct.structureType === STRUCTURE_LAB
-                || struct.structureType === STRUCTURE_NUKER
-                || struct.structureType === STRUCTURE_POWER_SPAWN
-                || struct.structureType === STRUCTURE_FACTORY
-                || struct.structureType === STRUCTURE_TOWER
-    )
-    if(extensions.length === memory.extensions.length){//if number of fill locations hasn't changed, fill order shouldn't change either
-        return;
-    }
-    //make list of deposit sites in order using fcbp from spawn.
-    //after a site is found, use pathfinder from spawn to site and save last pos (range 1)
-    //remove site from  extensions list, push site id to ordered list, and do calc again using saved pos as start pos
-    memory.extensions = []
-    let startPos = spawn.pos
-    while(extensions.length){
-        startPos = extensionPath(memory.extensions, startPos, extensions)
-    }
-}
-
-function extensionPath(sortedList, startPos, extensions){
-    const target = startPos.findClosestByPath(extensions, {range: 1, ignoreCreeps: true})
-    sortedList.push(target.id)
-    extensions = _.remove(extensions, target)
-    const path = target.room.findPath(startPos, target.pos, {range: 1, ignoreCreeps: true})
-    if(path.length){
-        const point = path[path.length - 1]
-        startPos = new RoomPosition(point.x, point.y, target.pos.roomName)
-    }
-    return startPos
 }
 
 function runObs(city){
