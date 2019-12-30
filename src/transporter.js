@@ -189,7 +189,7 @@ var rT = {
         if(creep.ticksToLive > 10 || !creep.room.storage){
             return false
         }
-        if(creep.store.getFreeCapacity() > 0){
+        if(creep.store.getUsedCapacity() > 0){
             actions.charge(creep, creep.room.storage)
         } else {
             creep.suicide()
