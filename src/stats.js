@@ -28,7 +28,6 @@ var stats = {
             RawMemory.setActiveSegments([])
             let stats = {}
             stats['cpu.bucket'] = Game.cpu.bucket
-            stats['cpu.bucket'] = Game.cpu.bucket
             stats['gcl.progress'] = Game.gcl.progress
             stats['gcl.progressTotal'] = Game.gcl.progressTotal
             stats['gcl.level'] = Game.gcl.level
@@ -64,6 +63,8 @@ var stats = {
                     stats['creeps.' + role.name + '.count'] = 0
                 }
             });
+
+            // City level stats
             var cityCounts = _.countBy(Game.creeps, creep => creep.memory.city);
             _.forEach(cities, function(city){
                 if (cityCounts[city]){
@@ -71,9 +72,25 @@ var stats = {
                 } else {
                     stats['cities.' + city + '.count'] = 0
                 }
+                stats['cities.' + city + '.deposits'] = 0
+                stats['cities.' + city + '.minerals'] = 0
             });
+            // Mining stats
+            Game.creeps.forEach(creep => {
+                let city = creep.memory.city
+                if (creep.memory.role == rDM.name) {
+                    stats['cities.' + city + '.deposits'] += creep.memory.mined
+                    creep.memory.mined = 0
+                } else if (creep.memory.role == rMM.name) {
+                    stats['cities.' + city + '.minerals'] += creep.memory.mined
+                    creep.memory.mined = 0
+                }
+            })
+
             stats['market.credits'] = Game.market.credits
             stats['cpu.getUsed'] = Game.cpu.getUsed()
+
+            
             
             RawMemory.segments[0] = JSON.stringify(stats)
         }  

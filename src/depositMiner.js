@@ -7,6 +7,9 @@ var rDM = {
     type: "depositMiner",
     target: () => 0,
 
+    // Keep track of how much is mined for stats. Stat object will clear this when it's recorded
+    mined: 0,
+
     /** @param {Creep} creep **/
     run: function(creep) {
         if (_.sum(creep.store) === 0 && creep.ticksToLive < 500){//if old and no store, suicide
@@ -50,12 +53,13 @@ var rDM = {
                 //move towards and mine deposit (actions.harvest)
                 if(actions.harvest(creep, deposit[0]) === 1){
                     //record amount harvested
-                    let works = 0;
-                    for(var i = 0; i < creep.body.length; ++i){
-                        if(creep.body[i].type == WORK){
-                            works++;
-                        }
+                    let works = _.filter(creep.body, part => part.type == WORK).length
+                    // record personal work for stats
+                    if (!creep.memory.mined) {
+                        creep.memory.mined = 0
                     }
+                    creep.memory.mined += works
+                    // update city level tracker for planning purposes
                     if(!Game.spawns[creep.memory.city].memory.deposit){
                         Game.spawns[creep.memory.city].memory.deposit = 0;
                     }
