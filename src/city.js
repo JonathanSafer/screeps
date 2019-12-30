@@ -174,7 +174,7 @@ function runTowers(city){
             return;
         }
         var towers = _.filter(Game.structures, (structure) => structure.structureType == STRUCTURE_TOWER && structure.room.memory.city == city);
-        var hostileCreep = _.filter(Game.spawns[city].room.find(FIND_HOSTILE_CREEPS), enemy => enemy.owner.username != 'TuN9aN0' || enemy.pos.roomName != 'W1N21')
+        var hostileCreep = Game.spawns[city].room.find(FIND_HOSTILE_CREEPS)
         var injuredCreep = Game.spawns[city].room.find(FIND_MY_CREEPS, {filter: (injured) => { 
                                                 return (injured) && injured.hits < injured.hitsMax;
                              }});
@@ -765,6 +765,5 @@ module.exports = {
     runCity: runCity,
     updateCountsCity: updateCountsCity,
     runTowers: runTowers,
-    updateScout: updateScout,
     runObs: runObs
 };
