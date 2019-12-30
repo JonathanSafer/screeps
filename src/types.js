@@ -14,7 +14,6 @@ function getRecipe(type, energyAvailable, room){
             d['miner'] = body([2, 2], [MOVE, WORK]);
             d['transporter'] = body([2, 2], [CARRY, MOVE]);
             d['builder'] = body([2, 1, 1], [WORK, CARRY, MOVE]);
-            d['scout'] = body([1, 1], [MOVE, CLAIM]);
             d['attacker'] = body([1, 1, 1], [TOUGH, MOVE, ATTACK]);
 			break;
 		case 500: // 550 energy
@@ -23,7 +22,6 @@ function getRecipe(type, energyAvailable, room){
             d['miner'] = body([1, 5], [MOVE, WORK]);
             d['transporter'] = body([4, 2], [CARRY, MOVE]);
             d['builder'] = body([2, 2, 2], [WORK, CARRY, MOVE]);
-            d['scout'] = body([1, 1], [MOVE, CLAIM]);
             d['attacker'] = body([2, 3, 1], [TOUGH, MOVE, ATTACK]);
 			break;
 		case 501: // 800
@@ -32,7 +30,6 @@ function getRecipe(type, energyAvailable, room){
             d['miner'] = body([3, 5], [MOVE, WORK]);
             d['transporter'] = body([4, 2], [CARRY, MOVE]);
             d['builder'] = body([3, 2, 2], [WORK, CARRY, MOVE]);
-            d['scout'] = body([1, 1], [MOVE, CLAIM]);
             d['attacker'] = body([4, 4], [MOVE, ATTACK]);
 			break;
 		case 1000: // 1300
@@ -41,7 +38,6 @@ function getRecipe(type, energyAvailable, room){
             d['miner'] = body([3, 5], [MOVE, WORK]);
             d['transporter'] = body([8, 4], [CARRY, MOVE]);
             d['builder'] = body([5, 9, 7], [WORK, CARRY, MOVE]);
-            d['scout'] = body([2, 2], [MOVE, CLAIM]);
             d['attacker'] = body([2, 4, 6], [TOUGH, MOVE, ATTACK]);
             d['spawnBuilder'] = body([4, 6, 10], [WORK, CARRY, MOVE]);
     		d['trooper'] = body([3, 3], [RANGED_ATTACK, MOVE]);
@@ -54,7 +50,6 @@ function getRecipe(type, energyAvailable, room){
     		d['ferry'] = body([6, 3], [CARRY, MOVE]);
     		d['transporter'] = body([12, 6], [CARRY, MOVE]);
     		d['miner'] = body([3, 5], [MOVE, WORK]);
-    		d['scout'] = body([5, 2], [MOVE, CLAIM]);
     		d['attacker'] = body([2, 4, 6], [TOUGH, MOVE, ATTACK]);
     		d['spawnBuilder'] = body([5, 10, 15], [WORK, CARRY, MOVE]);
     		d['trooper'] = body([6, 6], [RANGED_ATTACK, MOVE]);
@@ -75,7 +70,6 @@ function getRecipe(type, energyAvailable, room){
     		d['transporter'] = body([12, 6], [CARRY, MOVE]);
     		d['miner'] = body([3, 5], [MOVE, WORK]);
     		d['mineralMiner'] = body([12, 6, 9], [WORK, CARRY, MOVE]);
-    		d['scout'] = body([8, 3], [MOVE, CLAIM]);
     		d['attacker'] = body([2, 6, 10], [TOUGH, MOVE, ATTACK]);
     		d['spawnBuilder'] = body([5, 10, 15], [WORK, CARRY, MOVE]);
     	    d['trooper'] = body([8, 8], [RANGED_ATTACK, MOVE]);
@@ -90,7 +84,6 @@ function getRecipe(type, energyAvailable, room){
     		d['transporter'] = body([12, 6], [CARRY, MOVE]);
     		d['miner'] = body([5, 8, 10], [MOVE, CARRY, WORK]);
     		d['mineralMiner'] = body([22, 10, 16], [WORK, CARRY, MOVE]);
-    		d['scout'] = body([15, 6], [MOVE, CLAIM]);
     		d['attacker'] = body([2, 6, 10], [TOUGH, MOVE, ATTACK]);
     		d['spawnBuilder'] = body([10, 15, 25], [WORK, CARRY, MOVE]);
 		    d['harasser'] = body([9, 8, 1], [MOVE, RANGED_ATTACK, HEAL]);
@@ -116,7 +109,6 @@ function getRecipe(type, energyAvailable, room){
     		d['transporter'] = body([20, 10],[CARRY, MOVE]);
     		d['miner'] = body([20, 8, 10],[WORK, CARRY, MOVE]);
     		d['mineralMiner'] = body([22, 10, 16], [WORK, CARRY, MOVE]);
-    		d['scout'] = body([20, 8], [MOVE, CLAIM]);
     		d['attacker'] = body([2, 6, 10], [TOUGH, MOVE, ATTACK]);
     		d['spawnBuilder'] = body([10, 15, 25], [WORK,  CARRY, MOVE]);
 		    d['harasser'] = body([20, 25, 5], [RANGED_ATTACK, MOVE, HEAL]);
@@ -133,7 +125,6 @@ function getRecipe(type, energyAvailable, room){
             break;
 	}
 
-    d.eye = body([1], [MOVE]);
     d.basic = body([1,1,1],[WORK, CARRY, MOVE]);
     d.lightMiner = body([2, 2], [MOVE, WORK]);
     d.erunner = body([2, 1], [CARRY, MOVE]);
