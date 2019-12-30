@@ -67,6 +67,9 @@ var stats = {
             // City level stats
             var cityCounts = _.countBy(Game.creeps, creep => creep.memory.city);
             _.forEach(cities, function(city){
+                if (!city) {
+                    return
+                }
                 if (cityCounts[city]){
                     stats['cities.' + city + '.count'] = cityCounts[city]
                 } else {
@@ -74,6 +77,13 @@ var stats = {
                 }
                 stats['cities.' + city + '.deposits'] = 0
                 stats['cities.' + city + '.minerals'] = 0
+                
+                // Record the weakest wall in each city
+                let spawn = Game.spawns[city]
+                let buildings = spawn.room.find(FIND_STRUCTURES)
+                let walls = _.filter(buildings, building => building.structureType == STRUCTURE_WALL)
+                let minWall = _.min(_.toArray(_.map(walls, wall => wall.hits)))
+                stats['cities.' + city + '.wall'] = walls.length  > 0 ? minWall : 0
             });
             // Mining stats
             _.forEach(Game.creeps, creep => {
