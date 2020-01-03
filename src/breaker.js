@@ -55,6 +55,14 @@ var rBr = {
         if(creep.memory.retreat) {
             return a.retreat(creep);
         }
+        var targetFlag = creep.memory.city + 'breakTarget';
+        if(Game.flags[targetFlag] && creep.pos.roomName === Game.flags[targetFlag].pos.roomName){
+            var found = Game.flags[targetFlag].pos.lookFor(LOOK_STRUCTURES)
+            if(found.length){
+                a.dismantle(creep, found[0])
+                return;
+            }
+        }
         const badStuff = creep.pos.findClosestByPath(FIND_HOSTILE_STRUCTURES, {
             filter: function(object) {
                 return object.structureType !== STRUCTURE_CONTROLLER;
@@ -81,14 +89,7 @@ var rBr = {
             }
             return;
         }
-        var targetFlag = creep.memory.city + 'breakTarget';
-        if(Game.flags[targetFlag] && creep.pos.roomName === Game.flags[targetFlag].pos.roomName){
-            var found = Game.flags[targetFlag].pos.lookFor(LOOK_STRUCTURES)
-            if(found.length){
-                a.dismantle(creep, found[0])
-                return;
-            }
-        } else if(Game.flags[targetFlag]){
+        if(Game.flags[targetFlag]){
             creep.moveTo(Game.flags[targetFlag], {reusePath: 50})
             return;
         }
