@@ -63,16 +63,21 @@ var rBr = {
                 return;
             }
         }
-        const badStuff = creep.pos.findClosestByPath(FIND_HOSTILE_STRUCTURES, {
-            filter: function(object) {
-                return object.structureType !== STRUCTURE_CONTROLLER;
+
+        let ignore = creep.memory.ignore
+        if(ignore != null && ignore.includes(creep.pos.roomName)){
+            //attempt to move through room
+        } else {
+            const badStuff = creep.pos.findClosestByPath(FIND_HOSTILE_STRUCTURES, {
+                filter: function(object) {
+                    return (object.structureType !== STRUCTURE_CONTROLLER && object.owner !== 'invader')
+                }
+            })
+            if(badStuff != null) { // TODO ignore target room
+                a.dismantle(creep, badStuff)
+                return
             }
-        })
-        if(badStuff != null) { // TODO ignore target room
-            a.dismantle(creep, badStuff)
-            return
         }
-        
     	var rallyFlag = creep.memory.city + 'breakerRally1'
         if (Game.flags[rallyFlag] && !creep.memory.rally1){
             creep.moveTo(Game.flags[rallyFlag], {reusePath: 50})
