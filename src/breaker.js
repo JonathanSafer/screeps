@@ -64,7 +64,7 @@ var rBr = {
             }
         }
 
-        let ignore = creep.memory.ignore
+        let ignore = Game.spawns[creep.memory.city].memory.ignoreRooms
         if(ignore != null && ignore.includes(creep.pos.roomName)){
             //attempt to move through room
         } else {
