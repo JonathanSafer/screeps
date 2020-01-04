@@ -1,18 +1,17 @@
-var glob = require( 'glob' ),
-    path = require( 'path' );
 var profiler = require('screeps-profiler.js')
 
 var p = {
     prepProfile: function() {
-        glob.sync( './**/*.js' ).forEach( function( file ) {
-          console.log(file)
-          const ignoreFiles = ['main.js', 'profiler-prep.js', 'screeps-profiler.js']
-          if (file in ignoreFiles)  {
-            return;
-          }
-          const lib = require( path.resolve( file ) );
-          profiler.registerObject(lib, file);
-        });
+        let fileNames = ['city', 'powerCreep', 'utils', 'markets', 'medic',
+          'depositMiner', 'roomplan', 'bigMedic', 'trooper', 'bigTrooper',
+          'bigBreaker', 'harasser', 'spawnBuilder', 'claimer', 'robber',
+          'ferry', 'mineralMiner', 'upgrader', 'builder', 'runner', 'breaker',
+          'transporter', 'remoteMiner', 'attacker', 'types', 'tower', 'defender',
+          'powerMiner', 'labs', 'factory']
+        for (let fileName of fileNames) {
+          var lib = require(fileName);
+          profiler.registerObject(lib, fileName);
+        }
     }
 };
 module.exports = p;

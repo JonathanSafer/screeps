@@ -8,7 +8,6 @@ var rp = require('roomplan');
 var er = require('error');
 var settings = require('settings');
 const profiler = require('screeps-profiler');
-const pp = require('profiler-prep');
 
 // pp.prepProfile()
 
@@ -135,6 +134,8 @@ module.exports.loop = function () {
                 }
             }
         }*/
+        // const pp = require('profiler-prep');
+
         // This will always be last. Throw an exception if any city failed.
         er.finishTick()
     });
