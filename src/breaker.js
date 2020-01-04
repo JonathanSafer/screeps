@@ -70,7 +70,9 @@ var rBr = {
         } else {
             const badStuff = creep.pos.findClosestByPath(FIND_HOSTILE_STRUCTURES, {
                 filter: function(object) {
-                    return (object.structureType !== STRUCTURE_CONTROLLER && object.owner !== 'invader')
+                    return (object.structureType !== STRUCTURE_CONTROLLER 
+                        && object.owner.username !== 'Invader' && object.owner.username !== 'Source Keeper' 
+                        && object.owner.username !== 'Public' )
                 }
             })
             if(badStuff != null) { // TODO ignore target room
