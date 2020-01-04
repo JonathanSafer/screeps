@@ -6,67 +6,12 @@ var m = require('markets');
 var s = require('stats');
 var rp = require('roomplan');
 var er = require('error');
-var em = require('empire');
 var settings = require('settings');
 const profiler = require('screeps-profiler');
+const pp = require('profiler-prep');
 
-profiler.registerObject(c, 'city');
-profiler.registerObject(rPC, 'powerCreep');
-profiler.registerObject(u, 'utils');
-profiler.registerObject(m, 'markets');
+// pp.prepProfile()
 
-var rMe = require('medic');
-profiler.registerObject(rMe, 'medic');
-var rDM = require('depositMiner');
-profiler.registerObject(rDM, 'depositMiner');
-var rp = require('roomplan');
-profiler.registerObject(rp, 'roomplan');
-var rBM = require('bigMedic')
-profiler.registerObject(rBM, 'bigMedic');
-var rTr = require('trooper')
-profiler.registerObject(rTr, 'trooper');
-var rBT = require('bigTrooper')
-profiler.registerObject(rBT, 'bigTrooper');
-var rBB = require('bigBreaker')
-profiler.registerObject(rBB, 'bigBreaker');
-var rH = require('harasser');
-profiler.registerObject(rH, 'harasser');
-var rSB = require('spawnBuilder');
-profiler.registerObject(rSB, 'spawnBuilder');
-var rC = require('claimer');
-profiler.registerObject(rC, 'claimer');
-var rRo = require('robber');
-profiler.registerObject(rRo, 'robber');
-var rF = require('ferry');
-profiler.registerObject(rF, 'ferry');
-var rMM = require('mineralMiner');
-profiler.registerObject(rMM, 'mineralMiner');
-var rU = require('upgrader');
-profiler.registerObject(rU, 'upgrader');
-var rB = require('builder');
-profiler.registerObject(rB, 'builder');
-var rR = require('runner');
-profiler.registerObject(rR, 'runner');
-var rBr = require('breaker');
-profiler.registerObject(rBr, 'breaker');
-var rT = require('transporter');
-profiler.registerObject(rT, 'transporter');
-var rM = require('remoteMiner');
-profiler.registerObject(rM, 'remoteMiner');
-var rA = require('attacker');
-profiler.registerObject(rA, 'attacker');
-var types = require('types');
-profiler.registerObject(types, 'types');
-var t = require('tower');
-profiler.registerObject(t, 'tower');
-var rD = require('defender');
-profiler.registerObject(rD, 'defender');
-var rPM = require('powerMiner');
-profiler.registerObject(rPM, 'pwoerMiner');
-var labs = require('labs');
-profiler.registerObject(labs, 'labs');
-var fact = require('factory');
-profiler.registerObject(fact, 'factory');
 //Game.profiler.profile(1000);
 //Game.profiler.output();
 //Game.spawns['Home'].memory.counter = 934;
