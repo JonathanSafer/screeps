@@ -6,7 +6,7 @@ var p = {
           'depositMiner', 'roomplan', 'bigMedic', 'trooper', 'bigTrooper',
           'bigBreaker', 'harasser', 'spawnBuilder', 'claimer', 'robber',
           'ferry', 'mineralMiner', 'upgrader', 'builder', 'runner', 'breaker',
-          'transporter', 'remoteMiner', 'attacker', 'types', 'tower', 'defender',
+          'transporter', 'remoteMiner', 'defender', 'types', 'tower',
           'powerMiner', 'labs', 'factory']
         for (let fileName of fileNames) {
           var lib = require(fileName);

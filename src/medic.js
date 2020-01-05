@@ -35,7 +35,6 @@ var rMe = {
         		    && (targetCreep.memory.medic == null || targetCreep.memory.medic == creep.id));
 	   		} else {
    		    	var breakerSearch = _.filter(allCreeps[creep.memory.city], targetCreep => (targetCreep.memory.role == 'breaker' 
-    		                                        || targetCreep.memory.role == 'defender' 
     		                                        || targetCreep.memory.role == 'trooper'
     		                                        || targetCreep.memory.role == 'powerMiner')
     		    && (targetCreep.memory.medic == null || targetCreep.memory.medic == creep.id));

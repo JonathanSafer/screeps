@@ -17,11 +17,10 @@ var rR = require('runner');
 var rBr = require('breaker');
 var rT = require('transporter');
 var rM = require('remoteMiner');
-var rA = require('attacker');
+var rD = require('defender');
 var types = require('types');
 var u = require('utils');
 var t = require('tower');
-var rD = require('defender');
 var rPM = require('powerMiner');
 var labs = require('labs');
 var fact = require('factory');
@@ -62,8 +61,8 @@ function runCity(city, creeps){
         let room = Game.spawns[city].room
 
         // Only build required roles during financial stress
-        var coreRoles = [rF, rA, rT, rM, rR, rU, rB]
-        var allRoles = [rF, rA, rT, rM, rR, rU, rB, rMM, rC, rSB, rH, rBM, rD, rBB, rBT, rMe, rTr, rBr, rPM, rRo, rDM] // order roles for priority
+        var coreRoles = [rF, rD, rT, rM, rR, rU, rB]
+        var allRoles = [rF, rD, rT, rM, rR, rU, rB, rMM, rC, rSB, rH, rBM, rD, rBB, rBT, rMe, rTr, rBr, rPM, rRo, rDM] // order roles for priority
         var roles = (room.storage && room.storage.store.energy < 50000) ? coreRoles : allRoles
 
         var nameToRole = _.groupBy(allRoles, role => role.name); // map from names to roles
@@ -128,7 +127,7 @@ function updateCountsCity(city, creeps, rooms, closestRoom) {
             }
             makeEmergencyCreeps(extensions, creeps, city, rcl8, emergencyTime); 
         }
-        updateAttacker(rooms, memory, rcl8);
+        updateDefender(rooms, memory, rcl8);
     }
 }
 
@@ -306,7 +305,7 @@ function checkLabs(city){
 
 function updateMilitary(city, memory, rooms) {
     let flags = ['harass', 'break', 'defend', 'powerMine', 'bigShoot', 'shoot', 'bigBreak', 'deposit'];
-    let updateFns = [updateHarasser, updateBreaker, updateDefender, updatePowerMine, updateBigTrooper, updateTrooper, updateBigBreaker, updateDepositMiner];
+    let updateFns = [updateHarasser, updateBreaker, updatePowerMine, updateBigTrooper, updateTrooper, updateBigBreaker, updateDepositMiner];
     let big = 0
     for (var i = 0; i < flags.length; i++) {
         let flagName = city + flags[i];
@@ -376,11 +375,11 @@ function updateColonizers(city, memory, closestRoom) {
     //memory[rRo.name] = 0;
 }
 
-// Automated attacker count for defense
-function updateAttacker(rooms, memory, rcl8) {
+// Automated defender count for defense
+function updateDefender(rooms, memory, rcl8) {
     if (Game.time % 30 == 0) {
         if(rcl8){
-            memory[rA.name] = 0;
+            memory[rD.name] = 0;
             return;
         }
         var enemyCounts = _.map(rooms, room => {
@@ -391,7 +390,7 @@ function updateAttacker(rooms, memory, rcl8) {
             var invaders = _.reject(allBadCreeps, creep => creep.owner.username == "Source Keeper");
             return invaders.length;
         });
-        memory[rA.name] = _.sum(enemyCounts);
+        memory[rD.name] = _.sum(enemyCounts);
     }
 }
 
@@ -564,11 +563,6 @@ function updateHarasser(flag, memory) {
 function updateBreaker(flag, memory) {
     memory[rBr.name] = flag ? 1 : 0;
     memory[rMe.name] = flag ? 1 : 0;
-}
-
-function updateDefender(flag, memory) {
-    memory[rD.name] = flag ? 1 : 0;
-    if (flag) memory[rMe.name]++;
 }
 
 function updatePowerMine(flag, memory) {
