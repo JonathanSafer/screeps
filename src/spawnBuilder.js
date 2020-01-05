@@ -49,11 +49,20 @@ var rSB = {
     
     build: function(creep) {
         var targets = creep.room.find(FIND_CONSTRUCTION_SITES);
-        var spawns = _.filter(targets, site => site.structureType == STRUCTURE_SPAWN);
+        var spawns = _.find(targets, site => site.structureType == STRUCTURE_SPAWN);
+        var extensions = _.find(targets, site => site.structureType == STRUCTURE_EXTENSION);
+        var storage = _.find(targets, site => site.structureType == STRUCTURE_STORAGE);
+        var terminal = _.find(targets, site => site.structureType == STRUCTURE_TERMINAL);
         if(targets.length) {
             var target = targets[0];
-            if (spawns.length){
-                target = spawns[0];
+            if (spawns){
+                target = spawns
+            } else if (extensions){
+                target = extensions
+            } else if (storage){
+                target = storage
+            } else if (terminal){
+                target = terminal
             }
             if(creep.build(target) == ERR_NOT_IN_RANGE) {
                 creep.moveTo(target, {reusePath: 15});
