@@ -80,10 +80,12 @@ var stats = {
                 
                 // Record the weakest wall in each city
                 let spawn = Game.spawns[city]
-                let buildings = spawn.room.find(FIND_STRUCTURES)
-                let walls = _.filter(buildings, building => building.structureType == STRUCTURE_WALL)
-                let minWall = _.min(_.toArray(_.map(walls, wall => wall.hits)))
-                stats['cities.' + city + '.wall'] = walls.length  > 0 ? minWall : 0
+                if(spawn){
+                    let buildings = spawn.room.find(FIND_STRUCTURES)
+                    let walls = _.filter(buildings, building => building.structureType == STRUCTURE_WALL)
+                    let minWall = _.min(_.toArray(_.map(walls, wall => wall.hits)))
+                    stats['cities.' + city + '.wall'] = walls.length  > 0 ? minWall : 0
+                }
             });
             // Mining stats
             _.forEach(Game.creeps, creep => {
