@@ -513,7 +513,7 @@ function updateBuilder(rcl, memory, spawn, rooms, rcl8) {
         totalSites = constructionSites.length;
     }
     if (totalSites > 0){
-        memory[rB.name] = (totalSites > 10 && rcl > 2) ? 3 : 1;
+        memory[rB.name] = (totalSites > 10 && rcl > 2 && rcl < 6) ? 3 : 1;
     } else {
         memory[rB.name] = 0;
     }
