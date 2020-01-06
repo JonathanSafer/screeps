@@ -35,7 +35,7 @@ var rB = {
         }
         rB.decideWhetherToBuild(creep);
         if (creep.memory.building) {
-            a.build(creep);
+            rB.build(creep);
         } else {
             rB.getEnergy(creep)
         }
