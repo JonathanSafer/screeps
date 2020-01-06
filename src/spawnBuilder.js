@@ -1,4 +1,5 @@
 var a = require("actions")
+var sq = require("spawnQueue")
 
 var rSB = {
     name: "spawnBuilder",
@@ -7,6 +8,10 @@ var rSB = {
 
     /** @param {Creep} creep **/
     run: function(creep) {
+        // Use the spawn queue to set respawn at 20 ttl
+        if(creep.ticksToLive == 500) {
+            sq.respawn(creep)
+        }
         var city = creep.memory.city;
         if (creep.hits < creep.hitsMax){
             creep.moveTo(Game.spawns[city])

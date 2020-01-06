@@ -9,6 +9,17 @@ var sq = {
         return spawn.memory.sq.shift()
     },
 
+    getCounts: function(spawn) {
+        sq.initialize(spawn)
+        return _.countBy(sq, name => name)
+    },
+
+    respawn: function(creep) {
+        let spawn = Game.spawns[creep.memory.city]
+        sq.initialize(spawn)
+        sq.schedule(spawn, creep.memory.role)
+    },
+
     initialize: function(spawn) {
         if (!spawn.memory.sq) {
             spawn.memory.sq = []

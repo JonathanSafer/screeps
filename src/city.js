@@ -67,18 +67,22 @@ function runCity(city, creeps){
         var allRoles = [rF, rD, rT, rM, rR, rU, rB, rMM, rC, rSB, rH, rBM, rD, rBB, rBT, rMe, rTr, rBr, rPM, rRo, rDM] // order roles for priority
         var roles = (room.storage && room.storage.store.energy < 50000) ? coreRoles : allRoles
 
+        // Get counts for roles by looking at all living and queued creeps
         var nameToRole = _.groupBy(allRoles, role => role.name); // map from names to roles
         var counts = _.countBy(creeps, creep => creep.memory.role); // lookup table from role to count
-    
-        // Get counts for all roles, make first thing that doesn't have enough
-        _.forEach(_.filter(roles, role => !counts[role.name]), role => counts[role.name] = 0);
+        let queuedCounts = sq.getCounts(spawn)
+        _.forEach(roles, role => {
+            let liveCount = counts[role.name] || 0
+            let queueCount = queuedCounts[role.name] || 0
+            counts[role.name] = liveCount + queueCount
+        })
+
         //console.log(JSON.stringify(roles));
-        let nextQuotaRole = _.find(roles, role => (typeof counts[role.name] == "undefined" && 
+        let nextRole = _.find(roles, role => (typeof counts[role.name] == "undefined" && 
             spawn.memory[role.name]) || (counts[role.name] < spawn.memory[role.name]));
         // console.log(Game.spawns[city].memory.rM);
 
         // If quota is met, get a role from the spawn queue
-        let nextRole = nextQuotaRole;
         if (!nextRole) {
             let spawnQueueRoleName = sq.getNextRole(spawn)
             nextRole = spawnQueueRoleName ? nameToRole[spawnQueueRoleName][0] : undefined

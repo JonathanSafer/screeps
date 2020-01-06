@@ -1,6 +1,5 @@
 var a = require('actions');
-var t = require('types');
-var u = require('utils');
+var sq = require('spawnQueue')
 
 var rM = {
     name: "remoteMiner",
@@ -9,6 +8,10 @@ var rM = {
 
     /** @param {Creep} creep **/
     run: function(creep) {
+        // Use the spawn queue to set respawn at 20 ttl
+        if(creep.ticksToLive == 20) {
+            sq.respawn(creep)
+        }
         if(creep.hits < creep.hitsMax){
             creep.moveTo(Game.spawns[creep.memory.city])
             return;
