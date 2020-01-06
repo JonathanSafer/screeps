@@ -115,7 +115,8 @@ function updateCountsCity(city, creeps, rooms, closestRoom) {
         let controller = spawn.room.controller;
         let rcl = controller.level;
         let rcl8 = rcl > 7;
-        let emergencyTime = spawn.room.storage && spawn.room.storage.store.energy < 5000
+        let emergencyTime = spawn.room.storage && spawn.room.storage.store.energy < 5000 || 
+                    (rcl > 6 && !spawn.room.storage)
         let logisticsTime = rcl8 && !emergencyTime ? 500 : 50;
         if(Game.time % 200 == 0){
             updateMilitary(city, memory, rooms);
