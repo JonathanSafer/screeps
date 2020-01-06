@@ -50,7 +50,6 @@ module.exports.loop = function () {
                     c.runTowers(city)
                     // TODO: obs runs in dead cities
                     c.runObs(city)
-                    c.queueJobs(city)
                 } 
             } catch (failedCityError) {
                 er.reportError(failedCityError)

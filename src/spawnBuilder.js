@@ -8,8 +8,8 @@ var rSB = {
 
     /** @param {Creep} creep **/
     run: function(creep) {
-        // Use the spawn queue to set respawn at 20 ttl
-        if(creep.ticksToLive == 500) {
+        // Use the spawn queue to set respawn
+        if(creep.ticksToLive == 500 && Game.flags.claim) {
             sq.respawn(creep)
         }
         var city = creep.memory.city;
@@ -28,12 +28,8 @@ var rSB = {
             return;
         }
         if(creep.pos.roomName === Game.flags.claim.pos.roomName){
-            if(Game.time % 100 == 0){
-                let extensions = _.filter(creep.room.find(FIND_MY_STRUCTURES), structure => structure.structureType == STRUCTURE_EXTENSION)
-                let cSites = creep.room.find(FIND_MY_CONSTRUCTION_SITES)
-                if (extensions.length > 4 && !cSites.length){
-                    Game.flags.claim.remove();
-                }
+            if(Game.time % 100 == 0 && rSB.jobDone(creep)){
+                Game.flags.claim.remove();
             }
             if(creep.carry.energy == 0 && creep.memory.building){
                 creep.memory.building = false;
@@ -50,6 +46,12 @@ var rSB = {
             let pos = Game.flags.claim.pos
             creep.moveTo(new RoomPosition(pos.x, pos.y, pos.roomName), {reusePath: 50});
         }
+    },
+
+    jobDone: function(creep) {
+        let extensions = _.filter(creep.room.find(FIND_MY_STRUCTURES), structure => structure.structureType == STRUCTURE_EXTENSION)
+        let cSites = creep.room.find(FIND_MY_CONSTRUCTION_SITES)
+        return (extensions.length > 4 && !cSites.length)
     },
     
     build: function(creep) {
