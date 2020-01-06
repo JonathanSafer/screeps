@@ -74,14 +74,14 @@ var rSB = {
         var terminal = _.find(targets, site => site.structureType == STRUCTURE_TERMINAL);
         if(targets.length) {
             var target = targets[0];
-            if (spawns){
-                target = spawns
-            } else if (extensions){
-                target = extensions
+            if (terminal){
+                target = terminal
             } else if (storage){
                 target = storage
-            } else if (terminal){
-                target = terminal
+            } else if (extensions){
+                target = extensions
+            } else if (spawns){
+                target = spawns
             }
             if(creep.build(target) == ERR_NOT_IN_RANGE) {
                 creep.moveTo(target, {reusePath: 15});
@@ -94,6 +94,11 @@ var rSB = {
     },
     
     harvest: function(creep) {
+        let terminal = _.find(creep.room.find(FIND_MY_STRUCTURES), s => s.structureType == STRUCTURE_TERMINAL)
+        if(terminal && terminal.store[RESOURCE_ENERGY] >= creep.store.getCapacityAvailable()){
+            a.withdraw(creep, terminal, RESOURCE_ENERGY)
+            return
+        }
         var sources =  creep.room.find(FIND_SOURCES);
         if (sources.length == 1){
             let result = creep.harvest(sources[0]);
