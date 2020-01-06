@@ -1,5 +1,6 @@
 var a = require("actions")
 var sq = require("spawnQueue")
+var rU = require("upgrader")
 
 var rSB = {
     name: "spawnBuilder",
@@ -13,6 +14,17 @@ var rSB = {
             sq.respawn(creep)
         }
         var city = creep.memory.city;
+        if(!creep.memory.state){
+          creep.memory.state = 0
+        }
+        const boost = 'XGH2O'
+        rU.checkBoost(creep, city, boost);
+        rU.getBoosted(creep, city, boost);
+
+        if(creep.memory.state != 2) {
+            return
+        }
+
         if (creep.hits < creep.hitsMax){
             creep.moveTo(Game.spawns[city])
             return;
