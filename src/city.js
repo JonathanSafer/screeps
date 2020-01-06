@@ -24,6 +24,7 @@ var t = require('tower');
 var rPM = require('powerMiner');
 var labs = require('labs');
 var fact = require('factory');
+var sq = require('spawnQueue');
 
 
 function makeCreeps(role, type, target, city) {
@@ -57,8 +58,9 @@ function makeCreeps(role, type, target, city) {
 }
 //runCity function
 function runCity(city, creeps){
-    if (Game.spawns[city]){
-        let room = Game.spawns[city].room
+    let spawn = Game.spawns[city]
+    if (spawn){
+        let room = spawn.room
 
         // Only build required roles during financial stress
         var coreRoles = [rF, rD, rT, rM, rR, rU, rB]
@@ -71,9 +73,13 @@ function runCity(city, creeps){
         // Get counts for all roles, make first thing that doesn't have enough
         _.forEach(_.filter(roles, role => !counts[role.name]), role => counts[role.name] = 0);
         //console.log(JSON.stringify(roles));
-        let nextRole = _.find(roles, role => (typeof counts[role.name] == "undefined" && 
-            Game.spawns[city].memory[role.name]) || (counts[role.name] < Game.spawns[city].memory[role.name]));
+        let nextQuotaRole = _.find(roles, role => (typeof counts[role.name] == "undefined" && 
+            spawn.memory[role.name]) || (counts[role.name] < spawn.memory[role.name]));
         // console.log(Game.spawns[city].memory.rM);
+
+        // If quota is met, get a role from the spawn queue
+        let nextRole = nextQuotaRole ? nextQuotaRole : nameToRole[sq.getNextRole(spawn)][0]
+
         if (nextRole) {
             //console.log(JSON.stringify(nextRole));
             makeCreeps(nextRole.name, nextRole.type, nextRole.target(), city);
