@@ -72,7 +72,8 @@ var rBr = {
                 filter: function(object) {
                     return (object.structureType !== STRUCTURE_CONTROLLER 
                         && object.owner.username !== 'Invader' && object.owner.username !== 'Source Keeper' 
-                        && object.owner.username !== 'Public' )
+                        && object.owner.username !== 'Public'
+                        && object.hits )
                 }
             })
             if(badStuff != null) { // TODO ignore target room
