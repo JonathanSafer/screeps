@@ -207,7 +207,9 @@ var rF = {
             creep.suicide()
             return 0;
         }
-        if (Game.spawns[creep.memory.city].memory.storageLink && Game.getObjectById(Game.spawns[creep.memory.city].memory.storageLink).energy > 0){
+        if (Game.spawns[creep.memory.city].memory.storageLink &&
+            Game.getObjectById(Game.spawns[creep.memory.city].memory.storageLink).energy > 0)
+        {
             return 5;
         }
         if (creep.room.storage.store.energy > 150000 && creep.room.terminal.store.energy < 50000 && _.sum(creep.room.terminal.store) < 295000){
