@@ -318,7 +318,7 @@ function checkLabs(city){
 }
 
 function updateMilitary(city, memory, rooms) {
-    let flags = ['harass', 'break', 'defend', 'powerMine', 'bigShoot', 'shoot', 'bigBreak', 'deposit'];
+    let flags = ['harass', 'break', 'powerMine', 'bigShoot', 'shoot', 'bigBreak', 'deposit'];
     let updateFns = [updateHarasser, updateBreaker, updatePowerMine, updateBigTrooper, updateTrooper, updateBigBreaker, updateDepositMiner];
     let big = 0
     for (var i = 0; i < flags.length; i++) {
