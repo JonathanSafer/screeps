@@ -17,7 +17,7 @@ var rSB = {
         if(!creep.memory.state){
           creep.memory.state = 0
         }
-        const boost = 'XGH2O'
+        const boost = 'XLH2O'
         rU.checkBoost(creep, city, boost);
         rU.getBoosted(creep, city, boost);
 
