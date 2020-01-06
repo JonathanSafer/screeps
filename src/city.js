@@ -78,7 +78,11 @@ function runCity(city, creeps){
         // console.log(Game.spawns[city].memory.rM);
 
         // If quota is met, get a role from the spawn queue
-        let nextRole = nextQuotaRole ? nextQuotaRole : nameToRole[sq.getNextRole(spawn)][0]
+        let nextRole = nextQuotaRole;
+        if (!nextRole) {
+            let spawnQueueRoleName = sq.getNextRole(spawn)
+            nextRole = spawnQueueRoleName ? nameToRole[spawnQueueRoleName][0] : undefined
+        }
 
         if (nextRole) {
             //console.log(JSON.stringify(nextRole));

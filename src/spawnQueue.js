@@ -1,11 +1,11 @@
 var sq = {
     schedule: function(spawn, role) {
-        sq.initialize()
+        sq.initialize(spawn)
         spawn.memory.sq.push(role)
     },
 
-    getNext: function(spawn) {
-        sq.initialize()
+    getNextRole: function(spawn) {
+        sq.initialize(spawn)
         return spawn.memory.sq.shift()
     },
 
