@@ -212,13 +212,13 @@ var rF = {
         {
             return 5;
         }
-        if (creep.room.storage.store.energy > 150000 && creep.room.terminal.store.energy < 50000 && _.sum(creep.room.terminal.store) < 295000){
+        if (creep.room.storage && creep.room.storage.store.energy > 150000 && creep.room.terminal.store.energy < 50000 && _.sum(creep.room.terminal.store) < 295000){
             return 1;
         }
-        if (creep.room.terminal.store.energy > 51000){
+        if (creep.room.terminal && creep.room.terminal.store.energy > 51000){
             return 3;
         }
-        if(Object.keys(creep.room.storage.store).length > 1 && _.sum(creep.room.terminal.store) < 295000){
+        if(creep.room.storage && Object.keys(creep.room.storage.store).length > 1 && _.sum(creep.room.terminal.store) < 295000){
             return 2;
         }
         if (Game.spawns[creep.memory.city].memory.ferryInfo.needPower === true && Game.spawns[creep.memory.city].room.terminal.store[RESOURCE_POWER] > 0){
