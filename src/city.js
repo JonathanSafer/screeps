@@ -513,6 +513,10 @@ function updateBuilder(rcl, memory, spawn, rooms, rcl8) {
         totalSites = constructionSites.length;
     }
     if (totalSites > 0){
+        // If room is full of energy and there is contruction, make a builder
+        if (room.energyAvailable == room.energyCapacityAvailable) {
+            sq.schedule(spawn, "builder")
+        }
         memory[rB.name] = (totalSites > 10 && rcl > 2 && rcl < 6) ? 3 : 1;
     } else {
         memory[rB.name] = 0;
