@@ -421,7 +421,7 @@ var markets = {
         if(Game.time % 10 != 0){
             return;
         }
-        const termCities = _.filter(myCities, city => city.terminal)
+        const termCities = _.filter(myCities, c => c.terminal && Game.spawns[c.memory.city])
         //send coms (every 10 ticks)
         markets.sendComs(termCities);
         //relocate base mins (every 1k ticks)
@@ -469,7 +469,7 @@ var markets = {
             const highTier = [RESOURCE_ORGANISM, RESOURCE_MACHINE, RESOURCE_DEVICE, RESOURCE_ESSENCE];
             markets.updateSellPoint(highTier, termCities, buyOrders);
             for (var i = 0; i < termCities.length; i++){
-                //if no terminal continue
+                //if no terminal continue or no spawn
                 if(!termCities[i].terminal || !Game.spawns[termCities[i].memory.city].memory.ferryInfo){
                     continue;
                 }
