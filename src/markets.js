@@ -468,22 +468,22 @@ var markets = {
                     RESOURCE_OXIDANT, RESOURCE_REDUCTANT, RESOURCE_PURIFIER, RESOURCE_CELL, RESOURCE_WIRE, RESOURCE_ALLOY, RESOURCE_CONDENSATE];
             const highTier = [RESOURCE_ORGANISM, RESOURCE_MACHINE, RESOURCE_DEVICE, RESOURCE_ESSENCE];
             markets.updateSellPoint(highTier, termCities, buyOrders);
-            for (var i = 0; i < myCities.length; i++){
+            for (var i = 0; i < termCities.length; i++){
                 //if no terminal continue
-                if(!myCities[i].terminal || !Game.spawns[myCities[i].memory.city].memory.ferryInfo){
+                if(!termCities[i].terminal || !Game.spawns[termCities[i].memory.city].memory.ferryInfo){
                     continue;
                 }
                 let termUsed = false; //only one transaction can be run using each cities terminal
-                if(myCities[i].terminal.cooldown){
+                if(termCities[i].terminal.cooldown){
                     termUsed = true;
                 }
                 if(!termUsed){
                     termUsed = markets.sellPower(myCities[i], buyOrders);
                 }
                 if(!termUsed){
-                    termUsed = markets.sellOps(myCities[i], buyOrders);
+                    termUsed = markets.sellOps(termCities[i], buyOrders);
                 }
-                let memory = Game.spawns[myCities[i].memory.city].memory;
+                let memory = Game.spawns[termCities[i].memory.city].memory;
                 let level = memory.ferryInfo.factoryInfo.factoryLevel;
                 //cities w/o level send all base resources to non levelled cities
                 //base mins are NOT sold, they are made into bars instead.
@@ -491,14 +491,14 @@ var markets = {
                 //if any base mineral (besides ghodium) is low, an order for it will be placed on the market. If an order already exists, update quantity
                 //if an order already exists and is above threshold (arbitrary?), increase price
                 //buy minerals as needed
-                markets.buyMins(myCities[i], baseMins);
+                markets.buyMins(termCities[i], baseMins);
                 if(!level && !termUsed){
-                    termUsed = markets.sellBars(myCities[i], bars, buyOrders);
+                    termUsed = markets.sellBars(termCities[i], bars, buyOrders);
                 }
                 //buy/sell energy
-                termUsed = markets.processEnergy(myCities[i], termUsed, highEnergyOrder, energyOrders);
+                termUsed = markets.processEnergy(termCities[i], termUsed, highEnergyOrder, energyOrders);
                 //sell products
-                termUsed = markets.sellProducts(myCities[i], termUsed, buyOrders, highTier)
+                termUsed = markets.sellProducts(termCities[i], termUsed, buyOrders, highTier)
             }
         }
     }
