@@ -73,6 +73,7 @@ var rBr = {
                     return (object.structureType !== STRUCTURE_CONTROLLER 
                         && object.owner.username !== 'Invader' && object.owner.username !== 'Source Keeper' 
                         && object.owner.username !== 'Public'
+                        && object.owner.username !== 'Power Bank'
                         && object.hits )
                 }
             })
