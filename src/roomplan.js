@@ -48,7 +48,7 @@ let p = {
             if (room.memory.plan) {
                 var plan = room.memory.plan
                 p.buildRoads(room, plan);
-                if(room.controller.level === 8){
+                if(room.controller.level >= 7){
                     p.buildWalls(room, plan);
                 }
                 var spawnCount = 0
