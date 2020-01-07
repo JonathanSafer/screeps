@@ -79,7 +79,7 @@ function getRecipe(type, energyAvailable, room){
 		case 5500: // 5600
 			// lvl 7 recipes
     		d['normal'] = body([20, 12, 16], [WORK, CARRY, MOVE]);
-    		d['builder'] = body([5, 9, 7], [WORK, CARRY, MOVE]);
+    		d['builder'] = body([15, 18, 17], [WORK, CARRY, MOVE]);
     		d['ferry'] = body([20, 10], [CARRY, MOVE]);
     		d['transporter'] = body([12, 6], [CARRY, MOVE]);
     		d['miner'] = body([5, 8, 10], [MOVE, CARRY, WORK]);
