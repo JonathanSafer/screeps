@@ -437,7 +437,8 @@ function updateMiner(rooms, rcl8Room, memory, spawn){
             //this is currently not working
         //}
     });
-    if(Game.flags.claim && Game.flags.claim.pos.roomName === spawn.pos.roomName){
+    if(Game.flags.claim && Game.flags.claim.pos.roomName === spawn.pos.roomName &&
+        Game.flags.claim.room.controller.level < 6){
         memory[rM.name] = 0;
         return;
     }
