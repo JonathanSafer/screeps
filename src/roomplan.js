@@ -47,10 +47,6 @@ let p = {
             }
             if (room.memory.plan) {
                 var plan = room.memory.plan
-                p.buildRoads(room, plan);
-                if(room.controller.level >= 7){
-                    p.buildWalls(room, plan);
-                }
                 var spawnCount = 0
                 _.forEach(template.buildings, function(locations, structureType) {
                     locations.pos.forEach(location => {
@@ -64,6 +60,10 @@ let p = {
                         p.buildConstructionSite(room, structureType, pos, name)
                     })
                 })
+                p.buildRoads(room, plan);
+                if(room.controller.level >= 7){
+                    p.buildWalls(room, plan);
+                }
             }
         })
     },
@@ -110,6 +110,11 @@ let p = {
         room.wallCosts = costs;
 
         let roomExits = p.getRoomExits(room.name);//list of list of room exits
+        let counter = 0;
+        let csites = room.find(FIND_MY_CONSTRUCTION_SITES);
+        if(csites.length){
+            counter = csites.length;
+        }
 
         for(var i = 0; i < wallSpots.length; i++){//build stuff
             if(terrain.get(wallSpots[i].x, wallSpots[i].y) === TERRAIN_MASK_WALL){
@@ -163,6 +168,10 @@ let p = {
             } else {//wall
                 room.createConstructionSite(wallSpots[i], STRUCTURE_WALL)
                 room.visual.circle(wallSpots[i], {fill: 'transparent', radius: 0.25, stroke: 'blue'});
+            }
+            counter++
+            if(counter > 10){
+                break
             }
         }
     },
