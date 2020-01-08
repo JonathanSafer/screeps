@@ -517,6 +517,7 @@ function updateBuilder(rcl, memory, spawn, rooms, rcl8) {
     }
     if (totalSites > 0){
         // If room is full of energy and there is contruction, make a builder
+        let room = spawn.room
         if (room.energyAvailable == room.energyCapacityAvailable) {
             sq.schedule(spawn, "builder")
         }
