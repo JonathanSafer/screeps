@@ -692,7 +692,7 @@ function runNuker(city){
 function runObs(city){
     if(Game.time % 100 == 0){
         //check for Obs
-        if((!Game.spawns[city]) || Game.cpu.bucket < 5500){
+        if((!Game.spawns[city]) || Game.cpu.bucket < 5500 || city == 'W1N210' || city == 'W2N240' || city == 'E2S310'){
             return;
         }
         let buildings = Game.spawns[city].room.find(FIND_MY_STRUCTURES)
@@ -724,7 +724,7 @@ function runObs(city){
     }
     if (Game.time % 100 == 1){
         //check for Obs and list
-        if(!Game.spawns[city] || Game.cpu.bucket < 6000){
+        if(!Game.spawns[city] || Game.cpu.bucket < 6000 || city == 'W1N210' || city == 'W2N240' || city == 'E2S310'){
             return;
         }
         let buildings = Game.spawns[city].room.find(FIND_MY_STRUCTURES)
