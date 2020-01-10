@@ -464,7 +464,7 @@ function updateTransporter(extensions, memory) {
     } else if (extensions < 10){
         memory[rT.name] = 1;
     } else {
-        memory[rT.name] = 1;
+        memory[rT.name] = 2;
     }
 }
 

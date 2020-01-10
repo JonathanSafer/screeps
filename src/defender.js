@@ -2,7 +2,7 @@ var a = require('actions');
 var u = require('utils');
 
 var rD = {
-    name: "",
+    name: "defender",
     type: "defender",
     target: () => 0,
    
