@@ -1,126 +1,62 @@
 function getRecipe(type, energyAvailable, room){
-    let extensions = energyAvailable / 50
 	let d = {};
+    let rcl = room.controller.level
 
-    let baseCost = 2 * BODYPART_COST[CARRY] + BODYPART_COST[MOVE];
-    let scale = Math.floor(Math.min(energyAvailable / baseCost, MAX_CREEP_SIZE / 3));
-    d.runner = body([2 * scale, scale], [CARRY, MOVE]);
+    // used at all rcls
+    d.runner = scalingBody([2, 1], [CARRY, MOVE], energyAvailable)
+    d.miner = minerBody(energyAvailable, rcl)
+    d.normal = upgraderBody(energyAvailable, rcl)
+    d.transporter = scalingBody([2, 1], [CARRY, MOVE], energyAvailable, 30)
+    d.builder = builderBody(energyAvailable, rcl)
+    d.defender = defenderBody(energyAvailable, rcl)
 
-	switch (Math.floor(energyAvailable / 500) * 500) {
-		case 0: // 300 energy
-			//lvl 1 recipes
-            d.runner = body([2, 2], [CARRY, MOVE]);
-            d['normal'] = body([2, 1, 1], [WORK, CARRY, MOVE]);
-            d['miner'] = body([2, 2], [MOVE, WORK]);
-            d['transporter'] = body([2, 2], [CARRY, MOVE]);
-            d['builder'] = body([2, 1, 1], [WORK, CARRY, MOVE]);
-            d['defender'] = body([1, 1, 1], [TOUGH, MOVE, ATTACK]);
-			break;
-		case 500: // 550 energy
-			//lvl 2 recipes
-            d['normal'] = body([3, 2, 3], [WORK, CARRY, MOVE]);
-            d['miner'] = body([1, 5], [MOVE, WORK]);
-            d['transporter'] = body([4, 2], [CARRY, MOVE]);
-            d['builder'] = body([2, 2, 2], [WORK, CARRY, MOVE]);
-            d['defender'] = body([2, 3, 1], [TOUGH, MOVE, ATTACK]);
-			break;
-		case 501: // 800
-			//lvl 3 recipes
-            d['normal'] = body([4, 2, 3], [WORK, CARRY, MOVE]);
-            d['miner'] = body([3, 5], [MOVE, WORK]);
-            d['transporter'] = body([4, 2], [CARRY, MOVE]);
-            d['builder'] = body([3, 2, 2], [WORK, CARRY, MOVE]);
-            d['defender'] = body([4, 4], [MOVE, ATTACK]);
-			break;
-		case 1000: // 1300
+    // used at rcl 4+
+    d.spawnBuilder = scalingBody([2, 3, 5], [WORK, CARRY, MOVE], energyAvailable)
+    d.trooper = scalingBody([1, 1], [RANGED_ATTACK, MOVE], energyAvailable)
+
+    // used at rcl 5+
+    d.ferry = scalingBody([2, 1], [CARRY, MOVE], energyAvailable, 30)
+
+    // rcl 8 only
+    d.powerMiner = body([20, 20], [MOVE, ATTACK]);
+    d.bigMedic = body([11, 10, 29], [TOUGH, MOVE, HEAL]);
+    d.bigBreaker = body([10, 30, 10], [TOUGH, WORK, MOVE]);
+    d.bigTrooper = body([16, 24, 10], [TOUGH, RANGED_ATTACK, MOVE]);
+    d.depositMiner = body([20, 2, 22], [WORK, CARRY, MOVE]);
+
+	switch (rcl) {
+		case 4:
 			//lvl 4 recipes
-            d['normal'] = body([8, 4, 6], [WORK, CARRY, MOVE]);
-            d['miner'] = body([3, 5], [MOVE, WORK]);
-            d['transporter'] = body([8, 4], [CARRY, MOVE]);
-            d['builder'] = body([5, 9, 7], [WORK, CARRY, MOVE]);
-            d['defender'] = body([2, 4, 6], [TOUGH, MOVE, ATTACK]);
-            d['spawnBuilder'] = body([4, 6, 10], [WORK, CARRY, MOVE]);
-    		d['trooper'] = body([3, 3], [RANGED_ATTACK, MOVE]);
     		d['medic'] = body([2, 2], [MOVE, HEAL]);
 			break;
-		case 1500: // 1800
+		case 5:
 			//lvl 5 recipes
-    		d['normal'] = body([12, 4, 8], [WORK, CARRY, MOVE]);
-    		d['builder'] = body([5, 9, 7], [WORK, CARRY, MOVE]);
-    		d['ferry'] = body([6, 3], [CARRY, MOVE]);
-    		d['transporter'] = body([12, 6], [CARRY, MOVE]);
-    		d['miner'] = body([3, 5], [MOVE, WORK]);
-    		d['defender'] = body([2, 4, 6], [TOUGH, MOVE, ATTACK]);
-    		d['spawnBuilder'] = body([5, 10, 15], [WORK, CARRY, MOVE]);
-    		d['trooper'] = body([6, 6], [RANGED_ATTACK, MOVE]);
     		d['medic'] = body([5, 5], [MOVE, HEAL]);
             d['robber'] = body([15, 15], [CARRY, MOVE]); 
     		break;
-		case 2000: // 2300
-        case 2500:
-        case 3000:
-        case 3500:
-        case 4000:
-        case 4500:
-        case 5000:
+		case 6:
 			// lvl 6 recipes
-    		d['normal'] = body([12, 8, 10], [WORK, CARRY, MOVE]);
-    		d['builder'] = body([5, 9, 7], [WORK, CARRY, MOVE]);
-    		d['ferry'] = body([6, 3], [CARRY, MOVE]);
-    		d['transporter'] = body([12, 6], [CARRY, MOVE]);
-    		d['miner'] = body([3, 5], [MOVE, WORK]);
     		d['mineralMiner'] = body([12, 6, 9], [WORK, CARRY, MOVE]);
-    		d['defender'] = body([2, 6, 10], [TOUGH, MOVE, ATTACK]);
-    		d['spawnBuilder'] = body([5, 10, 15], [WORK, CARRY, MOVE]);
-    	    d['trooper'] = body([8, 8], [RANGED_ATTACK, MOVE]);
     		d['medic'] = body([7, 7], [MOVE, HEAL]);
     		d['robber'] = body([20, 20], [CARRY, MOVE]);
     		break;
-		case 5500: // 5600
+		case 7:
 			// lvl 7 recipes
-    		d['normal'] = body([20, 12, 16], [WORK, CARRY, MOVE]);
-    		d['builder'] = body([15, 18, 17], [WORK, CARRY, MOVE]);
-    		d['ferry'] = body([20, 10], [CARRY, MOVE]);
-    		d['transporter'] = body([12, 6], [CARRY, MOVE]);
-    		d['miner'] = body([5, 8, 10], [MOVE, CARRY, WORK]);
     		d['mineralMiner'] = body([22, 10, 16], [WORK, CARRY, MOVE]);
-    		d['defender'] = body([2, 6, 10], [TOUGH, MOVE, ATTACK]);
-    		d['spawnBuilder'] = body([10, 15, 25], [WORK, CARRY, MOVE]);
 		    d['harasser'] = body([9, 8, 1], [MOVE, RANGED_ATTACK, HEAL]);
 		    d['medic'] = body([5, 20, 15], [TOUGH, MOVE, HEAL]);
 	        d['breaker'] = body([10, 10], [MOVE, WORK]);
-	        d['trooper'] = body([20, 20], [RANGED_ATTACK, MOVE]);
         	d['robber'] = body([25, 25], [CARRY, MOVE]);
     		break;
-        case 5500:
-        case 6000:
-        case 6500:
-        case 7000:
-        case 7500:
-        case 8000:
-        case 8500:
-        case 9000:
-        case 9500:
-		default: // 12900
+		case 8:
 		    // lvl 8 recipes
-    		d['normal'] = body([15, 15, 15],[WORK, CARRY, MOVE]);
-    		d['builder'] = body([15, 18, 17], [WORK, CARRY, MOVE]);
-    		d['ferry'] = body([20, 10], [CARRY, MOVE]);
-    		d['transporter'] = body([20, 10],[CARRY, MOVE]);
-    		d['miner'] = body([20, 8, 10],[WORK, CARRY, MOVE]);
     		d['mineralMiner'] = body([22, 10, 16], [WORK, CARRY, MOVE]);
-    		d['defender'] = body([2, 6, 10], [TOUGH, MOVE, ATTACK]);
-    		d['spawnBuilder'] = body([10, 15, 25], [WORK,  CARRY, MOVE]);
 		    d['harasser'] = body([20, 25, 5], [RANGED_ATTACK, MOVE, HEAL]);
 		    d['medic'] = body([25, 25], [MOVE, HEAL]);
 	        d['breaker'] = body([25, 25], [MOVE, WORK]);
-            d['powerMiner'] = body([20, 20], [MOVE, ATTACK]);
-            d['bigMedic'] = body([11, 10, 29], [TOUGH, MOVE, HEAL]);
-            d['bigBreaker'] = body([10, 30, 10], [TOUGH, WORK, MOVE]);
-            d['bigTrooper'] = body([16, 24, 10], [TOUGH, RANGED_ATTACK, MOVE]);
-            d['trooper'] = body([25, 25], [RANGED_ATTACK, MOVE]);
             d['robber'] = body([25, 25], [CARRY, MOVE]);
-            d['depositMiner'] = body([20, 2, 22], [WORK, CARRY, MOVE]);
+            break;
+        default:
             break;
 	}
 
@@ -206,6 +142,62 @@ function test(hpt, ticks, harvested) {
         }
     }
     return (harvested - start);
+}
+
+function minerBody(energyAvailable, rcl) {
+    // miners. at least 1 move. 5 works until we can afford 10
+    let works = (energyAvailable - BODYPART_COST[MOVE]) / BODYPART_COST[WORK]
+    if (works >= 10) works = 10
+    else if (works >= 5) works = 5
+    else works = Math.floor(works)
+    let energyAfterWorks = energyAvailable - works * BODYPART_COST[WORK]
+    let moves = Math.min(works / 2, Math.max(1, energyAfterWorks / BODYPART_COST[MOVE]))
+    let energyAfterMoves = energyAfterWorks - moves * BODYPART_COST[MOVE]
+    let carries = rcl > 7 ? Math.min(works / 2.5, energyAfterMoves / BODYPART_COST[CARRY]) : 0
+    return body([works, carries, moves], [WORK, CARRY, MOVE])
+}
+
+function upgraderBody(energyAvailable, rcl) {
+    // upgraders. At least 2 work, at least work/2 carry. at least (w+c)/2 move
+    let types = [WORK, CARRY, MOVE]
+    return rcl > 7 ? body([15, 15, 15], types) : scalingBody([4, 2, 3], types, energyAvailable)
+}
+
+function builderBody(energyAvailable, rcl) {
+    let ratio = [2,1,1] // ratio at rcl1
+    let ratio4 = [5,9,7]
+    let ratio7 = [15,18,17]
+    let types = [WORK, CARRY, MOVE]
+    if (rcl == 2) ratio = [2,2,2]
+    if (rcl == 3) ratio = [3,2,2]
+    if (rcl >= 4 && energyAvailable > cost(body(ratio4, types))) ratio = ratio4
+    if (rcl >= 7 && energyAvailable > cost(body(ratio7, types))) ratio = ratio7
+    return body(ratio, types)
+}
+
+function defenderBody(energyAvailable, rcl) {
+    let ratio = [1,1,1] // ratio at rcl1
+    let ratio4 = [2,4,6]
+    let ratio6 = [2,6,10]
+    let types = [TOUGH, MOVE, ATTACK]
+    if (rcl == 2) ratio = [2,3,1]
+    if (rcl == 3) ratio = [0,4,4]
+    if (rcl >= 4 && energyAvailable > cost(body(ratio4, types))) ratio = ratio4
+    if (rcl >= 6 && energyAvailable > cost(body(ratio6, types))) ratio = ratio6
+    return body(ratio, types)
+}
+
+/**
+ * ratio: ratio of parts in an array. i.e. [2, 1, 2]
+ * types: types of part in an array. Must be same length as ratio. i.e. [MOVE, CARRY, MOVE]
+ * energyAvailable: energy to use on this creep
+ * maxOverride: (optional) max number of body parts to use on this creep
+ */
+function scalingBody(ratio, types, energyAvailable, maxOverride) {
+    let baseCost = cost(body(ratio, types))
+    let maxSize = maxOverride || MAX_CREEP_SIZE
+    let scale = Math.min(energyAvailable / baseCost, maxSize / _.sum(ratio))
+    return body(ratio.map(x => Math.floor(x * scale)), types)
 }
 
 module.exports = {
