@@ -206,7 +206,7 @@ var rPC = {
     canOperateObserver: function(creep) {
         let observer = _.find(creep.room.find(FIND_MY_STRUCTURES), struct => struct.structureType == STRUCTURE_OBSERVER)
         if (observer && 
-            !(observer.effects || observer.effects.length == 0) &&
+            (!observer.effects || observer.effects.length == 0) &&
             creep.powers[PWR_OPERATE_OBSERVER] &&
             creep.powers[PWR_OPERATE_OBSERVER].cooldown == 0) {
             creep.memory.target = observer.id
