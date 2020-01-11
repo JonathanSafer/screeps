@@ -30,7 +30,7 @@ var sq = require('spawnQueue');
 function makeCreeps(role, type, target, city) {
     //console.log(types.getRecipe('basic', 2));
     let room = Game.spawns[city].room;
-    var energyToSpend = !room.storage || room.storage.store.energy < 50000 ? room.energyAvailable :
+    var energyToSpend = (room.storage && room.storage.store.energy < 50000) ? room.energyAvailable :
             room.energyCapacityAvailable
     if (role == 'remoteMiner') {
         energyToSpend = room.energyCapacityAvailable
