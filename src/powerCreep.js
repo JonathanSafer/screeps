@@ -11,7 +11,8 @@ var CreepState = {
   WORK_DECIDE: 7,
   WORK_FACTORY: 8,
   WORK_BALANCE_OPS: 9,
-  SLEEP: 10
+  SLEEP: 10,
+  WORK_OBSERVER: 11
 };
 var CS = CreepState;
 
@@ -41,7 +42,7 @@ var rPC = {
                 a.enablePower(creep)
                 break
             case CS.WORK_SOURCE:
-                a.powerSource(creep, Game.getObjectById(creep.memory.target))
+                a.usePower(creep, Game.getObjectById(creep.memory.target), PWR_REGEN_SOURCE)
                 break
             case CS.WORK_GENERATE_OPS:
                 creep.usePower(PWR_GENERATE_OPS)
@@ -52,7 +53,7 @@ var rPC = {
                 a.renewPowerCreep(creep, Game.getObjectById(creep.memory.powerSpawn))
                 break
             case CS.WORK_FACTORY:
-                a.powerFactory(creep, Game.getObjectById(creep.memory.target))
+                a.usePower(creep, Game.getObjectById(creep.memory.target), PWR_OPERATE_FACTORY)
                 break
             case CS.WORK_BALANCE_OPS:
                 if (creep.store[RESOURCE_OPS] > POWER_INFO[PWR_OPERATE_FACTORY].ops) {
@@ -62,6 +63,9 @@ var rPC = {
                 }
                 break
             case CS.SLEEP:
+                break
+            case CS.WORK_OBSERVER:
+                a.usePower(creep, Game.getObjectById(creep.memory.target), PWR_OPERATE_OBSERVER)
                 break
         }
         creep.memory.state = rPC.getNextState(creep)
@@ -80,6 +84,7 @@ var rPC = {
             case CS.WORK_RENEW: return rPC.atTarget(creep) ? rPC.getNextWork(creep) : CS.WORK_RENEW
             case CS.WORK_BALANCE_OPS: return rPC.atTarget(creep) ? CS.SLEEP : CS.WORK_BALANCE_OPS
             case CS.SLEEP: return Game.time % 10 == 0 ? rPC.getNextWork(creep) : CS.SLEEP
+            case CS.WORK_OBSERVER: return rPC.atTarget(creep) ? rPC.getNextWork(creep) : CS.WORK_OBSERVER
         }
         // If state is unknown then restart
         return CS.START
@@ -121,6 +126,7 @@ var rPC = {
         switch (creep.memory.state) {
             case CS.WORK_SOURCE:
             case CS.WORK_FACTORY:
+            case CS.WORK_OBSERVER:
                 target = Game.getObjectById(creep.memory.target)
                 distance = 3
                 break
@@ -148,7 +154,8 @@ var rPC = {
         return (creep.ticksToLive < 300) ? CS.WORK_RENEW :
             rPC.canGenerateOps(creep) ? CS.WORK_GENERATE_OPS :
             rPC.hasSourceUpdate(creep) ? CS.WORK_SOURCE : 
-            rPC.canOperateFactory(creep) ? rPC.getFactoryJob(creep) :
+            rPC.canOperateFactory(creep) ? rPC.getOpsJob(creep, PWR_OPERATE_FACTORY, CS.WORK_FACTORY) :
+            rPC.canOperateObserver(creep) ? rPC.getOpsJob(creep, PWR_OPERATE_OBSERVER, CS.WORK_OBSERVER) :
             rPC.hasExtraOps(creep) ? CS.WORK_BALANCE_OPS :
             CS.SLEEP
     },
@@ -196,13 +203,25 @@ var rPC = {
         return false
     },
 
+    canOperateObserver: function(creep) {
+        let observer = _.find(creep.room.find(FIND_MY_STRUCTURES), struct => struct.structureType == STRUCTURE_OBSERVER)
+        if (observer && 
+            !(observer.effects || observer.effects.length == 0) &&
+            creep.powers[PWR_OPERATE_OBSERVER] &&
+            creep.powers[PWR_OPERATE_OBSERVER].cooldown == 0) {
+            creep.memory.target = observer.id
+            return true
+        }
+        return false
+    },
+
     hasExtraOps: function(creep) {
         return creep.store[RESOURCE_OPS] == creep.store.getCapacity()
     },
 
-    getFactoryJob: function(creep) {
-        return creep.store[RESOURCE_OPS] >= POWER_INFO[PWR_OPERATE_FACTORY].ops ?
-            CS.WORK_FACTORY : CS.WORK_BALANCE_OPS
+    getOpsJob: function(creep, jobName, jobState) {
+        return creep.store[RESOURCE_OPS] >= POWER_INFO[jobName].ops ?
+            jobState : CS.WORK_BALANCE_OPS
     }
 };
 module.exports = rPC;

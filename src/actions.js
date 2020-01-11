@@ -86,18 +86,8 @@ var actions = {
             true)
     },
 
-    powerSource: function(creep, target) {
-        return actions.interact(creep, 
-            target, 
-            () => creep.usePower(PWR_REGEN_SOURCE, target), 
-            true)
-    },
-
-    powerFactory: function(creep, target) {
-        return actions.interact(creep,
-            target,
-            () => creep.usePower(PWR_OPERATE_FACTORY, target),
-            true)
+    usePower: function(creep, target, power) {
+        return actions.interact(creep, target, () => creep.usePower(power, target), true)
     },
 
     renewPowerCreep: function(creep, target) {
