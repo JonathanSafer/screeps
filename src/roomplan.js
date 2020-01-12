@@ -250,7 +250,10 @@ let p = {
         let links = source.pos.findInRange(FIND_MY_STRUCTURES, 3, {
                 filter: { structureType: STRUCTURE_LINK }
         })
-        return links.length > 0
+        let newLinks = source.pos.findInRange(FIND_MY_CONSTRUCTION_SITES, 3, {
+            filter: { structureType: STRUCTURE_LINK }
+        })
+        return links.length > 0 || newLinks.length > 0
     },
 
     makeRoadMatrix: function(room, plan){
