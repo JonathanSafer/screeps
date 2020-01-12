@@ -134,7 +134,7 @@ var rT = {
 
     refill: function(creep, city){
         let result = 0;
-        if (Game.getObjectbyId(creep.memory.location)) {
+        if (Game.getObjectById(creep.memory.location)) {
             var bucket = Game.getObjectById(creep.memory.location);
             if(creep.carry.getUsedCapacity() > 0){
                 if(!creep.pos.isNearTo(bucket.pos)){
