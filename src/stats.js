@@ -53,7 +53,9 @@ var stats = {
                 if(room.storage){
                   stats['rooms.' + city + '.storage.energy'] = room.storage.store.energy
                 }
-                stats['rooms.' + city + '.cpu'] = stats.cityCpuMap[city]
+                if (stats.cityCpuMap) {
+                    stats['rooms.' + city + '.cpu'] = stats.cityCpuMap[city]
+                }
               }
             })
             var counts = _.countBy(Game.creeps, creep => creep.memory.role);
