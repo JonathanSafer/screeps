@@ -169,7 +169,7 @@ function builderBody(energyAvailable, rcl) {
     let ratio4 = [5,9,7]
     let ratio7 = [15,18,17]
     let types = [WORK, CARRY, MOVE]
-    if (rcl >= 2) return scalingBody([1, 1, 1], types)
+    if (rcl >= 2) return scalingBody([1, 1, 1], types, energyAvailable)
     if (rcl >= 4 && energyAvailable > cost(body(ratio4, types))) ratio = ratio4
     if (rcl >= 7 && energyAvailable > cost(body(ratio7, types))) ratio = ratio7
     return body(ratio, types)
