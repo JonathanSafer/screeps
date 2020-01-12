@@ -4,8 +4,8 @@ var linkLib = require('link')
 
 var CreepState = {
   START: 0,
-  BOOST: 2,
-  UPGRADE: 3
+  BOOST: 1,
+  UPGRADE: 2
 };
 var CS = CreepState;
 
@@ -25,8 +25,6 @@ var rU = {
       rU.getBoosted(creep, city, boost);
 
       if (creep.memory.state == CS.UPGRADE){
-        
-
         if(creep.memory.upgrading && creep.carry.energy == 0) {
           creep.memory.upgrading = false;
         } else if(!creep.memory.upgrading && creep.carry.energy == creep.carryCapacity) {
@@ -49,25 +47,11 @@ var rU = {
       }
     },
 
-    getWithdrawLocations: function(creep, city) {
-      let upgradeLink = rU.getUpgradeLink(creep)
-      if (upgradeLink) return upgradeLink
-
-      var targets = u.getWithdrawLocations(creep);
-      var location = targets[creep.memory.target];
-      if (!location){
-        location = Game.spawns[city];  
-      }
-      return location
-    },
-
     // Get the upgrade link. Check creep memory, then lib. May return null
     getUpgradeLink: function(creep) {
-      var link = creep.memory.upgradeLink
-      if (!link || !Game.getObjectById(link)) {
-        link = linkLib.getUpgradeLink(creep.room)
-        if (link) creep.memory.upgradeLink = link.id
-      }
+      var link = Game.getObjectById(creep.memory.upgradeLink)
+      link = link || linkLib.getUpgradeLink(creep.room)
+      if (link) creep.memory.upgradeLink = link.id
       return link
     },
 
@@ -81,14 +65,7 @@ var rU = {
       }
       if(Game.spawns[city].room.controller.level < 8){
         let lab = _.find(Game.spawns[city].room.find(FIND_STRUCTURES), structure => structure.structureType === STRUCTURE_LAB)
-        if(lab && lab.room.terminal){
-          if(rU.checkMaterials(lab, creep, boost)){
-            creep.memory.lab = lab.id
-            creep.memory.state = CS.BOOST
-            return;
-          }
-        }
-        creep.memory.state = CS.UPGRADE
+        rU.updateStateFromLab(lab, creep, boost)
         return;
       }
       if(!Game.spawns[city].memory.ferryInfo || !Game.spawns[city].memory.ferryInfo.boosterInfo){
@@ -96,7 +73,11 @@ var rU = {
           return;
       }
       let lab = Game.getObjectById(Game.spawns[city].memory.ferryInfo.boosterInfo[0][0])
-      if(lab != null && rU.checkMaterials(lab, creep, boost)){
+      rU.updateStateFromLab(lab, creep, boost)
+    },
+
+    updateStateFromLab: function(lab, creep, boost) {
+      if(rU.checkMaterials(lab, creep, boost)){
             creep.memory.lab = lab.id
             creep.memory.state = CS.BOOST
       } else {
@@ -105,6 +86,7 @@ var rU = {
     },
 
     checkMaterials: function(lab, creep, boost){
+      if (!lab || !lab.room.terminal) return false
       let terminal = lab.room.terminal
       let work = creep.getActiveBodyparts(WORK)
       return (terminal.store[boost] > (LAB_BOOST_MINERAL * work) && lab.mineralAmount == 0)

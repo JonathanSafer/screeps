@@ -11,7 +11,7 @@ var rL = {
         var storageLink, upgradeLink, sourceLinks = []
         for (let link of links) {
             if (link.pos.findInRange(FIND_SOURCES, rL.SOURCE + rL.LINK).length > 0) {
-                    sourceLinks.push(link)
+                sourceLinks.push(link)
             } else if (rL.isNearStructure(link.pos, STRUCTURE_CONTROLLER, rL.UPGRADE + rL.LINK)) {
                 upgradeLink = link
             } else if (rL.isNearStructure(link.pos, STRUCTURE_TERMINAL, rL.LINK)) {
@@ -35,7 +35,7 @@ var rL = {
     },
 
     readyForLinkTransfer(sender, receiver) {
-        return receiver && receiver.store.getUsedCapacity(RESOURCE_ENERGY) == 0 && !sender.cooldown
+        return receiver && !receiver.store.getUsedCapacity(RESOURCE_ENERGY) && !sender.cooldown
     },
 
     getUpgradeLink: function(room) {
@@ -52,7 +52,7 @@ var rL = {
     },
 
     isNearStructure: function(pos, type, range) {
-        rL.findNearStructures(pos, type, range).length > 0
+        return rL.findNearStructures(pos, type, range).length > 0
     },
 
     findStructure: function(room, type) {
