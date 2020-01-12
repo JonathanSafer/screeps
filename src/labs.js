@@ -49,7 +49,7 @@ var labs = {
             }
         }
         let receivers = [lab2, lab3, lab4, lab5];
-        for (i = 0; i < receivers.length; i++){
+        for (let i = 0; i < receivers.length; i++){
             if (receivers[i].mineralAmount >= 750){
                 spawn.memory.ferryInfo.labInfo[i + 2][1] = 1
                 return;
@@ -80,7 +80,7 @@ var labs = {
         if (boostsList.includes(currentBoost) && spawn.room.terminal.store[currentBoost] > 5000){
             boostsList.splice(boostsList.indexOf(currentBoost), 1);
         }
-        for(i = 0; i < boostsList.length; i++){
+        for(let i = 0; i < boostsList.length; i++){
             if(spawn.room.terminal.store[boostsList[i]] < 8000){
                 spawn.memory.ferryInfo.labInfo[6] = boostsList[i]
                 return;
@@ -109,7 +109,7 @@ var labs = {
             return;
         }
         //if we don't have both ingredients find the one we don't have and find it's ingredients
-        for(i = 0; i < 2; i++){
+        for(let i = 0; i < 2; i++){
             if (spawn.room.terminal.store[ingredients[i]] < 3000){
                 return labs.chooseMineral(ingredients[i], spawn);
             }

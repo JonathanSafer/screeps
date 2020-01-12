@@ -1,6 +1,4 @@
 var a = require('actions');
-var t = require('types');
-var u = require('utils');
 var rMe = require('medic')
 
 var rBM = {

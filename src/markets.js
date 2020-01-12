@@ -3,23 +3,23 @@ var settings = require('settings')
 
 var markets = {
     sortOrder: function(orders) {
-        sortedOrders = _.sortBy(orders, order => order.price); 
+        let sortedOrders = _.sortBy(orders, order => order.price); 
         return sortedOrders;
     },
     
     distributeEnergy: function(myCities){
         var receiver = null
-    	var needEnergy = _.filter(myCities, city => city.storage && city.storage.store.energy < 200000 && city.terminal)
-    	if (needEnergy.length){
-    		var sortedCities = _.sortBy(needEnergy, city => city.storage.store.energy)
-    		receiver = sortedCities[0].name
-    		for (var i = 0; i < myCities.length; i++){
-    		    if (myCities[i].storage && myCities[i].storage.store.energy > 500000 && !myCities[i].terminal.termUsed){
-    		        myCities[i].terminal.send(RESOURCE_ENERGY, 25000, receiver);
+        var needEnergy = _.filter(myCities, city => city.storage && city.storage.store.energy < 200000 && city.terminal)
+        if (needEnergy.length){
+            var sortedCities = _.sortBy(needEnergy, city => city.storage.store.energy)
+            receiver = sortedCities[0].name
+            for (var i = 0; i < myCities.length; i++){
+                if (myCities[i].storage && myCities[i].storage.store.energy > 500000 && !myCities[i].terminal.termUsed){
+                    myCities[i].terminal.send(RESOURCE_ENERGY, 25000, receiver);
                     myCities[i].terminal.termUsed = true;
-    		    }
-    		}
-    	}
+                }
+            }
+        }
     },
 
 
@@ -33,7 +33,7 @@ var markets = {
         for(var i = 0; i < senders.length; i++){
             //if a sender has more than 8k of a base mineral, or ANY of a base commodity, send it to a random receiver
             let go = true
-            for(var j = 0; j < baseMins.length; j++){
+            for(let j = 0; j < baseMins.length; j++){
                 if(!go){
                     continue;
                 }
@@ -45,7 +45,7 @@ var markets = {
                     go = false;
                 }
             }
-            for(var j = 0; j < baseComs.length; j++){
+            for(let j = 0; j < baseComs.length; j++){
                 if(!go){
                     continue;
                 }
@@ -75,7 +75,7 @@ var markets = {
                         continue;
                     }
                     if(senders[j].terminal.store[mineral] >= 6000 && !senders[j].terminal.termUsed){
-                        let result = senders[j].terminal.send(mineral, 3000, myCities[i].name)
+                        senders[j].terminal.send(mineral, 3000, myCities[i].name)
                         senders[j].terminal.termUsed = true;
                         senders = senders.splice(senders.indexOf(senders[j]), 1);
                         Game.spawns[city].memory.ferryInfo.mineralRequest = null;
@@ -100,17 +100,17 @@ var markets = {
 
     distributePower: function(myCities){
         var receiver = null
-    	var needPower = _.filter(myCities, city => city.controller.level > 7 && city.terminal && city.terminal.store.power < 1)
-    	if (needPower.length){
-    		receiver = needPower[0].name
-    		for (var i = 0; i < myCities.length; i++){
-    		    if (myCities[i].terminal && myCities[i].terminal.store.power > 2000 && !myCities[i].terminal.termUsed){
-    		        myCities[i].terminal.send(RESOURCE_POWER, 560, receiver);
+        var needPower = _.filter(myCities, city => city.controller.level > 7 && city.terminal && city.terminal.store.power < 1)
+        if (needPower.length){
+            receiver = needPower[0].name
+            for (var i = 0; i < myCities.length; i++){
+                if (myCities[i].terminal && myCities[i].terminal.store.power > 2000 && !myCities[i].terminal.termUsed){
+                    myCities[i].terminal.send(RESOURCE_POWER, 560, receiver);
                     myCities[i].terminal.termUsed = true;
-    		        console.log('Sending power to ' + receiver)
-    		    }
-    		}
-    	}
+                    console.log('Sending power to ' + receiver)
+                }
+            }
+        }
     },
 
     distributeUpgrade: function(myCities){
@@ -254,7 +254,7 @@ var markets = {
         let terminal = city.terminal;
         for(var i = 0; i < bars.length; i++){
             if(terminal.store[bars[i]] > 3000){
-                sellAmount = terminal.store[bars[i]] - 3000;
+                let sellAmount = terminal.store[bars[i]] - 3000;
                 let goodOrders = markets.sortOrder(buyOrders[bars[i]]).reverse();
                 if(goodOrders.length && goodOrders[0].price > (0.7 * markets.getPrice(bars[i]))){
                     Game.market.deal(goodOrders[0].id, Math.min(goodOrders[0].remainingAmount,  sellAmount), city.name);
@@ -263,7 +263,7 @@ var markets = {
             }
             //alternatively, sell if price is right
             if(terminal.store[bars[i]] === 3000 && Object.keys(COMMODITIES[bars[i]].components).length === 2){//excludes commodities
-                sellAmount = 1000;
+                let sellAmount = 1000;
                 let goodOrders = markets.sortOrder(buyOrders[bars[i]]).reverse();
                 //determine price of associated resource
                 let base = _.without(Object.keys(COMMODITIES[bars[i]].components), RESOURCE_ENERGY)[0]
@@ -278,7 +278,7 @@ var markets = {
 
     getPrice: function(resource){
         //determine price using history
-        let history = marketHistory[resource];
+        let history = MarketHistory[resource]; // TODO this may not be declared yet
         let totalVol = 0;
         let totalPrice = 0;
         for(var i = 0; i < history.length; i++){
@@ -387,7 +387,6 @@ var markets = {
             if(!Memory.sellPoint[resources[i]]){
                 Memory.sellPoint[resources[i]] === 0;
             }
-            let store = empireStore[resources[i]]
             let orders = markets.sortOrder(buyOrders[resources[i]]).reverse()
             if(orders.length && orders[0].price > Memory.sellPoint[resources[i]]){
                 //if there is a higher order than what we are willing to sell for, get pickier
@@ -452,14 +451,13 @@ var markets = {
         }
         //regular market stuff (every 200 ticks, offset by 30)
         if(Game.time % 200 === 30){
-            for(var i = 0; i < Object.keys(Game.market.orders).length; i++){
+            for(let i = 0; i < Object.keys(Game.market.orders).length; i++){
                 if(!Game.market.orders[Object.keys(Game.market.orders)[i]].active){
                     Game.market.cancelOrder(Object.keys(Game.market.orders)[i])
                 }
             }
             const orders = Game.market.getAllOrders();
-            global.marketHistory = _.groupBy(Game.market.getHistory(), history => history.resourceType)
-            const sellOrders = _.groupBy(_.filter(orders, order => order.type == ORDER_SELL), order => order.resourceType)
+            global.MarketHistory = _.groupBy(Game.market.getHistory(), history => history.resourceType)
             const buyOrders = _.groupBy(_.filter(orders, order => order.type == ORDER_BUY), order => order.resourceType)
             const energyOrders = markets.sortOrder(buyOrders[RESOURCE_ENERGY]).reverse();
             const highEnergyOrder = energyOrders[0];
@@ -468,7 +466,7 @@ var markets = {
                     RESOURCE_OXIDANT, RESOURCE_REDUCTANT, RESOURCE_PURIFIER, RESOURCE_CELL, RESOURCE_WIRE, RESOURCE_ALLOY, RESOURCE_CONDENSATE];
             const highTier = [RESOURCE_ORGANISM, RESOURCE_MACHINE, RESOURCE_DEVICE, RESOURCE_ESSENCE];
             markets.updateSellPoint(highTier, termCities, buyOrders);
-            for (var i = 0; i < termCities.length; i++){
+            for (let i = 0; i < termCities.length; i++){
                 //if no terminal continue or no spawn
                 if(!termCities[i].terminal || !Game.spawns[termCities[i].memory.city].memory.ferryInfo){
                     continue;

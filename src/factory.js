@@ -51,7 +51,7 @@ var fact = {
             let produce = Game.spawns[city].memory.ferryInfo.factoryInfo.produce;
             let components = Object.keys(COMMODITIES[produce].components);
             let go = true;
-            for (var i = 0; i < components.length; i++) {
+            for (let i = 0; i < components.length; i++) {
                 if(COMMODITIES[produce].components[components[i]] > factory.store[components[i]]){
                     go = false;
                 }
@@ -69,7 +69,7 @@ var fact = {
             let produce = Game.spawns[city].memory.ferryInfo.factoryInfo.produce;
             let components = Object.keys(COMMODITIES[produce].components);
             let go = true;
-            for (var i = 0; i < components.length; i++) {
+            for (let i = 0; i < components.length; i++) {
                 if(COMMODITIES[produce].components[components[i]] > factory.store[components[i]]){
                     go = false;
                 }
@@ -129,7 +129,7 @@ var fact = {
             let bars = [RESOURCE_UTRIUM_BAR, RESOURCE_LEMERGIUM_BAR, RESOURCE_ZYNTHIUM_BAR,
                     RESOURCE_KEANIUM_BAR, RESOURCE_OXIDANT, RESOURCE_REDUCTANT, RESOURCE_PURIFIER, RESOURCE_GHODIUM_MELT];
             let terminal = Game.spawns[city].room.terminal;
-            for(i = 0; i < bars.length; i++){
+            for(let i = 0; i < bars.length; i++){
                 if(terminal.store[bars[i]] < 3000){
                     Game.spawns[city].memory.ferryInfo.factoryInfo.produce = bars[i];
                     let components = _.without(Object.keys(COMMODITIES[bars[i]].components), RESOURCE_ENERGY); //ferry shouldn't deliver energy
@@ -138,7 +138,7 @@ var fact = {
                 }
             }
             //if excess base mineral, process it
-            for(i = 0; i < bars.length; i++){
+            for(let i = 0; i < bars.length; i++){
                 let components = _.without(Object.keys(COMMODITIES[bars[i]].components), RESOURCE_ENERGY);
                 if(terminal.store[components[0]] >= 9000){
                     if(components[0] == RESOURCE_GHODIUM && terminal.store[components[0]] < 20000){
@@ -153,7 +153,7 @@ var fact = {
             //make base commodities i.e. wire, cell etc.
             let baseComs = [RESOURCE_CONDENSATE, RESOURCE_ALLOY, RESOURCE_CELL, RESOURCE_WIRE]
             let rawComs = [RESOURCE_SILICON, RESOURCE_METAL, RESOURCE_BIOMASS, RESOURCE_MIST]
-            for(i = 0; i < baseComs.length; i++){
+            for(let i = 0; i < baseComs.length; i++){
                 let components = _.without(Object.keys(COMMODITIES[baseComs[i]].components), RESOURCE_ENERGY);
                 let commodity = _.intersection(components, rawComs);
                 if(terminal.store[commodity] >= 1000){
@@ -171,7 +171,7 @@ var fact = {
 
     findRateLimit: function(components, produce){//return number of cycles we can do
         let rateLimit = 0; //determine rate limit(resources cannot be transferred in quantities greater than 1k)
-        for(i = 0; i < components.length; i++){
+        for(let i = 0; i < components.length; i++){
             let needed = COMMODITIES[produce].components[components[i]];
             if(rateLimit < needed){
                 rateLimit = needed;
@@ -184,14 +184,14 @@ var fact = {
 
     requestComponents: function(city, components, produce){
         let productionNum = fact.findRateLimit(components, produce);
-        for(i = 0; i < components.length; i++){
+        for(let i = 0; i < components.length; i++){
             let requestAmount = COMMODITIES[produce].components[components[i]] * productionNum;
             Game.spawns[city].memory.ferryInfo.factoryInfo.transfer.push([components[i], 1, requestAmount])
         }
 
     },
 
-    removeJunk: function(city, terminal, factLevel){
+    removeJunk: function(city, terminal){
         const coms = _.without(_.difference(Object.keys(COMMODITIES), Object.keys(REACTIONS)), RESOURCE_ENERGY)
         const destination = _.find(Game.structures, struct => struct.structureType == STRUCTURE_FACTORY
                  && struct.my && !struct.level && struct.room.terminal && struct.room.controller.level >= 7).room.name

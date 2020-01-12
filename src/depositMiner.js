@@ -1,6 +1,4 @@
 var actions = require('actions');
-var t = require('types');
-var u = require('utils');
 
 var rDM = {
     name: "depositMiner",

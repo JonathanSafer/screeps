@@ -285,7 +285,7 @@ function checkLabs(city){
     spawn.memory.ferryInfo.labInfo = [];
     spawn.memory.ferryInfo.boosterInfo = [];
     group1.push(labs[0].id)
-    for(i = 1; i < labs.length; i++){
+    for(let i = 1; i < labs.length; i++){
         if(labs[0].pos.inRangeTo(labs[i].pos, 2)){
             group1.push(labs[i].id)
         } else {
@@ -293,26 +293,26 @@ function checkLabs(city){
         }
     }
     if (group1.length == 6){
-        for (i = 0; i < 6; i++){
+        for (let i = 0; i < 6; i++){
             spawn.memory.ferryInfo.labInfo[i] = [];
             spawn.memory.ferryInfo.labInfo[i][0] = group1[i]
             spawn.memory.ferryInfo.labInfo[i][1] = 0
             spawn.memory.ferryInfo.labInfo[i][2] = null
         }
-        for (i = 0; i < 4; i++){
+        for (let i = 0; i < 4; i++){
             spawn.memory.ferryInfo.boosterInfo[i] = [];
             spawn.memory.ferryInfo.boosterInfo[i][0] = group2[i]
             spawn.memory.ferryInfo.boosterInfo[i][1] = 0
             spawn.memory.ferryInfo.boosterInfo[i][2] = null
         }
     } else {
-        for (i = 0; i < 6; i++){
+        for (let i = 0; i < 6; i++){
             spawn.memory.ferryInfo.labInfo[i] = [];
             spawn.memory.ferryInfo.labInfo[i][0] = group2[i]
             spawn.memory.ferryInfo.labInfo[i][1] = 0
             spawn.memory.ferryInfo.labInfo[i][2] = null
         }
-        for (i = 0; i < 4; i++){
+        for (let i = 0; i < 4; i++){
             spawn.memory.ferryInfo.boosterInfo[i] = [];
             spawn.memory.ferryInfo.boosterInfo[i][0] = group1[i]
             spawn.memory.ferryInfo.boosterInfo[i][1] = 0
@@ -428,15 +428,7 @@ function updateMiner(rooms, rcl8Room, memory, spawn){
             memory.sources[sourceId] = sourcePos;
         }
     });
-    _.each(memory.sources, function(sourceInfo){
-        miners++;
-        let room = sourceInfo.roomName;
-        //if (Game.rooms[room] && !Game.rooms[room].controller.reservation){
-            //delete(Game.spawns[city].memory.sources[source])\
-            //console.log(Game.spawns[city].memory.sources[source])
-            //this is currently not working
-        //}
-    });
+    _.each(memory.sources, () => miners++)
     if(Game.flags.claim && Game.flags.claim.pos.roomName === spawn.pos.roomName &&
         Game.flags.claim.room.controller.level < 6){
         memory[rM.name] = 0;
@@ -604,14 +596,7 @@ function updateDepositMiner(flag, memory) {
     memory[rDM.name] = flag ? 1 : 0;
 }
 
-function updateTrooper(flag, memory, unused, rooms) {
-    // use troopers to defend rooms
-    // var enemyCounts = _.map(rooms, room => {
-    //     var allBadCreeps = room.find(FIND_HOSTILE_CREEPS);
-    //     var invaders = _.reject(allBadCreeps, creep => creep.owner.username == "Source Keeper");
-    //     return invaders.length;
-    // });
-    // memory[rTr.name] = _.sum(enemyCounts);
+function updateTrooper(flag, memory) {
     // add troopers for a shoot
     memory[rTr.name] = flag ? 1 : 0;
     if (flag) memory[rMe.name]++;
@@ -706,8 +691,8 @@ function runObs(city){
                 let pos = rp.roomNameToPos(myRoom)
                 let x = pos[0] - 2;
                 let y = pos[1] - 2;
-                for (var i = 0; i < 5; i++){
-                    for (var j = 0; j < 5; j++){
+                for (let i = 0; i < 5; i++){
+                    for (let j = 0; j < 5; j++){
                         let coord = [x, y]
                         let roomName = rp.roomPosToName(coord);
                         Game.spawns[city].memory.powerRooms.push(roomName)
@@ -751,8 +736,8 @@ function runObs(city){
                 let terrain = Game.rooms[roomName].getTerrain();
                 let x = powerBank.pos.x - 1
                 let y = powerBank.pos.y - 1
-                for(var i = 0; i < 3; i++){
-                    for (var j = 0; j < 3; j++){
+                for(let i = 0; i < 3; i++){
+                    for (let j = 0; j < 3; j++){
                         let result = terrain.get(x,y);
                         if (result == TERRAIN_MASK_WALL){
                             walls++
@@ -775,7 +760,7 @@ function runObs(city){
                 if(deposits.length){
                     let depositFlagName = city + 'deposit';
                     let flagPlaced = Game.flags[depositFlagName] ? true : false;
-                    for (var i = 0; i < deposits.length; i++) {
+                    for (let i = 0; i < deposits.length; i++) {
                         if(deposits[i].lastCooldown < 25 && flagPlaced === false){
                             Game.rooms[roomName].createFlag(deposits[i].pos, depositFlagName)
                             Game.spawns[city].memory.deposit = Math.floor(Math.pow((deposits[i].lastCooldown / 0.001), 1/1.2))

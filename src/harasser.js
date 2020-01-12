@@ -49,7 +49,7 @@ var rH = {
         //if target and in range, shoot target, otherwise shoot anybody in range
         if(creep.memory.target){
             let target = Game.getObjectById(creep.memory.target)
-            if(target && target.pos.inRangeTo(creep.pos), 3){
+            if(target && target.pos.inRangeTo(creep.pos, 3)){
                 creep.rangedAttack(target)
                 return;
             }
@@ -83,7 +83,7 @@ var rH = {
                 //get less angry
                 creep.memory.anger = creep.memory.anger/2
             }
-            let dangerous = _.filter(hostiles, h.getActiveBodyparts(ATTACK) > 0 || h.getActiveBodyparts(RANGED_ATTACK) > 0)
+            let dangerous = _.filter(hostiles, h => h.getActiveBodyparts(ATTACK) > 0 || h.getActiveBodyparts(RANGED_ATTACK) > 0)
             let goals = _.map(dangerous, function(d) {
             return { pos: d.pos, range: 3 };
             });

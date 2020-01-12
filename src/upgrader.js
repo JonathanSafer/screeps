@@ -30,7 +30,7 @@ var rU = {
         }
         if (creep.memory.upgrading ? actions.upgrade(creep) : actions.withdraw(creep, location) == ERR_NOT_ENOUGH_RESOURCES){
             creep.memory.target = u.getNextLocation(creep.memory.target, targets);
-        };
+        }
       }
     },
 

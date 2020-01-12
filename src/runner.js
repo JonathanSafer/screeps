@@ -16,7 +16,7 @@ var rR = {
                 if (!creep.memory.location){
                     creep.memory.location = Game.spawns[creep.memory.city].room.storage.id;
                 }
-                var target = Game.getObjectById(creep.memory.location)
+                let target = Game.getObjectById(creep.memory.location)
                 if (target){
                     actions.charge(creep, target)
                 }
@@ -89,7 +89,7 @@ var rR = {
               }
           }
           if (creep.memory.location){
-              var target = Game.getObjectById(creep.memory.location)
+              let target = Game.getObjectById(creep.memory.location)
               if (target){
                   if (actions.charge(creep, target) == ERR_FULL) {
                         var locations = u.getTransferLocations(creep)

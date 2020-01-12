@@ -225,7 +225,7 @@ var rF = {
             return 4;
         }
         if(Game.spawns[creep.memory.city].memory.ferryInfo.labInfo){
-            for (i = 0; i < 4; i++){
+            for (let i = 0; i < 4; i++){
                 if(Game.spawns[creep.memory.city].memory.ferryInfo.boosterInfo[i][1] === 1 && creep.room.terminal.store[Game.spawns[creep.memory.city].memory.ferryInfo.boosterInfo[i][2]] >= 1000){
                     creep.memory.lab = Game.spawns[creep.memory.city].memory.ferryInfo.boosterInfo[i][0]
                     creep.memory.mineral = Game.spawns[creep.memory.city].memory.ferryInfo.boosterInfo[i][2]
@@ -238,14 +238,14 @@ var rF = {
                     return 10;
                 }
             }
-            for(i = 2; i < 6; i++){
+            for(let i = 2; i < 6; i++){
                 if(Game.spawns[creep.memory.city].memory.ferryInfo.labInfo[i][1] == 1){
                     creep.memory.lab = Game.spawns[creep.memory.city].memory.ferryInfo.labInfo[i][0]
                     creep.memory.labNum = i;
                     return 7;
                 }
             }
-            for (i = 0; i < 2; i++){
+            for (let i = 0; i < 2; i++){
                 if(Game.spawns[creep.memory.city].memory.ferryInfo.labInfo[i][1] == 1 && creep.room.terminal.store[Game.spawns[creep.memory.city].memory.ferryInfo.labInfo[i][2]] >= 1000){
                     creep.memory.lab = Game.spawns[creep.memory.city].memory.ferryInfo.labInfo[i][0]
                     creep.memory.mineral = Game.spawns[creep.memory.city].memory.ferryInfo.labInfo[i][2]
@@ -257,7 +257,7 @@ var rF = {
         if(Game.spawns[creep.memory.city].memory.ferryInfo.factoryInfo){
             let transfer = Game.spawns[creep.memory.city].memory.ferryInfo.factoryInfo.transfer
             if(transfer.length){
-                for(i = 0; i < transfer.length; i++){
+                for(let i = 0; i < transfer.length; i++){
                     if(transfer[i][1] === 0){//move produce from factory to terminal
                         creep.memory.mineral = transfer[i][0];
                         creep.memory.quantity = transfer[i][2];

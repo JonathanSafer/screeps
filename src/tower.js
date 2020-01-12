@@ -84,13 +84,13 @@ var T = {
 
     generateHealMap: function(hostiles) {
         let map = [];
-        for(var i = 0; i < 50; i++){
+        for(let i = 0; i < 50; i++){
             map[i] = [];
-            for(var j = 0; j < 50; j++){
+            for(let j = 0; j < 50; j++){
                 map[i][j] = 0;
             }
         }
-        for(var i = 0; i < hostiles.length; i++){
+        for(let i = 0; i < hostiles.length; i++){
             if(hostiles[i].className){//creep is PC
                 continue;
             }
@@ -101,7 +101,7 @@ var T = {
             }
             let boosted = false;
             //if creep has one heal boosted, assume all are T3 boosted
-            for(var j = 0; j < hostiles[i].body.length; j++){
+            for(let j = 0; j < hostiles[i].body.length; j++){
                 if(hostiles[i].body[j].type === HEAL){
                     if(hostiles[i].body[j].boost){
                         boosted = true;

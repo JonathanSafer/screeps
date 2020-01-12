@@ -66,15 +66,15 @@ var u = {
     
     //splitCreepsByCity
     splitCreepsByCity: function(){
-	    var creeps = _.filter(Game.creeps, creep => creep.my)
-	    return _.groupBy(creeps, creep => creep.memory.city);
+        var creeps = _.filter(Game.creeps, creep => creep.my)
+        return _.groupBy(creeps, creep => creep.memory.city);
     },
     
     //splitRoomsByCity
     splitRoomsByCity: function(){
-	    var rooms = _.filter(Game.rooms, room => u.iReservedOrOwn(room.name))
-	    //console.log(JSON.stringify(rooms));
-	    return _.groupBy(rooms, room => room.memory.city);
+        var rooms = _.filter(Game.rooms, room => u.iReservedOrOwn(room.name))
+        //console.log(JSON.stringify(rooms));
+        return _.groupBy(rooms, room => room.memory.city);
     },
 
     getMyCities: function() {

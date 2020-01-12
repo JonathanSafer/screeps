@@ -1,5 +1,4 @@
 var actions = require('actions');
-var t = require('types');
 var u = require('utils');
 
 var rT = {
@@ -45,7 +44,7 @@ var rT = {
                 //if creep still has energy, start moving to next target
                 if(creep.store[RESOURCE_ENERGY] > target.store.getFreeCapacity(RESOURCE_ENERGY)){
                     //start moving to next target if target not already in range
-                    newTarget = rT.findTarget(creep, target)//make sure to remove current target from search list
+                    let newTarget = rT.findTarget(creep, target)//make sure to remove current target from search list
                     if(!newTarget){
                         creep.say(20)
                         return;
@@ -145,14 +144,14 @@ var rT = {
             }
             result = actions.withdraw(creep, bucket)
             if (result == ERR_NOT_ENOUGH_RESOURCES){
-                var targets = u.getWithdrawLocations(creep);
+                let targets = u.getWithdrawLocations(creep);
                 creep.memory.target = u.getNextLocation(creep.memory.target, targets);
                 if (targets[creep.memory.target]){
                     creep.memory.location = targets[creep.memory.target].id
                 }
             }
         } else {
-            var targets = u.getWithdrawLocations(creep);
+            let targets = u.getWithdrawLocations(creep);
             var location = targets[creep.memory.target];
             if (location == undefined) {
               location = Game.spawns[city];
