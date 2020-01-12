@@ -147,7 +147,7 @@ function test(hpt, ticks, harvested) {
 function minerBody(energyAvailable, rcl) {
     // miners. at least 1 move. 5 works until we can afford 10
     let works = (energyAvailable - BODYPART_COST[MOVE]) / BODYPART_COST[WORK]
-    if (works >= 10) works = 10
+    if (works >= 20) works = 20
     else if (works >= 5) works = 5
     else works = Math.floor(works)
     let energyAfterWorks = energyAvailable - works * BODYPART_COST[WORK]
