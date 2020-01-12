@@ -182,7 +182,7 @@ let p = {
         let sources = room.find(FIND_SOURCES)
         let neighbors = _.find(sources, p.tooCloseToSource)
         if (neighbors != undefined) {  // sources are next to eachother.
-            console.log("Source are next to each other in: " + room.name)
+            console.log("Sources are next to each other in: " + room.name)
             return
         }
 
@@ -191,14 +191,15 @@ let p = {
                 return // We already have links
             }
 
-            let creeps = source.pos.findInRange(FIND_MY_CREEPS)
+            let creeps = source.pos.findInRange(FIND_MY_CREEPS, 3)
             let miners = _.filter(creeps, creep => creep.memory.role == rM.name)
             if (miners.length != 1) {
-                console.log("Too many miners near source")
+                console.log("Wrong number of miners near source: " + room.name)
                 return
             }
 
-            // TODO enable for testing: p.buildSourceLink(room, miners[0])
+            console.log("Building link: " + room.name)
+            p.buildSourceLink(room, miners[0])
         })
     },
 
@@ -213,7 +214,7 @@ let p = {
             if (items.length == 1 &&
                 items[0].type == LOOK_TERRAIN &&
                 items[0][LOOK_TERRAIN] != TERRAIN_MASK_WALL) {
-                room.createConstructionSite(col[0], row[0], STRUCTURE_LINK)
+                room.createConstructionSite(Number(col[0]), Number(row[0]), STRUCTURE_LINK)
                 return
             }
           }
@@ -223,11 +224,11 @@ let p = {
     },
 
     tooCloseToSource: function(source) {
-        return source.pos.findInRange(FIND_SOURCES, 3).length > 0
+        return source.pos.findInRange(FIND_SOURCES, 3).length > 1
     },
 
     sourceHasLink: function(source) {
-        let links = source.pos.findInRange(FIND_MY_STRUCTURES, {
+        let links = source.pos.findInRange(FIND_MY_STRUCTURES, 3, {
                 filter: { structureType: STRUCTURE_LINK }
         })
         return links.length > 0
