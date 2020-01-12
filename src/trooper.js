@@ -15,7 +15,7 @@ var rTr = {
         u.updateCheckpoints(creep);
         creep.notifyWhenAttacked(false)
         
-        let hostiles = creep.room.find(FIND_HOSTILE_CREEPS);
+        let hostiles = _.filter(creep.room.find(FIND_HOSTILE_CREEPS), c => c.owner.username != 'atanner')
         let buildings = _.reject(creep.room.find(FIND_HOSTILE_STRUCTURES), structure => structure.structureType == STRUCTURE_CONTROLLER);
         let target = Game.getObjectById(creep.memory.target);
 
@@ -47,7 +47,11 @@ var rTr = {
             attack = 1
         }
         if(!attack && hostiles.length){
-            creep.memory.target = creep.pos.findClosestByRange(FIND_HOSTILE_CREEPS).id
+            let newTarget = creep.pos.findClosestByRange(hostiles)
+            creep.memory.target = newTarget.id
+            if(newTarget.pos.inRangeTo(creep.pos, 3)){
+                creep.rangedAttack(newTarget);
+            }
         }
     },
 
