@@ -88,19 +88,17 @@ var rR = {
                  // myPos.createConstructionSite(STRUCTURE_ROAD); // let's build more road
               }
           }
-          if (creep.memory.location){
+          if (creep.memory.location && Game.getObjectById(creep.memory.location)){
               let target = Game.getObjectById(creep.memory.location)
-              if (target){
-                  if (actions.charge(creep, target) == ERR_FULL) {
-                        var locations = u.getTransferLocations(creep)
-                        var nextLocation = u.getNextLocation(creep.memory.target, locations);
-                        if (locations[nextLocation] == undefined){
-                            creep.memory.location = Game.spawns[creep.memory.city].id
-                        } else {
-                            creep.memory.target = nextLocation;
-                            creep.memory.location = locations[nextLocation].id
-                        }
-                  }
+              if (actions.charge(creep, target) == ERR_FULL) {
+                    var locations = u.getTransferLocations(creep)
+                    var nextLocation = u.getNextLocation(creep.memory.target, locations);
+                    if (locations[nextLocation] == undefined){
+                        creep.memory.location = Game.spawns[creep.memory.city].id
+                    } else {
+                        creep.memory.target = nextLocation;
+                        creep.memory.location = locations[nextLocation].id
+                    }
               }
           } else {
               var targets =  u.getTransferLocations(creep);
