@@ -211,10 +211,11 @@ let p = {
           let cols = row[1]
           for (let col of Object.entries(cols)) {
             let items = area[row[0]][col[0]]
+            let x = Number(col[0])
+            let y = Number(row[0])
             if (items.length == 1 &&
-                items[0].type == LOOK_TERRAIN &&
-                items[0][LOOK_TERRAIN] != TERRAIN_MASK_WALL) {
-                room.createConstructionSite(Number(col[0]), Number(row[0]), STRUCTURE_LINK)
+                room.getTerrain().get(x, y) != TERRAIN_MASK_WALL) {
+                room.createConstructionSite(x, y, STRUCTURE_LINK)
                 return
             }
           }
