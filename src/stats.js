@@ -16,7 +16,7 @@ var rD = require('defender');
 var u = require('utils');
 var rPM = require('powerMiner');
 
-var stats = {
+var statsLib = {
     cityCpuMap: {},
 
     collectStats: function() {
@@ -53,9 +53,7 @@ var stats = {
                 if(room.storage){
                   stats['rooms.' + city + '.storage.energy'] = room.storage.store.energy
                 }
-                if (stats.cityCpuMap) {
-                    stats['rooms.' + city + '.cpu'] = stats.cityCpuMap[city]
-                }
+                stats['rooms.' + city + '.cpu'] = statsLib.cityCpuMap[city]
               }
             })
             var counts = _.countBy(Game.creeps, creep => creep.memory.role);
@@ -113,4 +111,4 @@ var stats = {
     }
 }
 
-module.exports = stats;
+module.exports = statsLib;
