@@ -1,5 +1,6 @@
 let u = require("utils")
 let template = require("template")
+let rM = require("remoteMiner")
 
 let p = {
     frequency: 2000,
@@ -63,6 +64,7 @@ let p = {
                 p.buildRoads(room, plan);
                 if(room.controller.level >= 7){
                     p.buildWalls(room, plan);
+                    p.buildSourceLinks(room)
                 }
             }
         })
@@ -89,13 +91,13 @@ let p = {
         //first identify all locations to be walled, if there is a road there, place a rampart instead. if there is a terrain wall don't make anything
         let startPoint = new RoomPosition(plan.x - 3, plan.y - 3, room.name)
         let wallSpots = []
-        for(var i = startPoint.x; i < startPoint.x + 19; i++){//walls are 19 by 17
+        for(let i = startPoint.x; i < startPoint.x + 19; i++){//walls are 19 by 17
             let location = new RoomPosition(i, startPoint.y, room.name)
             let location2 = new RoomPosition(i, startPoint.y + 16, room.name)
             wallSpots.push(location)
             wallSpots.push(location2)
         }
-        for(var i = startPoint.y; i < startPoint.y + 17; i++){//walls are 19 by 17
+        for(let i = startPoint.y; i < startPoint.y + 17; i++){//walls are 19 by 17
             let location = new RoomPosition(startPoint.x, i, room.name)
             let location2 = new RoomPosition(startPoint.x + 18, i, room.name)
             wallSpots.push(location)
@@ -103,7 +105,7 @@ let p = {
         }
         const terrain = new Room.Terrain(room.name);
 
-        let costs = new PathFinder.CostMatrix;
+        let costs = new PathFinder.CostMatrix();
         _.forEach(wallSpots, function(wallSpot) {//CM of just walls
             costs.set(wallSpot.x, wallSpot.y, 0xff)
         })
@@ -116,13 +118,13 @@ let p = {
             counter = csites.length;
         }
 
-        for(var i = 0; i < wallSpots.length; i++){//build stuff
+        for(let i = 0; i < wallSpots.length; i++){//build stuff
             if(terrain.get(wallSpots[i].x, wallSpots[i].y) === TERRAIN_MASK_WALL){
                 continue;
             }
             let structures = room.lookForAt(LOOK_STRUCTURES, wallSpots[i])
             let wall = false;
-            for(var j = 0; j < structures.length; j++){
+            for(let j = 0; j < structures.length; j++){
                 if(structures[j].structureType === STRUCTURE_WALL || structures[j].structureType === STRUCTURE_RAMPART){
                     wall = true;
                     break;
@@ -137,7 +139,7 @@ let p = {
 
             //check by attempting to path to all exits
             let wallNeeded = false;
-            for(var j = 0; j < roomExits.length; j++){
+            for(let j = 0; j < roomExits.length; j++){
                 if(roomExits[j].length){
                     //we only need to path to one of the exit points (it does not matter which one)
                     let origin = new RoomPosition(wallSpots[i].x, wallSpots[i].y, room.name)
@@ -176,8 +178,63 @@ let p = {
         }
     },
 
+    buildSourceLinks: function(room) {
+        let sources = room.find(FIND_SOURCES)
+        let neighbors = _.find(sources, p.tooCloseToSource)
+        if (neighbors != undefined) {  // sources are next to eachother.
+            console.log("Source are next to each other in: " + room.name)
+            return
+        }
+
+        _.forEach(sources, source => {
+            if (p.sourceHasLink(source)) {
+                return // We already have links
+            }
+
+            let creeps = source.pos.findInRange(FIND_MY_CREEPS)
+            let miners = _.filter(creeps, creep => creep.memory.role == rM.name)
+            if (miners.length != 1) {
+                console.log("Too many miners near source")
+                return
+            }
+
+            // TODO enable for testing: p.buildSourceLink(room, miners[0])
+        })
+    },
+
+    buildSourceLink: function(room, miner) {
+        let x = miner.pos.x
+        let y = miner.pos.y
+        let area = room.lookAtArea(y - 1, x - 1, y + 1, x + 1)
+        for (let row of Object.entries(area)) {
+          let cols = row[1]
+          for (let col of Object.entries(cols)) {
+            let items = area[row[0]][col[0]]
+            if (items.length == 1 &&
+                items[0].type == LOOK_TERRAIN &&
+                items[0][LOOK_TERRAIN] != TERRAIN_MASK_WALL) {
+                room.createConstructionSite(col[0], row[0], STRUCTURE_LINK)
+                return
+            }
+          }
+        }
+        // find empty square next to miner. lookAt all positions around miner
+        // check they have only creeps or terrain(not terrain wall)
+    },
+
+    tooCloseToSource: function(source) {
+        return source.pos.findInRange(FIND_SOURCES, 3).length > 0
+    },
+
+    sourceHasLink: function(source) {
+        let links = source.pos.findInRange(FIND_MY_STRUCTURES, {
+                filter: { structureType: STRUCTURE_LINK }
+        })
+        return links.length > 0
+    },
+
     makeRoadMatrix: function(room, plan){
-        let costs = new PathFinder.CostMatrix;
+        let costs = new PathFinder.CostMatrix();
         _.forEach(template.buildings, function(locations, structureType) {//don't make roads anywhere that a structure needs to go
             locations.pos.forEach(location => {
                 var pos = {"x": plan.x + location.x - template.offset.x, 
@@ -216,9 +273,7 @@ let p = {
             let sourcePos = Game.getObjectById(sources[i]).pos;
             let sourcePath = PathFinder.search(sourcePos, exits, {
                 plainCost: 4, swampCost: 4, maxRooms: 1, 
-                roomCallback: function(roomName) {
-                    return roadMatrix;
-                },
+                roomCallback: () => roadMatrix
             })
             for(var j = 0; j < sourcePath.path.length; j++){
                 sourcePaths.push(sourcePath.path[j]);
@@ -231,9 +286,7 @@ let p = {
         const mineralPos = room.find(FIND_MINERALS)[0].pos;
         let mineralPath = PathFinder.search(mineralPos, exits, {
             plainCost: 4, swampCost: 4, maxRooms: 1, 
-            roomCallback: function(roomName) {
-                return roadMatrix;
-            },
+            roomCallback: () => roadMatrix
         })
         return mineralPath.path.reverse()
     },
@@ -245,9 +298,7 @@ let p = {
         const controllerPos = controller.pos;
         let controllerPath = PathFinder.search(controllerPos, exits, {
             plainCost: 4, swampCost: 4, maxRooms: 1, 
-            roomCallback: function(roomName) {
-                return roadMatrix;
-            },
+            roomCallback: () => roadMatrix
         })
         for(var i = 2; i < controllerPath.path.length; i++){// don't include first two paths (not needed)
             path.push(controllerPath.path[i]);
@@ -265,17 +316,13 @@ let p = {
             if(roomExits[i].length){
                 let exitPath0 = PathFinder.search(startPos, roomExits[i], {
                     plainCost: 4, swampCost: 4, maxRooms: 1, 
-                    roomCallback: function(roomName) {
-                        return roadMatrix;
-                    },
+                    roomCallback: () => roadMatrix
                 })
                 let exitPoint = exitPath0.path[exitPath0.path.length - 1];
                 //now path from this point to template exits
                 let exitPath = PathFinder.search(exitPoint, exits, {
                     plainCost: 4, swampCost: 4, maxRooms: 1, 
-                    roomCallback: function(roomName) {
-                        return roadMatrix;
-                    },
+                    roomCallback: () => roadMatrix
                 })
                 let exitPathPath = exitPath.path
                 exitPathPath.reverse()
@@ -297,7 +344,7 @@ let p = {
             return;
         }
         let exits = [];
-        for(var i = 0; i < template.exits.length; i++){
+        for(let i = 0; i < template.exits.length; i++){
             let posX = plan.x + template.exits[i].x - template.offset.x;
             let posY = plan.y + template.exits[i].y - template.offset.y;
             let roomPos = new RoomPosition(posX, posY, room.name)
@@ -328,7 +375,7 @@ let p = {
         if(csites.length){
             counter = csites.length;
         }
-        for(var i = 0; i < roads.length; i++){
+        for(let i = 0; i < roads.length; i++){
             room.visual.circle(roads[i], {fill: '#ff1111', radius: 0.1, stroke: 'red'});
             if(counter < 20){//doesn't update during the tick
                 let look = room.lookForAt(LOOK_STRUCTURES, roads[i])
@@ -358,25 +405,25 @@ let p = {
         let sExits = []
         let eExits = []
         let wExits = []
-        for(var i = 0; i < 50; i++){
+        for(let i = 0; i < 50; i++){
             if(terrain.get(0,i) !== TERRAIN_MASK_WALL){
                 let pos = new RoomPosition(0, i, roomName)
                 wExits.push(pos)
             }
         }
-        for(var i = 0; i < 50; i++){
+        for(let i = 0; i < 50; i++){
             if(terrain.get(i,0) !== TERRAIN_MASK_WALL){
                 let pos = new RoomPosition(i, 0, roomName)
                 nExits.push(pos)
             }
         }
-        for(var i = 0; i < 50; i++){
+        for(let i = 0; i < 50; i++){
             if(terrain.get(49,i) !== TERRAIN_MASK_WALL){
                 let pos = new RoomPosition(49, i, roomName)
                 eExits.push(pos)
             }
         }
-        for(var i = 0; i < 50; i++){
+        for(let i = 0; i < 50; i++){
             if(terrain.get(i,49) !== TERRAIN_MASK_WALL){
                 let pos = new RoomPosition(i, 49, roomName)
                 sExits.push(pos)
@@ -389,7 +436,7 @@ let p = {
         // TODO
         // var room = Game.rooms[roomName]
         var ter = Game.map.getRoomTerrain(roomName)
-        var sqd = Array(50).fill().map(e => Array(50))
+        var sqd = Array(50).fill().map(() => Array(50))
         var i, j;
         for (i = 0; i < 50; i++) {
             for (j = 0; j < 50; j++) {
