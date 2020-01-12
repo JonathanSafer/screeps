@@ -69,7 +69,7 @@ let p = {
                 if (room.controller.level >= 7){
                     p.buildWalls(room, plan);
                     p.buildSourceLinks(room)
-                    //p.buildControllerLink(room)
+                    p.buildControllerLink(room)
                 }
             }
         })
