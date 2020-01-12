@@ -104,7 +104,7 @@ function runCity(city, creeps){
         // Run all the creeps in this city
         _.forEach(creeps, (creep) => nameToRole[creep.memory.role][0].run(creep)/* || console.log(creep.memory.role + ' ' + Game.cpu.getUsed())*/);
         
-        link.run(room)
+        // link.run(room)
 
         //run powerSpawn
         runPowerSpawn(city);

@@ -44,13 +44,15 @@ var rM = {
                 if (creep.carry.energy == creep.carryCapacity){
                     let link = Game.getObjectById(creep.memory.link);
             	    a.charge(creep, link);
-            	    if (link.store.getUsedCapacity() >= link.store.getCapacity() * .5){
+            	    if (link.energy >= link.energyCapacity * .5){
             	        creep.say('*', true);
             	    }
                 }
             	if (creep.saying === '*'){
             	    let link = Game.getObjectById(creep.memory.link);
-            		if (link.store.getUsedCapacity() < link.store.getCapacity() * .5){
+            		let storageLink = Game.getObjectById(Game.spawns[creep.memory.city].memory.storageLink);
+            		if (storageLink.energy === 0 && !link.cooldown){
+            		    link.transferEnergy(storageLink)
             		    creep.say('**', true);
             		} else {
             		    creep.say('*', true);

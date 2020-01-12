@@ -39,7 +39,7 @@ var rL = {
 
     findStructure(room, type) {
         return room.find(FIND_STRUCTURES, {
-            filter: type
+            filter: { structureType: type }
         })
     }
 };
