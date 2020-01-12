@@ -15,9 +15,9 @@ var rL = {
 
         // Make transfers
         for (let sourceLink of sourceLinks) {
-            if (sourceLink.store.getUsedCapacity(RESOURCE_ENERGY) < 
+            if (sourceLink.store.getUsedCapacity(RESOURCE_ENERGY) <= 
                 sourceLink.store.getCapacity(RESOURCE_ENERGY) * 0.5) {
-                break // sourceLink isn't full yet
+                continue // sourceLink isn't full yet
             }
 
             if (rL.readyForLinkTransfer(sourceLink, upgradeLink)) {
@@ -38,7 +38,7 @@ var rL = {
         }).length > 0;
     },
 
-    findStructure(room, type) {
+    findStructure: function(room, type) {
         return room.find(FIND_STRUCTURES, {
             filter: { structureType: type }
         })
