@@ -15,7 +15,8 @@ var rL = {
 
         // Make transfers
         for (let sourceLink of sourceLinks) {
-            if (sourceLink.store.getFreeCapacity(RESOURCE_ENERGY) > 0) {
+            if (sourceLink.store.getUsedCapacity(RESOURCE_ENERGY) < 
+                sourceLink.store.getCapacity(RESOURCE_ENERGY) * 0.5) {
                 break // sourceLink isn't full yet
             }
 
@@ -28,7 +29,7 @@ var rL = {
     },
 
     readyForLinkTransfer(sender, receiver) {
-        return receiver && receiver.store.getUsedCapacity() == 0 && !sender.cooldown
+        return receiver && receiver.store.getUsedCapacity(RESOURCE_ENERGY) == 0 && !sender.cooldown
     },
 
     isNearStructure: function(pos, type, range) {

@@ -49,6 +49,10 @@ var rM = {
             	    }
                 }
             	if (creep.saying === '*'){
+                    if (false) { // we are using linkjs
+                        return
+                    }
+
             	    let link = Game.getObjectById(creep.memory.link);
             		let storageLink = Game.getObjectById(Game.spawns[creep.memory.city].memory.storageLink);
             		if (storageLink.energy === 0 && !link.cooldown){
