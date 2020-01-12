@@ -1,6 +1,7 @@
 let u = require("utils")
 let template = require("template")
 let rM = require("remoteMiner")
+let rU = require("upgrader")
 
 let p = {
     frequency: 2000,
@@ -68,6 +69,7 @@ let p = {
                 if (room.controller.level >= 7){
                     p.buildWalls(room, plan);
                     p.buildSourceLinks(room)
+                    //p.buildControllerLink(room)
                 }
             }
         })
@@ -196,6 +198,10 @@ let p = {
         }
     },
 
+    buildControllerLink: function(room) {
+        p.buildLinkInArea(room, room.controller.pos, 3, rU.name, 1)
+    },
+
     buildSourceLinks: function(room) {
         let sources = room.find(FIND_SOURCES)
         let neighbors = _.find(sources, p.tooCloseToSource)
@@ -204,53 +210,51 @@ let p = {
             return
         }
 
-        _.forEach(sources, source => {
-            if (p.sourceHasLink(source)) {
-                return // We already have links
-            }
-
-            let creeps = source.pos.findInRange(FIND_MY_CREEPS, 3)
-            let miners = _.filter(creeps, creep => creep.memory.role == rM.name)
-            if (miners.length != 1) {
-                console.log("Wrong number of miners near source: " + room.name)
-                return
-            }
-
-            console.log("Building link: " + room.name)
-            p.buildSourceLink(room, miners[0])
-        })
+        _.forEach(sources, source => p.buildLinkInArea(room, source.pos, 1, rM.name, 1))
     },
 
-    buildSourceLink: function(room, miner) {
-        let x = miner.pos.x
-        let y = miner.pos.y
-        let area = room.lookAtArea(y - 1, x - 1, y + 1, x + 1)
-        for (let row of Object.entries(area)) {
-          let cols = row[1]
-          for (let col of Object.entries(cols)) {
-            let items = area[row[0]][col[0]]
-            let x = Number(col[0])
-            let y = Number(row[0])
-            if (items.length == 1 &&
-                room.getTerrain().get(x, y) != TERRAIN_MASK_WALL) {
-                room.createConstructionSite(x, y, STRUCTURE_LINK)
-                return
-            }
-          }
+    buildLinkInArea: function(room, structPos, creepRange, creepType, range) {
+        if (p.hasLink(structPos, range + creepRange)) {
+            return // We already have links
         }
-        // find empty square next to miner. lookAt all positions around miner
-        // check they have only creeps or terrain(not terrain wall)
+
+        let creeps = structPos.findInRange(FIND_MY_CREEPS, creepRange)
+        let workers = _.filter(creeps, creep => creep.memory.role == creepType)
+        if (workers.length != 1) {
+            console.log("Wrong number of " + creepType + " for link placement: " + room.name)
+            return
+        }
+
+        console.log("Building link: " + room.name)
+        let workerPos = workers[0].pos
+        let x = workerPos.x
+        let y = workerPos.y
+        let area = room.lookAtArea(y - range, x - range, y + range, x + range)
+        for (let row of Object.entries(area)) {
+            let cols = row[1]
+            for (let col of Object.entries(cols)) {
+                let items = area[row[0]][col[0]]
+                let x = Number(col[0])
+                let y = Number(row[0])
+                if (items.length == 1 &&
+                    room.getTerrain().get(x, y) != TERRAIN_MASK_WALL)
+                {
+                    room.createConstructionSite(x, y, STRUCTURE_LINK)
+                    return
+                }
+            }
+        }
     },
 
     tooCloseToSource: function(source) {
         return source.pos.findInRange(FIND_SOURCES, 3).length > 1
     },
 
-    sourceHasLink: function(source) {
-        let links = source.pos.findInRange(FIND_MY_STRUCTURES, 3, {
+    hasLink: function(pos, distance) {
+        let links = pos.findInRange(FIND_MY_STRUCTURES, distance, {
                 filter: { structureType: STRUCTURE_LINK }
         })
-        let newLinks = source.pos.findInRange(FIND_MY_CONSTRUCTION_SITES, 3, {
+        let newLinks = pos.findInRange(FIND_MY_CONSTRUCTION_SITES, distance, {
             filter: { structureType: STRUCTURE_LINK }
         })
         return links.length > 0 || newLinks.length > 0
