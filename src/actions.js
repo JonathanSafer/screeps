@@ -86,7 +86,7 @@ var actions = {
     
     withdraw: function(creep, location, mineral, amount) {
         if (mineral == undefined){
-            if (location.store.getUsedCapacity(RESOURCE_ENERGY) == 0) return ERR_NOT_ENOUGH_RESOURCES
+            if (!location || !location.store.getUsedCapacity(RESOURCE_ENERGY)) return ERR_NOT_ENOUGH_RESOURCES
             return actions.interact(creep, location, () => creep.withdraw(location, RESOURCE_ENERGY));
         } else if (amount == undefined){
             return actions.interact(creep, location, () => creep.withdraw(location, mineral));
