@@ -29,11 +29,10 @@ TLDR place flags in other rooms like "claim" (claim room), "plan" (build base at
 1. Ferry              - miscellaneous task operator. tasks include; lab work, factory, terminal management etc.
 
 ### Military
-1. Attacker           - attack enemy invaders (defensive unit)
 1. (big)Breaker       - destroys enemy buildings. Pair with healer.
 1. (big)Medic         - heals other military units
 1. (big)Trooper       - ranged unit. Pair with healer.
-1. Defender           - Melee attack unit. High damage unit for attacking enemy bases. Pair with healer.
+1. Defender           - Defend against enemy invaders.
 1. Harasser           - Small attacking unit for cheap damage to enemy remote miners and protecting highways
 1. Robber             - takes resources from enemy rooms
 
