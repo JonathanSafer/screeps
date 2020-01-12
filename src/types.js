@@ -27,33 +27,33 @@ function getRecipe(type, energyAvailable, room){
 	switch (rcl) {
 		case 4:
 			//lvl 4 recipes
-    		d['medic'] = body([2, 2], [MOVE, HEAL]);
+            d['medic'] = body([2, 2], [MOVE, HEAL]);
 			break;
 		case 5:
 			//lvl 5 recipes
-    		d['medic'] = body([5, 5], [MOVE, HEAL]);
+            d['medic'] = body([5, 5], [MOVE, HEAL]);
             d['robber'] = body([15, 15], [CARRY, MOVE]); 
-    		break;
+            break;
 		case 6:
 			// lvl 6 recipes
-    		d['mineralMiner'] = body([12, 6, 9], [WORK, CARRY, MOVE]);
-    		d['medic'] = body([7, 7], [MOVE, HEAL]);
-    		d['robber'] = body([20, 20], [CARRY, MOVE]);
-    		break;
+            d['mineralMiner'] = body([12, 6, 9], [WORK, CARRY, MOVE]);
+            d['medic'] = body([7, 7], [MOVE, HEAL]);
+            d['robber'] = body([20, 20], [CARRY, MOVE]);
+            break;
 		case 7:
 			// lvl 7 recipes
-    		d['mineralMiner'] = body([22, 10, 16], [WORK, CARRY, MOVE]);
-		    d['harasser'] = body([9, 8, 1], [MOVE, RANGED_ATTACK, HEAL]);
-		    d['medic'] = body([5, 20, 15], [TOUGH, MOVE, HEAL]);
-	        d['breaker'] = body([10, 10], [MOVE, WORK]);
-        	d['robber'] = body([25, 25], [CARRY, MOVE]);
-    		break;
+            d['mineralMiner'] = body([22, 10, 16], [WORK, CARRY, MOVE]);
+            d['harasser'] = body([9, 8, 1], [MOVE, RANGED_ATTACK, HEAL]);
+            d['medic'] = body([5, 20, 15], [TOUGH, MOVE, HEAL]);
+            d['breaker'] = body([10, 10], [MOVE, WORK]);
+            d['robber'] = body([25, 25], [CARRY, MOVE]);
+            break;
 		case 8:
-		    // lvl 8 recipes
-    		d['mineralMiner'] = body([22, 10, 16], [WORK, CARRY, MOVE]);
-		    d['harasser'] = body([20, 25, 5], [RANGED_ATTACK, MOVE, HEAL]);
-		    d['medic'] = body([25, 25], [MOVE, HEAL]);
-	        d['breaker'] = body([25, 25], [MOVE, WORK]);
+            // lvl 8 recipes
+            d['mineralMiner'] = body([22, 10, 16], [WORK, CARRY, MOVE]);
+            d['harasser'] = body([20, 25, 5], [RANGED_ATTACK, MOVE, HEAL]);
+            d['medic'] = body([25, 25], [MOVE, HEAL]);
+            d['breaker'] = body([25, 25], [MOVE, WORK]);
             d['robber'] = body([25, 25], [CARRY, MOVE]);
             break;
         default:
@@ -146,11 +146,11 @@ function test(hpt, ticks, harvested) {
 
 function minerBody(energyAvailable, rcl) {
     // miners. at least 1 move. 5 works until we can afford 10
-    let works = (energyAvailable - BODYPART_COST[MOVE]) / BODYPART_COST[WORK]
+    let works = Math.floor((energyAvailable - BODYPART_COST[MOVE]) / BODYPART_COST[WORK])
     if (works >= 20 && rcl > 7) works = 20
     else if (works >= 10) works = 10
     else if (works >= 5) works = 5
-    else works = Math.floor(works)
+    else works = Math.max(1, works)
     let energyAfterWorks = energyAvailable - works * BODYPART_COST[WORK]
     let moves = Math.floor(Math.min(works / 2, Math.max(1, energyAfterWorks / BODYPART_COST[MOVE])))
     let energyAfterMoves = energyAfterWorks - moves * BODYPART_COST[MOVE]
