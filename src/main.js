@@ -38,6 +38,7 @@ module.exports.loop = function () {
         }
         console.log("Time: " + Game.time);
         //run cities
+        var prevCpu = Game.cpu.getUsed()
         for (let i = 0; i < myCities.length; i += 1) {
             try {
                 var city = myCities[i].memory.city
@@ -50,7 +51,10 @@ module.exports.loop = function () {
                     c.runTowers(city)
                     // TODO: obs runs in dead cities
                     c.runObs(city)
-                } 
+                }
+                let currentCpu = Game.cpu.getUsed()
+                s.cityCpuMap[city] = currentCpu - prevCpu
+                prevCpu = currentCpu
             } catch (failedCityError) {
                 er.reportError(failedCityError)
             }

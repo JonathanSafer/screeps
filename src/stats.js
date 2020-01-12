@@ -17,6 +17,8 @@ var u = require('utils');
 var rPM = require('powerMiner');
 
 var stats = {
+    cityCpuMap: {},
+
     collectStats: function() {
         //stats
         if(Game.time % 19 == 0){
@@ -51,6 +53,7 @@ var stats = {
                 if(room.storage){
                   stats['rooms.' + city + '.storage.energy'] = room.storage.store.energy
                 }
+                stats['rooms.' + city + '.cpu'] = stats.cityCpuMap[city]
               }
             })
             var counts = _.countBy(Game.creeps, creep => creep.memory.role);
