@@ -15,7 +15,7 @@ var rTr = {
         u.updateCheckpoints(creep);
         creep.notifyWhenAttacked(false)
         
-        let hostiles = _.filter(creep.room.find(FIND_HOSTILE_CREEPS), c => c.owner.username != 'atanner')
+        let hostiles = _.filter(creep.room.find(FIND_HOSTILE_CREEPS), c => c.owner.username != 'Atanner')
         let buildings = _.reject(creep.room.find(FIND_HOSTILE_STRUCTURES), structure => structure.structureType == STRUCTURE_CONTROLLER);
         let target = Game.getObjectById(creep.memory.target);
 
