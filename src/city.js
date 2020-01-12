@@ -19,12 +19,13 @@ var rT = require('transporter');
 var rM = require('remoteMiner');
 var rD = require('defender');
 var types = require('types');
-var u = require('utils');
-var t = require('tower');
-var rPM = require('powerMiner');
-var labs = require('labs');
-var fact = require('factory');
-var sq = require('spawnQueue');
+var u = require('utils')
+var t = require('tower')
+var rPM = require('powerMiner')
+var labs = require('labs')
+var fact = require('factory')
+var sq = require('spawnQueue')
+var link = require('link')
 
 
 function makeCreeps(role, type, target, city) {
@@ -103,6 +104,8 @@ function runCity(city, creeps){
         // Run all the creeps in this city
         _.forEach(creeps, (creep) => nameToRole[creep.memory.role][0].run(creep)/* || console.log(creep.memory.role + ' ' + Game.cpu.getUsed())*/);
         
+        link.run(room)
+
         //run powerSpawn
         runPowerSpawn(city);
         labs.runLabs(city);
