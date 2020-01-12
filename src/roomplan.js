@@ -62,7 +62,10 @@ let p = {
                     })
                 })
                 p.buildRoads(room, plan);
-                if(room.controller.level >= 7){
+                if (room.controller.level >= 6) {
+                    p.buildExtractor(room)
+                }
+                if (room.controller.level >= 7){
                     p.buildWalls(room, plan);
                     p.buildSourceLinks(room)
                 }
@@ -85,6 +88,21 @@ let p = {
             //console.log("hi")
             room.createConstructionSite(pos.x, pos.y, structureType, name)
         }
+    },
+
+    buildExtractor: function(room) {
+        let minerals = room.find(FIND_MINERALS)
+        if (!minerals) {
+            return
+        }
+
+        let mineralPos = minerals[0].pos
+        if (mineralPos.lookFor(LOOK_STRUCTURES)) {
+            return
+        }
+
+        console.log("Building extractor: " + room.name)
+        mineralPos.createConstructionSite(STRUCTURE_EXTRACTOR)
     },
 
     buildWalls: function(room, plan){
