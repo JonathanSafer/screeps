@@ -246,7 +246,8 @@ var rPC = {
         if (spawn &&
             (!spawn.effects || spawn.effects.length == 0) &&
             creep.powers[PWR_OPERATE_SPAWN] &&
-            creep.powers[PWR_OPERATE_SPAWN].cooldown == 0) {
+            creep.powers[PWR_OPERATE_SPAWN].cooldown == 0 &&
+            spawn.memory.boost) {
             creep.memory.target = spawn.id
             return true
         }
