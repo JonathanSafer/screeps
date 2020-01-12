@@ -1,14 +1,20 @@
 var rL = {
+
+    // range needed to use these
+    UPGRADE: 3,
+    SOURCE: 1,
+    LINK: 1,
+
     run: function(room) {
         // Initialize links
         let links = rL.findStructure(room, STRUCTURE_LINK)
         var storageLink, upgradeLink, sourceLinks = []
         for (let link of links) {
-            if (link.pos.findInRange(FIND_SOURCES, 2).length > 0) {
+            if (link.pos.findInRange(FIND_SOURCES, rL.SOURCE + rL.LINK).length > 0) {
                     sourceLinks.push(link)
-            } else if (rL.isNearStructure(link.pos, STRUCTURE_CONTROLLER, 4)) {
+            } else if (rL.isNearStructure(link.pos, STRUCTURE_CONTROLLER, rL.UPGRADE + rL.LINK)) {
                 upgradeLink = link
-            } else if (rL.isNearStructure(link.pos, STRUCTURE_TERMINAL, 1)) {
+            } else if (rL.isNearStructure(link.pos, STRUCTURE_TERMINAL, rL.LINK)) {
                 storageLink = link
             }
         }
@@ -32,10 +38,21 @@ var rL = {
         return receiver && receiver.store.getUsedCapacity(RESOURCE_ENERGY) == 0 && !sender.cooldown
     },
 
-    isNearStructure: function(pos, type, range) {
+    getUpgradeLink: function(room) {
+        let links = rL.findNearStructures(room.controller.pos, 
+                STRUCTURE_LINK, 
+                rL.UPGRADE + rL.LINK)
+        return links.length > 0 ? links[0] : undefined
+    },
+
+    findNearStructures: function(pos, type, range) {
         return pos.findInRange(FIND_STRUCTURES, range, {
             filter: { structureType: type }
-        }).length > 0;
+        })
+    },
+
+    isNearStructure: function(pos, type, range) {
+        rL.findNearStructures(pos, type, range).length > 0
     },
 
     findStructure: function(room, type) {
