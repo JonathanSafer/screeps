@@ -196,7 +196,7 @@ function defenderBody(energyAvailable, rcl) {
 function scalingBody(ratio, types, energyAvailable, maxOverride) {
     let baseCost = cost(body(ratio, types))
     let maxSize = maxOverride || MAX_CREEP_SIZE
-    let scale = Math.floor(Math.min(energyAvailable / baseCost, maxSize / _.sum(ratio)))
+    let scale = Math.max(Math.floor(Math.min(energyAvailable / baseCost, maxSize / _.sum(ratio))), 1)
     return body(ratio.map(x => x * scale), types)
 }
 
