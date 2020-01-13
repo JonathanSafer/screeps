@@ -98,25 +98,25 @@ module.exports.loop = function () {
         }
         
         //calc for deposit mining
-        function calcCooldown(harvested) {
-            return Math.ceil(0.001*Math.pow(harvested,1.2))
-        }
+        // function calcCooldown(harvested) {
+        //     return Math.ceil(0.001*Math.pow(harvested,1.2))
+        // }
         
-        function test(hpt, ticks) {
-            let harvested = 4000
-            let cooldown = 0
-            for (let i = 0; i < ticks; i++) {
-                if (cooldown == 0) {
-                    harvested += hpt
-                    cooldown = calcCooldown(harvested);
-                }
-                else {
-                    cooldown--
-                }
-            }
-            console.log("Harvested so far:", harvested);
-            console.log("Last cooldown", calcCooldown(harvested));
-        }
+        // function test(hpt, ticks) {
+        //     let harvested = 4000
+        //     let cooldown = 0
+        //     for (let i = 0; i < ticks; i++) {
+        //         if (cooldown == 0) {
+        //             harvested += hpt
+        //             cooldown = calcCooldown(harvested);
+        //         }
+        //         else {
+        //             cooldown--
+        //         }
+        //     }
+        //     console.log("Harvested so far:", harvested);
+        //     console.log("Last cooldown", calcCooldown(harvested));
+        // }
         //test(20,100)
 
 

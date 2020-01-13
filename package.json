@@ -4,13 +4,14 @@
   "description": "",
   "main": "main.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "eslint src",
+    "postinstall": "cd ./node_modules/eslint-plugin-screeps && npm install"
   },
   "author": "",
   "license": "MIT",
   "devDependencies": {
     "eslint": "^6.8.0",
-    "eslint-plugin-screeps": "^2.0.0"
+    "eslint-plugin-screeps": "https://github.com/jordansafer/eslint-plugin-screeps.git"
   },
   "dependencies": {}
 }

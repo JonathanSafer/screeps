@@ -20,7 +20,7 @@ var rDM = {
             }
         }
         switch(creep.memory.target){
-            case 0:
+            case 0: {
                 //newly spawned or empty store
                 let flagName = creep.memory.city + 'deposit';
                 if(!Game.flags[flagName]){//if there is no flag, change city.memory.depositMiner to 0, and suicide
@@ -64,6 +64,7 @@ var rDM = {
                     Game.spawns[creep.memory.city].memory.deposit = Game.spawns[creep.memory.city].memory.deposit + works;
                 }
                 break;
+            }
             case 1:
                 //store is full
                 if(_.sum(creep.store) === 0){

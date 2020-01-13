@@ -98,7 +98,7 @@ function runCity(city, creeps){
         }
     
         // Print out each role & number of workers doing it
-        var printout = _.map(roles, role => role.name + ": " + counts[role.name]);
+        // var printout = _.map(roles, role => role.name + ": " + counts[role.name]);
         //console.log(city + ': ' + printout.join(', ' ));
     
         // Run all the creeps in this city

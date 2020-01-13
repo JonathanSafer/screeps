@@ -1,6 +1,4 @@
 var actions = require('actions');
-var t = require('types');
-var u = require('utils');
 
 var rF = {
     name: "ferry",
@@ -57,7 +55,7 @@ var rF = {
                     creep.memory.target = rF.getJob(creep);
                 }
                 break;
-            case 4:
+            case 4: {
                 //move power from terminal to power spawn
                 let powerSpawn = _.find(Game.structures, (structure) => structure.structureType == STRUCTURE_POWER_SPAWN && structure.room.memory.city == creep.memory.city)
                 if ((creep.carry.power) > 0){
@@ -69,6 +67,7 @@ var rF = {
                     creep.memory.target = rF.getJob(creep);
                 }
                 break;
+            } 
             case 5:
                 //move energy from storage link to storage
                 var link = Game.getObjectById(Game.spawns[creep.memory.city].memory.storageLink)
@@ -106,7 +105,7 @@ var rF = {
                     creep.say('getJob');
                 }
                 break;
-            case 7:
+            case 7: {
                 //move mineral from lab to terminal
                 if (_.sum(creep.carry) > 0){
                     let result = actions.charge(creep, creep.room.terminal)
@@ -121,6 +120,7 @@ var rF = {
                     Game.spawns[creep.memory.city].memory.ferryInfo.labInfo[creep.memory.labNum][1] = 0
                 }
                 break;
+            }  
             case 8:
                 //load up the nuker
                 if (_.sum(creep.carry) > 0){
@@ -154,7 +154,7 @@ var rF = {
                     creep.say('getJob')
                 }
                 break;
-            case 10:
+            case 10: {
                 //move mineral from booster to terminal
                 if (_.sum(creep.carry) > 0){
                     let result = actions.charge(creep, creep.room.terminal)
@@ -169,8 +169,9 @@ var rF = {
                     Game.spawns[creep.memory.city].memory.ferryInfo.boosterInfo[creep.memory.labNum][1] = 0
                 }
                 break;
-            case 11:
-                //move produce from factory to terminal
+            }
+            case 11: {
+                 //move produce from factory to terminal
                 if (_.sum(creep.store) > 0){
                     let result = actions.charge(creep, creep.room.terminal)
                     if(result == 1){//successful deposit, remove element from task list
@@ -183,6 +184,7 @@ var rF = {
                 actions.withdraw(creep, factory, creep.memory.mineral, Math.min(creep.memory.quantity, creep.store.getCapacity())); 
 
                 break;
+            }
             case 12:
                 //move component from terminal to factory
                 if (_.sum(creep.store) > 0){
