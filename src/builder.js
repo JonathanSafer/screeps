@@ -34,9 +34,19 @@ var rB = {
         }
         rB.decideWhetherToBuild(creep);
         if (creep.memory.building) {
-            rB.build(creep);
+            if(!rB.build(creep)){
+                rB.repair(creep)
+            }
         } else {
             rB.getEnergy(creep)
+        }
+    },
+
+    repair: function(creep){
+        let needRepair = _.find(creep.room.find(FIND_STRUCTURES), structure => (structure.hits < (0.4*structure.hitsMax)) && (structure.structureType != STRUCTURE_WALL) && (structure.structureType != STRUCTURE_RAMPART))
+        if (needRepair) {
+            creep.memory.repair = needRepair.id;
+            return a.repair(creep, needRepair);
         }
     },
 
