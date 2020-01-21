@@ -36,12 +36,14 @@ function getRecipe(type, energyAvailable, room){
             break;
 		case 6:
 			// lvl 6 recipes
+            d['normal'] = body([12, 8, 10],[WORK, CARRY, MOVE])
             d['mineralMiner'] = body([12, 6, 9], [WORK, CARRY, MOVE]);
             d['medic'] = body([7, 7], [MOVE, HEAL]);
             d['robber'] = body([20, 20], [CARRY, MOVE]);
             break;
 		case 7:
 			// lvl 7 recipes
+            d['normal'] = body([20, 12, 16],[WORK, CARRY, MOVE])
             d['mineralMiner'] = body([22, 10, 16], [WORK, CARRY, MOVE]);
             d['harasser'] = body([9, 8, 1], [MOVE, RANGED_ATTACK, HEAL]);
             d['medic'] = body([5, 20, 15], [TOUGH, MOVE, HEAL]);
