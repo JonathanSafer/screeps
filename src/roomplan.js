@@ -108,18 +108,32 @@ let p = {
     },
 
     buildWalls: function(room, plan){
-        //first identify all locations to be walled, if there is a road there, place a rampart instead. if there is a terrain wall don't make anything
-        let startPoint = new RoomPosition(plan.x - 3, plan.y - 3, room.name)
+        //first identify all locations to be walled, if there is a road there,
+        //place a rampart instead. if there is a terrain wall don't make anything
+        const startX = plan.x - 3
+        const startY = plan.y - 3
         let wallSpots = []
-        for(let i = startPoint.x; i < startPoint.x + 19; i++){//walls are 19 by 17
-            let location = new RoomPosition(i, startPoint.y, room.name)
-            let location2 = new RoomPosition(i, startPoint.y + 16, room.name)
+        for(let i = startX; i < startX + 19; i++){//walls are 19 by 17
+            if(i > 0 && i < 49){
+                if(startY > 0 && startY < 49){
+                    let location = new RoomPosition(i, startY, room.name)
+                }
+                if(startY + 16 > 0 && startY + 16 < 49){
+                    let location2 = new RoomPosition(i, startY + 16, room.name)
+                }
+            }
             wallSpots.push(location)
             wallSpots.push(location2)
         }
-        for(let i = startPoint.y; i < startPoint.y + 17; i++){//walls are 19 by 17
-            let location = new RoomPosition(startPoint.x, i, room.name)
-            let location2 = new RoomPosition(startPoint.x + 18, i, room.name)
+        for(let i = startY; i < startY + 17; i++){//walls are 19 by 17
+            if(i > 0 && i < 49){
+                if(startX > 0 && startX < 49){
+                    let location = new RoomPosition(startX, i, room.name)
+                }
+                if(startX + 18 > 0 && startX + 18 < 49){
+                    let location2 = new RoomPosition(startX + 18, i, room.name)
+                }
+            }  
             wallSpots.push(location)
             wallSpots.push(location2)
         }
@@ -184,7 +198,7 @@ let p = {
             }
 
             //now we need a wall
-            if(structures.length){//rampart
+            if(structures.length || wallSpots[i].getRangeTo(room.controller) == 3){//rampart
                 room.createConstructionSite(wallSpots[i], STRUCTURE_RAMPART)
                 room.visual.circle(wallSpots[i], {fill: 'transparent', radius: 0.25, stroke: 'green'});
             } else {//wall
