@@ -116,26 +116,22 @@ let p = {
         for(let i = startX; i < startX + 19; i++){//walls are 19 by 17
             if(i > 0 && i < 49){
                 if(startY > 0 && startY < 49){
-                    let location = new RoomPosition(i, startY, room.name)
+                    wallSpots.push(new RoomPosition(i, startY, room.name))
                 }
                 if(startY + 16 > 0 && startY + 16 < 49){
-                    let location2 = new RoomPosition(i, startY + 16, room.name)
+                    wallSpots.push(new RoomPosition(i, startY + 16, room.name))
                 }
             }
-            wallSpots.push(location)
-            wallSpots.push(location2)
         }
         for(let i = startY; i < startY + 17; i++){//walls are 19 by 17
             if(i > 0 && i < 49){
                 if(startX > 0 && startX < 49){
-                    let location = new RoomPosition(startX, i, room.name)
+                    wallSpots.push(new RoomPosition(startX, i, room.name))
                 }
                 if(startX + 18 > 0 && startX + 18 < 49){
-                    let location2 = new RoomPosition(startX + 18, i, room.name)
+                    wallSpots.push(new RoomPosition(startX + 18, i, room.name))
                 }
             }  
-            wallSpots.push(location)
-            wallSpots.push(location2)
         }
         const terrain = new Room.Terrain(room.name);
 
