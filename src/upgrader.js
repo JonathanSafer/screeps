@@ -27,7 +27,7 @@ var rU = {
       if (creep.memory.state == CS.UPGRADE){
         if(creep.memory.upgrading && creep.carry.energy == 0) {
           creep.memory.upgrading = false;
-        } else if(!creep.memory.upgrading && creep.carry.energy == creep.carryCapacity) {
+        } else if(!creep.memory.upgrading && creep.store.energy >= creep.store.getCapacity() * 0.5) {
           creep.memory.upgrading = true;
         }
 
@@ -51,8 +51,12 @@ var rU = {
     getUpgradeLink: function(creep) {
       var link = Game.getObjectById(creep.memory.upgradeLink)
       link = link || linkLib.getUpgradeLink(creep.room)
-      if (link && link.store.energy) creep.memory.upgradeLink = link.id
-      return link
+      if (link && link.store.getUsedCapacity() > 0) {
+        creep.memory.upgradeLink = link.id
+        return link
+      } else {
+        return null
+      }
     },
 
     checkBoost: function(creep, city, boost){
