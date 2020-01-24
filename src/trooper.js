@@ -188,7 +188,7 @@ var rTr = {
                 creep.moveTo(spawns[0])
                 return;
             }
-            creep.moveTo(buildings[0])
+            creep.moveTo(creep.pos.findClosestByPath(buildings))
             return;
         }
     }
