@@ -504,7 +504,7 @@ function updateBuilder(rcl, memory, spawn, rooms, rcl8) {
     let buildRooms = rcl8 ? [spawn.room] : rooms;
     let constructionSites = _.flatten(_.map(buildRooms, room => room.find(FIND_MY_CONSTRUCTION_SITES)));
     var totalSites;
-    if (!rcl8) {
+    if (rcl < 7) {
         let buildings = _.flatten(_.map(buildRooms, room => room.find(FIND_STRUCTURES)));
         let repairSites = _.filter(buildings, structure => (structure.hits < (structure.hitsMax*0.3)) && (structure.structureType != STRUCTURE_WALL));
         totalSites = (Math.floor((repairSites.length)/10) + constructionSites.length);
