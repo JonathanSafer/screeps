@@ -337,7 +337,7 @@ var markets = {
                         roomName: city.name   
                     });
                 } else {//update order occasionally
-                    if(Math.random() < 0.1 && order.price < highPrice){
+                    if(Math.random() < 0.5 && order.price < highPrice){
                         Game.market.changeOrderPrice(orderId, (order.price + 0.001))
                     }
                 }
