@@ -26,6 +26,7 @@ var labs = require('labs')
 var fact = require('factory')
 var sq = require('spawnQueue')
 var link = require('link')
+var settings = require('settings')
 
 
 function makeCreeps(role, type, target, city) {
@@ -681,7 +682,7 @@ function runNuker(city){
 function runObs(city){
     if(Game.time % 100 == 0){
         //check for Obs
-        if((!Game.spawns[city]) || Game.cpu.bucket < 5500 || city == 'W1N210' || city == 'W2N240' || city == 'E2S310'){
+        if((!Game.spawns[city]) || Game.cpu.bucket < settings.bucket.mining - 200 || settings.miningDisabled.includes(city)){
             return;
         }
         let buildings = Game.spawns[city].room.find(FIND_MY_STRUCTURES)
@@ -713,7 +714,7 @@ function runObs(city){
     }
     if (Game.time % 100 == 1){
         //check for Obs and list
-        if(!Game.spawns[city] || Game.cpu.bucket < 6000 || city == 'W1N210' || city == 'W2N240' || city == 'E2S310'){
+        if(!Game.spawns[city] || Game.cpu.bucket < settings.bucket.mining || settings.miningDisabled.includes(city)){
             return;
         }
         let buildings = Game.spawns[city].room.find(FIND_MY_STRUCTURES)
@@ -733,7 +734,7 @@ function runObs(city){
             let structures = Game.rooms[roomName].find(FIND_STRUCTURES)
             let powerBank = _.find(structures, structure => structure.structureType === STRUCTURE_POWER_BANK);
             let flagName = city + 'powerMine'
-            if (powerBank && powerBank.power > 1500 && Game.cpu.bucket > 6000 && powerBank.ticksToDecay > 2800 && !Game.flags[flagName] &&
+            if (powerBank && powerBank.power > 1500 && powerBank.ticksToDecay > 2800 && !Game.flags[flagName] &&
                     structures.length < 30 && Game.spawns[city].room.storage.store.energy > 600000){
                 let walls = 0
                 let terrain = Game.rooms[roomName].getTerrain();
@@ -758,7 +759,7 @@ function runObs(city){
                 }
             }
             //flag deposits
-            if(Game.cpu.bucket > 7000 && structures.length < 30){
+            if(structures.length < 30){
                 let deposits = Game.rooms[roomName].find(FIND_DEPOSITS)
                 if(deposits.length){
                     let depositFlagName = city + 'deposit';
