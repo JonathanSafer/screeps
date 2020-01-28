@@ -11,8 +11,10 @@ var rBr = {
     run: function(creep) {
         u.updateCheckpoints(creep);
         var breakerTarget = Game.getObjectById(creep.memory.target)
+        let attacker = _.find(creep.room.find(FIND_HOSTILE_CREEPS), c => c.pos.isNearTo(creep.pos) && c.getActiveBodyParts(ATTACK) > 10)
+        if(attacker){creep.memory.retreat = true}
 		if (breakerTarget && creep.pos.isNearTo(breakerTarget.pos)){
-            return a.dismantle(creep, breakerTarget);
+            creep.dismantle(breakerTarget);
 		} 
         if (!creep.memory.medic){
             creep.memory.medic = null;
@@ -78,6 +80,7 @@ var rBr = {
             })
             if(badStuff != null) { // TODO ignore target room
                 a.dismantle(creep, badStuff)
+                creep.memory.target = badStuff.id
                 return
             }
         }
