@@ -77,22 +77,27 @@ var rD = {
     },
 
     init: function(creep){
+        return creep
         //initialization
     },
 
     boost: function(creep){
+        return creep
         //get boosted, may get boosted using same method as offensive creeps
     },
 
     engage: function(creep){
+        return creep
         //attack designated weak target, or nearest target if no designation
     },
 
     retreat: function(creep){
+        return creep
         //move towards spawn
     },
 
     dormant: function(creep){
+        return creep
         //if in a safe space, hibernate until towers active
     },
     
