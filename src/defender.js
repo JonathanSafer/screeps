@@ -58,7 +58,6 @@ var rD = {
             return;
         }
         if (Game.time % 5 == 0){
-            var city = creep.memory.city;
             var localRooms = u.splitRoomsByCity();
             let rooms = _.filter(localRooms[city], room => room.find(FIND_HOSTILE_CREEPS) != 0);
             if (rooms.length){
