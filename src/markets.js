@@ -346,11 +346,7 @@ var markets = {
 
         }
         if(!termUsed){//don't deal to rooms we have vision of
-            if(storage.store[RESOURCE_ENERGY] > 700000 && highEnergyOrder && highEnergyOrder.price > .05 && !Game.rooms[highEnergyOrder.roomName]){//sell if expensive
-                Game.market.deal(highEnergyOrder.id, Math.min(highEnergyOrder.remainingAmount, terminal.store.energy / 2), city.name)
-                return true;
-            }
-            else if(storage.store[RESOURCE_ENERGY] > 900000){
+            if(storage.store[RESOURCE_ENERGY] > 900000){
                 for(var i = 0; i < energyOrders.length; i++){
                     if(!Game.rooms[energyOrders[i].roomName]){
                         Game.market.deal(energyOrders[i].id, Math.min(energyOrders[i].remainingAmount, terminal.store.energy / 2), city.name)
