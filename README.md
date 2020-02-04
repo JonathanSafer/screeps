@@ -1,3 +1,4 @@
+![Node CI](https://github.com/jordansafer/screeps/workflows/Node%20CI/badge.svg?branch=master)
 # screeps
 Screeps AI
 
