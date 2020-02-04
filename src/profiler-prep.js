@@ -1,4 +1,4 @@
-var profiler = require('screeps-profiler.js')
+var profiler = require('./screeps-profiler.js')
 
 var p = {
     prepProfile: function() {

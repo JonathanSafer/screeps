@@ -1,4 +1,4 @@
-var actions = require('actions');
+var actions = require('./actions');
 
 var rDM = {
     name: "depositMiner",

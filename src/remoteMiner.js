@@ -1,5 +1,5 @@
-var a = require('actions');
-var sq = require('spawnQueue')
+var a = require('./actions');
+var sq = require('./spawnQueue')
 
 var rM = {
     name: "remoteMiner",

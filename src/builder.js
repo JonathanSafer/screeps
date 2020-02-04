@@ -1,6 +1,6 @@
-var a = require('actions');
-var u = require('utils');
-var rU = require('upgrader');
+var a = require('./actions');
+var u = require('./utils');
+var rU = require('./upgrader');
 
 var rB = {
     name: "builder",

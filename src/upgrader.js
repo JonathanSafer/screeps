@@ -1,6 +1,6 @@
-var actions = require('actions')
-var u = require('utils')
-var linkLib = require('link')
+var actions = require('./actions')
+var u = require('./utils')
+var linkLib = require('./link')
 
 var CreepState = {
   START: 0,

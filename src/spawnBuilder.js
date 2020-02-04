@@ -1,6 +1,6 @@
-var a = require("actions")
-var sq = require("spawnQueue")
-var rU = require("upgrader")
+var a = require('./actions')
+var sq = require('./spawnQueue')
+var rU = require('./upgrader')
 
 var rSB = {
     name: "spawnBuilder",

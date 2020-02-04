@@ -1,7 +1,7 @@
-let u = require("utils")
-let template = require("template")
-let rM = require("remoteMiner")
-let rU = require("upgrader")
+let u = require('./utils')
+let template = require('./template')
+let rM = require('./remoteMiner')
+let rU = require('./upgrader')
 
 let p = {
     frequency: 2000,

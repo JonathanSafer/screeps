@@ -1,5 +1,5 @@
-var a = require('actions');
-var u = require('utils');
+var a = require('./actions');
+var u = require('./utils');
 
 var rPM = {
     name: "powerMiner",
