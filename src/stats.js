@@ -106,7 +106,7 @@ var statsLib = {
             stats['market.credits'] = Game.market.credits
             stats['cpu.getUsed'] = Game.cpu.getUsed()
 
-            if (profiler.results) {
+            if (profiler.results && profiler.results.stats) {
                 let stats = profiler.results.stats
                 let profileSize = Math.min(settings.profileResultsLength, stats.length)
                 for (var i = 0; i < profileSize; i++) {
