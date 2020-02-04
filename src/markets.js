@@ -472,7 +472,7 @@ var markets = {
                     termUsed = true;
                 }
                 if(!termUsed){
-                    termUsed = markets.sellPower(myCities[i], buyOrders);
+                    termUsed = markets.sellPower(termCities[i], buyOrders);
                 }
                 if(!termUsed){
                     termUsed = markets.sellOps(termCities[i], buyOrders);

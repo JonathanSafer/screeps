@@ -92,7 +92,7 @@ var rB = {
     },
 
     repWalls: function(creep){
-        let lookTime = 5
+        let lookTime = 1
         if(creep.memory.repair){//check for target and repair
             let target = Game.getObjectById(creep.memory.repair)
             if(target){//if there is a target, repair it
