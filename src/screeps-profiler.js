@@ -180,6 +180,8 @@ function profileFunction(fn, functionName) {
 }
 
 const Profiler = {
+  results: {},
+
   printProfile() {
     console.log(Profiler.output());
   },
@@ -234,6 +236,8 @@ const Profiler = {
     }).sort((val1, val2) => {
       return val2.totalTime - val1.totalTime;
     });
+
+    Profiler.results.stats = stats;
 
     const lines = stats.map(data => {
       return [
@@ -341,6 +345,8 @@ module.exports = {
     enabled = true;
     hookUpPrototypes();
   },
+
+  results: Profiler.results,
 
   output: Profiler.output,
 

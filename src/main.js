@@ -1,15 +1,15 @@
-var u = require('utils');
-var cM = require('commodityManager')
-var rPC = require('powerCreep');
-var c = require('city');
-var m = require('markets');
-var s = require('stats');
-var rp = require('roomplan');
-var er = require('error');
-var settings = require('settings');
-const profiler = require('screeps-profiler');
-
-// pp.prepProfile()
+var u = require('./utils');
+var cM = require('./commodityManager')
+var rPC = require('./powerCreep');
+var c = require('./city');
+var m = require('./markets');
+var s = require('./stats');
+var rp = require('./roomplan');
+var er = require('./error');
+var settings = require('./settings');
+const profiler = require('./screeps-profiler');
+var pp = require('./profiler-prep');
+pp.prepProfile()
 
 //Game.profiler.profile(1000);
 //Game.profiler.output();
@@ -19,7 +19,7 @@ const profiler = require('screeps-profiler');
 
 
 
-//profiler.enable();
+profiler.enable();
 module.exports.loop = function () {
     "use strict";
     profiler.wrap(function () {
@@ -97,48 +97,9 @@ module.exports.loop = function () {
             cM.runManager(myCities);
         }
         
-        //calc for deposit mining
-        // function calcCooldown(harvested) {
-        //     return Math.ceil(0.001*Math.pow(harvested,1.2))
-        // }
-        
-        // function test(hpt, ticks) {
-        //     let harvested = 4000
-        //     let cooldown = 0
-        //     for (let i = 0; i < ticks; i++) {
-        //         if (cooldown == 0) {
-        //             harvested += hpt
-        //             cooldown = calcCooldown(harvested);
-        //         }
-        //         else {
-        //             cooldown--
-        //         }
-        //     }
-        //     console.log("Harvested so far:", harvested);
-        //     console.log("Last cooldown", calcCooldown(harvested));
-        // }
-        //test(20,100)
-
-
-        //clear labs in a room
-        /*let creep = Game.creeps['a'];
-        if(creep){
-            let labs = _.filter(creep.room.find(FIND_STRUCTURES), structure => structure.structureType === STRUCTURE_LAB)
-            for(var i = 0; i < labs.length; i++){
-                if(labs[i].mineralAmount > 0){
-                    let sum = _.sum(creep.carry)
-                    if(sum > 0){
-                        creep.drop(Object.keys(creep.store)[0])
-                        return;
-                    }
-                    if(creep.withdraw(labs[i], labs[i].mineralType) == ERR_NOT_IN_RANGE){
-                        creep.moveTo(labs[i]);
-                    }
-                    return;
-                }
-            }
-        }*/
-        // const pp = require('profiler-prep');
+        if (Game.time % settings.profileFrequency == 0) {
+            Game.profiler.profile(settings.profileLength);
+        }
 
         // This will always be last. Throw an exception if any city failed.
         er.finishTick()

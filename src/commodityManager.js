@@ -1,4 +1,4 @@
-var fact = require('factory');
+var fact = require('./factory');
 var cM = {
 	runManager: function(cities){
 		//group cities by factory level

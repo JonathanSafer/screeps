@@ -1,20 +1,22 @@
-var rDM = require('depositMiner');
-var rMe = require('medic');
-var rH = require('harasser');
-var rSB = require('spawnBuilder');
-var rC = require('claimer');
-var rRo = require('robber');
-var rF = require('ferry');
-var rMM = require('mineralMiner');
-var rU = require('upgrader');
-var rB = require('builder');
-var rR = require('runner');
-var rBr = require('breaker');
-var rT = require('transporter');
-var rM = require('remoteMiner');
-var rD = require('defender');
-var u = require('utils');
-var rPM = require('powerMiner');
+var rDM = require('./depositMiner');
+var rMe = require('./medic');
+var rH = require('./harasser');
+var rSB = require('./spawnBuilder');
+var rC = require('./claimer');
+var rRo = require('./robber');
+var rF = require('./ferry');
+var rMM = require('./mineralMiner');
+var rU = require('./upgrader');
+var rB = require('./builder');
+var rR = require('./runner');
+var rBr = require('./breaker');
+var rT = require('./transporter');
+var rM = require('./remoteMiner');
+var rD = require('./defender');
+var u = require('./utils');
+var rPM = require('./powerMiner');
+var settings = require('./settings');
+var profiler = require('./screeps-profiler');
 
 var statsLib = {
     cityCpuMap: {},
@@ -96,7 +98,7 @@ var statsLib = {
                     stats['cities.' + city + '.deposits'] += creep.memory.mined
                     creep.memory.mined = 0
                 } else if (creep.memory.role == rMM.name) {
-                    stats['cities.' + city + '.minerals'] += creep.memory.mined
+                    stats[`cities.${city}.minerals`] += creep.memory.mined
                     creep.memory.mined = 0
                 }
             })
@@ -104,8 +106,16 @@ var statsLib = {
             stats['market.credits'] = Game.market.credits
             stats['cpu.getUsed'] = Game.cpu.getUsed()
 
-            
-            
+            if (profiler.results && profiler.results.stats) {
+                let stats = profiler.results.stats
+                let profileSize = Math.min(settings.profileResultsLength, stats.length)
+                for (var i = 0; i < profileSize; i++) {
+                    let result = stats[i]
+                    stats[`profiler.${result.name}.calls`] = result.calls
+                    stats[`profiler.${result.name}.time`] = result.totalTime.toFixed(1)
+                }
+            }
+
             RawMemory.segments[0] = JSON.stringify(stats)
         }  
     }

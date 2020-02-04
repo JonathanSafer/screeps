@@ -10,6 +10,8 @@
   "author": "",
   "license": "MIT",
   "devDependencies": {
+    "@types/lodash": "^3.10.1",
+    "@types/screeps": "^2.5.5",
     "eslint": "^6.8.0",
     "eslint-plugin-screeps": "https://github.com/jordansafer/eslint-plugin-screeps.git"
   },

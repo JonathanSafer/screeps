@@ -1,5 +1,5 @@
-var actions = require('actions');
-var u = require('utils');
+var actions = require('./actions');
+var u = require('./utils');
 
 var rR = {
     name: "runner",

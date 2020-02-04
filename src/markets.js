@@ -1,5 +1,5 @@
-var cM = require('commodityManager')
-var settings = require('settings')
+var cM = require('./commodityManager')
+var settings = require('./settings')
 
 var markets = {
     sortOrder: function(orders) {
