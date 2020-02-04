@@ -180,7 +180,7 @@ function profileFunction(fn, functionName) {
 }
 
 const Profiler = {
-  results: [],
+  results: {},
 
   printProfile() {
     console.log(Profiler.output());
@@ -237,7 +237,7 @@ const Profiler = {
       return val2.totalTime - val1.totalTime;
     });
 
-    Profiler.results = stats;
+    Profiler.results.stats = stats;
 
     const lines = stats.map(data => {
       return [

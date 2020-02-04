@@ -9,8 +9,7 @@ var er = require('./error');
 var settings = require('./settings');
 const profiler = require('./screeps-profiler');
 var pp = require('./profiler-prep');
-
-// pp.prepProfile()
+pp.prepProfile()
 
 //Game.profiler.profile(1000);
 //Game.profiler.output();
@@ -99,7 +98,6 @@ module.exports.loop = function () {
         }
         
         if (Game.time % settings.profileFrequency == 0) {
-            pp.prepProfile()
             Game.profiler.profile(settings.profileLength);
         }
 
