@@ -51,8 +51,8 @@ var rH = {
                 return;
             }
         }
-        let newTarget = _.find(hostiles, h => h.pos.inRangeTo(creep.pos), 3)
-        if(newTarget){
+        let newTarget = creep.pos.findClosestByRange(hostiles)
+        if(newTarget && newTarget.pos.getRangeTo(creep <= 3)){
             creep.rangedAttack(newTarget)
         }
     },
@@ -82,9 +82,9 @@ var rH = {
             }
             let dangerous = _.filter(hostiles, h => h.getActiveBodyparts(ATTACK) > 0 || h.getActiveBodyparts(RANGED_ATTACK) > 0)
             let goals = _.map(dangerous, function(d) {
-            return { pos: d.pos, range: 3 };
+            return { pos: d.pos, range: 8 };
             });
-            const retreatPath = PathFinder.search(creep.pos, goals, {maxOps: 100, flee: true, maxRooms: 1,
+            const retreatPath = PathFinder.search(creep.pos, goals, {maxOps: 200, flee: true, maxRooms: 1,
                 roomCallBack: function(roomName){
                     let room = Game.rooms[roomName]
                     let costs = new PathFinder.CostMatrix
