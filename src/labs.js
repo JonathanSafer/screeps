@@ -1,3 +1,5 @@
+var settings = require('./settings')
+
 var labs = {
     runLabs: function(city) {
         let spawn = Game.spawns[city];
