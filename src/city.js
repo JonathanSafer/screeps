@@ -366,7 +366,7 @@ function updateBigDefender(city, memory){
                 }
                 if(hostiles[i].getActiveBodyparts(TOUGH) > 0){
                     for(var j = 0; j < hostiles[i].body.length; j++){
-                        if(hostiles[i].body[j].boosted){
+                        if(hostiles[i].body[j].boost){
                             danger = true
                         }
                     }
