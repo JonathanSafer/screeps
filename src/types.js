@@ -57,6 +57,7 @@ function getRecipe(type, energyAvailable, room){
             d['medic'] = body([25, 25], [MOVE, HEAL]);
             d['breaker'] = body([25, 25], [MOVE, WORK]);
             d['robber'] = body([25, 25], [CARRY, MOVE]);
+            d['defender'] = body([3, 31, 6, 10], [TOUGH, RANGED_ATTACK, HEAL, MOVE])
             break;
         default:
             break;
@@ -163,6 +164,9 @@ function minerBody(energyAvailable, rcl) {
 function upgraderBody(energyAvailable, rcl) {
     // upgraders. At least 2 work, at least work/2 carry. at least (w+c)/2 move
     let types = [WORK, CARRY, MOVE]
+    if(rcl <= 2){
+        return body([1, 1, 1], types)
+    }
     return rcl > 7 ? body([15, 15, 15], types) : scalingBody([4, 2, 3], types, energyAvailable)
 }
 
