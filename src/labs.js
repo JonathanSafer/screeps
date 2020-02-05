@@ -72,16 +72,16 @@ var labs = {
     },
 
     chooseBoost: function(currentBoost, spawn) {
-        if(spawn.room.terminal.store['G'] < 15000){
+        if(spawn.room.terminal.store['G'] < settings.ghodiumAmount){
             spawn.memory.ferryInfo.labInfo[6] = 'G';
             return;
         }
         let boostsList = ['G', 'XKHO2', 'XLHO2', 'XZHO2', 'XGHO2', 'XZH2O', 'XGH2O', 'XLH2O']
-        if (boostsList.includes(currentBoost) && spawn.room.terminal.store[currentBoost] > 5000){
+        if (boostsList.includes(currentBoost) && spawn.room.terminal.store[currentBoost] > settings.boostAmount - 3000){
             boostsList.splice(boostsList.indexOf(currentBoost), 1);
         }
         for(let i = 0; i < boostsList.length; i++){
-            if(spawn.room.terminal.store[boostsList[i]] < 8000){
+            if(spawn.room.terminal.store[boostsList[i]] < settings.boostAmount){
                 spawn.memory.ferryInfo.labInfo[6] = boostsList[i]
                 return;
             }

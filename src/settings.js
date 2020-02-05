@@ -5,6 +5,8 @@ var settings = {
 	roomplanOffset: 155,
 	creditMin: 4500000, //min credits needed to start buying energy
 	miningDisabled: ['W1N210', 'W2N240'], //cities that will attempt any highway mining
+	ghodiumAmount: 15000, //threshold to stop producing ghodium
+	boostAmount: 12000, //threshold to stop producing boosts
 	bucket: {//minimum bucket thresholds
 		mining: 6000 //highway mining
 	},
