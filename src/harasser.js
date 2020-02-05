@@ -52,7 +52,7 @@ var rH = {
             }
         }
         let newTarget = creep.pos.findClosestByRange(hostiles)
-        if(newTarget && newTarget.pos.getRangeTo(creep <= 3)){
+        if(newTarget && newTarget.pos.getRangeTo(creep) <= 3){
             creep.rangedAttack(newTarget)
         }
     },
