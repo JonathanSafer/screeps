@@ -55,7 +55,7 @@ var rD = {
                     creep.memory.state = CS.DORMANT
                 }
             }
-
+            return
         }
 
 
