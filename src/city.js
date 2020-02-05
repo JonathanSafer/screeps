@@ -405,7 +405,7 @@ function updateBigDefender(city, memory){
                 //if a defender is not already spawning, queue another one up
                 const spawns = room.find(FIND_MY_SPAWNS)
                 let spawning = false;
-                for(var i = 0; i < spawns.length; i++){
+                for(let i = 0; i < spawns.length; i++){
                     if(spawns[i].spawning){
                         if(Game.creeps[spawns[i].spawning.name].memory.role == rD.name){
                             spawning = true
