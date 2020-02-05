@@ -50,7 +50,10 @@ var rD = {
             rH.shoot(creep, hostiles)
             rH.maybeHeal(creep, hostiles)
             if(!hostiles.length && creep.hits == creep.hitsMax){
-                creep.moveTo(Game.spawns[creep.memory.city].room.controller, {range: 2})
+                creep.say('sleep')
+                if(creep.saying == 'sleep'){
+                    creep.moveTo(Game.spawns[creep.memory.city].room.controller, {range: 2})
+                }
                 if(creep.pos.inRangeTo(Game.spawns[creep.memory.city].room.controller, 2)){
                     creep.memory.state = CS.DORMANT
                 }
