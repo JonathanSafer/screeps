@@ -73,8 +73,6 @@ var rM = {
         if (openSources.length){
             creep.memory.source = openSources[0]
             creep.memory.sourceRoom = Game.spawns[city].memory.sources[openSources[0]].roomName;
-        } else {
-            console.log(city + ': No sources available')
         }
     }
 };
