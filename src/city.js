@@ -337,7 +337,7 @@ function updateMilitary(city, memory, rooms) {
             big = 1
         }
     }
-    if(!big){
+    if(!big && !updateBigDefender(city, memory)){//no big military needed and no defenders needed
         emptyBoosters(memory);
     }
 }
@@ -351,6 +351,79 @@ function emptyBoosters(memory){
             }
         }
     }
+}
+
+function updateBigDefender(city, memory){
+    //if towers active and need help, get boosters ready for a defender
+    let danger = false
+    const room = Game.spawns[city].room
+    if(memory.towersActive){
+        const hostiles = room.find(FIND_HOSTILE_CREEPS)
+        if(hostiles.length){//if a hostile has tough and boosted parts, we are in danger aka need defenders
+            for (var i = 0; i < hostiles.length; i++) {
+                if(danger){
+                    continue;
+                }
+                if(hostiles[i].getActiveBodyparts(TOUGH) > 0){
+                    for(var j = 0; j < hostiles[i].body.length; j++){
+                        if(hostiles[i].body[j].boosted){
+                            danger = true
+                        }
+                    }
+                }
+            }
+        }
+    }
+    if(!danger){//if no defenders needed, early return 
+        memory[rD.name] = 0;
+        return false;
+    }
+    if(memory.ferryInfo.boosterInfo){
+        let resources = ['XZHO2', 'XKHO2', 'XLHO2', 'XGHO2']
+        let go = 1;
+        for (let i = 0; i < resources.length; i++){
+            if(room.terminal.store[resources[i]] < 1000){
+                go = 0
+            }
+            if(room.terminal.store[resources[i]] < 2000){
+                memory.ferryInfo.mineralRequest = resources[i];
+            }
+        }
+        if(go){
+            for (let i = 0; i < resources.length; i++){
+                let lab = Game.getObjectById(memory.ferryInfo.boosterInfo[i][0])
+                if(lab.mineralType !=  resources[i] && lab.mineralAmount){
+                    memory.ferryInfo.boosterInfo[i][1] = 2
+                    go = 0
+                } else if (lab.mineralAmount < 1000){
+                    memory.ferryInfo.boosterInfo[i][1] = 1
+                    memory.ferryInfo.boosterInfo[i][2] = resources[i]
+                }
+            }
+            if(go){
+                memory[rD.name] = 1;
+                //if a defender is not already spawning, queue another one up
+                const spawns = room.find(FIND_MY_SPAWNS)
+                let spawning = false;
+                for(var i = 0; i < spawns.length; i++){
+                    if(spawns[i].spawning){
+                        if(Game.creeps[spawns[i].spawning.name].memory.role == rD.name){
+                            spawning = true
+                        }
+                    }
+                }
+                if(!spawning){
+                    sq.schedule(Game.spawns[city], rD.name)
+                }
+            } else {
+                memory[rD.name] = 0;
+            }
+        } else {
+            memory[rD.name] = 0;
+        }
+    }
+    return true;
+
 }
 
 function chooseColonizerRoom(myCities){
@@ -403,7 +476,6 @@ function updateColonizers(city, memory, closestRoom) {
 function updateDefender(rooms, memory, rcl8) {
     if (Game.time % 30 == 0) {
         if(rcl8){
-            memory[rD.name] = 0;
             return;
         }
         var enemyCounts = _.map(rooms, room => {
@@ -607,7 +679,7 @@ function updateTrooper(flag, memory) {
 }
 
 function updateBigBreaker(flag, memory, city) {
-    if (flag){
+    if (flag && !memory.towersActive){
         let spawn = Game.spawns[city]
         let resources = ['XZHO2', 'XZH2O', 'XLHO2', 'XGHO2']
         let go = 1;
@@ -622,7 +694,10 @@ function updateBigBreaker(flag, memory, city) {
         if(go){
             for (let i = 0; i < resources.length; i++){
                 let lab = Game.getObjectById(memory.ferryInfo.boosterInfo[i][0])
-                if (lab.mineralAmount < 1000){
+                if(lab.mineralType !=  resources[i] && lab.mineralAmount){
+                    memory.ferryInfo.boosterInfo[i][1] = 2
+                    go = 0
+                } else if (lab.mineralAmount < 1000){
                     memory.ferryInfo.boosterInfo[i][1] = 1
                     memory.ferryInfo.boosterInfo[i][2] = resources[i]
                 }
@@ -638,7 +713,7 @@ function updateBigBreaker(flag, memory, city) {
 }
 
 function updateBigTrooper(flag, memory, city) {
-    if (flag){
+    if (flag && !memory.towersActive){
         let spawn = Game.spawns[city]
         let resources = ['XZHO2', 'XKHO2', 'XLHO2', 'XGHO2']
         let go = 1;
@@ -653,7 +728,10 @@ function updateBigTrooper(flag, memory, city) {
         if(go){
             for (let i = 0; i < resources.length; i++){
                 let lab = Game.getObjectById(memory.ferryInfo.boosterInfo[i][0])
-                if (lab.mineralAmount < 1000){
+                if(lab.mineralType !=  resources[i] && lab.mineralAmount){
+                    memory.ferryInfo.boosterInfo[i][1] = 2
+                    go = 0
+                } else if (lab.mineralAmount < 1000){
                     memory.ferryInfo.boosterInfo[i][1] = 1
                     memory.ferryInfo.boosterInfo[i][2] = resources[i]
                 }
