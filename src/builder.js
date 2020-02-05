@@ -87,7 +87,7 @@ var rB = {
             var targets = Game.spawns[creep.memory.city].room.find(FIND_MY_CONSTRUCTION_SITES)
             var siege = _.find(creep.room.find(FIND_MY_CREEPS), c => c.role = 'defender')
             if(siege){
-                const plan = creep.room.plan
+                const plan = creep.room.memory.plan
                 targets = _.reject(targets, site => site.pos.x > plan.x + template.dimensions.x + 2
                         || site.pos.y > plan.y + template.dimensions.y + 2
                         || site.pos.x < plan.x - 3

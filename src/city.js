@@ -412,7 +412,7 @@ function updateBigDefender(city, memory){
                         }
                     }
                 }
-                if(!spawning){
+                if(!spawning && _.filter(room.find(FIND_MY_CREEPS), c => c.role == rD.name).length < room.find(FIND_HOSTILE_CREEPS).length){
                     sq.schedule(Game.spawns[city], rD.name)
                 }
             } else {
