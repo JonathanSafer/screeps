@@ -52,7 +52,7 @@ var rD = {
             if(!hostiles.length && creep.hits == creep.hitsMax){
                 creep.moveTo(creep.room.controller, {range: 2})
                 if(creep.pos.inRangeTo(creep.room.controller, 2)){
-                    creep.memory.dormant = true
+                    creep.memory.state = CS.DORMANT
                 }
             }
 
