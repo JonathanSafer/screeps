@@ -39,7 +39,7 @@ var rD = {
                     rD.boost(creep)
                     break
                 case CS.ENGAGE:
-                    if(!rH.maybeRetreat(creep, hostiles) && hostiles.length && creep.pos.inRangeTo(Game.spawns[city], 8)){
+                    if(!rH.maybeRetreat(creep, hostiles) && hostiles.length && creep.pos.inRangeTo(Game.spawns[city], 11)){
                         rH.aMove(creep, hostiles)
                     }
                     break
