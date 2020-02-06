@@ -415,7 +415,9 @@ function updateBigDefender(city, memory){
                         }
                     }
                 }
-                sq.schedule(Game.spawns[city], rD.name)
+                if(!spawning){
+                    sq.schedule(Game.spawns[city], rD.name)
+                }
             } else {
                 memory[rD.name] = 0;
             }
