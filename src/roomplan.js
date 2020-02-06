@@ -99,7 +99,7 @@ let p = {
         }
 
         let mineralPos = minerals[0].pos
-        if (mineralPos.lookFor(LOOK_STRUCTURES)) {
+        if (mineralPos.lookFor(LOOK_STRUCTURES).length > 0) {
             return
         }
 
