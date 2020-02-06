@@ -403,6 +403,9 @@ function updateBigDefender(city, memory){
             if(go){
                 memory[rD.name] = 1;
                 //if a defender is not already spawning, queue another one up
+                if(_.filter(room.find(FIND_MY_CREEPS), c => c.memory.role == rD.name).length >= room.find(FIND_HOSTILE_CREEPS).length){
+                    return
+                }
                 const spawns = room.find(FIND_MY_SPAWNS)
                 let spawning = false;
                 for(let i = 0; i < spawns.length; i++){
@@ -412,9 +415,7 @@ function updateBigDefender(city, memory){
                         }
                     }
                 }
-                if(!spawning && _.filter(room.find(FIND_MY_CREEPS), c => c.role == rD.name).length < room.find(FIND_HOSTILE_CREEPS).length){
-                    sq.schedule(Game.spawns[city], rD.name)
-                }
+                sq.schedule(Game.spawns[city], rD.name)
             } else {
                 memory[rD.name] = 0;
             }
