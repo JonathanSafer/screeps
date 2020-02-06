@@ -495,7 +495,7 @@ function updateDefender(rooms, memory, rcl8) {
 
 function updateMiner(rooms, rcl8Room, memory, spawn){
     if(rcl8Room){
-        if(_.find(spawn.room.find(FIND_MY_CREEPS), c => c.role == 'defender')){
+        if(_.find(spawn.room.find(FIND_MY_CREEPS), c => c.memory.role == 'defender')){
             memory[rM.name] = 0;
             return
         }
