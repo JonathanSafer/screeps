@@ -123,12 +123,12 @@ var rH = {
             if(creep.memory.target){
                 let target = Game.getObjectById(creep.memory.target)
                 if(target){
-                    creep.moveTo(target)
+                    creep.moveTo(target, { range: 2 })
                     return;
                 }
             }
             let target = creep.pos.findClosestByRange(hostiles)
-            creep.moveTo(target)
+            creep.moveTo(target, { range: 2 })
             creep.memory.target = target.id
         }
         //move toward an enemy
