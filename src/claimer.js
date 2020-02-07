@@ -22,6 +22,10 @@ var rC = {
     },
 
     runClaimer: function(creep, flag, actionFn) {
+        if (!flag) {
+            return false
+        }
+
         if (flag.pos.roomName != creep.pos.roomName) {
             rC.cheapMove(creep, flag)
         } else if (!creep.pos.isNearTo(creep.room.controller.pos)) {
