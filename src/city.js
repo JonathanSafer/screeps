@@ -441,7 +441,7 @@ function chooseClosestRoom(myCities, flag){
     let closestLength = CREEP_CLAIM_LIFE_TIME + 100//more than max claimer lifetime
     for (let i = 0; i < goodCities.length; i += 1){
         let testRoomPos = goodCities[i].getPositionAt(25, 25)
-        let testPath = PathFinder.search(testRoomPos, {flag.pos, range: 1}, {swampCost: 1, maxOps: 10000, maxCost: 700})
+        let testPath = PathFinder.search(testRoomPos, {pos: flag.pos, range: 1 }, {swampCost: 1, maxOps: 10000, maxCost: 700})
         if(!testPath.incomplete && testPath.cost < closestLength && goodCities[i].name != flag.pos.name){
             closestRoomPos =  goodCities[i].getPositionAt(25, 25);
             closestLength = testPath.cost
