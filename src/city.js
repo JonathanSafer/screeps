@@ -438,10 +438,16 @@ function chooseClosestRoom(myCities, flag){
     }
     let goodCities = _.filter(myCities, city => city.controller.level >= 4 && Game.spawns[city.memory.city] && city.storage);
     let closestRoomPos = goodCities[0].getPositionAt(25, 25);
+    let closestLength = CREEP_CLAIM_LIFE_TIME + 100//more than max claimer lifetime
     for (let i = 0; i < goodCities.length; i += 1){
         let testRoomPos = goodCities[i].getPositionAt(25, 25)
-        if(testRoomPos.findPathTo(flag.pos).length < closestRoomPos.findPathTo(flag.pos).length && goodCities[i].name != flag.pos.name){
+        let testPath = PathFinder.search(testRoomPos, {flag.pos, range: 1}, {swampCost: 1, maxOps: 10000, maxCost: 700})
+        if(!testPath.incomplete && testPath.cost < closestLength && goodCities[i].name != flag.pos.name){
             closestRoomPos =  goodCities[i].getPositionAt(25, 25);
+            closestLength = testPath.cost
+        }
+        if(closestLength == 700){
+            Game.notify("No valid rooms in range for claim operation in " + flag.pos.roomName)
         }
     }
     return closestRoomPos.roomName;
