@@ -157,7 +157,7 @@ function checkNukes(room){
     if(Game.time % 1000 === 3){
         const nukes = room.find(FIND_NUKES);
         if(nukes.length){
-            Game.notify("Nuclear launch detected in " + room.name)
+            Game.notify("Nuclear launch detected in " + room.name, 720)
         }
     }
 }
