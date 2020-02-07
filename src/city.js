@@ -1,6 +1,5 @@
 var rMe = require('./medic');
 var rDM = require('./depositMiner');
-var rp = require('./roomplan');
 var rBM = require('./bigMedic')
 var rTr = require('./trooper')
 var rBT = require('./bigTrooper')
@@ -441,7 +440,7 @@ function chooseClosestRoom(myCities, flag){
     let closestLength = CREEP_CLAIM_LIFE_TIME + 100//more than max claimer lifetime
     for (let i = 0; i < goodCities.length; i += 1){
         let testRoomPos = goodCities[i].getPositionAt(25, 25)
-        let testPath = PathFinder.search(testRoomPos, {pos: flag.pos, range: 1 }, {swampCost: 1, maxOps: 10000, maxCost: 700})
+        let testPath = u.findMultiRoomPath(testRoomPos, flag.pos)
         if(!testPath.incomplete && testPath.cost < closestLength && goodCities[i].name != flag.pos.name){
             closestRoomPos =  goodCities[i].getPositionAt(25, 25);
             closestLength = testPath.cost
@@ -784,13 +783,13 @@ function runObs(city){
             if (!Game.spawns[city].memory.powerRooms){
                 Game.spawns[city].memory.powerRooms = [];
                 let myRoom = Game.spawns[city].room.name
-                let pos = rp.roomNameToPos(myRoom)
+                let pos = u.roomNameToPos(myRoom)
                 let x = pos[0] - 2;
                 let y = pos[1] - 2;
                 for (let i = 0; i < 5; i++){
                     for (let j = 0; j < 5; j++){
                         let coord = [x, y]
-                        let roomName = rp.roomPosToName(coord);
+                        let roomName = u.roomPosToName(coord);
                         Game.spawns[city].memory.powerRooms.push(roomName)
                         x++
                     }

@@ -103,8 +103,69 @@ var u = {
                 creep.memory.checkpoints.shift();
             }
         }
-    }
-    
+    },
+
+    findMultiRoomPath: function(startPos, endPos) {
+        return PathFinder.search(startPos, {pos: endPos, range: 1 }, {
+            plainCost: 1,
+            swampCost: 1,
+            maxOps: 10000, 
+            maxCost: 700,
+            roomCallback: function(roomName) {
+                let isHighway = u.isHighway(roomName)
+                let nearStart = u.roomInRange(2, startPos.roomName, roomName)
+                let nearEnd = u.roomInRange(2, endPos.roomName, roomName)
+
+                if (!isHighway && !nearStart && !nearEnd) {
+                    return false
+                }
+
+                let costs = new PathFinder.CostMatrix()
+                return isHighway ? costs : _.map(costs, cost => cost * 3)
+            }
+        })
+    },
+
+    // E0,E10... W0, 10 ..., N0, N10 ...
+    isHighway: function(roomName) {
+        let coords = roomName.match(/[0-9]+/g)
+        let x = Number(coords[0])
+        let y = Number(coords[1])
+        return (x % 10 == 0) || (y % 10 == 0)
+    },
+
+    getAllRoomsInRange: function(d, rooms) {
+        let pos = _.map(rooms, u.roomNameToPos)
+        let posXY = _.unzip(pos);
+        let ranges = _.map(posXY, coords => _.range(_.min(coords) - d, _.max(coords) + 1 + d))
+        let roomCoords = _.flatten(_.map(ranges[0], x => _.map(ranges[1], y => [x, y])))
+        let roomNames = _.map(roomCoords, u.roomPosToName)
+        return roomNames
+    },
+
+    roomInRange: function(range, roomName1, roomName2) {
+        let pos1 = u.roomNameToPos(roomName1)
+        let pos2 = u.roomNameToPos(roomName2)
+        return (Math.abs(pos1.x - pos2.x) <= range) && (Math.abs(pos1.y - pos2.y) <= range) 
+    },
+
+    roomNameToPos: function(roomName) {
+        let quad = roomName.match(/[NSEW]/g)
+        let coords = roomName.match(/[0-9]+/g)
+        let x = Number(coords[0])
+        let y = Number(coords[1])
+        return [
+            quad[0] === 'W' ? 0 - x : 1 + x,
+            quad[1] === 'S' ? 0 - y : 1 + y
+        ]
+    },
+
+    roomPosToName: function(roomPos) {
+        let x = roomPos[0]
+        let y = roomPos[1]
+        return (x <= 0 ? "W" + String(-x) : "E" + String(x - 1)) +
+            (y <= 0 ? "S" + String(-y) : "N" + String(y - 1))
+    },
 };
 
 module.exports = u;

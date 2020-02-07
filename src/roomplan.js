@@ -10,7 +10,7 @@ let p = {
         if (!p.newRoomNeeded()) {
             return
         }
-        let rooms = p.getAllRoomsInRange()
+        let rooms = u.getAllRoomsInRange(10, p.roomsSelected())
         let validRooms = p.getValidRooms(rooms)
         let rankings = p.sortByScore(validRooms)
         if (rankings.length) {
@@ -520,35 +520,6 @@ let p = {
             p.totalEnergy() > 200000 &&
             p.isRcl4() &&
             p.myRooms().length === p.roomsSelected().length
-    },
-
-    getAllRoomsInRange: function() {
-        let d = 10
-        let myRooms = p.roomsSelected()
-        let pos = _.map(myRooms, p.roomNameToPos)
-        let posXY = _.unzip(pos);
-        let ranges = _.map(posXY, coords => _.range(_.min(coords) - d, _.max(coords) + 1 + d))
-        let roomCoords = _.flatten(_.map(ranges[0], x => _.map(ranges[1], y => [x, y])))
-        let roomNames = _.map(roomCoords, p.roomPosToName)
-        return roomNames
-    },
-
-    roomNameToPos: function(roomName) {
-        let quad = roomName.match(/[NSEW]/g)
-        let coords = roomName.match(/[0-9]+/g)
-        let x = Number(coords[0])
-        let y = Number(coords[1])
-        return [
-            quad[0] === 'W' ? 0 - x : 1 + x,
-            quad[1] === 'S' ? 0 - y : 1 + y
-        ]
-    },
-
-    roomPosToName: function(roomPos) {
-        let x = roomPos[0]
-        let y = roomPos[1]
-        return (x <= 0 ? "W" + String(-x) : "E" + String(x - 1)) +
-            (y <= 0 ? "S" + String(-y) : "N" + String(y - 1))
     },
 
     getValidRooms: function(rooms) {
