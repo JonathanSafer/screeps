@@ -437,14 +437,14 @@ function chooseClosestRoom(myCities, flag){
         return 0;
     }
     let goodCities = _.filter(myCities, city => city.controller.level >= 4 && Game.spawns[city.memory.city] && city.storage);
-    let targetRoom = flag.pos.roomName
-    let closestRoom = goodCities[0].name;
+    let closestRoomPos = goodCities[0].getPositionAt(25, 25);
     for (let i = 0; i < goodCities.length; i += 1){
-        if(Game.map.getRoomLinearDistance(goodCities[i].name, targetRoom) < Game.map.getRoomLinearDistance(closestRoom, targetRoom) && goodCities[i].name != targetRoom){
-            closestRoom =  goodCities[i].name;
+        let testRoomPos = goodCities[i].getPositionAt(25, 25)
+        if(testRoomPos.findPathTo(flag.pos).length < closestRoomPos.findPathTo(flag.pos).length && goodCities[i].name != flag.pos.name){
+            closestRoomPos =  goodCities[i].getPositionAt(25, 25);
         }
     }
-    return closestRoom;
+    return closestRoomPos.roomName;
 }
 
 function updateColonizers(city, memory, claimRoom, unclaimRoom) {
