@@ -2,6 +2,7 @@ var a = require('./actions');
 var u = require('./utils');
 var rU = require('./upgrader');
 var template = require('./template')
+var rD = require('./defender')
 
 var rB = {
     name: "builder",
@@ -85,7 +86,7 @@ var rB = {
             //if room is under siege (determined by presence of a defender),
             // ignore any construction sites outside of wall limits
             var targets = Game.spawns[creep.memory.city].room.find(FIND_MY_CONSTRUCTION_SITES)
-            var siege = _.find(creep.room.find(FIND_MY_CREEPS), c => c.memory.role == 'defender')
+            var siege = _.find(creep.room.find(FIND_MY_CREEPS), c => c.memory.role == rD.name)
             if(siege){
                 const plan = creep.room.memory.plan
                 targets = _.reject(targets, site => site.pos.x > plan.x + template.dimensions.x + 2
