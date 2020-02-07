@@ -109,8 +109,8 @@ var u = {
         return PathFinder.search(startPos, {pos: endPos, range: 1 }, {
             plainCost: 1,
             swampCost: 1,
-            maxOps: 10000, 
-            maxCost: 700,
+            maxOps: 10000,
+            maxRooms: 64,
             roomCallback: function(roomName) {
                 let isHighway = u.isHighway(roomName)
                 let nearStart = u.roomInRange(2, startPos.roomName, roomName)
@@ -146,7 +146,7 @@ var u = {
     roomInRange: function(range, roomName1, roomName2) {
         let pos1 = u.roomNameToPos(roomName1)
         let pos2 = u.roomNameToPos(roomName2)
-        return (Math.abs(pos1.x - pos2.x) <= range) && (Math.abs(pos1.y - pos2.y) <= range) 
+        return (Math.abs(pos1[0] - pos2[0]) <= range) && (Math.abs(pos1[1] - pos2[1]) <= range)
     },
 
     roomNameToPos: function(roomName) {
