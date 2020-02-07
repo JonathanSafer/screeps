@@ -8,7 +8,8 @@ var settings = {
 	ghodiumAmount: 15000, //threshold to stop producing ghodium
 	boostAmount: 12000, //threshold to stop producing boosts
 	bucket: {//minimum bucket thresholds
-		mining: 6000 //highway mining
+		mining: 6000, //highway mining
+        colony: 4000 // building new rooms
 	},
 
     // Profiling

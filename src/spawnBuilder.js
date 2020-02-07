@@ -1,6 +1,7 @@
 var a = require('./actions')
 var sq = require('./spawnQueue')
 var rU = require('./upgrader')
+var s = require('./settings')
 
 var rSB = {
     name: "spawnBuilder",
@@ -13,6 +14,11 @@ var rSB = {
         if(creep.ticksToLive == 500 && Game.flags.claim) {
             sq.respawn(creep)
         }
+
+        if (Game.cpu.bucket < s.bucket.colony) {
+            return
+        }
+
         var city = creep.memory.city;
         if(!creep.memory.state){
           creep.memory.state = 0
