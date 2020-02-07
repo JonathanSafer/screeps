@@ -28,12 +28,13 @@ module.exports.loop = function () {
         var localRooms = u.splitRoomsByCity()
         var localCreeps = u.splitCreepsByCity()
         var myCities = u.getMyCities()
-        let closestRoom = null;
+        let claimRoom, unclaimRoom
 
         // TODO add a setup function to validate memory etc
         if (!Memory.flags) Memory.flags = {}
         if(Game.time % 500 == 0){
-            closestRoom = c.chooseColonizerRoom(myCities);
+            claimRoom = c.chooseClosestRoom(myCities, Game.flags.claim)
+            unclaimRoom = c.chooseClosestRoom(myCities, Game.flags.unclaim)
             //em.expand() // grow the empire!
         }
         console.log("Time: " + Game.time);
@@ -50,7 +51,8 @@ module.exports.loop = function () {
                     continue // skip this city
                 }
                 c.runCity(city, localCreeps[city])
-                c.updateCountsCity(city, localCreeps[city], localRooms[city], closestRoom)
+                c.updateCountsCity(city, localCreeps[city], localRooms[city], 
+                    claimRoom, unclaimRoom)
                 c.runTowers(city)
                 // TODO: obs runs in dead cities
                 c.runObs(city)

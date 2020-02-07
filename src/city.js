@@ -118,7 +118,7 @@ function runCity(city, creeps){
     }
 }
 //updateCountsCity function
-function updateCountsCity(city, creeps, rooms, closestRoom) {
+function updateCountsCity(city, creeps, rooms, claimRoom, unclaimRoom) {
     let spawn = Game.spawns[city];
     if (spawn){
         let memory = spawn.memory;
@@ -143,7 +143,7 @@ function updateCountsCity(city, creeps, rooms, closestRoom) {
                 runNuker(city)
                 checkLabs(city)
                 updateTransporter(extensions, memory);
-                updateColonizers(city, memory, closestRoom);
+                updateColonizers(city, memory, claimRoom, unclaimRoom);
                 updateUpgrader(city, controller, memory, rcl8, creeps, rcl);
                 updateBuilder(rcl, memory, spawn, rooms, rcl8);
                 updateMineralMiner(rcl, structures, spawn, memory);
@@ -432,46 +432,44 @@ function updateBigDefender(city, memory){
 
 }
 
-function chooseColonizerRoom(myCities){
-    if(!Game.flags.claim && !Game.flags.unclaim){
+function chooseClosestRoom(myCities, flag){
+    if(!flag){
         return 0;
     }
     let goodCities = _.filter(myCities, city => city.controller.level >= 4 && Game.spawns[city.memory.city] && city.storage);
-    let claimRoom = Game.flags.unclaim ? Game.flags.unclaim.pos.roomName: Game.flags.claim.pos.roomName
+    let targetRoom = flag.pos.roomName
     let closestRoom = goodCities[0].name;
     for (let i = 0; i < goodCities.length; i += 1){
-        if(Game.map.getRoomLinearDistance(goodCities[i].name, claimRoom) < Game.map.getRoomLinearDistance(closestRoom, claimRoom) && goodCities[i].name != claimRoom){
+        if(Game.map.getRoomLinearDistance(goodCities[i].name, targetRoom) < Game.map.getRoomLinearDistance(closestRoom, targetRoom) && goodCities[i].name != targetRoom){
             closestRoom =  goodCities[i].name;
         }
     }
     return closestRoom;
 }
 
-function updateColonizers(city, memory, closestRoom) {
+function updateColonizers(city, memory, claimRoom, unclaimRoom) {
     //claimer and spawnBuilder reset
     // TODO only make a claimer if city is close
     let roomName = Game.spawns[city].room.name
-    if(roomName == closestRoom){
-        if(Game.flags.claim){
-            if(Game.spawns[city].room.controller.level < 7){
-                memory[rSB.name] = 4;
-            } else if(Game.flags.claim.room && Game.flags.claim.room.controller && Game.flags.claim.room.controller.level > 6) {
-                memory[rSB.name] = 4;
-            } else {
-                memory[rSB.name] = 2;
-            }
+    if(roomName == claimRoom){
+        if(Game.spawns[city].room.controller.level < 7){
+            memory[rSB.name] = 4;
+        } else if(Game.flags.claim.room && Game.flags.claim.room.controller && Game.flags.claim.room.controller.level > 6) {
+            memory[rSB.name] = 4;
         } else {
-            memory[rSB.name] = 0;
+            memory[rSB.name] = 2;
         }
         if(Game.flags.claim && Game.flags.claim.room && Game.flags.claim.room.controller.my){
             memory[rC.name] = 0;
         } else {
             memory[rC.name] = Game.flags.claim ? 1 : 0;
         }
-        memory[rUC.name] = Game.flags.unclaim ? 1 : memory[rUC.name]
     } else {
         memory[rSB.name] = 0;
         memory[rC.name] = 0;
+    }
+    if (roomName == unclaimRoom) {
+        memory[rUC.name] = 1
     }
     //memory[rRo.name] = 0;
 }
@@ -866,7 +864,7 @@ function runObs(city){
 }
 
 module.exports = {
-    chooseColonizerRoom: chooseColonizerRoom,
+    chooseClosestRoom: chooseClosestRoom,
     runCity: runCity,
     updateCountsCity: updateCountsCity,
     runTowers: runTowers,
