@@ -45,13 +45,15 @@ module.exports.loop = function () {
                 if(!city){
                     myCities[i].memory.city = myCities[i].name + '0'
                 }
-                if (city !== "pit") {
-                    c.runCity(city, localCreeps[city])
-                    c.updateCountsCity(city, localCreeps[city], localRooms[city], closestRoom)
-                    c.runTowers(city)
-                    // TODO: obs runs in dead cities
-                    c.runObs(city)
+                let rcl = myCities[i].controller.level
+                if (rcl < 8 && Game.cpu.bucket < settings.bucket.colony) {
+                    continue // skip this city
                 }
+                c.runCity(city, localCreeps[city])
+                c.updateCountsCity(city, localCreeps[city], localRooms[city], closestRoom)
+                c.runTowers(city)
+                // TODO: obs runs in dead cities
+                c.runObs(city)
                 let currentCpu = Game.cpu.getUsed()
                 s.cityCpuMap[city] = currentCpu - prevCpu
                 prevCpu = currentCpu
