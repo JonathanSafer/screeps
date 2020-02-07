@@ -33,8 +33,10 @@ module.exports.loop = function () {
         // TODO add a setup function to validate memory etc
         if (!Memory.flags) Memory.flags = {}
         if(Game.time % 500 == 0){
-            claimRoom = c.chooseClosestRoom(myCities, Game.flags.claim)
-            unclaimRoom = c.chooseClosestRoom(myCities, Game.flags.unclaim)
+            claimRoom = c.chooseClosestRoom(myCities,
+                Game.flags.claimRally || Game.flags.claim)
+            unclaimRoom = c.chooseClosestRoom(myCities,
+                Game.flags.unclaimRally || Game.flags.unclaim)
             //em.expand() // grow the empire!
         }
         console.log("Time: " + Game.time);
