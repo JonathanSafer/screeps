@@ -783,7 +783,7 @@ function observeNewRoomForMining(city) {
     const obs = getObsForMining(city)
     if (!obs) return false
     preparePowerRoomsList(city, settings.miningRange)
-    const roomNum = timeToRoomNum(Game.time, 1)
+    const roomNum = timeToRoomNum(Game.time, city)
     //scan next room
     obs.observeRoom(Game.spawns[city].memory.powerRooms[roomNum])
 }
