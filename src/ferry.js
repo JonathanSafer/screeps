@@ -209,7 +209,7 @@ var rF = {
             creep.suicide()
             return 0
         }
-        if (Game.spawns[creep.memory.city].memory.storageLink &&
+        if (Game.getObjectById(Game.spawns[creep.memory.city].memory.storageLink) &&
             Game.getObjectById(Game.spawns[creep.memory.city].memory.storageLink).energy > 0)
         {
             return 5
