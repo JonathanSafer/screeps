@@ -445,9 +445,9 @@ function chooseClosestRoom(myCities, flag){
             closestRoomPos =  goodCities[i].getPositionAt(25, 25)
             closestLength = testPath.cost
         }
-        if(closestLength == 700){
-            Game.notify("No valid rooms in range for claim operation in " + flag.pos.roomName)
-        }
+    }
+    if(closestLength == 700){
+        Game.notify("No valid rooms in range for claim operation in " + flag.pos.roomName)
     }
     return closestRoomPos.roomName
 }
