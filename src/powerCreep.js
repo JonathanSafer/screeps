@@ -1,5 +1,5 @@
-var a = require('./actions');
-var u = require('./utils');
+var a = require('./actions')
+var u = require('./utils')
 
 var CreepState = {
   START: 1,
@@ -15,8 +15,8 @@ var CreepState = {
   WORK_OBSERVER: 11,
   WORK_EXTENSION: 12,
   WORK_SPAWN: 13
-};
-var CS = CreepState;
+}
+var CS = CreepState
 
 var rPC = {
 
@@ -24,7 +24,7 @@ var rPC = {
     run: function(creep) {
         if(creep.hits < creep.hitsMax && creep.memory.city){
             creep.moveTo(Game.rooms[creep.memory.city].storage)
-            return;
+            return
         }
         if (!rPC.hasValidState(creep)) {
             if (creep.ticksToLive > 0) {
@@ -112,15 +112,15 @@ var rPC = {
     spawnPowerCreep: function(creep) {
         // spawn creep
         if(!Game.rooms[creep.memory.city]){
-            return;
+            return
         }
         const structures = Game.rooms[creep.memory.city].find(FIND_MY_STRUCTURES)
         const powerSpawn = _.find(structures, structure => structure.structureType === STRUCTURE_POWER_SPAWN)
         if(!powerSpawn){
-            return;
+            return
         }
-        creep.spawn(powerSpawn);
-        creep.memory.powerSpawn = powerSpawn.id;
+        creep.spawn(powerSpawn)
+        creep.memory.powerSpawn = powerSpawn.id
     },
 
     hasValidState: function(creep) { // TODO. false if creep spawns in city with no power spawn
@@ -188,7 +188,7 @@ var rPC = {
         // get all sources
         // if there is no effect on source then choose it
         if(!creep.powers[PWR_REGEN_SOURCE]){
-            return false;
+            return false
         }
         const sourceIds = Object.keys(Game.spawns[creep.memory.city + "0"].memory.sources)
         for (const sourceId of sourceIds) {
@@ -262,5 +262,5 @@ var rPC = {
         return creep.store[RESOURCE_OPS] >= POWER_INFO[jobName].ops ?
             jobState : CS.WORK_BALANCE_OPS
     }
-};
-module.exports = rPC;
+}
+module.exports = rPC

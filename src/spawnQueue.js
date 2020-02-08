@@ -26,5 +26,5 @@ var sq = {
         }
     }
 
-};
-module.exports = sq;
+}
+module.exports = sq

@@ -6,8 +6,8 @@ var CreepState = {
   START: 0,
   BOOST: 1,
   UPGRADE: 2
-};
-var CS = CreepState;
+}
+var CS = CreepState
 
 var rU = {
     name: "Upgrader",
@@ -16,19 +16,19 @@ var rU = {
 
     /** @param {Creep} creep **/
     run: function(creep) {
-      var city = creep.memory.city;
+      var city = creep.memory.city
       if(!creep.memory.state){
         creep.memory.state = CS.START
       }
       const boost = 'XGH2O'
-      rU.checkBoost(creep, city, boost);
-      rU.getBoosted(creep, city, boost);
+      rU.checkBoost(creep, city, boost)
+      rU.getBoosted(creep, city, boost)
 
       if (creep.memory.state == CS.UPGRADE){
         if(creep.memory.upgrading && creep.carry.energy == 0) {
-          creep.memory.upgrading = false;
+          creep.memory.upgrading = false
         } else if(!creep.memory.upgrading && creep.store.energy >= creep.store.getCapacity() * 0.5) {
-          creep.memory.upgrading = true;
+          creep.memory.upgrading = true
         }
 
         creep.memory.upgrading ? actions.upgrade(creep) : rU.withdraw(creep, city)
@@ -43,7 +43,7 @@ var rU = {
       location = location || Game.spawns[city]
 
       if (actions.withdraw(creep, location) == ERR_NOT_ENOUGH_RESOURCES) {
-          creep.memory.target = u.getNextLocation(creep.memory.target, targets);
+          creep.memory.target = u.getNextLocation(creep.memory.target, targets)
       }
     },
 
@@ -61,20 +61,20 @@ var rU = {
 
     checkBoost: function(creep, city, boost){
       if(creep.memory.state != CS.START){
-        return;
+        return
       }
       if(Game.spawns[city].room.controller.level < 6 || !creep.room.terminal){
           creep.memory.state = CS.UPGRADE
-          return;
+          return
       }
       if(Game.spawns[city].room.controller.level < 8){
         const lab = _.find(Game.spawns[city].room.find(FIND_STRUCTURES), structure => structure.structureType === STRUCTURE_LAB)
         rU.updateStateFromLab(lab, creep, boost)
-        return;
+        return
       }
       if(!Game.spawns[city].memory.ferryInfo || !Game.spawns[city].memory.ferryInfo.boosterInfo){
           creep.memory.state = CS.UPGRADE
-          return;
+          return
       }
       const lab = Game.getObjectById(Game.spawns[city].memory.ferryInfo.boosterInfo[0][0])
       rU.updateStateFromLab(lab, creep, boost)
@@ -99,30 +99,30 @@ var rU = {
 
     getBoosted: function(creep, city, boost){
       if(creep.memory.state != 1){
-        return;
+        return
       }
       const lab = Game.getObjectById(creep.memory.lab)
       if(_.sum(creep.carry) == 0 && !creep.pos.isNearTo(lab.pos)){
         if(Game.time % 50 == 0){
           creep.memory.state = CS.START
-          return;
+          return
         }
         const work = creep.getActiveBodyparts(WORK)
         actions.withdraw(creep, creep.room.terminal, boost, LAB_BOOST_MINERAL * work)
-        return;
+        return
       }
       if(_.sum(creep.carry) > 0){
         actions.charge(creep, lab)
-        return;
+        return
       }
       if(creep.body[0].boost){
         creep.memory.state = CS.UPGRADE
-        return;
+        return
       } else {
         lab.boostCreep(creep)
         creep.memory.state = CS.UPGRADE
-        return;
+        return
       }
     }
-};
-module.exports = rU;
+}
+module.exports = rU

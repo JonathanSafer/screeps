@@ -18,6 +18,6 @@ var settings = {
     profileFrequency: 123, // profiler runs every 123 ticks
     profileLength: 7, // profiler is run for 7 ticks
     profileResultsLength: 50 // top 50 results are recorded
-};
+}
 
-module.exports = settings;
+module.exports = settings

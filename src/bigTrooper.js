@@ -1,4 +1,4 @@
-var a = require('./actions');
+var a = require('./actions')
 var rTr = require('./trooper')
 
 var rBT = {
@@ -17,5 +17,5 @@ var rBT = {
         return
     }
    
-};
-module.exports = rBT;
+}
+module.exports = rBT

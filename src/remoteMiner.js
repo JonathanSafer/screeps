@@ -1,4 +1,4 @@
-var a = require('./actions');
+var a = require('./actions')
 var sq = require('./spawnQueue')
 
 var rM = {
@@ -14,38 +14,38 @@ var rM = {
         }
         if(creep.hits < creep.hitsMax){
             creep.moveTo(Game.spawns[creep.memory.city])
-            return;
+            return
         }
         if(creep.memory.source == null) {
-            rM.nextSource(creep);
+            rM.nextSource(creep)
         } else if (Game.getObjectById(creep.memory.source) == null){
-            creep.moveTo(new RoomPosition(25, 25, creep.memory.sourceRoom), {reusePath: 50}); 
+            creep.moveTo(new RoomPosition(25, 25, creep.memory.sourceRoom), {reusePath: 50}) 
         } else {
             if (creep.saying != '*'){
-                rM.harvestTarget(creep);
+                rM.harvestTarget(creep)
             }
             if (Game.time % 50 === 0){
                 if (Game.spawns[creep.memory.city].room.controller.level > 6){
                     if (!creep.memory.link){
                         //find link
-                        var source = Game.getObjectById(creep.memory.source);
+                        var source = Game.getObjectById(creep.memory.source)
                         var structures = creep.room.find(FIND_MY_STRUCTURES)
                         const links = _.filter(structures, structure => structure.structureType === STRUCTURE_LINK && structure.pos.inRangeTo(source.pos, 3))
                         //console.log(link)
                         if (links.length > 1){
-                            creep.memory.link = source.pos.findClosestByRange(links).id;
+                            creep.memory.link = source.pos.findClosestByRange(links).id
                         } else if(links.length){
-                            creep.memory.link = links[0].id;
+                            creep.memory.link = links[0].id
                         }
                     }
                 }
             }
             if (creep.memory.link){
                 if (creep.carry.energy == creep.carryCapacity){
-                    const link = Game.getObjectById(creep.memory.link);
-                    a.charge(creep, link);
+                    const link = Game.getObjectById(creep.memory.link)
+                    a.charge(creep, link)
                     if (link && link.energy >= link.energyCapacity * .5){
-                        creep.say('*', true);
+                        creep.say('*', true)
                     }
                 }
             }
@@ -53,7 +53,7 @@ var rM = {
     },
 
     harvestTarget: function(creep) {
-        var source = Game.getObjectById(creep.memory.source);
+        var source = Game.getObjectById(creep.memory.source)
         if (!((Game.time % 2 == 0) && (creep.body.length == 15) && (creep.pos.isNearTo(source.pos)))){
             a.harvest(creep, source)
         }
@@ -61,19 +61,19 @@ var rM = {
 
     /** pick a target id for creep **/
     nextSource: function(creep) {
-        var city = creep.memory.city;
+        var city = creep.memory.city
         var miners = _.filter(Game.creeps, creep => creep.memory.role === 'remoteMiner')
         var occupied = []
         _.each(miners, function(minerInfo){
             occupied.push(minerInfo.memory.source)
         })
         var sources = Object.keys(Game.spawns[city].memory.sources)
-        var openSources = _.filter(sources, Id => !occupied.includes(Id));
+        var openSources = _.filter(sources, Id => !occupied.includes(Id))
         //console.log(sources)
         if (openSources.length){
             creep.memory.source = openSources[0]
-            creep.memory.sourceRoom = Game.spawns[city].memory.sources[openSources[0]].roomName;
+            creep.memory.sourceRoom = Game.spawns[city].memory.sources[openSources[0]].roomName
         }
     }
-};
-module.exports = rM;
+}
+module.exports = rM

@@ -1,13 +1,13 @@
-var a = require('./actions');
-var u = require('./utils');
-var rH = require('./harasser');
+var a = require('./actions')
+var u = require('./utils')
+var rH = require('./harasser')
 var CreepState = {
     START: 1,
     BOOST: 2,
     ENGAGE: 3,
     DORMANT: 4,
-};
-var CS = CreepState;
+}
+var CS = CreepState
 
 var rD = {
     name: "defender",
@@ -27,7 +27,7 @@ var rD = {
             if (!creep.memory.state) {
                 creep.memory.state = CS.START
             }
-            let hostiles = [];
+            let hostiles = []
             if(creep.memory.state != CS.DORMANT){
                 hostiles = creep.room.find(FIND_HOSTILE_CREEPS)
             }
@@ -45,7 +45,7 @@ var rD = {
                     break
                 case CS.DORMANT:
                     rD.dormant(creep)
-                    return;
+                    return
             }
             rH.shoot(creep, hostiles)
             rH.maybeHeal(creep, hostiles)
@@ -64,35 +64,35 @@ var rD = {
 
         //rcl 7 and below dumb melee defender
         if(creep.ticksToLive === 1490) {
-            creep.notifyWhenAttacked(false);
+            creep.notifyWhenAttacked(false)
         }
-        const target = Game.getObjectById(creep.memory.target);
+        const target = Game.getObjectById(creep.memory.target)
         if (target){
-            a.attack(creep, target);
-            return;
+            a.attack(creep, target)
+            return
         }
         if (Game.time % 5 == 0){
-            var localRooms = u.splitRoomsByCity();
-            const rooms = _.filter(localRooms[city], room => room.find(FIND_HOSTILE_CREEPS) != 0);
+            var localRooms = u.splitRoomsByCity()
+            const rooms = _.filter(localRooms[city], room => room.find(FIND_HOSTILE_CREEPS) != 0)
             if (rooms.length){
                 var enemies = _.filter(rooms[0].find(FIND_HOSTILE_CREEPS), enemy => enemy.owner.username != 'TuN9aN0')
                 if (enemies.length) {
-                    console.log(enemies);
-                    a.attack(creep, enemies[0]);
+                    console.log(enemies)
+                    a.attack(creep, enemies[0])
                     creep.memory.target = enemies[0].id
-                    creep.memory.location = enemies[0].room.name;
-                    return;
+                    creep.memory.location = enemies[0].room.name
+                    return
                 }
             }
         }
         if (creep.memory.location && !(creep.room.name == creep.memory.location && creep.pos.x > 5 && creep.pos.y > 5 && creep.pos.x < 45 && creep.pos.y < 45)){
-            creep.moveTo(new RoomPosition(25, 25, creep.memory.location), {reusePath: 10});
+            creep.moveTo(new RoomPosition(25, 25, creep.memory.location), {reusePath: 10})
         }
     },
 
     init: function(creep){//same init as harasser for now
         if(!creep.memory.target){
-            creep.memory.target = null;
+            creep.memory.target = null
         }
         if(!creep.memory.anger){//the more angry the creep gets, the more aggressive it'll get
             creep.memory.anger = 0//anger increases when hostiles run away, and decreases when hostiles give chase (see rH.aMove)
@@ -118,15 +118,15 @@ var rD = {
 
     dormant: function(creep){
         if(Game.spawns[creep.memory.city].memory.towersActive){
-            creep.memory.state = CS.ENGAGE;
+            creep.memory.state = CS.ENGAGE
         }
         return creep
         //if in a safe space, hibernate until towers active
     },
 
     iOwn: function(roomName) {
-        var room = Game.rooms[roomName];
-        return (room && room.controller && room.controller.my);
+        var room = Game.rooms[roomName]
+        return (room && room.controller && room.controller.my)
     }
-};
-module.exports = rD;
+}
+module.exports = rD

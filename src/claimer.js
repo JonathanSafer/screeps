@@ -14,7 +14,7 @@ var rC = {
             return false
         }
 
-        rC.cheapMove(creep, flag);
+        rC.cheapMove(creep, flag)
         if (flag.pos.x == creep.pos.x && flag.pos.y == creep.pos.y) {
             creep.memory.rally = true
         }
@@ -39,12 +39,12 @@ var rC = {
     claim: function(creep) {
         var newCity = creep.room.name + "0"
         creep.signController(creep.room.controller, newCity)
-        creep.room.memory.city = newCity;
-        creep.claimController(creep.room.controller);
+        creep.room.memory.city = newCity
+        creep.claimController(creep.room.controller)
     },
 
     cheapMove: function(creep, target) {
         creep.moveTo(target, { reusePath: 50 })
     }      
-};
-module.exports = rC;
+}
+module.exports = rC

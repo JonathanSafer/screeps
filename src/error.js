@@ -17,6 +17,6 @@ var error = {
             throw error.exception
         }
     }
-};
+}
 
-module.exports = error;
+module.exports = error

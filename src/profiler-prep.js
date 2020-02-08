@@ -9,9 +9,9 @@ var p = {
           'transporter', 'remoteMiner', 'defender', 'types', 'tower',
           'powerMiner', 'labs', 'factory']
         for (const fileName of fileNames) {
-          var lib = require(fileName);
-          profiler.registerObject(lib, fileName);
+          var lib = require(fileName)
+          profiler.registerObject(lib, fileName)
         }
     }
-};
-module.exports = p;
+}
+module.exports = p

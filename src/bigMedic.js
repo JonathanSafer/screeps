@@ -1,4 +1,4 @@
-var a = require('./actions');
+var a = require('./actions')
 var rMe = require('./medic')
 
 var rBM = {
@@ -17,5 +17,5 @@ var rBM = {
         return
     }
    
-};
-module.exports = rBM;
+}
+module.exports = rBM

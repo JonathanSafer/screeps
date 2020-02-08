@@ -1,4 +1,4 @@
-var u = require('./utils');
+var u = require('./utils')
 
 var rMe = {
     name: "medic",
@@ -9,12 +9,12 @@ var rMe = {
     /** @param {Creep} creep **/
     run: function(creep) {
         if(creep.tickToLive === 1490) {
-            creep.notifyWhenAttacked(false);
+            creep.notifyWhenAttacked(false)
         }
         if (!creep.memory.breaker){
             creep.memory.breaker = null
         }
-        var breaker = Game.getObjectById(creep.memory.breaker);
+        var breaker = Game.getObjectById(creep.memory.breaker)
         if (Game.time % 10 == 0 && breaker){
             if (breaker && breaker.memory.medic && breaker.memory.medic != creep.id){
                 creep.memory.breaker = null
@@ -22,40 +22,40 @@ var rMe = {
         }
         if (!breaker){
             if(creep.ticksToLive < 1000){
-                creep.suicide();
+                creep.suicide()
             }
-            var allCreeps = u.splitCreepsByCity();
-            var status = creep.memory.role.substring(0, 3);
-            var breakerSearch = [];
+            var allCreeps = u.splitCreepsByCity()
+            var status = creep.memory.role.substring(0, 3)
+            var breakerSearch = []
             if(status === 'big'){
                 breakerSearch = _.filter(allCreeps[creep.memory.city], targetCreep => (targetCreep.memory.role == 'bigBreaker' 
                                                     || targetCreep.memory.role == 'bigTrooper')
-                    && (targetCreep.memory.medic == null || targetCreep.memory.medic == creep.id));
+                    && (targetCreep.memory.medic == null || targetCreep.memory.medic == creep.id))
             } else {
                 breakerSearch = _.filter(allCreeps[creep.memory.city], targetCreep => (targetCreep.memory.role == 'breaker' 
                                                 || targetCreep.memory.role == 'trooper'
                                                 || targetCreep.memory.role == 'powerMiner')
-                    && (targetCreep.memory.medic == null || targetCreep.memory.medic == creep.id));
+                    && (targetCreep.memory.medic == null || targetCreep.memory.medic == creep.id))
             }
             if (breakerSearch.length){
-                creep.memory.breaker = breakerSearch[0].id;
+                creep.memory.breaker = breakerSearch[0].id
             }
-            return;
+            return
         } else {
             //moveTo and heal as needed
             creep.moveTo(breaker, {reusePath: 5})
             if (breaker.hits < (0.85 * breaker.hitsMax)){
-                creep.heal(breaker);
-                return;
+                creep.heal(breaker)
+                return
             } else if (breaker.hits < breaker.hitsMax && creep.hits === creep.hitsMax){
-                creep.heal(breaker);
-                return;
+                creep.heal(breaker)
+                return
             } else if (creep.hits <= creep.hitsMax){
-                creep.heal(creep);
-                return;
+                creep.heal(creep)
+                return
             }
 		}
     }
    
-};
-module.exports = rMe;
+}
+module.exports = rMe

@@ -1,22 +1,22 @@
-var rDM = require('./depositMiner');
-var rMe = require('./medic');
-var rH = require('./harasser');
-var rSB = require('./spawnBuilder');
-var rC = require('./claimer');
-var rRo = require('./robber');
-var rF = require('./ferry');
-var rMM = require('./mineralMiner');
-var rU = require('./upgrader');
-var rB = require('./builder');
-var rR = require('./runner');
-var rBr = require('./breaker');
-var rT = require('./transporter');
-var rM = require('./remoteMiner');
-var rD = require('./defender');
-var u = require('./utils');
-var rPM = require('./powerMiner');
-var settings = require('./settings');
-var profiler = require('./screeps-profiler');
+var rDM = require('./depositMiner')
+var rMe = require('./medic')
+var rH = require('./harasser')
+var rSB = require('./spawnBuilder')
+var rC = require('./claimer')
+var rRo = require('./robber')
+var rF = require('./ferry')
+var rMM = require('./mineralMiner')
+var rU = require('./upgrader')
+var rB = require('./builder')
+var rR = require('./runner')
+var rBr = require('./breaker')
+var rT = require('./transporter')
+var rM = require('./remoteMiner')
+var rD = require('./defender')
+var u = require('./utils')
+var rPM = require('./powerMiner')
+var settings = require('./settings')
+var profiler = require('./screeps-profiler')
 
 var statsLib = {
     cityCpuMap: {},
@@ -38,11 +38,11 @@ var statsLib = {
             stats['gpl.progressTotal'] = Game.gpl.progressTotal
             stats['gpl.level'] = Game.gpl.level
             stats['energy'] = u.getDropTotals()
-            var cities = [];
+            var cities = []
             _.forEach(Object.keys(Game.rooms), function(roomName){
               const room = Game.rooms[roomName]
-              const city = Game.rooms[roomName].memory.city;
-              cities.push(city);
+              const city = Game.rooms[roomName].memory.city
+              cities.push(city)
         
               if(room.controller && room.controller.my){
                 stats['rooms.' + city + '.rcl.level'] = room.controller.level
@@ -58,7 +58,7 @@ var statsLib = {
                 stats['rooms.' + city + '.cpu'] = statsLib.cityCpuMap[city]
               }
             })
-            var counts = _.countBy(Game.creeps, creep => creep.memory.role);
+            var counts = _.countBy(Game.creeps, creep => creep.memory.role)
             var roles = [rD, rT, rM, rR, rU, rB, rMM, rF, rC, rSB, rH, rMe, rBr, rPM, rRo] 
             _.forEach(roles, function(role){
                 if (counts[role.name]){
@@ -66,10 +66,10 @@ var statsLib = {
                 } else {
                     stats['creeps.' + role.name + '.count'] = 0
                 }
-            });
+            })
 
             // City level stats
-            var cityCounts = _.countBy(Game.creeps, creep => creep.memory.city);
+            var cityCounts = _.countBy(Game.creeps, creep => creep.memory.city)
             _.forEach(cities, function(city){
                 if (!city) {
                     return
@@ -90,7 +90,7 @@ var statsLib = {
                     const minWall = _.min(_.toArray(_.map(walls, wall => wall.hits)))
                     stats['cities.' + city + '.wall'] = walls.length  > 0 ? minWall : 0
                 }
-            });
+            })
             // Mining stats
             _.forEach(Game.creeps, creep => {
                 const city = creep.memory.city
@@ -108,7 +108,7 @@ var statsLib = {
 
             if (profiler.results && profiler.results.stats) {
                 const pstats = profiler.results.stats
-                const profileSize = Math.min(settings.profileResultsLength, pstats.length)
+                const profileSize = Math.min(settings.profileResultsLength, stats.length)
                 for (var i = 0; i < profileSize; i++) {
                     const result = pstats[i]
                     stats[`profiler.${result.name}.calls`] = result.calls
@@ -121,4 +121,4 @@ var statsLib = {
     }
 }
 
-module.exports = statsLib;
+module.exports = statsLib

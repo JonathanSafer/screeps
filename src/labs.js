@@ -2,12 +2,12 @@ var settings = require('./settings')
 
 var labs = {
     runLabs: function(city) {
-        const spawn = Game.spawns[city];
+        const spawn = Game.spawns[city]
         if (!spawn.memory.ferryInfo){
-            return;
+            return
         }
         if (!spawn.memory.ferryInfo.labInfo){
-            return;
+            return
         }
         const lab0 = Game.getObjectById(spawn.memory.ferryInfo.labInfo[0][0])
         const lab1 = Game.getObjectById(spawn.memory.ferryInfo.labInfo[1][0])
@@ -16,9 +16,9 @@ var labs = {
         const lab4 = Game.getObjectById(spawn.memory.ferryInfo.labInfo[4][0])
         const lab5 = Game.getObjectById(spawn.memory.ferryInfo.labInfo[5][0])
         if (!lab0 || !lab1 || !lab2 || !lab3 || !lab4 || !lab5){
-            return;
+            return
         }
-        const reaction = labs.runReaction(lab0, lab1, lab2, lab3, lab4, lab5, spawn);
+        const reaction = labs.runReaction(lab0, lab1, lab2, lab3, lab4, lab5, spawn)
         // if no reaction, update labs
         if (reaction){
             labs.updateLabs(lab0, lab1, lab2, lab3, lab4, lab5, spawn)
@@ -30,31 +30,31 @@ var labs = {
             const produce = REACTIONS[spawn.memory.ferryInfo.labInfo[0][2]][spawn.memory.ferryInfo.labInfo[1][2]]
             const reactionTime = REACTION_TIME[produce]
             if (Game.time % reactionTime === 4 && Game.cpu.bucket > 2000){
-                lab2.runReaction(lab0, lab1);
-                lab3.runReaction(lab0, lab1);
-                lab4.runReaction(lab0, lab1);
-                lab5.runReaction(lab0, lab1);
+                lab2.runReaction(lab0, lab1)
+                lab3.runReaction(lab0, lab1)
+                lab4.runReaction(lab0, lab1)
+                lab5.runReaction(lab0, lab1)
             }
-            return 0;
+            return 0
         }
-        return 1;
+        return 1
     },
 
     updateLabs: function(lab0, lab1, lab2, lab3, lab4, lab5, spawn) {
         if(spawn.memory.ferryInfo.labInfo[6] == 'dormant' && Game.time % 500 != 0){
-            return;
+            return
         }
         if(lab5.mineralType == spawn.memory.ferryInfo.labInfo[6] || spawn.memory.ferryInfo.labInfo[6] == 'dormant'){
             labs.chooseBoost(spawn.memory.ferryInfo.labInfo[6], spawn)
             if(spawn.memory.ferryInfo.labInfo[6] == 'dormant'){
-                return;
+                return
             }
         }
-        const receivers = [lab2, lab3, lab4, lab5];
+        const receivers = [lab2, lab3, lab4, lab5]
         for (let i = 0; i < receivers.length; i++){
             if (receivers[i].mineralAmount >= 750){
                 spawn.memory.ferryInfo.labInfo[i + 2][1] = 1
-                return;
+                return
             } else {
                 spawn.memory.ferryInfo.labInfo[i + 2][1] = 0
             }
@@ -62,9 +62,9 @@ var labs = {
         // if lab0 and lab1 are not requesting more resource, run new resource decider
         if (spawn.memory.ferryInfo.labInfo[0][1] == 0 && spawn.memory.ferryInfo.labInfo[1][1] == 0){
             const boost = spawn.memory.ferryInfo.labInfo[6]
-            const minerals = labs.chooseMineral(boost, spawn);
+            const minerals = labs.chooseMineral(boost, spawn)
             if (!minerals){
-                return;
+                return
             }
             spawn.memory.ferryInfo.labInfo[0][1] = 1
             spawn.memory.ferryInfo.labInfo[1][1] = 1
@@ -75,49 +75,49 @@ var labs = {
 
     chooseBoost: function(currentBoost, spawn) {
         if(spawn.room.terminal.store['G'] < settings.ghodiumAmount){
-            spawn.memory.ferryInfo.labInfo[6] = 'G';
-            return;
+            spawn.memory.ferryInfo.labInfo[6] = 'G'
+            return
         }
         const boostsList = ['G', 'XKHO2', 'XLHO2', 'XZHO2', 'XGHO2', 'XZH2O', 'XGH2O', 'XLH2O']
         if (boostsList.includes(currentBoost) && spawn.room.terminal.store[currentBoost] > settings.boostAmount - 3000){
-            boostsList.splice(boostsList.indexOf(currentBoost), 1);
+            boostsList.splice(boostsList.indexOf(currentBoost), 1)
         }
         for(let i = 0; i < boostsList.length; i++){
             if(spawn.room.terminal.store[boostsList[i]] < settings.boostAmount){
                 spawn.memory.ferryInfo.labInfo[6] = boostsList[i]
-                return;
+                return
             }
         }
         //go dormant
-        spawn.memory.ferryInfo.labInfo[6] = 'dormant';
+        spawn.memory.ferryInfo.labInfo[6] = 'dormant'
     },
 
     chooseMineral: function(mineral, spawn) {
         //if requesting mineral, early return
         if (spawn.memory.ferryInfo.mineralRequest){
             if(Game.time % 50 == 26){
-                spawn.memory.ferryInfo.mineralRequest = null;
+                spawn.memory.ferryInfo.mineralRequest = null
             }
-            return 0;
+            return 0
         }
         const ingredients = labs.findIngredients(mineral)
         //if no ingredients, request mineral
         if (!ingredients){
             spawn.memory.ferryInfo.mineralRequest = mineral
-            return 0;
+            return 0
         }
         const ferry = _.find(spawn.room.find(FIND_MY_CREEPS), creep => creep.memory.role === 'ferry')
         if(ferry && _.sum(ferry.carry)){
-            return;
+            return
         }
         //if we don't have both ingredients find the one we don't have and find it's ingredients
         for(let i = 0; i < 2; i++){
             if (spawn.room.terminal.store[ingredients[i]] < 3000){
-                return labs.chooseMineral(ingredients[i], spawn);
+                return labs.chooseMineral(ingredients[i], spawn)
             }
         }
         //if we have both ingredients, load them up
-        return ingredients;
+        return ingredients
     },
 
     findIngredients: function(mineral){
@@ -127,9 +127,9 @@ var labs = {
                 if (REACTIONS[key][key2] == mineral){
                     result = [key, key2]
                 }
-            });
-        });
-        return result;
+            })
+        })
+        return result
     }
-};
-module.exports = labs;
+}
+module.exports = labs

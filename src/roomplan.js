@@ -44,8 +44,8 @@ const p = {
                 room.memory.plan = {}
                 room.memory.plan.x = Game.flags.plan.pos.x
                 room.memory.plan.y = Game.flags.plan.pos.y
-                Game.flags.plan.remove();
-                p.clearAllStructures(room);
+                Game.flags.plan.remove()
+                p.clearAllStructures(room)
             }
             if (room.memory.plan) {
                 var plan = room.memory.plan
@@ -62,12 +62,12 @@ const p = {
                         p.buildConstructionSite(room, structureType, pos, name)
                     })
                 })
-                p.buildRoads(room, plan);
+                p.buildRoads(room, plan)
                 if (room.controller.level >= 6) {
                     p.buildExtractor(room)
                 }
                 if (room.controller.level >= 7){
-                    p.buildWalls(room, plan);
+                    p.buildWalls(room, plan)
                     p.buildSourceLinks(room)
                     p.buildControllerLink(room)
                 }
@@ -133,42 +133,42 @@ const p = {
                 }
             }  
         }
-        const terrain = new Room.Terrain(room.name);
+        const terrain = new Room.Terrain(room.name)
 
-        const costs = new PathFinder.CostMatrix();
+        const costs = new PathFinder.CostMatrix()
         _.forEach(wallSpots, function(wallSpot) {//CM of just walls
             costs.set(wallSpot.x, wallSpot.y, 0xff)
         })
-        room.wallCosts = costs;
+        room.wallCosts = costs
 
-        const roomExits = p.getRoomExits(room.name);//list of list of room exits
-        let counter = 0;
-        const csites = room.find(FIND_MY_CONSTRUCTION_SITES);
+        const roomExits = p.getRoomExits(room.name)//list of list of room exits
+        let counter = 0
+        const csites = room.find(FIND_MY_CONSTRUCTION_SITES)
         if(csites.length){
-            counter = csites.length;
+            counter = csites.length
         }
 
         for(let i = 0; i < wallSpots.length; i++){//build stuff
             if(terrain.get(wallSpots[i].x, wallSpots[i].y) === TERRAIN_MASK_WALL){
-                continue;
+                continue
             }
             const structures = room.lookForAt(LOOK_STRUCTURES, wallSpots[i])
-            let wall = false;
+            let wall = false
             for(let j = 0; j < structures.length; j++){
                 if(structures[j].structureType === STRUCTURE_WALL || structures[j].structureType === STRUCTURE_RAMPART){
-                    wall = true;
-                    break;
+                    wall = true
+                    break
                 }
             }
             if(wall){
-                continue;
+                continue
             }
             //if we make it here, no wall or rampart has been placed on this spot
             //first we will check to see if we even need a barrier
             //then, if we do need one, it'll be a ramp if structures.length, else it'll be a wall
 
             //check by attempting to path to all exits
-            let wallNeeded = false;
+            let wallNeeded = false
             for(let j = 0; j < roomExits.length; j++){
                 if(roomExits[j].length){
                     //we only need to path to one of the exit points (it does not matter which one)
@@ -179,27 +179,27 @@ const p = {
                         maxOps: 1000,
                         maxRooms: 1,
                         roomCallback: function(roomName) {
-                            return Game.rooms[roomName].wallCosts;
+                            return Game.rooms[roomName].wallCosts
                         }
                     })
                     //if path is complete, we need a wall
                     if(!path.incomplete){
-                        wallNeeded = true;
-                        break;
+                        wallNeeded = true
+                        break
                     }
                 }
             }
             if(!wallNeeded){//at this point we will not build a wall if a path cannot be achieved outside anyway
-                continue;
+                continue
             }
 
             //now we need a wall
             if(structures.length || wallSpots[i].getRangeTo(room.controller) == 3){//rampart
                 room.createConstructionSite(wallSpots[i], STRUCTURE_RAMPART)
-                room.visual.circle(wallSpots[i], {fill: 'transparent', radius: 0.25, stroke: 'green'});
+                room.visual.circle(wallSpots[i], {fill: 'transparent', radius: 0.25, stroke: 'green'})
             } else {//wall
                 room.createConstructionSite(wallSpots[i], STRUCTURE_WALL)
-                room.visual.circle(wallSpots[i], {fill: 'transparent', radius: 0.25, stroke: 'blue'});
+                room.visual.circle(wallSpots[i], {fill: 'transparent', radius: 0.25, stroke: 'blue'})
             }
             counter++
             if(counter > 10){
@@ -271,7 +271,7 @@ const p = {
     },
 
     makeRoadMatrix: function(room, plan){
-        const costs = new PathFinder.CostMatrix();
+        const costs = new PathFinder.CostMatrix()
         _.forEach(template.buildings, function(locations, structureType) {//don't make roads anywhere that a structure needs to go
             locations.pos.forEach(location => {
                 var pos = {"x": plan.x + location.x - template.offset.x, 
@@ -284,43 +284,43 @@ const p = {
         room.find(FIND_STRUCTURES).forEach(function(struct) {
             if (struct.structureType === STRUCTURE_ROAD) {
                 // Favor roads over plain tiles
-                costs.set(struct.pos.x, struct.pos.y, 1);
+                costs.set(struct.pos.x, struct.pos.y, 1)
             } else if (struct.structureType !== STRUCTURE_CONTAINER &&
                         (struct.structureType !== STRUCTURE_WALL) && //allow roads on walls so that path to controller still works
                          (struct.structureType !== STRUCTURE_RAMPART)) {
                 // Can't walk through non-walkable buildings
-                costs.set(struct.pos.x, struct.pos.y, 0xff);
+                costs.set(struct.pos.x, struct.pos.y, 0xff)
             } else if(!struct.my){//allow roads on walls so that path to controller still works
-                costs.set(struct.pos.x, struct.pos.y, 5);
+                costs.set(struct.pos.x, struct.pos.y, 5)
             }
-        });
+        })
         room.find(FIND_MY_CONSTRUCTION_SITES).forEach(function(site) {
             if (site.structureType === STRUCTURE_ROAD) {
                 // Favor roads over plain tiles
-                costs.set(site.pos.x, site.pos.y, 1);
+                costs.set(site.pos.x, site.pos.y, 1)
             }
-        });
-        return costs;
+        })
+        return costs
     },
 
     getSourcePaths: function(room, exits, roadMatrix){
         const sources = Object.keys(Game.spawns[room.memory.city].memory.sources)
         const sourcePaths = []
         for (var i = 0; i < sources.length; i++) {
-            const sourcePos = Game.getObjectById(sources[i]).pos;
+            const sourcePos = Game.getObjectById(sources[i]).pos
             const sourcePath = PathFinder.search(sourcePos, exits, {
                 plainCost: 4, swampCost: 4, maxRooms: 1, 
                 roomCallback: () => roadMatrix
             })
             for(var j = 0; j < sourcePath.path.length; j++){
-                sourcePaths.push(sourcePath.path[j]);
+                sourcePaths.push(sourcePath.path[j])
             }
         }
         return sourcePaths.reverse()
     },
 
     getMineralPath: function(room, exits, roadMatrix){
-        const mineralPos = room.find(FIND_MINERALS)[0].pos;
+        const mineralPos = room.find(FIND_MINERALS)[0].pos
         const mineralPath = PathFinder.search(mineralPos, exits, {
             plainCost: 4, swampCost: 4, maxRooms: 1, 
             roomCallback: () => roadMatrix
@@ -330,24 +330,24 @@ const p = {
 
     getControllerPath: function(room, exits, roadMatrix){
         const path = []
-        const structures = room.find(FIND_MY_STRUCTURES);
-        const controller = _.find(structures, structure => structure.structureType === STRUCTURE_CONTROLLER);
-        const controllerPos = controller.pos;
+        const structures = room.find(FIND_MY_STRUCTURES)
+        const controller = _.find(structures, structure => structure.structureType === STRUCTURE_CONTROLLER)
+        const controllerPos = controller.pos
         const controllerPath = PathFinder.search(controllerPos, exits, {
             plainCost: 4, swampCost: 4, maxRooms: 1, 
             roomCallback: () => roadMatrix
         })
         for(var i = 2; i < controllerPath.path.length; i++){// don't include first two paths (not needed)
-            path.push(controllerPath.path[i]);
+            path.push(controllerPath.path[i])
         } 
         return path.reverse()
     },
 
     getExitPaths: function(room, exits, plan, roadMatrix){
-        const roomExits = p.getRoomExits(room.name);
-        const path = [];
+        const roomExits = p.getRoomExits(room.name)
+        const path = []
 
-        const startPoint = template.buildings.storage.pos[0];
+        const startPoint = template.buildings.storage.pos[0]
         const startPos = new RoomPosition(plan.x + startPoint.x - template.offset.x, plan.y + startPoint.y - template.offset.y, room.name)
         for(var i = 0; i < 4; i++){//find closest Exit point for each side and then path to it
             if(roomExits[i].length){
@@ -355,7 +355,7 @@ const p = {
                     plainCost: 4, swampCost: 4, maxRooms: 1, 
                     roomCallback: () => roadMatrix
                 })
-                const exitPoint = exitPath0.path[exitPath0.path.length - 1];
+                const exitPoint = exitPath0.path[exitPath0.path.length - 1]
                 //now path from this point to template exits
                 const exitPath = PathFinder.search(exitPoint, exits, {
                     plainCost: 4, swampCost: 4, maxRooms: 1, 
@@ -364,7 +364,7 @@ const p = {
                 const exitPathPath = exitPath.path
                 exitPathPath.reverse()
                 for(var j = 0; j < Math.min(exitPath.path.length, 4); j++){
-                    path.push(exitPath.path[j]);
+                    path.push(exitPath.path[j])
                 }
             }
         }
@@ -378,18 +378,18 @@ const p = {
     buildRoads: function(room, plan){
         //need roads to sources, mineral, controller (3 spaces away), exits (nearest exit point for each)
         if(!(room.memory.city && Game.spawns[room.memory.city] && Game.spawns[room.memory.city].memory.sources)){
-            return;
+            return
         }
-        const exits = [];
+        const exits = []
         for(let i = 0; i < template.exits.length; i++){
-            const posX = plan.x + template.exits[i].x - template.offset.x;
-            const posY = plan.y + template.exits[i].y - template.offset.y;
+            const posX = plan.x + template.exits[i].x - template.offset.x
+            const posY = plan.y + template.exits[i].y - template.offset.y
             const roomPos = new RoomPosition(posX, posY, room.name)
-            exits.push(roomPos);
+            exits.push(roomPos)
         }//exits now filled with roomPos of all exits from template
 
         //generateCM
-        const roadMatrix = p.makeRoadMatrix(room, plan);
+        const roadMatrix = p.makeRoadMatrix(room, plan)
 
         //roads from sources
         const sourcePaths = p.getSourcePaths(room, exits, roadMatrix)
@@ -407,13 +407,13 @@ const p = {
         const roads = p.compileRoads(sourcePaths, mineralPath, controllerPath, exitPaths)
         
         //place Csites
-        let counter = 0;
-        const csites = room.find(FIND_MY_CONSTRUCTION_SITES);
+        let counter = 0
+        const csites = room.find(FIND_MY_CONSTRUCTION_SITES)
         if(csites.length){
-            counter = csites.length;
+            counter = csites.length
         }
         for(let i = 0; i < roads.length; i++){
-            room.visual.circle(roads[i], {fill: '#ff1111', radius: 0.1, stroke: 'red'});
+            room.visual.circle(roads[i], {fill: '#ff1111', radius: 0.1, stroke: 'red'})
             if(counter < 20){//doesn't update during the tick
                 const look = room.lookForAt(LOOK_STRUCTURES, roads[i])
                 if(look.length){
@@ -428,10 +428,10 @@ const p = {
     },
 
     clearAllStructures: function(room) {
-        const structures = room.find(FIND_STRUCTURES);
+        const structures = room.find(FIND_STRUCTURES)
         _.forEach(structures, structure => {
             if(!structure.my){
-                structure.destroy();
+                structure.destroy()
             }
         })
     },
@@ -466,7 +466,7 @@ const p = {
                 sExits.push(pos)
             }
         }
-        return [nExits, sExits, eExits, wExits];
+        return [nExits, sExits, eExits, wExits]
     },
 
     planRoom: function(roomName) {
@@ -474,7 +474,7 @@ const p = {
         // var room = Game.rooms[roomName]
         var ter = Game.map.getRoomTerrain(roomName)
         var sqd = Array(50).fill().map(() => Array(50))
-        var i, j;
+        var i, j
         for (i = 0; i < 50; i++) {
             for (j = 0; j < 50; j++) {
                 sqd[i][j] = ter.get(i, j) == TERRAIN_MASK_WALL ? 0 : 
@@ -550,13 +550,13 @@ const p = {
     },
 
     isRcl4: function() {
-        const rooms = p.myRooms();
+        const rooms = p.myRooms()
         const rcls = _.map(rooms, (room) => room.controller.level)
-        return _.max(rcls) >= 4;
+        return _.max(rcls) >= 4
     },
 
     totalEnergy: function() {
-        const rooms = p.myRooms();
+        const rooms = p.myRooms()
         const energy = _.map(rooms, p.getStorageEnergy)
         return _.sum(energy)
     },

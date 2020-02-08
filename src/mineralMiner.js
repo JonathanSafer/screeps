@@ -1,5 +1,5 @@
-var a = require('./actions');
-var u = require('./utils');
+var a = require('./actions')
+var u = require('./utils')
 
 var rMM = {
     name: "mineralMiner",
@@ -12,28 +12,28 @@ var rMM = {
             creep.suicide()
         }
         if (!creep.memory.source){
-            var sources = creep.room.find(FIND_MINERALS);
-            creep.memory.source = sources[0].id;
+            var sources = creep.room.find(FIND_MINERALS)
+            creep.memory.source = sources[0].id
         }
         if (rMM.needEnergy(creep)){
-            rMM.harvestTarget(creep);
+            rMM.harvestTarget(creep)
         } else {
-            var targets =  u.getTransferLocations(creep);
-            var bucket = targets[creep.memory.target];
-            a.charge(creep, bucket);
+            var targets =  u.getTransferLocations(creep)
+            var bucket = targets[creep.memory.target]
+            a.charge(creep, bucket)
         }
     },
 
     needEnergy: function(creep) {
-        const carry = _.sum(creep.carry);
-        return (carry < creep.carryCapacity);
+        const carry = _.sum(creep.carry)
+        return (carry < creep.carryCapacity)
     },
 
     harvestTarget: function(creep) {
-      var source = Game.getObjectById(creep.memory.source);
-      const harvestResult = a.harvest(creep, source);
+      var source = Game.getObjectById(creep.memory.source)
+      const harvestResult = a.harvest(creep, source)
       if (harvestResult == ERR_NO_PATH) {
-          console.log("no path for mining :/");
+          console.log("no path for mining :/")
       } else if (harvestResult == 1) {
         // Record mining totals in memory for stat tracking
         const works = _.filter(creep.body, part => part.type == WORK).length
@@ -45,5 +45,5 @@ var rMM = {
     },
 
 
-};
-module.exports = rMM;
+}
+module.exports = rMM

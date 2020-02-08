@@ -1,14 +1,14 @@
-var u = require('./utils');
+var u = require('./utils')
 var cM = require('./commodityManager')
-var rPC = require('./powerCreep');
-var c = require('./city');
-var m = require('./markets');
-var s = require('./stats');
-var rp = require('./roomplan');
-var er = require('./error');
-var settings = require('./settings');
-const profiler = require('./screeps-profiler');
-var pp = require('./profiler-prep');
+var rPC = require('./powerCreep')
+var c = require('./city')
+var m = require('./markets')
+var s = require('./stats')
+var rp = require('./roomplan')
+var er = require('./error')
+var settings = require('./settings')
+const profiler = require('./screeps-profiler')
+var pp = require('./profiler-prep')
 pp.prepProfile()
 
 //Game.profiler.profile(1000);
@@ -19,9 +19,9 @@ pp.prepProfile()
 
 
 
-profiler.enable();
+profiler.enable()
 module.exports.loop = function () {
-    "use strict";
+    "use strict"
     profiler.wrap(function () {
         er.reset()
 
@@ -39,7 +39,7 @@ module.exports.loop = function () {
                 Game.flags.unclaimRally || Game.flags.unclaim)
             //em.expand() // grow the empire!
         }
-        console.log("Time: " + Game.time);
+        console.log("Time: " + Game.time)
         //run cities
         var prevCpu = Game.cpu.getUsed()
         for (let i = 0; i < myCities.length; i += 1) {
@@ -75,8 +75,8 @@ module.exports.loop = function () {
         if (Game.time % 100 === 0) {
             for (const name in Memory.creeps) {
                 if (!Game.creeps[name]) {
-                    delete Memory.creeps[name];
-                    console.log('Clearing non-existing creep memory:', name);
+                    delete Memory.creeps[name]
+                    console.log('Clearing non-existing creep memory:', name)
                 }
             }
         }
@@ -84,31 +84,31 @@ module.exports.loop = function () {
         if (Game.time % 5000 === 0) {
            for (const name in Memory.rooms) {
                 if (!Memory.rooms[name].city) {
-                    delete Memory.rooms[name];
-                    console.log('Clearing room memory:', name);
+                    delete Memory.rooms[name]
+                    console.log('Clearing room memory:', name)
                 }
             }
         }
 
         //market (seems to use about 3 cpu, so we can make this run every few ticks when we start needing cpu)
-        m.manageMarket(myCities);
+        m.manageMarket(myCities)
 
         //rp.findRooms();
         //rp.planRooms();
         if (Game.time % settings.roomplanTime == settings.roomplanOffset){
-            rp.buildConstructionSites(); 
+            rp.buildConstructionSites() 
         }// TODO: this could go in run city?
-        s.collectStats();
+        s.collectStats()
         if(Game.time % 400 == 39){//run commodity manager every 400 (lower than lowest batched reaction time, on the 39 so it'll be before dormant period ends)
-            cM.runManager(myCities);
+            cM.runManager(myCities)
         }
         
         if (Game.time % settings.profileFrequency == 0) {
-            Game.profiler.profile(settings.profileLength);
+            Game.profiler.profile(settings.profileLength)
         }
 
         // This will always be last. Throw an exception if any city failed.
         er.finishTick()
-    });
-};
+    })
+}
 

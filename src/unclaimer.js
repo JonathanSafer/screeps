@@ -12,11 +12,11 @@ var rUC = {
     },
 
     unclaim: function(creep) {
-        const result = creep.attackController(creep.room.controller);
+        const result = creep.attackController(creep.room.controller)
         if(result === OK){
-            Game.spawns[creep.memory.city].memory[rUC.name] = 0;
-            creep.suicide();
+            Game.spawns[creep.memory.city].memory[rUC.name] = 0
+            creep.suicide()
         }
     }    
-};
-module.exports = rC;
+}
+module.exports = rC

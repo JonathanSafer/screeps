@@ -1,5 +1,5 @@
-var a = require('./actions');
-var u = require('./utils');
+var a = require('./actions')
+var u = require('./utils')
 
 var rTr = {
     name: "trooper",
@@ -10,14 +10,14 @@ var rTr = {
     /** @param {Creep} creep **/
     run: function(creep) {
         if(creep.ticksToLive === 1490) {
-            creep.notifyWhenAttacked(false);
+            creep.notifyWhenAttacked(false)
         }
-        u.updateCheckpoints(creep);
+        u.updateCheckpoints(creep)
         creep.notifyWhenAttacked(false)
         
         const hostiles = _.filter(creep.room.find(FIND_HOSTILE_CREEPS), c => c.owner.username != 'Atanner')
-        const buildings = _.reject(creep.room.find(FIND_HOSTILE_STRUCTURES), structure => structure.structureType == STRUCTURE_CONTROLLER);
-        let target = Game.getObjectById(creep.memory.target);
+        const buildings = _.reject(creep.room.find(FIND_HOSTILE_STRUCTURES), structure => structure.structureType == STRUCTURE_CONTROLLER)
+        let target = Game.getObjectById(creep.memory.target)
 
         rTr.rangedAttack(creep, hostiles, buildings, target)
         if (!rTr.meetMedic(creep)) return
@@ -25,51 +25,51 @@ var rTr = {
         if (rTr.maybeRetreat(creep)) return
         if (rTr.maybeRally(creep)) return
         if (rTr.maybeShoot(creep)) return
-        target = Game.getObjectById(creep.memory.target);
+        target = Game.getObjectById(creep.memory.target)
         if(target) return creep.moveTo(target)
 
         rTr.destroyBuildings(creep, buildings)
     },
 
     rangedAttack: function(creep, hostiles, buildings, target) {
-        const combo = hostiles.concat(buildings);
+        const combo = hostiles.concat(buildings)
         let attack = 0
         for(let i = 0; i < combo.length; i++){
             if(combo[i].pos.isNearTo(creep.pos)){
-                creep.rangedMassAttack();
+                creep.rangedMassAttack()
                 attack = 1
-                break;
+                break
             }
         }
 
         if(!attack && target && target.pos.roomName === creep.pos.roomName && target.pos.inRangeTo(creep.pos, 3)) {
-            creep.rangedAttack(target);
+            creep.rangedAttack(target)
             attack = 1
         }
         if(!attack && hostiles.length){
             const newTarget = creep.pos.findClosestByRange(hostiles)
             creep.memory.target = newTarget.id
             if(newTarget.pos.inRangeTo(creep.pos, 3)){
-                creep.rangedAttack(newTarget);
+                creep.rangedAttack(newTarget)
             }
         }
     },
 
     meetMedic: function(creep) {
-        const allCreeps = u.splitCreepsByCity();
+        const allCreeps = u.splitCreepsByCity()
 
         if (!creep.memory.medic){
             // undefined causes error, so using null
             creep.memory.medic = null
         }
-        var medic = Game.getObjectById(creep.memory.medic);
+        var medic = Game.getObjectById(creep.memory.medic)
         if (medic){
             //set tolerance
             if(!creep.memory.tolerance){
-                let tolerance = 0;
+                let tolerance = 0
                 for(var i = 0; i < medic.body.length; ++i){
                     if(medic.body[i].type == HEAL){
-                        tolerance++;
+                        tolerance++
                     }
                 }
                 if(medic.memory.role.substring(0, 3) === 'big'){
@@ -85,17 +85,17 @@ var rTr = {
             }
         } else {
             //look for medics
-            const status = creep.memory.role.substring(0, 3);
+            const status = creep.memory.role.substring(0, 3)
             var medicSearch = 0
             if (status == 'big'){
                 medicSearch = _.find(allCreeps[creep.memory.city], localCreep => localCreep.memory.role === 'bigMedic' &&
-                    localCreep.pos.isNearTo(creep.pos) && localCreep.memory.breaker == creep.id);
+                    localCreep.pos.isNearTo(creep.pos) && localCreep.memory.breaker == creep.id)
             } else {
                 medicSearch = _.find(allCreeps[creep.memory.city], localCreep => localCreep.memory.role === 'medic' &&
-                    localCreep.pos.isNearTo(creep.pos) && localCreep.memory.breaker == creep.id);
+                    localCreep.pos.isNearTo(creep.pos) && localCreep.memory.breaker == creep.id)
             }
             if (medicSearch){
-                creep.memory.medic = medicSearch.id;
+                creep.memory.medic = medicSearch.id
             }
             return false
         }
@@ -119,8 +119,8 @@ var rTr = {
                 }
             }
             if(damage > creep.memory.tolerance){
-                creep.memory.retreat = true;
-                a.retreat(creep);
+                creep.memory.retreat = true
+                a.retreat(creep)
                 return true
             }
         }
@@ -138,9 +138,9 @@ var rTr = {
             const medic = Game.getObjectById(creep.memory.medic)
             if(medic && creep.memory.tolerance){
                 if(creep.hits === creep.hitsMax && medic.hits === medic.hitsMax){
-                    creep.memory.tolerance = creep.memory.tolerance + (creep.memory.tolerance * 0.001);
+                    creep.memory.tolerance = creep.memory.tolerance + (creep.memory.tolerance * 0.001)
                 } else {
-                    creep.memory.tolerance = creep.memory.tolerance - (creep.memory.tolerance * 0.001);
+                    creep.memory.tolerance = creep.memory.tolerance - (creep.memory.tolerance * 0.001)
                 }
             }
             a.retreat(creep)
@@ -164,9 +164,9 @@ var rTr = {
 
     maybeShoot: function(creep) {
         // If there is a 'shoot' flag, move to the flag before attacking. 
-        var city = creep.memory.city;
+        var city = creep.memory.city
         var flagName = 'shoot'
-        var status = creep.memory.role.substring(0, 3);
+        var status = creep.memory.role.substring(0, 3)
         if(status === 'big'){
             flagName = city + 'bigShoot'
         } else {
@@ -174,7 +174,7 @@ var rTr = {
         }
         if(Game.flags[flagName]){
             if(creep.pos.roomName != Game.flags[flagName].pos.roomName){
-                creep.moveTo(Game.flags[flagName].pos); 
+                creep.moveTo(Game.flags[flagName].pos) 
                 return true      
             }
         }
@@ -186,11 +186,11 @@ var rTr = {
             const spawns = _.filter(buildings, structure => structure.structureType == STRUCTURE_SPAWN)
             if(spawns.length){
                 creep.moveTo(spawns[0])
-                return;
+                return
             }
             creep.moveTo(creep.pos.findClosestByPath(buildings))
-            return;
+            return
         }
     }
 }
-module.exports = rTr;
+module.exports = rTr

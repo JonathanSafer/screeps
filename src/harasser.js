@@ -48,7 +48,7 @@ var rH = {
             const target = Game.getObjectById(creep.memory.target)
             if(target && target.pos.inRangeTo(creep.pos, 3)){
                 creep.rangedAttack(target)
-                return;
+                return
             }
         }
         const newTarget = creep.pos.findClosestByRange(hostiles)
@@ -82,17 +82,17 @@ var rH = {
             }
             const dangerous = _.filter(hostiles, h => h.getActiveBodyparts(ATTACK) > 0 || h.getActiveBodyparts(RANGED_ATTACK) > 0)
             const goals = _.map(dangerous, function(d) {
-            return { pos: d.pos, range: 8 };
-            });
+            return { pos: d.pos, range: 8 }
+            })
             const retreatPath = PathFinder.search(creep.pos, goals, {maxOps: 200, flee: true, maxRooms: 1,
                 roomCallBack: function(roomName){
                     const room = Game.rooms[roomName]
                     const costs = new PathFinder.CostMatrix
                     room.find(FIND_CREEPS).forEach(function(creep) {
-                      costs.set(creep.pos.x, creep.pos.y, 0xff);
-                    });
+                      costs.set(creep.pos.x, creep.pos.y, 0xff)
+                    })
 
-                    return costs;
+                    return costs
                 }
             })
             creep.moveByPath(retreatPath.path)
@@ -124,7 +124,7 @@ var rH = {
                 const target = Game.getObjectById(creep.memory.target)
                 if(target){
                     creep.moveTo(target, { range: 2 })
-                    return;
+                    return
                 }
             }
             const target = creep.pos.findClosestByRange(hostiles)
@@ -152,7 +152,7 @@ var rH = {
 
     init: function(creep){
         if(!creep.memory.target){
-            creep.memory.target = null;
+            creep.memory.target = null
         }
         if(!creep.memory.anger){//the more angry the creep gets, the more aggressive it'll get
             creep.memory.anger = 0//anger increases when hostiles run away, and decreases when hostiles give chase
@@ -181,7 +181,7 @@ var rH = {
                     if(!creep.pos.inRangeTo(25, 25, 8)){
                         creep.moveTo(25, 25, {range: 5})
                     } else {
-                        creep.memory.dormant = true;
+                        creep.memory.dormant = true
                         return true
                     }
                 } else {
@@ -193,5 +193,5 @@ var rH = {
         return false
     }
    
-};
-module.exports = rH;
+}
+module.exports = rH

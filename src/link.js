@@ -60,6 +60,6 @@ var rL = {
             filter: { structureType: type }
         })
     }
-};
+}
 
-module.exports = rL;
+module.exports = rL

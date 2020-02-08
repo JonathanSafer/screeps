@@ -1,4 +1,4 @@
-var a = require('./actions');
+var a = require('./actions')
 var rBr = require('./breaker')
 
 var rBB = {
@@ -17,5 +17,5 @@ var rBB = {
         return
     }
    
-};
-module.exports = rBB;
+}
+module.exports = rBB
