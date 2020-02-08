@@ -459,7 +459,7 @@ function updateColonizers(city, memory, claimRoom, unclaimRoom) {
     if(roomName == claimRoom){
         if(Game.spawns[city].room.controller.level < 7){
             memory[rSB.name] = 4
-        } else if(Game.flags.claim.room && Game.flags.claim.room.controller && Game.flags.claim.room.controller.level > 6) {
+        } else if (Game.flags.claim.room && Game.flags.claim.room.controller && Game.flags.claim.room.controller.level > 6) {
             memory[rSB.name] = 4
         } else {
             memory[rSB.name] = 2
