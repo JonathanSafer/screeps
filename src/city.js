@@ -128,7 +128,7 @@ function updateCountsCity(city, creeps, rooms, claimRoom, unclaimRoom) {
 
     // Always update defender
     updateDefender(rooms, memory, rcl8)
-    
+
     if(Game.time % 200 == 0){
         updateMilitary(city, memory, rooms)
     }
@@ -782,7 +782,7 @@ function runObs(city){
 function observeNewRoomForMining(city) {
     const obs = getObsForMining(city)
     if (!obs) return false
-    preparePowerRoomsList(city)
+    preparePowerRoomsList(city, settings.miningRange)
     const roomNum = timeToRoomNum(Game.time, 1)
     //scan next room
     obs.observeRoom(Game.spawns[city].memory.powerRooms[roomNum])
@@ -823,15 +823,15 @@ function getObsForMining(city) {
     return _.find(buildings, structure => structure.structureType === STRUCTURE_OBSERVER)
 }
 
-function preparePowerRoomsList(city) {
+function preparePowerRoomsList(city, range) {
     if (Game.spawns[city].memory.powerRooms) {
         return
     }
     Game.spawns[city].memory.powerRooms = []
     const myRoom = Game.spawns[city].room.name
     const pos = u.roomNameToPos(myRoom)
-    for (let i = -2; i < +2; i++){
-        for (let j = -2; j < +2; j++){
+    for (let i = -range; i < +range; i++){
+        for (let j = -range; j < +range; j++){
             const coord = [pos[0] + i, pos[1] + j]
             const roomName = u.roomPosToName(coord)
             Game.spawns[city].memory.powerRooms.push(roomName)

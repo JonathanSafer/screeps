@@ -14,6 +14,7 @@ var settings = {
         colony: 4000, // building new rooms
         repair: 3000 //repairing walls in a room
     },
+    miningRange: 5,
 
     // Profiling
     profileFrequency: 123, // profiler runs every 123 ticks
