@@ -62,7 +62,7 @@ var rM = {
     /** pick a target id for creep **/
     nextSource: function(creep) {
         var city = creep.memory.city
-        var miners = _.filter(Game.creeps, creep => creep.memory.role === "remoteMiner")
+        var miners = _.filter(Game.creeps, c => c.memory.role === "remoteMiner")
         var occupied = []
         _.each(miners, function(minerInfo){
             occupied.push(minerInfo.memory.source)

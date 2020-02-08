@@ -237,17 +237,16 @@ const p = {
 
         console.log("Building link: " + room.name)
         const workerPos = workers[0].pos
-        const x = workerPos.x
-        const y = workerPos.y
-        const area = room.lookAtArea(y - range, x - range, y + range, x + range)
+        const wx = workerPos.x
+        const wy = workerPos.y
+        const area = room.lookAtArea(wy - range, wx - range, wy + range, wx + range)
         for (const row of Object.entries(area)) {
             const cols = row[1]
             for (const col of Object.entries(cols)) {
                 const items = area[row[0]][col[0]]
                 const x = Number(col[0])
                 const y = Number(row[0])
-                if (items.length == 1 &&
-                    room.getTerrain().get(x, y) != TERRAIN_MASK_WALL)
+                if (items.length == 1 && room.getTerrain().get(x, y) != TERRAIN_MASK_WALL)
                 {
                     room.createConstructionSite(x, y, STRUCTURE_LINK)
                     return

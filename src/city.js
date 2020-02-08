@@ -22,7 +22,7 @@ var types = require("./types")
 var u = require("./utils")
 var t = require("./tower")
 var rPM = require("./powerMiner")
-var labs = require("./labs")
+var labsLib = require("./labs")
 var fact = require("./factory")
 var sq = require("./spawnQueue")
 var link = require("./link")
@@ -109,7 +109,7 @@ function runCity(city, creeps){
 
     //run powerSpawn
     runPowerSpawn(city)
-    labs.runLabs(city)
+    labsLib.runLabs(city)
     fact.runFactory(city)
     checkNukes(room)
 }
@@ -362,7 +362,7 @@ function updateBigDefender(city, memory){
     if(memory.towersActive){
         const hostiles = room.find(FIND_HOSTILE_CREEPS)
         if(hostiles.length){//if a hostile has tough and boosted parts, we are in danger aka need defenders
-            for (var i = 0; i < hostiles.length; i++) {
+            for (let i = 0; i < hostiles.length; i++) {
                 if(danger){
                     continue
                 }

@@ -88,8 +88,8 @@ var rH = {
                 roomCallBack: function(roomName){
                     const room = Game.rooms[roomName]
                     const costs = new PathFinder.CostMatrix
-                    room.find(FIND_CREEPS).forEach(function(creep) {
-                        costs.set(creep.pos.x, creep.pos.y, 0xff)
+                    room.find(FIND_CREEPS).forEach(function(c) {
+                        costs.set(c.pos.x, c.pos.y, 0xff)
                     })
 
                     return costs

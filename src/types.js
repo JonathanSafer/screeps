@@ -106,25 +106,25 @@ function dMinerCalc(room){
     const workTime = 1500 - (distance * 3)//distance x 3 since it'll take 2x as long on return
     let work = 20
     let carryAmount = test(work, workTime, harvested)
-    let carry = Math.floor(carryAmount/100)*2 //carry must be an even number for 20 works
-    if(carry < 8){// if we're getting less than 400 resource in a lifetime, drop the source
+    let carrys = Math.floor(carryAmount/100)*2 //carry must be an even number for 20 works
+    if(carrys < 8){// if we're getting less than 400 resource in a lifetime, drop the source
         flag.remove()
         return [1, 1, 1]
     }
-    if(carry > 10){
+    if(carrys > 10){
         //body is impossible so we have to decrease works
         for(var i = 0; i < 2; i++){
             work = work/2
             carryAmount = test(work, workTime, harvested)
-            carry = Math.floor(carryAmount/50)
-            if(carry < (32 - work)){
-                return [work, carry, 16]
+            carrys = Math.floor(carryAmount/50)
+            if(carrys < (32 - work)){
+                return [work, carrys, 16]
             }
         }
         //can't go under 5 works => make min body
         return [work, 27, 16]
     } else {
-        return [work, carry, 20]
+        return [work, carrys, 20]
     }
 
 }

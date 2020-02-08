@@ -14,6 +14,7 @@ rules:
   semi: [error, never]
   quotes: error
   indent: error
+  no-shadow: error
 plugins:
   - 'screeps'
 
