@@ -108,7 +108,7 @@ var statsLib = {
 
             if (profiler.results && profiler.results.stats) {
                 const pstats = profiler.results.stats
-                const profileSize = Math.min(settings.profileResultsLength, stats.length)
+                const profileSize = Math.min(settings.profileResultsLength, pstats.length)
                 for (var i = 0; i < profileSize; i++) {
                     const result = pstats[i]
                     stats[`profiler.${result.name}.calls`] = result.calls
