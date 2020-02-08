@@ -82,14 +82,14 @@ var rH = {
             }
             const dangerous = _.filter(hostiles, h => h.getActiveBodyparts(ATTACK) > 0 || h.getActiveBodyparts(RANGED_ATTACK) > 0)
             const goals = _.map(dangerous, function(d) {
-            return { pos: d.pos, range: 8 }
+                return { pos: d.pos, range: 8 }
             })
             const retreatPath = PathFinder.search(creep.pos, goals, {maxOps: 200, flee: true, maxRooms: 1,
                 roomCallBack: function(roomName){
                     const room = Game.rooms[roomName]
                     const costs = new PathFinder.CostMatrix
                     room.find(FIND_CREEPS).forEach(function(creep) {
-                      costs.set(creep.pos.x, creep.pos.y, 0xff)
+                        costs.set(creep.pos.x, creep.pos.y, 0xff)
                     })
 
                     return costs

@@ -40,8 +40,8 @@ var rL = {
 
     getUpgradeLink: function(room) {
         const links = rL.findNearStructures(room.controller.pos, 
-                STRUCTURE_LINK, 
-                rL.UPGRADE + rL.LINK)
+            STRUCTURE_LINK, 
+            rL.UPGRADE + rL.LINK)
         return links.length > 0 ? links[0] : undefined
     },
 

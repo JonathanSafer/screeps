@@ -13,6 +13,7 @@ rules:
   prefer-const: error
   semi: [error, never]
   quotes: error
+  indent: error
 plugins:
   - 'screeps'
 

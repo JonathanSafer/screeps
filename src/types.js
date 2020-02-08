@@ -1,5 +1,5 @@
 function getRecipe(type, energyAvailable, room){
-	const d = {}
+    const d = {}
     const rcl = room.controller.level
 
     // used at all rcls
@@ -24,44 +24,44 @@ function getRecipe(type, energyAvailable, room){
     d.bigTrooper = body([16, 24, 10], [TOUGH, RANGED_ATTACK, MOVE])
     d.depositMiner = body([20, 2, 22], [WORK, CARRY, MOVE])
 
-	switch (rcl) {
-		case 4:
-			//lvl 4 recipes
-            d["medic"] = body([2, 2], [MOVE, HEAL])
-			break
-		case 5:
-			//lvl 5 recipes
-            d["medic"] = body([5, 5], [MOVE, HEAL])
-            d["robber"] = body([15, 15], [CARRY, MOVE]) 
-            break
-		case 6:
-			// lvl 6 recipes
-            d["normal"] = body([12, 8, 10],[WORK, CARRY, MOVE])
-            d["mineralMiner"] = body([12, 6, 9], [WORK, CARRY, MOVE])
-            d["medic"] = body([7, 7], [MOVE, HEAL])
-            d["robber"] = body([20, 20], [CARRY, MOVE])
-            break
-		case 7:
-			// lvl 7 recipes
-            d["normal"] = body([20, 12, 16],[WORK, CARRY, MOVE])
-            d["mineralMiner"] = body([22, 10, 16], [WORK, CARRY, MOVE])
-            d["harasser"] = body([9, 8, 1], [MOVE, RANGED_ATTACK, HEAL])
-            d["medic"] = body([5, 20, 15], [TOUGH, MOVE, HEAL])
-            d["breaker"] = body([10, 10], [MOVE, WORK])
-            d["robber"] = body([25, 25], [CARRY, MOVE])
-            break
-		case 8:
-            // lvl 8 recipes
-            d["mineralMiner"] = body([22, 10, 16], [WORK, CARRY, MOVE])
-            d["harasser"] = body([20, 25, 5], [RANGED_ATTACK, MOVE, HEAL])
-            d["medic"] = body([25, 25], [MOVE, HEAL])
-            d["breaker"] = body([25, 25], [MOVE, WORK])
-            d["robber"] = body([25, 25], [CARRY, MOVE])
-            d["defender"] = body([3, 31, 6, 10], [TOUGH, RANGED_ATTACK, HEAL, MOVE])
-            break
-        default:
-            break
-	}
+    switch (rcl) {
+    case 4:
+        //lvl 4 recipes
+        d["medic"] = body([2, 2], [MOVE, HEAL])
+        break
+    case 5:
+        //lvl 5 recipes
+        d["medic"] = body([5, 5], [MOVE, HEAL])
+        d["robber"] = body([15, 15], [CARRY, MOVE]) 
+        break
+    case 6:
+        // lvl 6 recipes
+        d["normal"] = body([12, 8, 10],[WORK, CARRY, MOVE])
+        d["mineralMiner"] = body([12, 6, 9], [WORK, CARRY, MOVE])
+        d["medic"] = body([7, 7], [MOVE, HEAL])
+        d["robber"] = body([20, 20], [CARRY, MOVE])
+        break
+    case 7:
+        // lvl 7 recipes
+        d["normal"] = body([20, 12, 16],[WORK, CARRY, MOVE])
+        d["mineralMiner"] = body([22, 10, 16], [WORK, CARRY, MOVE])
+        d["harasser"] = body([9, 8, 1], [MOVE, RANGED_ATTACK, HEAL])
+        d["medic"] = body([5, 20, 15], [TOUGH, MOVE, HEAL])
+        d["breaker"] = body([10, 10], [MOVE, WORK])
+        d["robber"] = body([25, 25], [CARRY, MOVE])
+        break
+    case 8:
+        // lvl 8 recipes
+        d["mineralMiner"] = body([22, 10, 16], [WORK, CARRY, MOVE])
+        d["harasser"] = body([20, 25, 5], [RANGED_ATTACK, MOVE, HEAL])
+        d["medic"] = body([25, 25], [MOVE, HEAL])
+        d["breaker"] = body([25, 25], [MOVE, WORK])
+        d["robber"] = body([25, 25], [CARRY, MOVE])
+        d["defender"] = body([3, 31, 6, 10], [TOUGH, RANGED_ATTACK, HEAL, MOVE])
+        break
+    default:
+        break
+    }
 
     d.basic = body([1,1,1],[WORK, CARRY, MOVE])
     d.lightMiner = body([2, 2], [MOVE, WORK])
@@ -74,7 +74,7 @@ function getRecipe(type, energyAvailable, room){
     if (d[type] == null) {
         return [WORK, CARRY, MOVE]
     }
-	return d[type]//recipe
+    return d[type]//recipe
 }
 function body(counts, order) { // order is list of types from move, work, attack, carry, heal, ranged, tough, claim
     // assert counts.length == order.length
@@ -207,8 +207,8 @@ function scalingBody(ratio, types, energyAvailable, maxOverride) {
 }
 
 module.exports = {
-	getRecipe: getRecipe,
-	cost: cost,
-	carry: carry,
-	body: body
+    getRecipe: getRecipe,
+    cost: cost,
+    carry: carry,
+    body: body
 }

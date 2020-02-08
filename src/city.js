@@ -33,7 +33,7 @@ function makeCreeps(role, type, target, city) {
     //console.log(types.getRecipe('basic', 2));
     const room = Game.spawns[city].room
     var energyToSpend = (room.storage && room.storage.store.energy < 50000) ? room.energyAvailable :
-            room.energyCapacityAvailable
+        room.energyCapacityAvailable
     if (role == "remoteMiner") {
         energyToSpend = room.energyCapacityAvailable
     }
@@ -70,8 +70,8 @@ function runCity(city, creeps){
         // Only build required roles during financial stress
         var coreRoles = [rF, rD, rT, rM, rR, rU, rB]
         var allRoles = [rF, rD, rT, rM, rR, rU, rB, rMM, rC, rUC,
-                        rSB, rH, rBM, rD, rBB, rBT, rMe, rTr, rBr, rPM,
-                        rRo, rDM] // order roles for priority
+            rSB, rH, rBM, rD, rBB, rBT, rMe, rTr, rBr, rPM,
+            rRo, rDM] // order roles for priority
         var roles = (room.storage && room.storage.store.energy < 50000) ? coreRoles : allRoles
 
         // Get counts for roles by looking at all living and queued creeps
@@ -198,11 +198,11 @@ function runTowers(city){
         var towers = _.filter(Game.structures, (structure) => structure.structureType == STRUCTURE_TOWER && structure.room.memory.city == city)
         var hostileCreep = Game.spawns[city].room.find(FIND_HOSTILE_CREEPS)
         var injuredCreep = Game.spawns[city].room.find(FIND_MY_CREEPS, {filter: (injured) => { 
-                                                return (injured) && injured.hits < injured.hitsMax
-                             }})
+            return (injured) && injured.hits < injured.hitsMax
+        }})
         var injuredPower = Game.spawns[city].room.find(FIND_MY_POWER_CREEPS, {filter: (injured) => { 
-                                                return (injured) && injured.hits < injured.hitsMax
-                             }})
+            return (injured) && injured.hits < injured.hitsMax
+        }})
         var hostilePower = Game.spawns[city].room.find(FIND_HOSTILE_POWER_CREEPS)
         var hostiles = hostilePower.concat(hostileCreep)
         var injured = injuredPower.concat(injuredCreep)
@@ -210,9 +210,9 @@ function runTowers(city){
         let target = null
         if (Game.time % 10 === 0) {
             var damaged = Game.spawns[city].room.find(FIND_STRUCTURES, {
-                    filter: (structure) => {
-                        return (structure) && structure.hits < (structure.hitsMax * 0.1)
-                    }
+                filter: (structure) => {
+                    return (structure) && structure.hits < (structure.hitsMax * 0.1)
+                }
             })
             notWalls = _.reject(damaged, location => location.structureType == STRUCTURE_WALL || location.structureType == STRUCTURE_RAMPART)
         }

@@ -67,8 +67,8 @@ var rT = {
             id = oldTarget.id
         }
         return creep.pos.findClosestByPath(FIND_STRUCTURES, {
-                filter: (structure) => {
-                    return (structure.id !== id && 
+            filter: (structure) => {
+                return (structure.id !== id && 
                         (((structure.structureType == STRUCTURE_EXTENSION 
                             || structure.structureType == STRUCTURE_SPAWN
                             || structure.structureType == STRUCTURE_LAB
@@ -77,46 +77,46 @@ var rT = {
                             || (structure.structureType == STRUCTURE_POWER_SPAWN && structure.energy < (structure.energyCapacity - 400))
                             || (structure.structureType == STRUCTURE_FACTORY && structure.store.getUsedCapacity(RESOURCE_ENERGY) < 10000)
                             || (structure.structureType == STRUCTURE_TOWER && structure.energy < (structure.energyCapacity - 400)))
-                    )
-                },
-                maxOps: 10
+                )
+            },
+            maxOps: 10
         })
     },
 
 
     needsEnergy: function(structure){
         switch(structure.structureType){
-            case STRUCTURE_EXTENSION:
-            case STRUCTURE_SPAWN:
-            case STRUCTURE_LAB:
-            case STRUCTURE_NUKER:
-                //if there is any room for energy, needs energy
-                if(structure.store.getFreeCapacity(RESOURCE_ENERGY) > 0){
-                    return true
-                } else {
-                    return false
-                }
-            case STRUCTURE_TOWER:
-                //arbitrary buffer
-                if(structure.store.getFreeCapacity(RESOURCE_ENERGY) > 300){
-                    return true
-                } else {
-                    return false
-                }
-            case STRUCTURE_POWER_SPAWN:
-                //arbitrary buffer
-                if(structure.store.getFreeCapacity(RESOURCE_ENERGY) > 1000){
-                    return true
-                } else {
-                    return false
-                }
-            case STRUCTURE_FACTORY:
-                //arbitrary max value
-                if(structure.store.getUsedCapacity(RESOURCE_ENERGY) < 10000){
-                    return true
-                } else {
-                    return false
-                }
+        case STRUCTURE_EXTENSION:
+        case STRUCTURE_SPAWN:
+        case STRUCTURE_LAB:
+        case STRUCTURE_NUKER:
+            //if there is any room for energy, needs energy
+            if(structure.store.getFreeCapacity(RESOURCE_ENERGY) > 0){
+                return true
+            } else {
+                return false
+            }
+        case STRUCTURE_TOWER:
+            //arbitrary buffer
+            if(structure.store.getFreeCapacity(RESOURCE_ENERGY) > 300){
+                return true
+            } else {
+                return false
+            }
+        case STRUCTURE_POWER_SPAWN:
+            //arbitrary buffer
+            if(structure.store.getFreeCapacity(RESOURCE_ENERGY) > 1000){
+                return true
+            } else {
+                return false
+            }
+        case STRUCTURE_FACTORY:
+            //arbitrary max value
+            if(structure.store.getUsedCapacity(RESOURCE_ENERGY) < 10000){
+                return true
+            } else {
+                return false
+            }
         }
     },
 
@@ -154,8 +154,8 @@ var rT = {
             const targets = u.getWithdrawLocations(creep)
             var location = targets[creep.memory.target]
             if (location == undefined) {
-              location = Game.spawns[city]
-              creep.memory.noContainers = true
+                location = Game.spawns[city]
+                creep.memory.noContainers = true
             } else {
                 creep.memory.noContainers = false
             }

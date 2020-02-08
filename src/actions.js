@@ -4,28 +4,28 @@ var actions = {
     interact: function(creep, location, fnToTry, logSuccess) {
         var result = fnToTry()
         switch (result) {
-            case ERR_NOT_IN_RANGE:
-                if(creep.memory.role === "Upgrader" && location.structureType && location.structureType === STRUCTURE_CONTROLLER){
-                    return creep.moveTo(location, {reusePath: 15, range: 3, swampCost: 2, plainCost: 2})
-                } else {
-                    return creep.moveTo(location, {reusePath: 15, maxOps: 10000, maxRooms: 32})
-                }
-            case OK:
-                if (logSuccess) {
-                    console.log(creep.name+ " at " + creep.pos + ": " + fnToTry.toString())
-                }
-                return 1
-            case ERR_BUSY:
-            case ERR_FULL:
-            case ERR_TIRED:
-                return result
-            case ERR_NOT_ENOUGH_RESOURCES:
-                creep.memory.path = null
-                return result
-            default:
-                console.log(creep.memory.role + " at " + creep.pos + ": " + result.toString())
-                return result
-      }
+        case ERR_NOT_IN_RANGE:
+            if(creep.memory.role === "Upgrader" && location.structureType && location.structureType === STRUCTURE_CONTROLLER){
+                return creep.moveTo(location, {reusePath: 15, range: 3, swampCost: 2, plainCost: 2})
+            } else {
+                return creep.moveTo(location, {reusePath: 15, maxOps: 10000, maxRooms: 32})
+            }
+        case OK:
+            if (logSuccess) {
+                console.log(creep.name+ " at " + creep.pos + ": " + fnToTry.toString())
+            }
+            return 1
+        case ERR_BUSY:
+        case ERR_FULL:
+        case ERR_TIRED:
+            return result
+        case ERR_NOT_ENOUGH_RESOURCES:
+            creep.memory.path = null
+            return result
+        default:
+            console.log(creep.memory.role + " at " + creep.pos + ": " + result.toString())
+            return result
+        }
     },
     
     reserve: function(creep, target){
@@ -66,20 +66,20 @@ var actions = {
     rangedAttack: function(creep, target){
         var result = creep.rangedAttack(target)
         switch(result){
-            case ERR_NOT_IN_RANGE:
-                if (creep.pos.roomName == target.pos.roomName){
-                    creep.moveTo(target, {reusePath: 5})
-                }
+        case ERR_NOT_IN_RANGE:
+            if (creep.pos.roomName == target.pos.roomName){
+                creep.moveTo(target, {reusePath: 5})
+            }
+            break
+        case OK:
+            if(creep.memory.noFear){
+                creep.moveTo(target, {reusePath: 5})
                 break
-            case OK:
-                if(creep.memory.noFear){
-                    creep.moveTo(target, {reusePath: 5})
-                    break
-                }
-                creep.moveTo(Game.spawns[creep.memory.city], {reusePath: 5})
-                break
-            case ERR_NO_BODYPART:
-                creep.moveTo(Game.spawns[creep.memory.city], {reusePath: 5})
+            }
+            creep.moveTo(Game.spawns[creep.memory.city], {reusePath: 5})
+            break
+        case ERR_NO_BODYPART:
+            creep.moveTo(Game.spawns[creep.memory.city], {reusePath: 5})
         }
         return
     },
@@ -96,7 +96,7 @@ var actions = {
     },
 
     harvest: function(creep, target) {
-      return actions.interact(creep, target, () => creep.harvest(target))
+        return actions.interact(creep, target, () => creep.harvest(target))
     },
     
     pickup: function(creep) {
@@ -107,13 +107,13 @@ var actions = {
             if(_.contains(goodLoads, target)) {
                 const result = actions.interact(creep, target, () => creep.pickup(target))
                 switch (result) {
-                  case OK:
-                      break
-                  case ERR_INVALID_TARGET:
-                      creep.memory.targetId = null
-                      break
-                  default:
-                      break
+                case OK:
+                    break
+                case ERR_INVALID_TARGET:
+                    creep.memory.targetId = null
+                    break
+                default:
+                    break
                 }
                 return result
             }
@@ -130,8 +130,8 @@ var actions = {
     },
 
     upgrade: function(creep) {
-      location = creep.room.controller
-      return actions.interact(creep, location, () => creep.upgradeController(location))
+        location = creep.room.controller
+        return actions.interact(creep, location, () => creep.upgradeController(location))
     },
     
     charge: function(creep, location) {
@@ -146,19 +146,19 @@ var actions = {
 
     // priorities: very damaged structures > construction > mildly damaged structures
     // stores repair id in memory so it will continue repairing till the structure is at max hp
-	build: function(creep) {
+    build: function(creep) {
         if(Game.time % 200 === 0){
             creep.memory.repair = null
             creep.memory.build = null
         }
-		if (creep.memory.repair){
-			var target = Game.getObjectById(creep.memory.repair)
-			if(target){
+        if (creep.memory.repair){
+            var target = Game.getObjectById(creep.memory.repair)
+            if(target){
                 if (target.hits < target.hitsMax){
                     return actions.repair(creep, target)
                 }
-			}
-		}
+            }
+        }
         const city = creep.memory.city
         const myRooms = u.splitRoomsByCity()
         const buildings = _.flatten(_.map(myRooms[city], room => room.find(FIND_STRUCTURES)))
@@ -202,13 +202,13 @@ var actions = {
             // we can only get one thing per turn, success is assumed since we're close
             const result = creep.withdraw(closeStones[0], _.keys(closeStones[0])[0])
             switch (result) {
-                case ERR_FULL:
-                    return
-                case ERR_NOT_ENOUGH_RESOURCES:
-                    break
-                default:
-                    //console.log(result);
-                    return result
+            case ERR_FULL:
+                return
+            case ERR_NOT_ENOUGH_RESOURCES:
+                break
+            default:
+                //console.log(result);
+                return result
             }
         }
         var resources = creep.room.find(FIND_DROPPED_RESOURCES)

@@ -53,7 +53,7 @@ const p = {
                 _.forEach(template.buildings, function(locations, structureType) {
                     locations.pos.forEach(location => {
                         var pos = {"x": plan.x + location.x - template.offset.x, 
-                                   "y": plan.y + location.y - template.offset.y}
+                            "y": plan.y + location.y - template.offset.y}
                         var name = roomName + spawnCount
                         spawnCount = structureType == STRUCTURE_SPAWN ? spawnCount + 1 : spawnCount
                         if (Game.cpu.getUsed() + 20 > Game.cpu.tickLimit) {
@@ -262,7 +262,7 @@ const p = {
 
     hasLink: function(pos, distance) {
         const links = pos.findInRange(FIND_MY_STRUCTURES, distance, {
-                filter: { structureType: STRUCTURE_LINK }
+            filter: { structureType: STRUCTURE_LINK }
         })
         const newLinks = pos.findInRange(FIND_MY_CONSTRUCTION_SITES, distance, {
             filter: { structureType: STRUCTURE_LINK }
@@ -275,7 +275,7 @@ const p = {
         _.forEach(template.buildings, function(locations, structureType) {//don't make roads anywhere that a structure needs to go
             locations.pos.forEach(location => {
                 var pos = {"x": plan.x + location.x - template.offset.x, 
-                           "y": plan.y + location.y - template.offset.y}
+                    "y": plan.y + location.y - template.offset.y}
                 if(structureType !== STRUCTURE_ROAD){
                     costs.set(pos.x, pos.y, 0xff)
                 }
@@ -479,7 +479,7 @@ const p = {
             for (j = 0; j < 50; j++) {
                 sqd[i][j] = ter.get(i, j) == TERRAIN_MASK_WALL ? 0 : 
                     i < 2 || i > 47 || j < 2 || j > 47 ? 0 : 
-                    Math.min(sqd[i - 1][j], sqd[i][j - 1], sqd[i - 1][j - 1]) + 1
+                        Math.min(sqd[i - 1][j], sqd[i][j - 1], sqd[i - 1][j - 1]) + 1
             }
         }
         

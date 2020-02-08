@@ -82,7 +82,7 @@ module.exports.loop = function () {
         }
         //clear rooms
         if (Game.time % 5000 === 0) {
-           for (const name in Memory.rooms) {
+            for (const name in Memory.rooms) {
                 if (!Memory.rooms[name].city) {
                     delete Memory.rooms[name]
                     console.log("Clearing room memory:", name)

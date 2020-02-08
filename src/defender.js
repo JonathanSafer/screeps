@@ -32,20 +32,20 @@ var rD = {
                 hostiles = creep.room.find(FIND_HOSTILE_CREEPS)
             }
             switch (creep.memory.state) {
-                case CS.START:
-                    rD.init(creep)
-                    break
-                case CS.BOOST:
-                    rD.boost(creep)
-                    break
-                case CS.ENGAGE:
-                    if(!rH.maybeRetreat(creep, hostiles) && hostiles.length && creep.pos.inRangeTo(Game.spawns[city], 11)){
-                        rH.aMove(creep, hostiles)
-                    }
-                    break
-                case CS.DORMANT:
-                    rD.dormant(creep)
-                    return
+            case CS.START:
+                rD.init(creep)
+                break
+            case CS.BOOST:
+                rD.boost(creep)
+                break
+            case CS.ENGAGE:
+                if(!rH.maybeRetreat(creep, hostiles) && hostiles.length && creep.pos.inRangeTo(Game.spawns[city], 11)){
+                    rH.aMove(creep, hostiles)
+                }
+                break
+            case CS.DORMANT:
+                rD.dormant(creep)
+                return
             }
             rH.shoot(creep, hostiles)
             rH.maybeHeal(creep, hostiles)

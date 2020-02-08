@@ -15,9 +15,9 @@ var rPM = {
                 Game.spawns[creep.memory.city].memory.runner = Math.ceil(breakerTarget.power/1600)
             }
         }
-		if (breakerTarget && creep.pos.isNearTo(breakerTarget.pos)){
+        if (breakerTarget && creep.pos.isNearTo(breakerTarget.pos)){
             return a.attack(creep, breakerTarget)
-		} 
+        } 
         if (!creep.memory.medic){
             creep.memory.medic = null
         }

@@ -172,7 +172,7 @@ var markets = {
             } else {
                 //make a sell order
                 const orderId = _.find(Object.keys(Game.market.orders),
-                        order => Game.market.orders[order].roomName === city.name && Game.market.orders[order].resourceType === "power")
+                    order => Game.market.orders[order].roomName === city.name && Game.market.orders[order].resourceType === "power")
                 const order = Game.market.orders[orderId]
                 if(!order){
                     const sellPrice = markets.getPrice("power") * .90
@@ -200,7 +200,7 @@ var markets = {
             } else {
                 //make a sell order
                 const orderId = _.find(Object.keys(Game.market.orders),
-                        order => Game.market.orders[order].roomName === city.name && Game.market.orders[order].resourceType === RESOURCE_OPS)
+                    order => Game.market.orders[order].roomName === city.name && Game.market.orders[order].resourceType === RESOURCE_OPS)
                 const order = Game.market.orders[orderId]
                 if(!order){
                     const sellPrice = markets.getPrice(RESOURCE_OPS) * .90
@@ -224,7 +224,7 @@ var markets = {
             if(mineralAmount < 8000){
                 const amountNeeded = 8000 - mineralAmount
                 const orderId = _.find(Object.keys(Game.market.orders),
-                        order => Game.market.orders[order].roomName === city.name && Game.market.orders[order].resourceType === minerals[i])
+                    order => Game.market.orders[order].roomName === city.name && Game.market.orders[order].resourceType === minerals[i])
                 const order = Game.market.orders[orderId]
                 if(order && order.remainingAmount < amountNeeded){
                     //update order quantity
@@ -303,7 +303,7 @@ var markets = {
         if(storage.store[RESOURCE_ENERGY] < 400000 && (!highEnergyOrder || highEnergyOrder.price <= 0.002)){//buy energy if it's cheap
             //buy energy
             const orderId = _.find(Object.keys(Game.market.orders),
-                    order => Game.market.orders[order].roomName === city.name && Game.market.orders[order].resourceType === RESOURCE_ENERGY)
+                order => Game.market.orders[order].roomName === city.name && Game.market.orders[order].resourceType === RESOURCE_ENERGY)
             const order = Game.market.orders[orderId]
             if(order && order.remainingAmount === 0){
                 //update order quantity
@@ -321,7 +321,7 @@ var markets = {
         } else if(storage.store[RESOURCE_ENERGY] < buyThreshold){//buy energy with excess credits
             if(Game.market.credits > settings.creditMin){//arbitrary
                 const orderId = _.find(Object.keys(Game.market.orders),
-                        order => Game.market.orders[order].roomName === city.name && Game.market.orders[order].resourceType === RESOURCE_ENERGY)
+                    order => Game.market.orders[order].roomName === city.name && Game.market.orders[order].resourceType === RESOURCE_ENERGY)
                 const order = Game.market.orders[orderId]
                 let highPrice = 0
                 if(highEnergyOrder){
@@ -459,7 +459,7 @@ var markets = {
             const highEnergyOrder = energyOrders[0]
             const baseMins = [RESOURCE_HYDROGEN, RESOURCE_OXYGEN, RESOURCE_UTRIUM, RESOURCE_LEMERGIUM, RESOURCE_KEANIUM, RESOURCE_ZYNTHIUM, RESOURCE_CATALYST]
             const bars = [RESOURCE_UTRIUM_BAR, RESOURCE_LEMERGIUM_BAR, RESOURCE_ZYNTHIUM_BAR, RESOURCE_KEANIUM_BAR, RESOURCE_GHODIUM_MELT, 
-                    RESOURCE_OXIDANT, RESOURCE_REDUCTANT, RESOURCE_PURIFIER, RESOURCE_CELL, RESOURCE_WIRE, RESOURCE_ALLOY, RESOURCE_CONDENSATE]
+                RESOURCE_OXIDANT, RESOURCE_REDUCTANT, RESOURCE_PURIFIER, RESOURCE_CELL, RESOURCE_WIRE, RESOURCE_ALLOY, RESOURCE_CONDENSATE]
             const highTier = [RESOURCE_ORGANISM, RESOURCE_MACHINE, RESOURCE_DEVICE, RESOURCE_ESSENCE]
             markets.updateSellPoint(highTier, termCities, buyOrders)
             for (let i = 0; i < termCities.length; i++){

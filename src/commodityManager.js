@@ -1,23 +1,23 @@
 var fact = require("./factory")
 var cM = {
-	runManager: function(cities){
-		//group cities by factory level
-		const factCities = cM.groupByLevel(cities)
-		//find total terminal store for each level
-		let storeByLvl = []
-		for(let i = 0; i < 6; i++){
-			storeByLvl[i] = cM.empireStore(factCities[i])
-		}
-		//go through each city:
-		for(let i = factCities.length - 1; i > 0; i--){
-			const products = _.filter(Object.keys(COMMODITIES), key => COMMODITIES[key].level === i)
-			for(var j = 0; j < factCities[i].length; j++){
-				//for each produce of city's level:
-				for (var k = 0; k < products.length; k++) {
-					if(factCities[i][j].terminal.store[products[k]] > 2000){
-						continue//if city's store of produce is above 2k, don't produce any more
-					}
-					const components = _.without(Object.keys(COMMODITIES[products[k]].components), RESOURCE_ENERGY)
+    runManager: function(cities){
+        //group cities by factory level
+        const factCities = cM.groupByLevel(cities)
+        //find total terminal store for each level
+        let storeByLvl = []
+        for(let i = 0; i < 6; i++){
+            storeByLvl[i] = cM.empireStore(factCities[i])
+        }
+        //go through each city:
+        for(let i = factCities.length - 1; i > 0; i--){
+            const products = _.filter(Object.keys(COMMODITIES), key => COMMODITIES[key].level === i)
+            for(var j = 0; j < factCities[i].length; j++){
+                //for each produce of city's level:
+                for (var k = 0; k < products.length; k++) {
+                    if(factCities[i][j].terminal.store[products[k]] > 2000){
+                        continue//if city's store of produce is above 2k, don't produce any more
+                    }
+                    const components = _.without(Object.keys(COMMODITIES[products[k]].components), RESOURCE_ENERGY)
                     const rate = fact.findRateLimit(components, products[k]) //find rate limit, and use that to find quantity of each resource needed 
                     let go = true //(possibly batched in addition based on reaction time)
                     let highTier = false
@@ -48,14 +48,14 @@ var cM = {
                         }
                     }
                 }		
-			}
-		}
-	},
+            }
+        }
+    },
 
-	scheduleDeliveries: function(product, rate, storeByLvl, factCities, destination, dryrun){
-		const components = _.without(Object.keys(COMMODITIES[product].components), RESOURCE_ENERGY)
-		for(var i = 0; i < components.length; i++){
-			let compLvl = COMMODITIES[components[i]].level
+    scheduleDeliveries: function(product, rate, storeByLvl, factCities, destination, dryrun){
+        const components = _.without(Object.keys(COMMODITIES[product].components), RESOURCE_ENERGY)
+        for(var i = 0; i < components.length; i++){
+            let compLvl = COMMODITIES[components[i]].level
             if(!compLvl){//if comp doesn't need a leveled factory, set to 0
                 compLvl = 0
             }
@@ -88,39 +88,39 @@ var cM = {
             if(quantity){
                 Game.notify("Problem sending " + components[i] + " to " + destination)
             }
-		}
-		return storeByLvl
-	},
+        }
+        return storeByLvl
+    },
 
-	groupByLevel: function(cities){
-		const factCities = []
-		for(let i = 0; i < 6; i++){
-			factCities[i] = []
-		}
-		for(let i = 0; i < cities.length; i++){
-			const factory = _.find(cities[i].find(FIND_MY_STRUCTURES), struct => struct.structureType === STRUCTURE_FACTORY)
-			if(!factory || !cities[i].terminal){
-				continue
-			}
-			if(!factory.level){
-				factCities[0].push(cities[i])
-			} else {
-				factCities[factory.level].push(cities[i])
-			}
-		}
-		return factCities
-	},
+    groupByLevel: function(cities){
+        const factCities = []
+        for(let i = 0; i < 6; i++){
+            factCities[i] = []
+        }
+        for(let i = 0; i < cities.length; i++){
+            const factory = _.find(cities[i].find(FIND_MY_STRUCTURES), struct => struct.structureType === STRUCTURE_FACTORY)
+            if(!factory || !cities[i].terminal){
+                continue
+            }
+            if(!factory.level){
+                factCities[0].push(cities[i])
+            } else {
+                factCities[factory.level].push(cities[i])
+            }
+        }
+        return factCities
+    },
 
-	empireStore: function(cities){//combine store of all cities given
-		const empireStore = {}
-		for(var i = 0; i < RESOURCES_ALL.length; i++){
-			if(!cities.length){
-				empireStore[RESOURCES_ALL[i]] = 0
-			} else {
-				empireStore[RESOURCES_ALL[i]] = _.sum(cities, city => city.terminal.store[RESOURCES_ALL[i]])
-			}
-		}
-		return empireStore
-	}
+    empireStore: function(cities){//combine store of all cities given
+        const empireStore = {}
+        for(var i = 0; i < RESOURCES_ALL.length; i++){
+            if(!cities.length){
+                empireStore[RESOURCES_ALL[i]] = 0
+            } else {
+                empireStore[RESOURCES_ALL[i]] = _.sum(cities, city => city.terminal.store[RESOURCES_ALL[i]])
+            }
+        }
+        return empireStore
+    }
 }
 module.exports = cM

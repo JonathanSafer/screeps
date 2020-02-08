@@ -13,9 +13,9 @@ var rBr = {
         var breakerTarget = Game.getObjectById(creep.memory.target)
         const attacker = _.find(creep.room.find(FIND_HOSTILE_CREEPS), c => c.pos.isNearTo(creep.pos) && c.getActiveBodyparts(ATTACK) > 10)
         if(attacker){creep.memory.retreat = true}
-		if (breakerTarget && creep.pos.isNearTo(breakerTarget.pos)){
+        if (breakerTarget && creep.pos.isNearTo(breakerTarget.pos)){
             creep.dismantle(breakerTarget)
-		} 
+        } 
         if (!creep.memory.medic){
             creep.memory.medic = null
         }
@@ -34,7 +34,7 @@ var rBr = {
                 medicSearch = _.find(allCreeps[creep.memory.city], localCreep => localCreep.memory.role === "bigMedic" && localCreep.pos.isNearTo(creep.pos) 
                                                                                         && localCreep.memory.breaker == creep.id)
             } else {
-                    medicSearch = _.find(allCreeps[creep.memory.city], localCreep => localCreep.memory.role === "medic" && localCreep.pos.isNearTo(creep.pos) 
+                medicSearch = _.find(allCreeps[creep.memory.city], localCreep => localCreep.memory.role === "medic" && localCreep.pos.isNearTo(creep.pos) 
                                                                                         && localCreep.memory.breaker == creep.id)
             }                                               
             if (medicSearch){

@@ -40,23 +40,23 @@ var statsLib = {
             stats["energy"] = u.getDropTotals()
             var cities = []
             _.forEach(Object.keys(Game.rooms), function(roomName){
-              const room = Game.rooms[roomName]
-              const city = Game.rooms[roomName].memory.city
-              cities.push(city)
+                const room = Game.rooms[roomName]
+                const city = Game.rooms[roomName].memory.city
+                cities.push(city)
         
-              if(room.controller && room.controller.my){
-                stats["rooms." + city + ".rcl.level"] = room.controller.level
-                stats["rooms." + city + ".rcl.progress"] = room.controller.progress
-                stats["rooms." + city + ".rcl.progressTotal"] = room.controller.progressTotal
+                if(room.controller && room.controller.my){
+                    stats["rooms." + city + ".rcl.level"] = room.controller.level
+                    stats["rooms." + city + ".rcl.progress"] = room.controller.progress
+                    stats["rooms." + city + ".rcl.progressTotal"] = room.controller.progressTotal
         
-                stats["rooms." + city + ".spawn.energy"] = room.energyAvailable
-                stats["rooms." + city + ".spawn.energyTotal"] = room.energyCapacityAvailable
+                    stats["rooms." + city + ".spawn.energy"] = room.energyAvailable
+                    stats["rooms." + city + ".spawn.energyTotal"] = room.energyCapacityAvailable
         
-                if(room.storage){
-                  stats["rooms." + city + ".storage.energy"] = room.storage.store.energy
+                    if(room.storage){
+                        stats["rooms." + city + ".storage.energy"] = room.storage.store.energy
+                    }
+                    stats["rooms." + city + ".cpu"] = statsLib.cityCpuMap[city]
                 }
-                stats["rooms." + city + ".cpu"] = statsLib.cityCpuMap[city]
-              }
             })
             var counts = _.countBy(Game.creeps, creep => creep.memory.role)
             var roles = [rD, rT, rM, rR, rU, rB, rMM, rF, rC, rSB, rH, rMe, rBr, rPM, rRo] 
