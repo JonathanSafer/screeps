@@ -4,3 +4,4 @@ node_modules
 *.zip
 .screeps-multimeter.history
 screeps-multimeter.json
+screeps.log
