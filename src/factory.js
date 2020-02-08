@@ -8,7 +8,7 @@ var fact = {
             }
             Game.spawns[city].memory.ferryInfo.factoryInfo.produce = RESOURCE_ORGANISM;//will result in reset
         }
-        let factory = fact.findFactory(city);
+        const factory = fact.findFactory(city);
         if(!factory){
             return;
         }
@@ -31,8 +31,8 @@ var fact = {
     },
 
     findFactory: function(city){
-        let structures = Game.spawns[city].room.find(FIND_MY_STRUCTURES);
-        let factory = _.find(structures, struct => struct.structureType === STRUCTURE_FACTORY);
+        const structures = Game.spawns[city].room.find(FIND_MY_STRUCTURES);
+        const factory = _.find(structures, struct => struct.structureType === STRUCTURE_FACTORY);
         if(!factory){
             return 0;
         }
@@ -48,8 +48,8 @@ var fact = {
 
     react: function(factory, city){
         if(!factory.cooldown && Game.spawns[city].memory.ferryInfo.factoryInfo.produce){
-            let produce = Game.spawns[city].memory.ferryInfo.factoryInfo.produce;
-            let components = Object.keys(COMMODITIES[produce].components);
+            const produce = Game.spawns[city].memory.ferryInfo.factoryInfo.produce;
+            const components = Object.keys(COMMODITIES[produce].components);
             let go = true;
             for (let i = 0; i < components.length; i++) {
                 if(COMMODITIES[produce].components[components[i]] > factory.store[components[i]]){
@@ -66,8 +66,8 @@ var fact = {
             return;
         }
         if(Game.time % 10 === 0 && Game.spawns[city].memory.ferryInfo.factoryInfo.produce){
-            let produce = Game.spawns[city].memory.ferryInfo.factoryInfo.produce;
-            let components = Object.keys(COMMODITIES[produce].components);
+            const produce = Game.spawns[city].memory.ferryInfo.factoryInfo.produce;
+            const components = Object.keys(COMMODITIES[produce].components);
             let go = true;
             for (let i = 0; i < components.length; i++) {
                 if(COMMODITIES[produce].components[components[i]] > factory.store[components[i]]){
@@ -87,7 +87,7 @@ var fact = {
                 return;
             }
             //don't choose new produce if ferry just deposited (ferry will be isNearTo and carrying stuff)
-            let ferry = _.find(factory.room.find(FIND_MY_CREEPS), creep => creep.memory.role === 'ferry')
+            const ferry = _.find(factory.room.find(FIND_MY_CREEPS), creep => creep.memory.role === 'ferry')
             if(ferry &&  _.sum(ferry.store) > 0 && ferry.pos.isNearTo(factory.pos)) {
                 return;
             }
@@ -99,11 +99,11 @@ var fact = {
     checkTerminal: function(factory, city){
         const products = _.filter(Object.keys(COMMODITIES), key => COMMODITIES[key].level === factory.level)
         for (var i = 0; i < products.length; i++) {
-            let components = _.without(Object.keys(COMMODITIES[products[i]].components), RESOURCE_ENERGY)
-            let rate = fact.findRateLimit(components, products[i])
+            const components = _.without(Object.keys(COMMODITIES[products[i]].components), RESOURCE_ENERGY)
+            const rate = fact.findRateLimit(components, products[i])
             let go = true;
             for (var j = 0; j < components.length; j++) {
-                let room = Game.spawns[city].room
+                const room = Game.spawns[city].room
                 if((COMMODITIES[products[i]].components[components[j]] * rate) > room.terminal.store[components[j]]){
                     go = false;
                 }
@@ -126,36 +126,36 @@ var fact = {
             Game.spawns[city].memory.ferryInfo.factoryInfo.produce = 'dormant';
         } else {
             //make 5k of each base resource commodity (in increments of 200)
-            let bars = [RESOURCE_UTRIUM_BAR, RESOURCE_LEMERGIUM_BAR, RESOURCE_ZYNTHIUM_BAR,
+            const bars = [RESOURCE_UTRIUM_BAR, RESOURCE_LEMERGIUM_BAR, RESOURCE_ZYNTHIUM_BAR,
                     RESOURCE_KEANIUM_BAR, RESOURCE_OXIDANT, RESOURCE_REDUCTANT, RESOURCE_PURIFIER, RESOURCE_GHODIUM_MELT];
-            let terminal = Game.spawns[city].room.terminal;
+            const terminal = Game.spawns[city].room.terminal;
             for(let i = 0; i < bars.length; i++){
                 if(terminal.store[bars[i]] < 3000){
                     Game.spawns[city].memory.ferryInfo.factoryInfo.produce = bars[i];
-                    let components = _.without(Object.keys(COMMODITIES[bars[i]].components), RESOURCE_ENERGY); //ferry shouldn't deliver energy
+                    const components = _.without(Object.keys(COMMODITIES[bars[i]].components), RESOURCE_ENERGY); //ferry shouldn't deliver energy
                     fact.requestComponents(city, components, bars[i])
                     return;
                 }
             }
             //if excess base mineral, process it
             for(let i = 0; i < bars.length; i++){
-                let components = _.without(Object.keys(COMMODITIES[bars[i]].components), RESOURCE_ENERGY);
+                const components = _.without(Object.keys(COMMODITIES[bars[i]].components), RESOURCE_ENERGY);
                 if(terminal.store[components[0]] >= 9000){
                     if(components[0] == RESOURCE_GHODIUM && terminal.store[components[0]] < 20000){
                         continue;
                     }
                     Game.spawns[city].memory.ferryInfo.factoryInfo.produce = bars[i];
-                    let coms = _.without(Object.keys(COMMODITIES[bars[i]].components), RESOURCE_ENERGY); //ferry shouldn't deliver energy
+                    const coms = _.without(Object.keys(COMMODITIES[bars[i]].components), RESOURCE_ENERGY); //ferry shouldn't deliver energy
                     fact.requestComponents(city, coms, bars[i])
                     return;
                 }
             }
             //make base commodities i.e. wire, cell etc.
-            let baseComs = [RESOURCE_CONDENSATE, RESOURCE_ALLOY, RESOURCE_CELL, RESOURCE_WIRE]
-            let rawComs = [RESOURCE_SILICON, RESOURCE_METAL, RESOURCE_BIOMASS, RESOURCE_MIST]
+            const baseComs = [RESOURCE_CONDENSATE, RESOURCE_ALLOY, RESOURCE_CELL, RESOURCE_WIRE]
+            const rawComs = [RESOURCE_SILICON, RESOURCE_METAL, RESOURCE_BIOMASS, RESOURCE_MIST]
             for(let i = 0; i < baseComs.length; i++){
-                let components = _.without(Object.keys(COMMODITIES[baseComs[i]].components), RESOURCE_ENERGY);
-                let commodity = _.intersection(components, rawComs);
+                const components = _.without(Object.keys(COMMODITIES[baseComs[i]].components), RESOURCE_ENERGY);
+                const commodity = _.intersection(components, rawComs);
                 if(terminal.store[commodity] >= 1000){
                     //produce it
                     Game.spawns[city].memory.ferryInfo.factoryInfo.produce = baseComs[i];
@@ -172,20 +172,20 @@ var fact = {
     findRateLimit: function(components, produce){//return number of cycles we can do
         let rateLimit = 0; //determine rate limit(resources cannot be transferred in quantities greater than 1k)
         for(let i = 0; i < components.length; i++){
-            let needed = COMMODITIES[produce].components[components[i]];
+            const needed = COMMODITIES[produce].components[components[i]];
             if(rateLimit < needed){
                 rateLimit = needed;
             }
         }
         //use rate limit to determine how much of each component is needed
-        let productionNum = _.floor(1000/rateLimit)//number of cycles we can run per charter
+        const productionNum = _.floor(1000/rateLimit)//number of cycles we can run per charter
         return productionNum;
     },
 
     requestComponents: function(city, components, produce){
-        let productionNum = fact.findRateLimit(components, produce);
+        const productionNum = fact.findRateLimit(components, produce);
         for(let i = 0; i < components.length; i++){
-            let requestAmount = COMMODITIES[produce].components[components[i]] * productionNum;
+            const requestAmount = COMMODITIES[produce].components[components[i]] * productionNum;
             Game.spawns[city].memory.ferryInfo.factoryInfo.transfer.push([components[i], 1, requestAmount])
         }
 

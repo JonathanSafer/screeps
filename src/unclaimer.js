@@ -1,4 +1,4 @@
-let rC = require('./claimer')
+const rC = require('./claimer')
 
 var rUC = {
     name: "unclaimer",
@@ -12,7 +12,7 @@ var rUC = {
     },
 
     unclaim: function(creep) {
-        let result = creep.attackController(creep.room.controller);
+        const result = creep.attackController(creep.room.controller);
         if(result === OK){
             Game.spawns[creep.memory.city].memory[rUC.name] = 0;
             creep.suicide();

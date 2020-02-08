@@ -53,8 +53,8 @@ var rPM = {
             if (creep.pos.inRangeTo(Game.flags[targetFlag].pos, 10)){
                 creep.moveTo(Game.spawns[creep.memory.city])
             }
-            let resource = Game.flags[targetFlag].room.lookForAt(LOOK_RESOURCES, Game.flags[targetFlag].pos);
-            let ruin = Game.flags[targetFlag].room.lookForAt(LOOK_RUINS, Game.flags[targetFlag].pos);
+            const resource = Game.flags[targetFlag].room.lookForAt(LOOK_RESOURCES, Game.flags[targetFlag].pos);
+            const ruin = Game.flags[targetFlag].room.lookForAt(LOOK_RUINS, Game.flags[targetFlag].pos);
             if (!resource.length && !ruin.length){
                 Game.flags[targetFlag].remove();
             }

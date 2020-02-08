@@ -13,7 +13,7 @@ var rRo = {
               creep.suicide();
           }
           var target = Game.getObjectById('5d86e27a2a6b4021bee17629');
-          let mineral = RESOURCE_ENERGY
+          const mineral = RESOURCE_ENERGY
           if (target){
               if(!target.store[mineral]){
                   Game.notify("Robbery complete")

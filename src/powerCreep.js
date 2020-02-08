@@ -102,9 +102,9 @@ var rPC = {
 
     initializePowerCreep: function(creep) {
         if (!creep.memory.city) {
-            let cities = u.getMyCities()
-            let fullPower = _.filter(cities, (city) => city.controller.level == 8)
-            let city = _.sample(fullPower) // pick a random city
+            const cities = u.getMyCities()
+            const fullPower = _.filter(cities, (city) => city.controller.level == 8)
+            const city = _.sample(fullPower) // pick a random city
             creep.memory.city = city.name
         }
     },
@@ -114,8 +114,8 @@ var rPC = {
         if(!Game.rooms[creep.memory.city]){
             return;
         }
-        let structures = Game.rooms[creep.memory.city].find(FIND_MY_STRUCTURES)
-        let powerSpawn = _.find(structures, structure => structure.structureType === STRUCTURE_POWER_SPAWN)
+        const structures = Game.rooms[creep.memory.city].find(FIND_MY_STRUCTURES)
+        const powerSpawn = _.find(structures, structure => structure.structureType === STRUCTURE_POWER_SPAWN)
         if(!powerSpawn){
             return;
         }
@@ -124,9 +124,9 @@ var rPC = {
     },
 
     hasValidState: function(creep) { // TODO. false if creep spawns in city with no power spawn
-        let validSpawn = creep.memory.state == CS.START || 
+        const validSpawn = creep.memory.state == CS.START || 
                          creep.memory.state == CS.SPAWN || (creep.room && creep.room.controller)
-        let initialized = creep.memory.state && creep.memory.city
+        const initialized = creep.memory.state && creep.memory.city
         return initialized && validSpawn
     },
 
@@ -175,7 +175,7 @@ var rPC = {
     },
 
     isPowerEnabled: function(creep) {
-        let room = Game.rooms[creep.memory.city]
+        const room = Game.rooms[creep.memory.city]
         return (room.controller && room.controller.isPowerEnabled)
     },
 
@@ -190,9 +190,9 @@ var rPC = {
         if(!creep.powers[PWR_REGEN_SOURCE]){
             return false;
         }
-        let sourceIds = Object.keys(Game.spawns[creep.memory.city + "0"].memory.sources)
-        for (let sourceId of sourceIds) {
-            let source = Game.getObjectById(sourceId)
+        const sourceIds = Object.keys(Game.spawns[creep.memory.city + "0"].memory.sources)
+        for (const sourceId of sourceIds) {
+            const source = Game.getObjectById(sourceId)
             if (!source.effects || source.effects.length == 0 ||
                 source.effects[0].ticksRemaining < 30) {
                 creep.memory.target = sourceId
@@ -203,8 +203,8 @@ var rPC = {
     },
 
     canOperateFactory: function(creep) {
-        let factory = _.find(creep.room.find(FIND_MY_STRUCTURES), struct => struct.structureType == STRUCTURE_FACTORY)
-        let city = creep.memory.city + "0"
+        const factory = _.find(creep.room.find(FIND_MY_STRUCTURES), struct => struct.structureType == STRUCTURE_FACTORY)
+        const city = creep.memory.city + "0"
         if (factory &&
             (!factory.effects || factory.effects.length == 0) &&
             factory.cooldown < 30 &&
@@ -218,7 +218,7 @@ var rPC = {
     },
 
     canOperateObserver: function(creep) {
-        let observer = _.find(creep.room.find(FIND_MY_STRUCTURES), struct => struct.structureType == STRUCTURE_OBSERVER)
+        const observer = _.find(creep.room.find(FIND_MY_STRUCTURES), struct => struct.structureType == STRUCTURE_OBSERVER)
         if (observer && 
             (!observer.effects || observer.effects.length == 0) &&
             creep.powers[PWR_OPERATE_OBSERVER] &&
@@ -230,7 +230,7 @@ var rPC = {
     },
 
     canOperateExtension: function(creep) {
-        let storage = creep.room.storage
+        const storage = creep.room.storage
         if (storage &&
             creep.powers[PWR_OPERATE_EXTENSION] &&
             creep.powers[PWR_OPERATE_EXTENSION].cooldown == 0 &&
@@ -242,7 +242,7 @@ var rPC = {
     },
 
     canOperateSpawn: function(creep) {
-        let spawn = Game.spawns[creep.memory.city + "0"]
+        const spawn = Game.spawns[creep.memory.city + "0"]
         if (spawn &&
             (!spawn.effects || spawn.effects.length == 0) &&
             creep.powers[PWR_OPERATE_SPAWN] &&

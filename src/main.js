@@ -48,7 +48,7 @@ module.exports.loop = function () {
                 if(!city){
                     myCities[i].memory.city = myCities[i].name + '0'
                 }
-                let rcl = myCities[i].controller.level
+                const rcl = myCities[i].controller.level
                 if (rcl < 8 && Game.cpu.bucket < settings.bucket.colony) {
                     continue // skip this city
                 }
@@ -58,7 +58,7 @@ module.exports.loop = function () {
                 c.runTowers(city)
                 // TODO: obs runs in dead cities
                 c.runObs(city)
-                let currentCpu = Game.cpu.getUsed()
+                const currentCpu = Game.cpu.getUsed()
                 s.cityCpuMap[city] = currentCpu - prevCpu
                 prevCpu = currentCpu
             } catch (failedCityError) {
@@ -73,7 +73,7 @@ module.exports.loop = function () {
 
         //clear old creeps
         if (Game.time % 100 === 0) {
-            for (let name in Memory.creeps) {
+            for (const name in Memory.creeps) {
                 if (!Game.creeps[name]) {
                     delete Memory.creeps[name];
                     console.log('Clearing non-existing creep memory:', name);
@@ -82,7 +82,7 @@ module.exports.loop = function () {
         }
         //clear rooms
         if (Game.time % 5000 === 0) {
-           for (let name in Memory.rooms) {
+           for (const name in Memory.rooms) {
                 if (!Memory.rooms[name].city) {
                     delete Memory.rooms[name];
                     console.log('Clearing room memory:', name);

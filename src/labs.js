@@ -2,23 +2,23 @@ var settings = require('./settings')
 
 var labs = {
     runLabs: function(city) {
-        let spawn = Game.spawns[city];
+        const spawn = Game.spawns[city];
         if (!spawn.memory.ferryInfo){
             return;
         }
         if (!spawn.memory.ferryInfo.labInfo){
             return;
         }
-        let lab0 = Game.getObjectById(spawn.memory.ferryInfo.labInfo[0][0])
-        let lab1 = Game.getObjectById(spawn.memory.ferryInfo.labInfo[1][0])
-        let lab2 = Game.getObjectById(spawn.memory.ferryInfo.labInfo[2][0])
-        let lab3 = Game.getObjectById(spawn.memory.ferryInfo.labInfo[3][0])
-        let lab4 = Game.getObjectById(spawn.memory.ferryInfo.labInfo[4][0])
-        let lab5 = Game.getObjectById(spawn.memory.ferryInfo.labInfo[5][0])
+        const lab0 = Game.getObjectById(spawn.memory.ferryInfo.labInfo[0][0])
+        const lab1 = Game.getObjectById(spawn.memory.ferryInfo.labInfo[1][0])
+        const lab2 = Game.getObjectById(spawn.memory.ferryInfo.labInfo[2][0])
+        const lab3 = Game.getObjectById(spawn.memory.ferryInfo.labInfo[3][0])
+        const lab4 = Game.getObjectById(spawn.memory.ferryInfo.labInfo[4][0])
+        const lab5 = Game.getObjectById(spawn.memory.ferryInfo.labInfo[5][0])
         if (!lab0 || !lab1 || !lab2 || !lab3 || !lab4 || !lab5){
             return;
         }
-        let reaction = labs.runReaction(lab0, lab1, lab2, lab3, lab4, lab5, spawn);
+        const reaction = labs.runReaction(lab0, lab1, lab2, lab3, lab4, lab5, spawn);
         // if no reaction, update labs
         if (reaction){
             labs.updateLabs(lab0, lab1, lab2, lab3, lab4, lab5, spawn)
@@ -27,8 +27,8 @@ var labs = {
 
     runReaction: function(lab0, lab1, lab2, lab3, lab4, lab5, spawn) {
         if (lab0.mineralAmount > 0 && lab1.mineralAmount > 0){
-            let produce = REACTIONS[spawn.memory.ferryInfo.labInfo[0][2]][spawn.memory.ferryInfo.labInfo[1][2]]
-            let reactionTime = REACTION_TIME[produce]
+            const produce = REACTIONS[spawn.memory.ferryInfo.labInfo[0][2]][spawn.memory.ferryInfo.labInfo[1][2]]
+            const reactionTime = REACTION_TIME[produce]
             if (Game.time % reactionTime === 4 && Game.cpu.bucket > 2000){
                 lab2.runReaction(lab0, lab1);
                 lab3.runReaction(lab0, lab1);
@@ -50,7 +50,7 @@ var labs = {
                 return;
             }
         }
-        let receivers = [lab2, lab3, lab4, lab5];
+        const receivers = [lab2, lab3, lab4, lab5];
         for (let i = 0; i < receivers.length; i++){
             if (receivers[i].mineralAmount >= 750){
                 spawn.memory.ferryInfo.labInfo[i + 2][1] = 1
@@ -61,8 +61,8 @@ var labs = {
         }
         // if lab0 and lab1 are not requesting more resource, run new resource decider
         if (spawn.memory.ferryInfo.labInfo[0][1] == 0 && spawn.memory.ferryInfo.labInfo[1][1] == 0){
-            let boost = spawn.memory.ferryInfo.labInfo[6]
-            let minerals = labs.chooseMineral(boost, spawn);
+            const boost = spawn.memory.ferryInfo.labInfo[6]
+            const minerals = labs.chooseMineral(boost, spawn);
             if (!minerals){
                 return;
             }
@@ -78,7 +78,7 @@ var labs = {
             spawn.memory.ferryInfo.labInfo[6] = 'G';
             return;
         }
-        let boostsList = ['G', 'XKHO2', 'XLHO2', 'XZHO2', 'XGHO2', 'XZH2O', 'XGH2O', 'XLH2O']
+        const boostsList = ['G', 'XKHO2', 'XLHO2', 'XZHO2', 'XGHO2', 'XZH2O', 'XGH2O', 'XLH2O']
         if (boostsList.includes(currentBoost) && spawn.room.terminal.store[currentBoost] > settings.boostAmount - 3000){
             boostsList.splice(boostsList.indexOf(currentBoost), 1);
         }
@@ -100,13 +100,13 @@ var labs = {
             }
             return 0;
         }
-        let ingredients = labs.findIngredients(mineral)
+        const ingredients = labs.findIngredients(mineral)
         //if no ingredients, request mineral
         if (!ingredients){
             spawn.memory.ferryInfo.mineralRequest = mineral
             return 0;
         }
-        let ferry = _.find(spawn.room.find(FIND_MY_CREEPS), creep => creep.memory.role === 'ferry')
+        const ferry = _.find(spawn.room.find(FIND_MY_CREEPS), creep => creep.memory.role === 'ferry')
         if(ferry && _.sum(ferry.carry)){
             return;
         }

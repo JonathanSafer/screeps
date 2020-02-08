@@ -15,14 +15,14 @@ var rR = {
                 if (!creep.memory.location){
                     creep.memory.location = Game.spawns[creep.memory.city].room.storage.id;
                 }
-                let target = Game.getObjectById(creep.memory.location)
+                const target = Game.getObjectById(creep.memory.location)
                 if (target){
                     actions.charge(creep, target)
                 }
                 return;
             }
             //check for flag
-            let flagName = creep.memory.city + 'powerMine';
+            const flagName = creep.memory.city + 'powerMine';
             if (Game.flags[flagName] && Game.flags[flagName].pos.roomName !== creep.pos.roomName){
                 //move to flag range 5
                 creep.moveTo(Game.flags[flagName], {reusePath: 50}, {range: 4})
@@ -30,7 +30,7 @@ var rR = {
             }
             if (Game.flags[flagName]){
                 //check for resources under flag
-                let resource = Game.flags[flagName].room.lookForAt(LOOK_RESOURCES, Game.flags[flagName].pos);
+                const resource = Game.flags[flagName].room.lookForAt(LOOK_RESOURCES, Game.flags[flagName].pos);
                 if (resource.length){
                     //pickup resource
                     if (creep.pickup(resource[0]) == ERR_NOT_IN_RANGE){
@@ -39,7 +39,7 @@ var rR = {
 
                     return;
                 }
-                let ruin = Game.flags[flagName].room.lookForAt(LOOK_RUINS, Game.flags[flagName].pos);
+                const ruin = Game.flags[flagName].room.lookForAt(LOOK_RUINS, Game.flags[flagName].pos);
                 if (ruin.length){
                     //pickup resource
                     if (creep.withdraw(ruin[0], RESOURCE_POWER) == ERR_NOT_IN_RANGE){
@@ -54,7 +54,7 @@ var rR = {
                 }
                 // every 50 ticks check for powerbank
                 if (Game.time % 50 == 0){
-                    let powerBank = Game.flags[flagName].room.lookForAt(LOOK_STRUCTURES, Game.flags[flagName].pos);
+                    const powerBank = Game.flags[flagName].room.lookForAt(LOOK_STRUCTURES, Game.flags[flagName].pos);
                     // if no powerbank, remove flag
                     if (!powerBank.length){
                         Game.flags[flagName].remove()
@@ -88,7 +88,7 @@ var rR = {
               }
           }
           if (creep.memory.location && Game.getObjectById(creep.memory.location)){
-              let target = Game.getObjectById(creep.memory.location)
+              const target = Game.getObjectById(creep.memory.location)
               if (actions.charge(creep, target) == ERR_FULL) {
                     var locations = u.getTransferLocations(creep)
                     var nextLocation = u.getNextLocation(creep.memory.target, locations);

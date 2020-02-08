@@ -17,8 +17,8 @@ var cM = {
 					if(factCities[i][j].terminal.store[products[k]] > 2000){
 						continue;//if city's store of produce is above 2k, don't produce any more
 					}
-					let components = _.without(Object.keys(COMMODITIES[products[k]].components), RESOURCE_ENERGY)
-                    let rate = fact.findRateLimit(components, products[k]) //find rate limit, and use that to find quantity of each resource needed 
+					const components = _.without(Object.keys(COMMODITIES[products[k]].components), RESOURCE_ENERGY)
+                    const rate = fact.findRateLimit(components, products[k]) //find rate limit, and use that to find quantity of each resource needed 
                     let go = true; //(possibly batched in addition based on reaction time)
                     let highTier = false;
                     for (var l = 0; l < components.length; l++) {//go through each component and check if we have in empire store
@@ -93,7 +93,7 @@ var cM = {
 	},
 
 	groupByLevel: function(cities){
-		let factCities = []
+		const factCities = []
 		for(let i = 0; i < 6; i++){
 			factCities[i] = []
 		}
@@ -112,7 +112,7 @@ var cM = {
 	},
 
 	empireStore: function(cities){//combine store of all cities given
-		let empireStore = {}
+		const empireStore = {}
 		for(var i = 0; i < RESOURCES_ALL.length; i++){
 			if(!cities.length){
 				empireStore[RESOURCES_ALL[i]] = 0;

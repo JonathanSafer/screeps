@@ -20,7 +20,7 @@ var rT = {
             //refill on energy
             if(rT.refill(creep, city) === 1){
                 //start moving to target
-                let target = rT.findTarget(creep, null)
+                const target = rT.findTarget(creep, null)
                 if(!target){
                     creep.say(20)
                     return
@@ -31,7 +31,7 @@ var rT = {
             }
         } else {
             //findClosestByRange(deposit locations)
-            let target = rT.findTarget(creep, null)//for now we will call every tick
+            const target = rT.findTarget(creep, null)//for now we will call every tick
             //do we call this every tick or cache result or something in between?
 
             if(!target){
@@ -39,12 +39,12 @@ var rT = {
                 return
             }
 
-            let result = actions.charge(creep, target)
+            const result = actions.charge(creep, target)
             if(result === 1){//successful deposit
                 //if creep still has energy, start moving to next target
                 if(creep.store[RESOURCE_ENERGY] > target.store.getFreeCapacity(RESOURCE_ENERGY)){
                     //start moving to next target if target not already in range
-                    let newTarget = rT.findTarget(creep, target)//make sure to remove current target from search list
+                    const newTarget = rT.findTarget(creep, target)//make sure to remove current target from search list
                     if(!newTarget){
                         creep.say(20)
                         return;
@@ -144,14 +144,14 @@ var rT = {
             }
             result = actions.withdraw(creep, bucket)
             if (result == ERR_NOT_ENOUGH_RESOURCES){
-                let targets = u.getWithdrawLocations(creep);
+                const targets = u.getWithdrawLocations(creep);
                 creep.memory.target = u.getNextLocation(creep.memory.target, targets);
                 if (targets[creep.memory.target]){
                     creep.memory.location = targets[creep.memory.target].id
                 }
             }
         } else {
-            let targets = u.getWithdrawLocations(creep);
+            const targets = u.getWithdrawLocations(creep);
             var location = targets[creep.memory.target];
             if (location == undefined) {
               location = Game.spawns[city];

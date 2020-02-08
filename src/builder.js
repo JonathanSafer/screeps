@@ -45,7 +45,7 @@ var rB = {
     },
 
     repair: function(creep){
-        let needRepair = _.find(creep.room.find(FIND_STRUCTURES), structure => (structure.hits < (0.4*structure.hitsMax)) && (structure.structureType != STRUCTURE_WALL) && (structure.structureType != STRUCTURE_RAMPART))
+        const needRepair = _.find(creep.room.find(FIND_STRUCTURES), structure => (structure.hits < (0.4*structure.hitsMax)) && (structure.structureType != STRUCTURE_WALL) && (structure.structureType != STRUCTURE_RAMPART))
         if (needRepair) {
             creep.memory.repair = needRepair.id;
             return a.repair(creep, needRepair);
@@ -71,7 +71,7 @@ var rB = {
 
     build: function(creep){
         if(creep.memory.build){//check for site and build
-            let site = Game.getObjectById(creep.memory.build)
+            const site = Game.getObjectById(creep.memory.build)
             if(site){//if there is a build site, build it, else set build to null
                 //build site
                 if(creep.build(site) === ERR_NOT_IN_RANGE){
@@ -104,9 +104,9 @@ var rB = {
     },
 
     repWalls: function(creep){
-        let lookTime = 1
+        const lookTime = 1
         if(creep.memory.repair){//check for target and repair
-            let target = Game.getObjectById(creep.memory.repair)
+            const target = Game.getObjectById(creep.memory.repair)
             if(target){//if there is a target, repair it
                 if(creep.repair(target) === ERR_NOT_IN_RANGE){
                     creep.moveTo(target, {reusePath: 15, range: 3, swampCost: 2, plainCost: 2})
@@ -119,7 +119,7 @@ var rB = {
             const buildings = Game.spawns[creep.memory.city].room.find(FIND_STRUCTURES)
             const walls = _.filter(buildings, struct => struct.structureType === STRUCTURE_RAMPART || struct.structureType === STRUCTURE_WALL).reverse()
             if(walls.length){//find lowest hits wall
-                let sortedWalls = _.sortBy(walls, wall => wall.hits)
+                const sortedWalls = _.sortBy(walls, wall => wall.hits)
                 creep.memory.repair = sortedWalls[0].id
                 return;
             }

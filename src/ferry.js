@@ -39,7 +39,7 @@ var rF = {
                     break;
                 }
                 if(Object.keys(creep.room.storage.store).length > 1 && _.sum(creep.room.terminal.store) < 295000){
-                    let mineral =_.keys(creep.room.storage.store)[1];
+                    const mineral =_.keys(creep.room.storage.store)[1];
                     actions.withdraw(creep, creep.room.storage, mineral);
                 } else {
                     creep.memory.target = rF.getJob(creep);
@@ -57,7 +57,7 @@ var rF = {
                 break;
             case 4: {
                 //move power from terminal to power spawn
-                let powerSpawn = _.find(Game.structures, (structure) => structure.structureType == STRUCTURE_POWER_SPAWN && structure.room.memory.city == creep.memory.city)
+                const powerSpawn = _.find(Game.structures, (structure) => structure.structureType == STRUCTURE_POWER_SPAWN && structure.room.memory.city == creep.memory.city)
                 if ((creep.carry.power) > 0){
                     actions.charge(creep, powerSpawn)
                     //creep.transfer(powerSpawn, 'power')
@@ -82,16 +82,16 @@ var rF = {
             case 6:
                 //move mineral from terminal to lab
                 if (_.sum(creep.carry) > 0){
-                    let lab = Game.getObjectById(creep.memory.lab);
-                    let result = actions.charge(creep, lab)
+                    const lab = Game.getObjectById(creep.memory.lab);
+                    const result = actions.charge(creep, lab)
                     if(result == 1){
-                        let lab0 = Game.getObjectById(Game.spawns[creep.memory.city].memory.ferryInfo.labInfo[0][0])
-                        let lab1 = Game.getObjectById(Game.spawns[creep.memory.city].memory.ferryInfo.labInfo[1][0])
-                        let lab2 = Game.getObjectById(Game.spawns[creep.memory.city].memory.ferryInfo.labInfo[2][0])
-                        let lab3 = Game.getObjectById(Game.spawns[creep.memory.city].memory.ferryInfo.labInfo[3][0])
-                        let lab4 = Game.getObjectById(Game.spawns[creep.memory.city].memory.ferryInfo.labInfo[4][0])
-                        let lab5 = Game.getObjectById(Game.spawns[creep.memory.city].memory.ferryInfo.labInfo[5][0])
-                        let total = lab0.mineralAmount + lab1.mineralAmount + (2 * (lab2.mineralAmount + lab3.mineralAmount + lab4.mineralAmount + lab5.mineralAmount))
+                        const lab0 = Game.getObjectById(Game.spawns[creep.memory.city].memory.ferryInfo.labInfo[0][0])
+                        const lab1 = Game.getObjectById(Game.spawns[creep.memory.city].memory.ferryInfo.labInfo[1][0])
+                        const lab2 = Game.getObjectById(Game.spawns[creep.memory.city].memory.ferryInfo.labInfo[2][0])
+                        const lab3 = Game.getObjectById(Game.spawns[creep.memory.city].memory.ferryInfo.labInfo[3][0])
+                        const lab4 = Game.getObjectById(Game.spawns[creep.memory.city].memory.ferryInfo.labInfo[4][0])
+                        const lab5 = Game.getObjectById(Game.spawns[creep.memory.city].memory.ferryInfo.labInfo[5][0])
+                        const total = lab0.mineralAmount + lab1.mineralAmount + (2 * (lab2.mineralAmount + lab3.mineralAmount + lab4.mineralAmount + lab5.mineralAmount))
                         if (total >= 5000 || lab.mineralAmount >= 2000){
                             Game.spawns[creep.memory.city].memory.ferryInfo.labInfo[creep.memory.labNum][1] = 0
                         }
@@ -108,14 +108,14 @@ var rF = {
             case 7: {
                 //move mineral from lab to terminal
                 if (_.sum(creep.carry) > 0){
-                    let result = actions.charge(creep, creep.room.terminal)
+                    const result = actions.charge(creep, creep.room.terminal)
                     if (result == 1){
                         creep.say('getJob');
                         break;
                     }
                     break;
                 }
-                let lab = Game.getObjectById(creep.memory.lab)
+                const lab = Game.getObjectById(creep.memory.lab)
                 if(actions.withdraw(creep, lab, lab.mineralType) == 1){
                     Game.spawns[creep.memory.city].memory.ferryInfo.labInfo[creep.memory.labNum][1] = 0
                 }
@@ -124,8 +124,8 @@ var rF = {
             case 8:
                 //load up the nuker
                 if (_.sum(creep.carry) > 0){
-                    let nuker = Game.getObjectById(creep.memory.nuker);
-                    let result = actions.charge(creep, nuker)
+                    const nuker = Game.getObjectById(creep.memory.nuker);
+                    const result = actions.charge(creep, nuker)
                     if(result == 1){
                         creep.say('getJob')
                     }
@@ -140,8 +140,8 @@ var rF = {
             case 9:
                 //move mineral from terminal to booster
                 if (_.sum(creep.carry) > 0){
-                    let lab = Game.getObjectById(creep.memory.lab);
-                    let result = actions.charge(creep, lab)
+                    const lab = Game.getObjectById(creep.memory.lab);
+                    const result = actions.charge(creep, lab)
                     if(result == 1){
                         Game.spawns[creep.memory.city].memory.ferryInfo.boosterInfo[creep.memory.labNum][1] = 0
                         creep.say('getJob')
@@ -157,14 +157,14 @@ var rF = {
             case 10: {
                 //move mineral from booster to terminal
                 if (_.sum(creep.carry) > 0){
-                    let result = actions.charge(creep, creep.room.terminal)
+                    const result = actions.charge(creep, creep.room.terminal)
                     if (result == 1){
                         creep.say('getJob')
                         break;
                     }
                     break;
                 }
-                let booster = Game.getObjectById(creep.memory.lab)
+                const booster = Game.getObjectById(creep.memory.lab)
                 if(actions.withdraw(creep, booster, booster.mineralType) == 1 && booster.mineralAmount <= 1000){
                     Game.spawns[creep.memory.city].memory.ferryInfo.boosterInfo[creep.memory.labNum][1] = 0
                 }
@@ -173,14 +173,14 @@ var rF = {
             case 11: {
                  //move produce from factory to terminal
                 if (_.sum(creep.store) > 0){
-                    let result = actions.charge(creep, creep.room.terminal)
+                    const result = actions.charge(creep, creep.room.terminal)
                     if(result == 1){//successful deposit, remove element from task list
                         _.pullAt(Game.spawns[creep.memory.city].memory.ferryInfo.factoryInfo.transfer, creep.memory.labNum) //remove element
                         creep.say('getJob')
                     }
                     break;
                 }
-                let factory = Game.getObjectById(creep.memory.lab)
+                const factory = Game.getObjectById(creep.memory.lab)
                 actions.withdraw(creep, factory, creep.memory.mineral, Math.min(creep.memory.quantity, creep.store.getCapacity())); 
 
                 break;
@@ -188,8 +188,8 @@ var rF = {
             case 12:
                 //move component from terminal to factory
                 if (_.sum(creep.store) > 0){
-                    let factory = Game.getObjectById(creep.memory.lab)
-                    let result = creep.transfer(factory, creep.memory.mineral, creep.memory.quantity);
+                    const factory = Game.getObjectById(creep.memory.lab)
+                    const result = creep.transfer(factory, creep.memory.mineral, creep.memory.quantity);
                     if (result == 0){
                         _.pullAt(Game.spawns[creep.memory.city].memory.ferryInfo.factoryInfo.transfer, creep.memory.labNum) //remove element
                         creep.say('getJob')
@@ -257,7 +257,7 @@ var rF = {
             }
         }
         if(Game.spawns[creep.memory.city].memory.ferryInfo.factoryInfo){
-            let transfer = Game.spawns[creep.memory.city].memory.ferryInfo.factoryInfo.transfer
+            const transfer = Game.spawns[creep.memory.city].memory.ferryInfo.factoryInfo.transfer
             if(transfer.length){
                 for(let i = 0; i < transfer.length; i++){
                     if(transfer[i][1] === 0){//move produce from factory to terminal
@@ -286,7 +286,7 @@ var rF = {
                 }
             }
         }
-        let nuker = _.find(creep.room.find(FIND_MY_STRUCTURES), structure => structure.structureType == STRUCTURE_NUKER)
+        const nuker = _.find(creep.room.find(FIND_MY_STRUCTURES), structure => structure.structureType == STRUCTURE_NUKER)
         if (nuker && nuker.ghodium < nuker.ghodiumCapacity && creep.room.terminal.store['G'] >= 4000){
             creep.memory.nuker = nuker.id
             return 8;

@@ -30,7 +30,7 @@ var rM = {
                         //find link
                         var source = Game.getObjectById(creep.memory.source);
                         var structures = creep.room.find(FIND_MY_STRUCTURES)
-                        let links = _.filter(structures, structure => structure.structureType === STRUCTURE_LINK && structure.pos.inRangeTo(source.pos, 3))
+                        const links = _.filter(structures, structure => structure.structureType === STRUCTURE_LINK && structure.pos.inRangeTo(source.pos, 3))
                         //console.log(link)
                         if (links.length > 1){
                             creep.memory.link = source.pos.findClosestByRange(links).id;
@@ -42,7 +42,7 @@ var rM = {
             }
             if (creep.memory.link){
                 if (creep.carry.energy == creep.carryCapacity){
-                    let link = Game.getObjectById(creep.memory.link);
+                    const link = Game.getObjectById(creep.memory.link);
                     a.charge(creep, link);
                     if (link && link.energy >= link.energyCapacity * .5){
                         creep.say('*', true);

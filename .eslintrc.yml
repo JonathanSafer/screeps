@@ -9,7 +9,8 @@ globals:
   SharedArrayBuffer: readonly
 parserOptions:
   ecmaVersion: 2018
-rules: {}
+rules:
+  prefer-const: error
 plugins:
   - 'screeps'
 

@@ -29,7 +29,7 @@ var statsLib = {
         }
         if (Game.time % 19 == 1){
             RawMemory.setActiveSegments([])
-            let stats = {}
+            const stats = {}
             stats['cpu.bucket'] = Game.cpu.bucket
             stats['gcl.progress'] = Game.gcl.progress
             stats['gcl.progressTotal'] = Game.gcl.progressTotal
@@ -40,8 +40,8 @@ var statsLib = {
             stats['energy'] = u.getDropTotals()
             var cities = [];
             _.forEach(Object.keys(Game.rooms), function(roomName){
-              let room = Game.rooms[roomName]
-              let city = Game.rooms[roomName].memory.city;
+              const room = Game.rooms[roomName]
+              const city = Game.rooms[roomName].memory.city;
               cities.push(city);
         
               if(room.controller && room.controller.my){
@@ -83,17 +83,17 @@ var statsLib = {
                 stats['cities.' + city + '.minerals'] = 0
                 
                 // Record the weakest wall in each city
-                let spawn = Game.spawns[city]
+                const spawn = Game.spawns[city]
                 if(spawn){
-                    let buildings = spawn.room.find(FIND_STRUCTURES)
-                    let walls = _.filter(buildings, building => building.structureType == STRUCTURE_WALL)
-                    let minWall = _.min(_.toArray(_.map(walls, wall => wall.hits)))
+                    const buildings = spawn.room.find(FIND_STRUCTURES)
+                    const walls = _.filter(buildings, building => building.structureType == STRUCTURE_WALL)
+                    const minWall = _.min(_.toArray(_.map(walls, wall => wall.hits)))
                     stats['cities.' + city + '.wall'] = walls.length  > 0 ? minWall : 0
                 }
             });
             // Mining stats
             _.forEach(Game.creeps, creep => {
-                let city = creep.memory.city
+                const city = creep.memory.city
                 if (creep.memory.role == rDM.name) {
                     stats['cities.' + city + '.deposits'] += creep.memory.mined
                     creep.memory.mined = 0
@@ -107,10 +107,10 @@ var statsLib = {
             stats['cpu.getUsed'] = Game.cpu.getUsed()
 
             if (profiler.results && profiler.results.stats) {
-                let stats = profiler.results.stats
-                let profileSize = Math.min(settings.profileResultsLength, stats.length)
+                const pstats = profiler.results.stats
+                const profileSize = Math.min(settings.profileResultsLength, pstats.length)
                 for (var i = 0; i < profileSize; i++) {
-                    let result = stats[i]
+                    const result = pstats[i]
                     stats[`profiler.${result.name}.calls`] = result.calls
                     stats[`profiler.${result.name}.time`] = result.totalTime.toFixed(1)
                 }

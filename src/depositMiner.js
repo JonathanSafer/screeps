@@ -22,7 +22,7 @@ var rDM = {
         switch(creep.memory.target){
             case 0: {
                 //newly spawned or empty store
-                let flagName = creep.memory.city + 'deposit';
+                const flagName = creep.memory.city + 'deposit';
                 if(!Game.flags[flagName]){//if there is no flag, change city.memory.depositMiner to 0, and suicide
                     Game.spawns[creep.memory.city].memory.depositMiner = 0;
                     creep.suicide();
@@ -35,7 +35,7 @@ var rDM = {
                     creep.moveTo(Game.flags[flagName], {reusePath: 50}, {range: 1, maxOps: 5000, swampCost: 8})
                     return;
                 }
-                let deposit = Game.flags[flagName].room.lookForAt(LOOK_DEPOSITS, Game.flags[flagName].pos);//if flag is visible, check for deposit, if no deposit, remove flag
+                const deposit = Game.flags[flagName].room.lookForAt(LOOK_DEPOSITS, Game.flags[flagName].pos);//if flag is visible, check for deposit, if no deposit, remove flag
                 if(!deposit.length){
                     Game.flags[flagName].remove();
                     return;
@@ -51,7 +51,7 @@ var rDM = {
                 //move towards and mine deposit (actions.harvest)
                 if(actions.harvest(creep, deposit[0]) === 1){
                     //record amount harvested
-                    let works = _.filter(creep.body, part => part.type == WORK).length
+                    const works = _.filter(creep.body, part => part.type == WORK).length
                     // record personal work for stats
                     if (!creep.memory.mined) {
                         creep.memory.mined = 0
@@ -84,14 +84,14 @@ var rDM = {
             
             //check for tampering with deposit
             const cooldown = deposit.lastCooldown
-            let expected = Math.ceil(0.001*Math.pow(Game.spawns[creep.memory.city].memory.deposit,1.2))
+            const expected = Math.ceil(0.001*Math.pow(Game.spawns[creep.memory.city].memory.deposit,1.2))
 
             if(cooldown > expected){
                 Game.spawns[creep.memory.city].memory.deposit = Math.floor(Math.pow((deposit.lastCooldown / 0.001), 1/1.2))
             }
             if(cooldown > expected || dangerous){
                 //call in harasser
-                let flagName = creep.memory.city + 'harass'
+                const flagName = creep.memory.city + 'harass'
                 if(!Game.flags[flagName]){
                     creep.room.createFlag(25, 25, flagName)
                 }

@@ -68,7 +68,7 @@ var rU = {
           return;
       }
       if(Game.spawns[city].room.controller.level < 8){
-        let lab = _.find(Game.spawns[city].room.find(FIND_STRUCTURES), structure => structure.structureType === STRUCTURE_LAB)
+        const lab = _.find(Game.spawns[city].room.find(FIND_STRUCTURES), structure => structure.structureType === STRUCTURE_LAB)
         rU.updateStateFromLab(lab, creep, boost)
         return;
       }
@@ -76,7 +76,7 @@ var rU = {
           creep.memory.state = CS.UPGRADE
           return;
       }
-      let lab = Game.getObjectById(Game.spawns[city].memory.ferryInfo.boosterInfo[0][0])
+      const lab = Game.getObjectById(Game.spawns[city].memory.ferryInfo.boosterInfo[0][0])
       rU.updateStateFromLab(lab, creep, boost)
     },
 
@@ -91,8 +91,8 @@ var rU = {
 
     checkMaterials: function(lab, creep, boost){
       if (!lab || !lab.room.terminal) return false
-      let terminal = lab.room.terminal
-      let work = creep.getActiveBodyparts(WORK)
+      const terminal = lab.room.terminal
+      const work = creep.getActiveBodyparts(WORK)
       return (terminal.store[boost] > (LAB_BOOST_MINERAL * work) && lab.mineralAmount == 0)
     },
 
@@ -101,13 +101,13 @@ var rU = {
       if(creep.memory.state != 1){
         return;
       }
-      let lab = Game.getObjectById(creep.memory.lab)
+      const lab = Game.getObjectById(creep.memory.lab)
       if(_.sum(creep.carry) == 0 && !creep.pos.isNearTo(lab.pos)){
         if(Game.time % 50 == 0){
           creep.memory.state = CS.START
           return;
         }
-        let work = creep.getActiveBodyparts(WORK)
+        const work = creep.getActiveBodyparts(WORK)
         actions.withdraw(creep, creep.room.terminal, boost, LAB_BOOST_MINERAL * work)
         return;
       }

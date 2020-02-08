@@ -105,7 +105,7 @@ var actions = {
         if(creep.memory.targetId) {
             var target = Game.getObjectById(creep.memory.targetId);
             if(_.contains(goodLoads, target)) {
-                let result = actions.interact(creep, target, () => creep.pickup(target));
+                const result = actions.interact(creep, target, () => creep.pickup(target));
                 switch (result) {
                   case OK:
                       break;
@@ -135,9 +135,9 @@ var actions = {
     },
     
     charge: function(creep, location) {
-        let carry = creep.carry;
+        const carry = creep.carry;
         if (Object.keys(carry).length > 1){
-            let mineral = _.keys(carry)[1];
+            const mineral = _.keys(carry)[1];
             return actions.interact(creep, location, () => creep.transfer(location, mineral));
         } else{
             return actions.interact(creep, location, () => creep.transfer(location, Object.keys(carry)[0]));
@@ -159,11 +159,11 @@ var actions = {
                 }
 			}
 		}
-        let city = creep.memory.city;
-        let myRooms = u.splitRoomsByCity();
-        let buildings = _.flatten(_.map(myRooms[city], room => room.find(FIND_STRUCTURES)));
-        let needRepair = _.filter(buildings, structure => (structure.hits < (0.2*structure.hitsMax)) && (structure.structureType != STRUCTURE_WALL) && (structure.structureType != STRUCTURE_RAMPART));
-        let walls = _.filter(buildings, structure => (structure.hits < 1000000) && (structure.hits < structure.hitsMax) && (structure.structureType != STRUCTURE_ROAD));
+        const city = creep.memory.city;
+        const myRooms = u.splitRoomsByCity();
+        const buildings = _.flatten(_.map(myRooms[city], room => room.find(FIND_STRUCTURES)));
+        const needRepair = _.filter(buildings, structure => (structure.hits < (0.2*structure.hitsMax)) && (structure.structureType != STRUCTURE_WALL) && (structure.structureType != STRUCTURE_RAMPART));
+        const walls = _.filter(buildings, structure => (structure.hits < 1000000) && (structure.hits < structure.hitsMax) && (structure.structureType != STRUCTURE_ROAD));
         //console.log(buildings);
         if(needRepair.length){
             creep.memory.repair = needRepair[0].id;
@@ -181,7 +181,7 @@ var actions = {
                     return actions.repair(creep, damagedStructures[0]);
                 }
                 if (walls.length) {
-                    let sortedWalls = _.sortBy(walls, structure => structure.hits)
+                    const sortedWalls = _.sortBy(walls, structure => structure.hits)
                     creep.memory.repair = sortedWalls[0].id;
                     return actions.repair(creep, sortedWalls[0]);
                 }
@@ -200,7 +200,7 @@ var actions = {
         if (closeStones.length) {
             //console.log(closeStones);
             // we can only get one thing per turn, success is assumed since we're close
-            let result = creep.withdraw(closeStones[0], _.keys(closeStones[0])[0]);
+            const result = creep.withdraw(closeStones[0], _.keys(closeStones[0])[0]);
             switch (result) {
                 case ERR_FULL:
                     return;
@@ -220,14 +220,14 @@ var actions = {
     },
     
     getBoosted: function(creep){
-        let boosts = {'move': 'XZHO2', 'tough': 'XGHO2', 'work': 'XZH2O', 'heal': 'XLHO2', 'ranged_attack': 'XKHO2'}
+        const boosts = {'move': 'XZHO2', 'tough': 'XGHO2', 'work': 'XZH2O', 'heal': 'XLHO2', 'ranged_attack': 'XKHO2'}
         for(let i = creep.body.length - 1; i >= 0; i--){
             if(!creep.body[i].boost){
-                let type = creep.body[i].type;
-                let boost = boosts[type];
+                const type = creep.body[i].type;
+                const boost = boosts[type];
                 for(let j = 0; j < 4; j++){
                     if(Game.spawns[creep.memory.city].memory.ferryInfo.boosterInfo[j][2] == boost){
-                        let lab = Game.getObjectById(Game.spawns[creep.memory.city].memory.ferryInfo.boosterInfo[j][0]);
+                        const lab = Game.getObjectById(Game.spawns[creep.memory.city].memory.ferryInfo.boosterInfo[j][0]);
                         //boost self
                         if (lab.boostCreep(creep) === ERR_NOT_IN_RANGE) {
                             creep.moveTo(lab);
@@ -262,10 +262,10 @@ var actions = {
         if(Game.time % 20 === 0){
             creep.memory.retreat = false;
         }
-        let checkpoints = creep.memory.checkpoints;
+        const checkpoints = creep.memory.checkpoints;
         if (checkpoints) {
-            let oldCheckpoint = checkpoints[0];
-            let o = oldCheckpoint;
+            const oldCheckpoint = checkpoints[0];
+            const o = oldCheckpoint;
             return creep.moveTo(new RoomPosition(o.x, o.y, o.roomName), {reusePath: 0});
         }
     }

@@ -61,14 +61,14 @@ var rSB = {
                 rSB.harvest(creep)
             }
         } else {
-            let pos = Game.flags.claim.pos
+            const pos = Game.flags.claim.pos
             creep.moveTo(new RoomPosition(pos.x, pos.y, pos.roomName), {reusePath: 50});
         }
     },
 
     jobDone: function(creep) {
-        let extensions = _.filter(creep.room.find(FIND_MY_STRUCTURES), structure => structure.structureType == STRUCTURE_EXTENSION)
-        let cSites = creep.room.find(FIND_MY_CONSTRUCTION_SITES)
+        const extensions = _.filter(creep.room.find(FIND_MY_STRUCTURES), structure => structure.structureType == STRUCTURE_EXTENSION)
+        const cSites = creep.room.find(FIND_MY_CONSTRUCTION_SITES)
         return (extensions.length > 4 && !cSites.length)
     },
     
@@ -100,20 +100,20 @@ var rSB = {
     },
     
     harvest: function(creep) {
-        let terminal = _.find(creep.room.find(FIND_MY_STRUCTURES), s => s.structureType == STRUCTURE_TERMINAL)
+        const terminal = _.find(creep.room.find(FIND_MY_STRUCTURES), s => s.structureType == STRUCTURE_TERMINAL)
         if(terminal && terminal.store[RESOURCE_ENERGY] >= creep.store.getCapacity()){
             a.withdraw(creep, terminal, RESOURCE_ENERGY)
             return
         }
         var sources =  creep.room.find(FIND_SOURCES);
         if (sources.length == 1){
-            let result = creep.harvest(sources[0]);
+            const result = creep.harvest(sources[0]);
             if(result == ERR_NOT_IN_RANGE) {
                 creep.moveTo(sources[0], {reusePath: 15});
             }
             return;
         }
-        let result = creep.harvest(sources[creep.memory.target]);
+        const result = creep.harvest(sources[creep.memory.target]);
         if(result == ERR_NOT_IN_RANGE) {
             if(creep.moveTo(sources[creep.memory.target], {reusePath: 15}) == ERR_NO_PATH){
                 creep.memory.target = (creep.memory.target + 1) % 2;

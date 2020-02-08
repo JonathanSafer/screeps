@@ -3,7 +3,7 @@ var settings = require('./settings')
 
 var markets = {
     sortOrder: function(orders) {
-        let sortedOrders = _.sortBy(orders, order => order.price); 
+        const sortedOrders = _.sortBy(orders, order => order.price); 
         return sortedOrders;
     },
     
@@ -25,9 +25,9 @@ var markets = {
 
     relocateBaseMins: function(myCities){
         //receivers are rooms with a lvl 0 factory
-        let receivers = _.filter(myCities, city => city.terminal && !Game.spawns[city.memory.city].memory.ferryInfo.factoryInfo.factoryLevel && city.controller.level >= 7)
+        const receivers = _.filter(myCities, city => city.terminal && !Game.spawns[city.memory.city].memory.ferryInfo.factoryInfo.factoryLevel && city.controller.level >= 7)
         //senders are rooms with a levelled factory, or no factory at all
-        let senders = _.filter(myCities, city => city.terminal && (Game.spawns[city.memory.city].memory.ferryInfo.factoryInfo.factoryLevel > 0 || city.controller.level == 6))
+        const senders = _.filter(myCities, city => city.terminal && (Game.spawns[city.memory.city].memory.ferryInfo.factoryInfo.factoryLevel > 0 || city.controller.level == 6))
         const baseMins = [RESOURCE_HYDROGEN, RESOURCE_OXYGEN, RESOURCE_UTRIUM, RESOURCE_LEMERGIUM, RESOURCE_KEANIUM, RESOURCE_ZYNTHIUM, RESOURCE_CATALYST];
         const baseComs = [RESOURCE_SILICON, RESOURCE_METAL, RESOURCE_BIOMASS, RESOURCE_MIST]
         for(var i = 0; i < senders.length; i++){
@@ -38,8 +38,8 @@ var markets = {
                     continue;
                 }
                 if(senders[i].terminal.store[baseMins[j]] > 8000 && !senders[i].terminal.termUsed){
-                    let amount = senders[i].terminal.store[baseMins[j]] - 8000;
-                    let receiver = receivers[Math.floor(Math.random() * Math.floor(receivers.length))].name
+                    const amount = senders[i].terminal.store[baseMins[j]] - 8000;
+                    const receiver = receivers[Math.floor(Math.random() * Math.floor(receivers.length))].name
                     senders[i].terminal.send(baseMins[j], amount, receiver)
                     senders[i].terminal.termUsed = true;
                     go = false;
@@ -50,8 +50,8 @@ var markets = {
                     continue;
                 }
                 if(senders[i].terminal.store[baseComs[j]] > 0 && !senders[i].terminal.termUsed){
-                    let amount = senders[i].terminal.store[baseComs[j]];
-                    let receiver = receivers[Math.floor(Math.random() * Math.floor(receivers.length))].name
+                    const amount = senders[i].terminal.store[baseComs[j]];
+                    const receiver = receivers[Math.floor(Math.random() * Math.floor(receivers.length))].name
                     senders[i].terminal.send(baseComs[j], amount, receiver)
                     senders[i].terminal.termUsed = true;
                     go = false;
@@ -63,13 +63,13 @@ var markets = {
     distributeMinerals: function(myCities){
         let senders = myCities
         for (var i = 0; i < myCities.length; i++){
-            let city = myCities[i].memory.city
+            const city = myCities[i].memory.city
             if(!Game.spawns[city]){
                 continue;
             }
-            let mineral = Game.spawns[city].memory.ferryInfo.mineralRequest;
+            const mineral = Game.spawns[city].memory.ferryInfo.mineralRequest;
             if(mineral){
-                let x = senders.length
+                const x = senders.length
                 for (var j = 0; j < senders.length; j++){
                     if(!senders[j].terminal){
                         continue;
@@ -85,7 +85,7 @@ var markets = {
                 }
                 if(x === senders.length && !myCities[i].terminal.termUsed){
                     //buy mineral
-                    let sellOrders = markets.sortOrder(Game.market.getAllOrders(order => order.type == ORDER_SELL && order.resourceType == mineral && order.amount >= 3000 && order.price < 0.5))
+                    const sellOrders = markets.sortOrder(Game.market.getAllOrders(order => order.type == ORDER_SELL && order.resourceType == mineral && order.amount >= 3000 && order.price < 0.5))
                     if (sellOrders.length){
                         Game.market.deal(sellOrders[0].id, 3000, myCities[i].name)
                         Game.spawns[city].memory.ferryInfo.mineralRequest = null;
@@ -162,7 +162,7 @@ var markets = {
     },
     
     sellPower: function(city, buyOrders){
-        let terminal = city.terminal
+        const terminal = city.terminal
         if ('power' in terminal.store && terminal.store['power'] > 10000){
             var goodOrders = markets.sortOrder(buyOrders['power']);
             if (goodOrders.length && goodOrders[goodOrders.length - 1].price > .20){
@@ -171,11 +171,11 @@ var markets = {
                 return true;
             } else {
                 //make a sell order
-                let orderId = _.find(Object.keys(Game.market.orders),
+                const orderId = _.find(Object.keys(Game.market.orders),
                         order => Game.market.orders[order].roomName === city.name && Game.market.orders[order].resourceType === 'power');
-                let order = Game.market.orders[orderId];
+                const order = Game.market.orders[orderId];
                 if(!order){
-                    let sellPrice = markets.getPrice('power') * .90
+                    const sellPrice = markets.getPrice('power') * .90
                     Game.market.createOrder({
                         type: ORDER_SELL,
                         resourceType: 'power',
@@ -190,7 +190,7 @@ var markets = {
     },
 
     sellOps: function(city, buyOrders){
-        let terminal = city.terminal
+        const terminal = city.terminal
         if (terminal.store[RESOURCE_OPS] > 20000){
             var goodOrders = markets.sortOrder(buyOrders[RESOURCE_OPS]);
             if (goodOrders.length){
@@ -199,11 +199,11 @@ var markets = {
                 return true;
             } else {
                 //make a sell order
-                let orderId = _.find(Object.keys(Game.market.orders),
+                const orderId = _.find(Object.keys(Game.market.orders),
                         order => Game.market.orders[order].roomName === city.name && Game.market.orders[order].resourceType === RESOURCE_OPS);
-                let order = Game.market.orders[orderId];
+                const order = Game.market.orders[orderId];
                 if(!order){
-                    let sellPrice = markets.getPrice(RESOURCE_OPS) * .90
+                    const sellPrice = markets.getPrice(RESOURCE_OPS) * .90
                     Game.market.createOrder({
                         type: ORDER_SELL,
                         resourceType: RESOURCE_OPS,
@@ -218,14 +218,14 @@ var markets = {
     },
 
     buyMins: function(city, minerals){
-        let terminal = city.terminal
+        const terminal = city.terminal
         for(var i = 0; i < minerals.length; i++){
-            let mineralAmount = terminal.store[minerals[i]];
+            const mineralAmount = terminal.store[minerals[i]];
             if(mineralAmount < 8000){
-                let amountNeeded = 8000 - mineralAmount;
-                let orderId = _.find(Object.keys(Game.market.orders),
+                const amountNeeded = 8000 - mineralAmount;
+                const orderId = _.find(Object.keys(Game.market.orders),
                         order => Game.market.orders[order].roomName === city.name && Game.market.orders[order].resourceType === minerals[i]);
-                let order = Game.market.orders[orderId];
+                const order = Game.market.orders[orderId];
                 if(order && order.remainingAmount < amountNeeded){
                     //update order quantity
                     Game.market.extendOrder(orderId, (amountNeeded - order.remainingAmount))
@@ -241,7 +241,7 @@ var markets = {
                     });
                 } else if(amountNeeded === 8000 || Game.time % 400 === 30){//order already exists for max amount and has not been satisfied
                     //increment price if price is not above market value 
-                    let buyPrice = markets.getPrice(minerals[i]);
+                    const buyPrice = markets.getPrice(minerals[i]);
                     if(order.price < buyPrice){
                         Game.market.changeOrderPrice(orderId, (order.price + 0.001))
                     }
@@ -251,11 +251,11 @@ var markets = {
     },
 
     sellBars: function(city, bars, buyOrders){//if # of bars is above threshold, sell extras
-        let terminal = city.terminal;
+        const terminal = city.terminal;
         for(var i = 0; i < bars.length; i++){
             if(terminal.store[bars[i]] > 3000){
-                let sellAmount = terminal.store[bars[i]] - 3000;
-                let goodOrders = markets.sortOrder(buyOrders[bars[i]]).reverse();
+                const sellAmount = terminal.store[bars[i]] - 3000;
+                const goodOrders = markets.sortOrder(buyOrders[bars[i]]).reverse();
                 if(goodOrders.length && goodOrders[0].price > (0.7 * markets.getPrice(bars[i]))){
                     Game.market.deal(goodOrders[0].id, Math.min(goodOrders[0].remainingAmount,  sellAmount), city.name);
                     return true;
@@ -263,10 +263,10 @@ var markets = {
             }
             //alternatively, sell if price is right
             if(terminal.store[bars[i]] === 3000 && Object.keys(COMMODITIES[bars[i]].components).length === 2){//excludes commodities
-                let sellAmount = 1000;
-                let goodOrders = markets.sortOrder(buyOrders[bars[i]]).reverse();
+                const sellAmount = 1000;
+                const goodOrders = markets.sortOrder(buyOrders[bars[i]]).reverse();
                 //determine price of associated resource
-                let base = _.without(Object.keys(COMMODITIES[bars[i]].components), RESOURCE_ENERGY)[0]
+                const base = _.without(Object.keys(COMMODITIES[bars[i]].components), RESOURCE_ENERGY)[0]
                 if(goodOrders.length && terminal.store[base] >= 5000 && (markets.getPrice(base) * 7) < goodOrders[0].price){//check base quantity to prevent buying from other ppls orders
                     Game.market.deal(goodOrders[0].id, Math.min(goodOrders[0].remainingAmount,  sellAmount), city.name);
                     return true;
@@ -278,21 +278,21 @@ var markets = {
 
     getPrice: function(resource){
         //determine price using history
-        let history = MarketHistory[resource]; // TODO this may not be declared yet
+        const history = MarketHistory[resource]; // TODO this may not be declared yet
         let totalVol = 0;
         let totalPrice = 0;
         for(var i = 0; i < history.length; i++){
             totalVol = totalVol + history[i].volume
             totalPrice = totalPrice + (history[i].volume * history[i].avgPrice)
         }
-        let price = totalPrice/totalVol;
+        const price = totalPrice/totalVol;
         return price;
     },
 
     processEnergy: function(city, termUsed, highEnergyOrder, energyOrders){
         //can't sell if terminal has been used
-        let terminal = city.terminal;
-        let storage = city.storage;
+        const terminal = city.terminal;
+        const storage = city.storage;
         let buyThreshold = 600000;
         if(terminal.store[RESOURCE_POWER] > 2000){
             buyThreshold = 650000;//if excess power, buy energy
@@ -302,14 +302,14 @@ var markets = {
         }
         if(storage.store[RESOURCE_ENERGY] < 400000 && (!highEnergyOrder || highEnergyOrder.price <= 0.002)){//buy energy if it's cheap
             //buy energy
-            let orderId = _.find(Object.keys(Game.market.orders),
+            const orderId = _.find(Object.keys(Game.market.orders),
                     order => Game.market.orders[order].roomName === city.name && Game.market.orders[order].resourceType === RESOURCE_ENERGY);
-            let order = Game.market.orders[orderId];
+            const order = Game.market.orders[orderId];
             if(order && order.remainingAmount === 0){
                 //update order quantity
                 Game.market.extendOrder(orderId, 50000)
             } else if(!order){
-                let buyPrice = 0.002
+                const buyPrice = 0.002
                 Game.market.createOrder({
                     type: ORDER_BUY,
                     resourceType: RESOURCE_ENERGY,
@@ -320,15 +320,15 @@ var markets = {
             }
         } else if(storage.store[RESOURCE_ENERGY] < buyThreshold){//buy energy with excess credits
             if(Game.market.credits > settings.creditMin){//arbitrary
-                let orderId = _.find(Object.keys(Game.market.orders),
+                const orderId = _.find(Object.keys(Game.market.orders),
                         order => Game.market.orders[order].roomName === city.name && Game.market.orders[order].resourceType === RESOURCE_ENERGY);
-                let order = Game.market.orders[orderId];
+                const order = Game.market.orders[orderId];
                 let highPrice = 0
                 if(highEnergyOrder){
                     highPrice = highEnergyOrder.price
                 }
                 if(!order){
-                    let buyPrice = Math.max(Math.min(markets.getPrice(RESOURCE_ENERGY), highPrice), 0.001)
+                    const buyPrice = Math.max(Math.min(markets.getPrice(RESOURCE_ENERGY), highPrice), 0.001)
                     Game.market.createOrder({
                         type: ORDER_BUY,
                         resourceType: RESOURCE_ENERGY,
@@ -383,7 +383,7 @@ var markets = {
             if(!Memory.sellPoint[resources[i]]){
                 Memory.sellPoint[resources[i]] === 0;
             }
-            let orders = markets.sortOrder(buyOrders[resources[i]]).reverse()
+            const orders = markets.sortOrder(buyOrders[resources[i]]).reverse()
             if(orders.length && orders[0].price > Memory.sellPoint[resources[i]]){
                 //if there is a higher order than what we are willing to sell for, get pickier
                 Memory.sellPoint[resources[i]] = orders[0].price
@@ -402,7 +402,7 @@ var markets = {
         const store = city.terminal.store;
         for(var i = 0; i < products.length; i++){
             if(store[products[i]]){
-                let orders = markets.sortOrder(buyOrders[products[i]]).reverse();
+                const orders = markets.sortOrder(buyOrders[products[i]]).reverse();
                 if(orders.length && orders[0].price > Memory.sellPoint[products[i]] * 0.9){
                     Game.market.deal(orders[0].id, Math.min(orders[0].remainingAmount, store[products[i]]), city.name)
                     console.log("Sold ", products[i], " for: ", orders[0].price)
@@ -477,8 +477,8 @@ var markets = {
                 if(!termUsed){
                     termUsed = markets.sellOps(termCities[i], buyOrders);
                 }
-                let memory = Game.spawns[termCities[i].memory.city].memory;
-                let level = memory.ferryInfo.factoryInfo.factoryLevel;
+                const memory = Game.spawns[termCities[i].memory.city].memory;
+                const level = memory.ferryInfo.factoryInfo.factoryLevel;
                 //cities w/o level send all base resources to non levelled cities
                 //base mins are NOT sold, they are made into bars instead.
                 //bars can be sold if in excess

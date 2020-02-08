@@ -45,13 +45,13 @@ var rH = {
         }
         //if target and in range, shoot target, otherwise shoot anybody in range
         if(creep.memory.target){
-            let target = Game.getObjectById(creep.memory.target)
+            const target = Game.getObjectById(creep.memory.target)
             if(target && target.pos.inRangeTo(creep.pos, 3)){
                 creep.rangedAttack(target)
                 return;
             }
         }
-        let newTarget = creep.pos.findClosestByRange(hostiles)
+        const newTarget = creep.pos.findClosestByRange(hostiles)
         if(newTarget && newTarget.pos.getRangeTo(creep) <= 3){
             creep.rangedAttack(newTarget)
         }
@@ -80,14 +80,14 @@ var rH = {
                 //get less angry
                 creep.memory.anger = creep.memory.anger/2
             }
-            let dangerous = _.filter(hostiles, h => h.getActiveBodyparts(ATTACK) > 0 || h.getActiveBodyparts(RANGED_ATTACK) > 0)
-            let goals = _.map(dangerous, function(d) {
+            const dangerous = _.filter(hostiles, h => h.getActiveBodyparts(ATTACK) > 0 || h.getActiveBodyparts(RANGED_ATTACK) > 0)
+            const goals = _.map(dangerous, function(d) {
             return { pos: d.pos, range: 8 };
             });
             const retreatPath = PathFinder.search(creep.pos, goals, {maxOps: 200, flee: true, maxRooms: 1,
                 roomCallBack: function(roomName){
-                    let room = Game.rooms[roomName]
-                    let costs = new PathFinder.CostMatrix
+                    const room = Game.rooms[roomName]
+                    const costs = new PathFinder.CostMatrix
                     room.find(FIND_CREEPS).forEach(function(creep) {
                       costs.set(creep.pos.x, creep.pos.y, 0xff);
                     });
@@ -110,7 +110,7 @@ var rH = {
                 //get more angry
                 creep.memory.anger++
             }
-            let rand = Math.floor(Math.random() * 101)
+            const rand = Math.floor(Math.random() * 101)
             if(creep.memory.anger > rand){
                 //give chase
                 creep.say('attack')
@@ -121,13 +121,13 @@ var rH = {
             }
         } else {
             if(creep.memory.target){
-                let target = Game.getObjectById(creep.memory.target)
+                const target = Game.getObjectById(creep.memory.target)
                 if(target){
                     creep.moveTo(target, { range: 2 })
                     return;
                 }
             }
-            let target = creep.pos.findClosestByRange(hostiles)
+            const target = creep.pos.findClosestByRange(hostiles)
             creep.moveTo(target, { range: 2 })
             creep.memory.target = target.id
         }
@@ -135,12 +135,12 @@ var rH = {
     },
 
     removeFlag: function(creep){
-        let flagName = creep.memory.city + 'harass'
+        const flagName = creep.memory.city + 'harass'
         if(!Game.flags[flagName]){
             return
         }
         if(creep.pos.roomName == Game.flags[flagName].pos.roomName){
-            let flags = creep.room.find(FIND_FLAGS)
+            const flags = creep.room.find(FIND_FLAGS)
             for(var i = 0; i < flags.length; i++){
                 if(flags[i].name.includes('deposit') || flags[i].name.includes('powerMine')){
                     return

@@ -1,6 +1,6 @@
 function getRecipe(type, energyAvailable, room){
-	let d = {};
-    let rcl = room.controller.level
+	const d = {};
+    const rcl = room.controller.level
 
     // used at all rcls
     d.runner = scalingBody([2, 1], [CARRY, MOVE], energyAvailable)
@@ -68,7 +68,7 @@ function getRecipe(type, energyAvailable, room){
     d.erunner = body([2, 1], [CARRY, MOVE]);
     d.claimer = body([5, 1], [MOVE, CLAIM]);
     if (type === 'depositMiner'){
-        let dMinerCounts = dMinerCalc(room);
+        const dMinerCounts = dMinerCalc(room);
         d['depositMiner'] = body(dMinerCounts, [WORK, CARRY, MOVE])
     }
     if (d[type] == null) {
@@ -78,7 +78,7 @@ function getRecipe(type, energyAvailable, room){
 }
 function body(counts, order) { // order is list of types from move, work, attack, carry, heal, ranged, tough, claim
     // assert counts.length == order.length
-    let nestedPartsLists = _.map(counts, (count, index) => Array(count).fill(order[index]));
+    const nestedPartsLists = _.map(counts, (count, index) => Array(count).fill(order[index]));
     return _.flatten(nestedPartsLists);
 }
 
@@ -91,10 +91,10 @@ function carry(recipe){
     return _.filter(recipe, part => part == CARRY).length * CARRY_CAPACITY;
 }
 function dMinerCalc(room){
-    let city = room.memory.city
-    let spawn = Game.spawns[city]
-    let flagName = city + "deposit"
-    let flag = Game.flags[flagName]
+    const city = room.memory.city
+    const spawn = Game.spawns[city]
+    const flagName = city + "deposit"
+    const flag = Game.flags[flagName]
     if(!flag){
         return [1, 1, 1];//return 1,1, 1
     }
@@ -102,8 +102,8 @@ function dMinerCalc(room){
     if(!harvested){
         harvested = 0
     }
-    let distance = PathFinder.search(spawn.pos, {pos: flag.pos, range: 1}, {maxOps: 10000}).path.length
-    let workTime = 1500 - (distance * 3);//distance x 3 since it'll take 2x as long on return
+    const distance = PathFinder.search(spawn.pos, {pos: flag.pos, range: 1}, {maxOps: 10000}).path.length
+    const workTime = 1500 - (distance * 3);//distance x 3 since it'll take 2x as long on return
     let work = 20
     let carryAmount = test(work, workTime, harvested)
     let carry = Math.floor(carryAmount/100)*2 //carry must be an even number for 20 works
@@ -154,16 +154,16 @@ function minerBody(energyAvailable, rcl) {
     else if (works >= 10) works = 10
     else if (works >= 5) works = 5
     else works = Math.max(1, works)
-    let energyAfterWorks = energyAvailable - works * BODYPART_COST[WORK]
-    let moves = Math.floor(Math.min(works / 2, Math.max(1, energyAfterWorks / BODYPART_COST[MOVE])))
-    let energyAfterMoves = energyAfterWorks - moves * BODYPART_COST[MOVE]
-    let carries = rcl >= 7 ? Math.floor(Math.min(works / 2.5, energyAfterMoves / BODYPART_COST[CARRY])) : 0
+    const energyAfterWorks = energyAvailable - works * BODYPART_COST[WORK]
+    const moves = Math.floor(Math.min(works / 2, Math.max(1, energyAfterWorks / BODYPART_COST[MOVE])))
+    const energyAfterMoves = energyAfterWorks - moves * BODYPART_COST[MOVE]
+    const carries = rcl >= 7 ? Math.floor(Math.min(works / 2.5, energyAfterMoves / BODYPART_COST[CARRY])) : 0
     return body([works, carries, moves], [WORK, CARRY, MOVE])
 }
 
 function upgraderBody(energyAvailable, rcl) {
     // upgraders. At least 2 work, at least work/2 carry. at least (w+c)/2 move
-    let types = [WORK, CARRY, MOVE]
+    const types = [WORK, CARRY, MOVE]
     if(rcl <= 2){
         return body([1, 1, 1], types)
     }
@@ -172,9 +172,9 @@ function upgraderBody(energyAvailable, rcl) {
 
 function builderBody(energyAvailable, rcl) {
     let ratio = [2,1,1] // ratio at rcl1
-    let ratio4 = [5,9,7]
-    let ratio7 = [15,18,17]
-    let types = [WORK, CARRY, MOVE]
+    const ratio4 = [5,9,7]
+    const ratio7 = [15,18,17]
+    const types = [WORK, CARRY, MOVE]
     if (rcl >= 2) return scalingBody([1, 1, 1], types, energyAvailable)
     if (rcl >= 4 && energyAvailable > cost(body(ratio4, types))) ratio = ratio4
     if (rcl >= 7 && energyAvailable > cost(body(ratio7, types))) ratio = ratio7
@@ -183,9 +183,9 @@ function builderBody(energyAvailable, rcl) {
 
 function defenderBody(energyAvailable, rcl) {
     let ratio = [1,1,1] // ratio at rcl1
-    let ratio4 = [2,4,6]
-    let ratio6 = [2,6,10]
-    let types = [TOUGH, MOVE, ATTACK]
+    const ratio4 = [2,4,6]
+    const ratio6 = [2,6,10]
+    const types = [TOUGH, MOVE, ATTACK]
     if (rcl == 2) ratio = [2,3,1]
     if (rcl == 3) ratio = [0,4,4]
     if (rcl >= 4 && energyAvailable > cost(body(ratio4, types))) ratio = ratio4
@@ -200,9 +200,9 @@ function defenderBody(energyAvailable, rcl) {
  * maxOverride: (optional) max number of body parts to use on this creep
  */
 function scalingBody(ratio, types, energyAvailable, maxOverride) {
-    let baseCost = cost(body(ratio, types))
-    let maxSize = maxOverride || MAX_CREEP_SIZE
-    let scale = Math.max(Math.floor(Math.min(energyAvailable / baseCost, maxSize / _.sum(ratio))), 1)
+    const baseCost = cost(body(ratio, types))
+    const maxSize = maxOverride || MAX_CREEP_SIZE
+    const scale = Math.max(Math.floor(Math.min(energyAvailable / baseCost, maxSize / _.sum(ratio))), 1)
     return body(ratio.map(x => x * scale), types)
 }
 

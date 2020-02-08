@@ -15,8 +15,8 @@ var rTr = {
         u.updateCheckpoints(creep);
         creep.notifyWhenAttacked(false)
         
-        let hostiles = _.filter(creep.room.find(FIND_HOSTILE_CREEPS), c => c.owner.username != 'Atanner')
-        let buildings = _.reject(creep.room.find(FIND_HOSTILE_STRUCTURES), structure => structure.structureType == STRUCTURE_CONTROLLER);
+        const hostiles = _.filter(creep.room.find(FIND_HOSTILE_CREEPS), c => c.owner.username != 'Atanner')
+        const buildings = _.reject(creep.room.find(FIND_HOSTILE_STRUCTURES), structure => structure.structureType == STRUCTURE_CONTROLLER);
         let target = Game.getObjectById(creep.memory.target);
 
         rTr.rangedAttack(creep, hostiles, buildings, target)
@@ -32,7 +32,7 @@ var rTr = {
     },
 
     rangedAttack: function(creep, hostiles, buildings, target) {
-        let combo = hostiles.concat(buildings);
+        const combo = hostiles.concat(buildings);
         let attack = 0
         for(let i = 0; i < combo.length; i++){
             if(combo[i].pos.isNearTo(creep.pos)){
@@ -47,7 +47,7 @@ var rTr = {
             attack = 1
         }
         if(!attack && hostiles.length){
-            let newTarget = creep.pos.findClosestByRange(hostiles)
+            const newTarget = creep.pos.findClosestByRange(hostiles)
             creep.memory.target = newTarget.id
             if(newTarget.pos.inRangeTo(creep.pos, 3)){
                 creep.rangedAttack(newTarget);
@@ -56,7 +56,7 @@ var rTr = {
     },
 
     meetMedic: function(creep) {
-        let allCreeps = u.splitCreepsByCity();
+        const allCreeps = u.splitCreepsByCity();
 
         if (!creep.memory.medic){
             // undefined causes error, so using null
@@ -85,7 +85,7 @@ var rTr = {
             }
         } else {
             //look for medics
-            let status = creep.memory.role.substring(0, 3);
+            const status = creep.memory.role.substring(0, 3);
             var medicSearch = 0
             if (status == 'big'){
                 medicSearch = _.find(allCreeps[creep.memory.city], localCreep => localCreep.memory.role === 'bigMedic' &&
@@ -106,15 +106,15 @@ var rTr = {
         if (creep.room.controller && !creep.room.controller.owner){
             return false
         }
-        let towers = _.filter(buildings, structure => structure.structureType === STRUCTURE_TOWER)
+        const towers = _.filter(buildings, structure => structure.structureType === STRUCTURE_TOWER)
         if(towers.length){
             let damage = 0
             for(let i = 0; i < towers.length; i++){
                 if(towers[i].energy >= TOWER_ENERGY_COST){
-                    let distance = towers[i].pos.getRangeTo(creep.pos)
-                    let damage_distance = Math.max(TOWER_OPTIMAL_RANGE, Math.min(distance, TOWER_FALLOFF_RANGE))
-                    let steps = TOWER_FALLOFF_RANGE - TOWER_OPTIMAL_RANGE
-                    let step_size = TOWER_FALLOFF * TOWER_POWER_ATTACK / steps
+                    const distance = towers[i].pos.getRangeTo(creep.pos)
+                    const damage_distance = Math.max(TOWER_OPTIMAL_RANGE, Math.min(distance, TOWER_FALLOFF_RANGE))
+                    const steps = TOWER_FALLOFF_RANGE - TOWER_OPTIMAL_RANGE
+                    const step_size = TOWER_FALLOFF * TOWER_POWER_ATTACK / steps
                     damage += TOWER_POWER_ATTACK - (damage_distance - TOWER_OPTIMAL_RANGE) * step_size
                 }
             }
@@ -135,7 +135,7 @@ var rTr = {
             creep.memory.retreat = true
         }
         if(creep.memory.retreat) {
-            let medic = Game.getObjectById(creep.memory.medic)
+            const medic = Game.getObjectById(creep.memory.medic)
             if(medic && creep.memory.tolerance){
                 if(creep.hits === creep.hitsMax && medic.hits === medic.hitsMax){
                     creep.memory.tolerance = creep.memory.tolerance + (creep.memory.tolerance * 0.001);
@@ -183,7 +183,7 @@ var rTr = {
 
     destroyBuildings: function(creep, buildings) {
         if (buildings.length){
-            let spawns = _.filter(buildings, structure => structure.structureType == STRUCTURE_SPAWN)
+            const spawns = _.filter(buildings, structure => structure.structureType == STRUCTURE_SPAWN)
             if(spawns.length){
                 creep.moveTo(spawns[0])
                 return;

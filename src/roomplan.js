@@ -1,18 +1,18 @@
-let u = require('./utils')
-let template = require('./template')
-let rM = require('./remoteMiner')
-let rU = require('./upgrader')
+const u = require('./utils')
+const template = require('./template')
+const rM = require('./remoteMiner')
+const rU = require('./upgrader')
 
-let p = {
+const p = {
     frequency: 2000,
 
     findRooms: function() {
         if (!p.newRoomNeeded()) {
             return
         }
-        let rooms = u.getAllRoomsInRange(10, p.roomsSelected())
-        let validRooms = p.getValidRooms(rooms)
-        let rankings = p.sortByScore(validRooms)
+        const rooms = u.getAllRoomsInRange(10, p.roomsSelected())
+        const validRooms = p.getValidRooms(rooms)
+        const rankings = p.sortByScore(validRooms)
         if (rankings.length) {
             p.addRoom(rankings[0])
         }
@@ -29,12 +29,12 @@ let p = {
     },
 
     buildConstructionSites: function() {
-        let firstRoom = Object.keys(Game.rooms).length == 1
+        const firstRoom = Object.keys(Game.rooms).length == 1
 
         Object.keys(Game.rooms).forEach((roomName) => {
             var room = Game.rooms[roomName]
             if (firstRoom && !room.memory.plan) {
-                let spawnPos = Game.spawns[roomName + "0"].pos
+                const spawnPos = Game.spawns[roomName + "0"].pos
                 room.memory.plan = {}
                 room.memory.plan.x = spawnPos.x - 5 // TODO get these values from the template
                 room.memory.plan.y = spawnPos.y - 3
@@ -77,11 +77,11 @@ let p = {
 
     buildConstructionSite: function(room, structureType, pos, name) {
         //console.log(room.lookAt(pos.x, pos.y)[0].type)
-        let look = room.lookAt(pos.x, pos.y)
+        const look = room.lookAt(pos.x, pos.y)
         if(room.controller.level < 5 && structureType == STRUCTURE_TERMINAL){
             structureType = STRUCTURE_CONTAINER
         } else if(structureType == STRUCTURE_TERMINAL){
-            let struct = _.find(look, object => object.type == 'structure')
+            const struct = _.find(look, object => object.type == 'structure')
             if(struct && struct.structure.structureType == STRUCTURE_CONTAINER){
                 struct.structure.destroy()
             }
@@ -93,12 +93,12 @@ let p = {
     },
 
     buildExtractor: function(room) {
-        let minerals = room.find(FIND_MINERALS)
+        const minerals = room.find(FIND_MINERALS)
         if (!minerals) {
             return
         }
 
-        let mineralPos = minerals[0].pos
+        const mineralPos = minerals[0].pos
         if (mineralPos.lookFor(LOOK_STRUCTURES).length > 0) {
             return
         }
@@ -112,7 +112,7 @@ let p = {
         //place a rampart instead. if there is a terrain wall don't make anything
         const startX = plan.x - 3
         const startY = plan.y - 3
-        let wallSpots = []
+        const wallSpots = []
         for(let i = startX; i < startX + 19; i++){//walls are 19 by 17
             if(i > 0 && i < 49){
                 if(startY > 0 && startY < 49){
@@ -135,15 +135,15 @@ let p = {
         }
         const terrain = new Room.Terrain(room.name);
 
-        let costs = new PathFinder.CostMatrix();
+        const costs = new PathFinder.CostMatrix();
         _.forEach(wallSpots, function(wallSpot) {//CM of just walls
             costs.set(wallSpot.x, wallSpot.y, 0xff)
         })
         room.wallCosts = costs;
 
-        let roomExits = p.getRoomExits(room.name);//list of list of room exits
+        const roomExits = p.getRoomExits(room.name);//list of list of room exits
         let counter = 0;
-        let csites = room.find(FIND_MY_CONSTRUCTION_SITES);
+        const csites = room.find(FIND_MY_CONSTRUCTION_SITES);
         if(csites.length){
             counter = csites.length;
         }
@@ -152,7 +152,7 @@ let p = {
             if(terrain.get(wallSpots[i].x, wallSpots[i].y) === TERRAIN_MASK_WALL){
                 continue;
             }
-            let structures = room.lookForAt(LOOK_STRUCTURES, wallSpots[i])
+            const structures = room.lookForAt(LOOK_STRUCTURES, wallSpots[i])
             let wall = false;
             for(let j = 0; j < structures.length; j++){
                 if(structures[j].structureType === STRUCTURE_WALL || structures[j].structureType === STRUCTURE_RAMPART){
@@ -172,8 +172,8 @@ let p = {
             for(let j = 0; j < roomExits.length; j++){
                 if(roomExits[j].length){
                     //we only need to path to one of the exit points (it does not matter which one)
-                    let origin = new RoomPosition(wallSpots[i].x, wallSpots[i].y, room.name)
-                    let path = PathFinder.search(origin, roomExits[j][0], {
+                    const origin = new RoomPosition(wallSpots[i].x, wallSpots[i].y, room.name)
+                    const path = PathFinder.search(origin, roomExits[j][0], {
                         plainCost: 1,
                         swampCost: 1,
                         maxOps: 1000,
@@ -213,8 +213,8 @@ let p = {
     },
 
     buildSourceLinks: function(room) {
-        let sources = room.find(FIND_SOURCES)
-        let neighbors = _.find(sources, p.tooCloseToSource)
+        const sources = room.find(FIND_SOURCES)
+        const neighbors = _.find(sources, p.tooCloseToSource)
         if (neighbors != undefined) {  // sources are next to eachother.
             console.log("Sources are next to each other in: " + room.name)
             return
@@ -228,24 +228,24 @@ let p = {
             return // We already have links
         }
 
-        let creeps = structPos.findInRange(FIND_MY_CREEPS, creepRange)
-        let workers = _.filter(creeps, creep => creep.memory.role == creepType)
+        const creeps = structPos.findInRange(FIND_MY_CREEPS, creepRange)
+        const workers = _.filter(creeps, creep => creep.memory.role == creepType)
         if (workers.length != 1) {
             console.log("Wrong number of " + creepType + " for link placement: " + room.name)
             return
         }
 
         console.log("Building link: " + room.name)
-        let workerPos = workers[0].pos
-        let x = workerPos.x
-        let y = workerPos.y
-        let area = room.lookAtArea(y - range, x - range, y + range, x + range)
-        for (let row of Object.entries(area)) {
-            let cols = row[1]
-            for (let col of Object.entries(cols)) {
-                let items = area[row[0]][col[0]]
-                let x = Number(col[0])
-                let y = Number(row[0])
+        const workerPos = workers[0].pos
+        const x = workerPos.x
+        const y = workerPos.y
+        const area = room.lookAtArea(y - range, x - range, y + range, x + range)
+        for (const row of Object.entries(area)) {
+            const cols = row[1]
+            for (const col of Object.entries(cols)) {
+                const items = area[row[0]][col[0]]
+                const x = Number(col[0])
+                const y = Number(row[0])
                 if (items.length == 1 &&
                     room.getTerrain().get(x, y) != TERRAIN_MASK_WALL)
                 {
@@ -261,17 +261,17 @@ let p = {
     },
 
     hasLink: function(pos, distance) {
-        let links = pos.findInRange(FIND_MY_STRUCTURES, distance, {
+        const links = pos.findInRange(FIND_MY_STRUCTURES, distance, {
                 filter: { structureType: STRUCTURE_LINK }
         })
-        let newLinks = pos.findInRange(FIND_MY_CONSTRUCTION_SITES, distance, {
+        const newLinks = pos.findInRange(FIND_MY_CONSTRUCTION_SITES, distance, {
             filter: { structureType: STRUCTURE_LINK }
         })
         return links.length > 0 || newLinks.length > 0
     },
 
     makeRoadMatrix: function(room, plan){
-        let costs = new PathFinder.CostMatrix();
+        const costs = new PathFinder.CostMatrix();
         _.forEach(template.buildings, function(locations, structureType) {//don't make roads anywhere that a structure needs to go
             locations.pos.forEach(location => {
                 var pos = {"x": plan.x + location.x - template.offset.x, 
@@ -305,10 +305,10 @@ let p = {
 
     getSourcePaths: function(room, exits, roadMatrix){
         const sources = Object.keys(Game.spawns[room.memory.city].memory.sources)
-        let sourcePaths = []
+        const sourcePaths = []
         for (var i = 0; i < sources.length; i++) {
-            let sourcePos = Game.getObjectById(sources[i]).pos;
-            let sourcePath = PathFinder.search(sourcePos, exits, {
+            const sourcePos = Game.getObjectById(sources[i]).pos;
+            const sourcePath = PathFinder.search(sourcePos, exits, {
                 plainCost: 4, swampCost: 4, maxRooms: 1, 
                 roomCallback: () => roadMatrix
             })
@@ -321,7 +321,7 @@ let p = {
 
     getMineralPath: function(room, exits, roadMatrix){
         const mineralPos = room.find(FIND_MINERALS)[0].pos;
-        let mineralPath = PathFinder.search(mineralPos, exits, {
+        const mineralPath = PathFinder.search(mineralPos, exits, {
             plainCost: 4, swampCost: 4, maxRooms: 1, 
             roomCallback: () => roadMatrix
         })
@@ -329,11 +329,11 @@ let p = {
     },
 
     getControllerPath: function(room, exits, roadMatrix){
-        let path = []
+        const path = []
         const structures = room.find(FIND_MY_STRUCTURES);
         const controller = _.find(structures, structure => structure.structureType === STRUCTURE_CONTROLLER);
         const controllerPos = controller.pos;
-        let controllerPath = PathFinder.search(controllerPos, exits, {
+        const controllerPath = PathFinder.search(controllerPos, exits, {
             plainCost: 4, swampCost: 4, maxRooms: 1, 
             roomCallback: () => roadMatrix
         })
@@ -344,24 +344,24 @@ let p = {
     },
 
     getExitPaths: function(room, exits, plan, roadMatrix){
-        let roomExits = p.getRoomExits(room.name);
-        let path = [];
+        const roomExits = p.getRoomExits(room.name);
+        const path = [];
 
-        let startPoint = template.buildings.storage.pos[0];
-        let startPos = new RoomPosition(plan.x + startPoint.x - template.offset.x, plan.y + startPoint.y - template.offset.y, room.name)
+        const startPoint = template.buildings.storage.pos[0];
+        const startPos = new RoomPosition(plan.x + startPoint.x - template.offset.x, plan.y + startPoint.y - template.offset.y, room.name)
         for(var i = 0; i < 4; i++){//find closest Exit point for each side and then path to it
             if(roomExits[i].length){
-                let exitPath0 = PathFinder.search(startPos, roomExits[i], {
+                const exitPath0 = PathFinder.search(startPos, roomExits[i], {
                     plainCost: 4, swampCost: 4, maxRooms: 1, 
                     roomCallback: () => roadMatrix
                 })
-                let exitPoint = exitPath0.path[exitPath0.path.length - 1];
+                const exitPoint = exitPath0.path[exitPath0.path.length - 1];
                 //now path from this point to template exits
-                let exitPath = PathFinder.search(exitPoint, exits, {
+                const exitPath = PathFinder.search(exitPoint, exits, {
                     plainCost: 4, swampCost: 4, maxRooms: 1, 
                     roomCallback: () => roadMatrix
                 })
-                let exitPathPath = exitPath.path
+                const exitPathPath = exitPath.path
                 exitPathPath.reverse()
                 for(var j = 0; j < Math.min(exitPath.path.length, 4); j++){
                     path.push(exitPath.path[j]);
@@ -380,11 +380,11 @@ let p = {
         if(!(room.memory.city && Game.spawns[room.memory.city] && Game.spawns[room.memory.city].memory.sources)){
             return;
         }
-        let exits = [];
+        const exits = [];
         for(let i = 0; i < template.exits.length; i++){
-            let posX = plan.x + template.exits[i].x - template.offset.x;
-            let posY = plan.y + template.exits[i].y - template.offset.y;
-            let roomPos = new RoomPosition(posX, posY, room.name)
+            const posX = plan.x + template.exits[i].x - template.offset.x;
+            const posY = plan.y + template.exits[i].y - template.offset.y;
+            const roomPos = new RoomPosition(posX, posY, room.name)
             exits.push(roomPos);
         }//exits now filled with roomPos of all exits from template
 
@@ -408,14 +408,14 @@ let p = {
         
         //place Csites
         let counter = 0;
-        let csites = room.find(FIND_MY_CONSTRUCTION_SITES);
+        const csites = room.find(FIND_MY_CONSTRUCTION_SITES);
         if(csites.length){
             counter = csites.length;
         }
         for(let i = 0; i < roads.length; i++){
             room.visual.circle(roads[i], {fill: '#ff1111', radius: 0.1, stroke: 'red'});
             if(counter < 20){//doesn't update during the tick
-                let look = room.lookForAt(LOOK_STRUCTURES, roads[i])
+                const look = room.lookForAt(LOOK_STRUCTURES, roads[i])
                 if(look.length){
                     continue
                 }
@@ -428,7 +428,7 @@ let p = {
     },
 
     clearAllStructures: function(room) {
-        let structures = room.find(FIND_STRUCTURES);
+        const structures = room.find(FIND_STRUCTURES);
         _.forEach(structures, structure => {
             if(!structure.my){
                 structure.destroy();
@@ -438,31 +438,31 @@ let p = {
 
     getRoomExits: function(roomName){
         const terrain = Game.map.getRoomTerrain(roomName)
-        let nExits = []
-        let sExits = []
-        let eExits = []
-        let wExits = []
+        const nExits = []
+        const sExits = []
+        const eExits = []
+        const wExits = []
         for(let i = 0; i < 50; i++){
             if(terrain.get(0,i) !== TERRAIN_MASK_WALL){
-                let pos = new RoomPosition(0, i, roomName)
+                const pos = new RoomPosition(0, i, roomName)
                 wExits.push(pos)
             }
         }
         for(let i = 0; i < 50; i++){
             if(terrain.get(i,0) !== TERRAIN_MASK_WALL){
-                let pos = new RoomPosition(i, 0, roomName)
+                const pos = new RoomPosition(i, 0, roomName)
                 nExits.push(pos)
             }
         }
         for(let i = 0; i < 50; i++){
             if(terrain.get(49,i) !== TERRAIN_MASK_WALL){
-                let pos = new RoomPosition(49, i, roomName)
+                const pos = new RoomPosition(49, i, roomName)
                 eExits.push(pos)
             }
         }
         for(let i = 0; i < 50; i++){
             if(terrain.get(i,49) !== TERRAIN_MASK_WALL){
-                let pos = new RoomPosition(i, 49, roomName)
+                const pos = new RoomPosition(i, 49, roomName)
                 sExits.push(pos)
             }
         }
@@ -536,7 +536,7 @@ let p = {
     },
 
     addRoom: function(room) {
-        let selected = p.roomsSelected()
+        const selected = p.roomsSelected()
         selected.push(room.name)
     },
 
@@ -550,14 +550,14 @@ let p = {
     },
 
     isRcl4: function() {
-        let rooms = p.myRooms();
-        let rcls = _.map(rooms, (room) => room.controller.level)
+        const rooms = p.myRooms();
+        const rcls = _.map(rooms, (room) => room.controller.level)
         return _.max(rcls) >= 4;
     },
 
     totalEnergy: function() {
-        let rooms = p.myRooms();
-        let energy = _.map(rooms, p.getStorageEnergy)
+        const rooms = p.myRooms();
+        const energy = _.map(rooms, p.getStorageEnergy)
         return _.sum(energy)
     },
 
@@ -574,7 +574,7 @@ let p = {
     },
 
     hasCpu: function () {
-        let used = Memory.stats['cpu.getUsed']
+        const used = Memory.stats['cpu.getUsed']
         return (used !== undefined) && (used < Game.cpu.tickLimit / 2)
     }
 }

@@ -66,14 +66,14 @@ var rD = {
         if(creep.ticksToLive === 1490) {
             creep.notifyWhenAttacked(false);
         }
-        let target = Game.getObjectById(creep.memory.target);
+        const target = Game.getObjectById(creep.memory.target);
         if (target){
             a.attack(creep, target);
             return;
         }
         if (Game.time % 5 == 0){
             var localRooms = u.splitRoomsByCity();
-            let rooms = _.filter(localRooms[city], room => room.find(FIND_HOSTILE_CREEPS) != 0);
+            const rooms = _.filter(localRooms[city], room => room.find(FIND_HOSTILE_CREEPS) != 0);
             if (rooms.length){
                 var enemies = _.filter(rooms[0].find(FIND_HOSTILE_CREEPS), enemy => enemy.owner.username != 'TuN9aN0')
                 if (enemies.length) {

@@ -38,10 +38,10 @@ var T = {
         let damage = 0;
         for(let i = 0; i < towers.length; i++){
             if(towers[i].energy >= TOWER_ENERGY_COST){
-                let distance = towers[i].pos.getRangeTo(target.pos)
-                let damage_distance = Math.max(TOWER_OPTIMAL_RANGE, Math.min(distance, TOWER_FALLOFF_RANGE))
-                let steps = TOWER_FALLOFF_RANGE - TOWER_OPTIMAL_RANGE
-                let step_size = TOWER_FALLOFF * TOWER_POWER_ATTACK / steps
+                const distance = towers[i].pos.getRangeTo(target.pos)
+                const damage_distance = Math.max(TOWER_OPTIMAL_RANGE, Math.min(distance, TOWER_FALLOFF_RANGE))
+                const steps = TOWER_FALLOFF_RANGE - TOWER_OPTIMAL_RANGE
+                const step_size = TOWER_FALLOFF * TOWER_POWER_ATTACK / steps
                 damage += TOWER_POWER_ATTACK - (damage_distance - TOWER_OPTIMAL_RANGE) * step_size
             }
         }
@@ -83,7 +83,7 @@ var T = {
     },  
 
     generateHealMap: function(hostiles) {
-        let map = [];
+        const map = [];
         for(let i = 0; i < 50; i++){
             map[i] = [];
             for(let j = 0; j < 50; j++){

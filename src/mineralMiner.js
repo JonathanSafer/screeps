@@ -25,18 +25,18 @@ var rMM = {
     },
 
     needEnergy: function(creep) {
-        let carry = _.sum(creep.carry);
+        const carry = _.sum(creep.carry);
         return (carry < creep.carryCapacity);
     },
 
     harvestTarget: function(creep) {
       var source = Game.getObjectById(creep.memory.source);
-      let harvestResult = a.harvest(creep, source);
+      const harvestResult = a.harvest(creep, source);
       if (harvestResult == ERR_NO_PATH) {
           console.log("no path for mining :/");
       } else if (harvestResult == 1) {
         // Record mining totals in memory for stat tracking
-        let works = _.filter(creep.body, part => part.type == WORK).length
+        const works = _.filter(creep.body, part => part.type == WORK).length
         if (!creep.memory.mined) {
             creep.memory.mined = 0
         }

@@ -7,9 +7,9 @@ var rL = {
 
     run: function(room) {
         // Initialize links
-        let links = rL.findStructure(room, STRUCTURE_LINK)
+        const links = rL.findStructure(room, STRUCTURE_LINK)
         var storageLink, upgradeLink, sourceLinks = []
-        for (let link of links) {
+        for (const link of links) {
             if (link.pos.findInRange(FIND_SOURCES, rL.SOURCE + rL.LINK).length > 0) {
                 sourceLinks.push(link)
             } else if (rL.isNearStructure(link.pos, STRUCTURE_CONTROLLER, rL.UPGRADE + rL.LINK)) {
@@ -20,7 +20,7 @@ var rL = {
         }
 
         // Make transfers
-        for (let sourceLink of sourceLinks) {
+        for (const sourceLink of sourceLinks) {
             if (sourceLink.store.getUsedCapacity(RESOURCE_ENERGY) <= 
                 sourceLink.store.getCapacity(RESOURCE_ENERGY) * 0.5) {
                 continue // sourceLink isn't full yet
@@ -39,7 +39,7 @@ var rL = {
     },
 
     getUpgradeLink: function(room) {
-        let links = rL.findNearStructures(room.controller.pos, 
+        const links = rL.findNearStructures(room.controller.pos, 
                 STRUCTURE_LINK, 
                 rL.UPGRADE + rL.LINK)
         return links.length > 0 ? links[0] : undefined

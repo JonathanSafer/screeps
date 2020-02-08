@@ -11,7 +11,7 @@ var rBr = {
     run: function(creep) {
         u.updateCheckpoints(creep);
         var breakerTarget = Game.getObjectById(creep.memory.target)
-        let attacker = _.find(creep.room.find(FIND_HOSTILE_CREEPS), c => c.pos.isNearTo(creep.pos) && c.getActiveBodyparts(ATTACK) > 10)
+        const attacker = _.find(creep.room.find(FIND_HOSTILE_CREEPS), c => c.pos.isNearTo(creep.pos) && c.getActiveBodyparts(ATTACK) > 10)
         if(attacker){creep.memory.retreat = true}
 		if (breakerTarget && creep.pos.isNearTo(breakerTarget.pos)){
             creep.dismantle(breakerTarget);
@@ -28,7 +28,7 @@ var rBr = {
         } else {
             //look for medics
             var allCreeps = u.splitCreepsByCity();
-            let status = creep.memory.role.substring(0, 3);
+            const status = creep.memory.role.substring(0, 3);
             var medicSearch = 0
             if (status == 'big'){
                 medicSearch = _.find(allCreeps[creep.memory.city], localCreep => localCreep.memory.role === 'bigMedic' && localCreep.pos.isNearTo(creep.pos) 
@@ -44,7 +44,7 @@ var rBr = {
         }
         var city = creep.memory.city;
         var flagName = 'break'
-        let status = creep.memory.role.substring(0, 3);
+        const status = creep.memory.role.substring(0, 3);
         if(status === 'big'){
             flagName = city + 'bigBreak'
         } else {
@@ -65,7 +65,7 @@ var rBr = {
             }
         }
 
-        let ignore = Game.spawns[creep.memory.city].memory.ignoreRooms
+        const ignore = Game.spawns[creep.memory.city].memory.ignoreRooms
         if(ignore != null && ignore.includes(creep.pos.roomName)){
             //attempt to move through room
         } else {
