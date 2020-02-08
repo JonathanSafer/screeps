@@ -1,4 +1,5 @@
 var actions = require("./actions")
+var settings = require("./settings")
 
 var rDM = {
     name: "depositMiner",
@@ -40,7 +41,7 @@ var rDM = {
                 Game.flags[flagName].remove()
                 return
             }
-            if(_.sum(creep.store) === 0 && (deposit[0].lastCooldown > 25 && Game.cpu.bucket < 3000)){
+            if(_.sum(creep.store) === 0 && (deposit[0].lastCooldown > 25 && Game.cpu.bucket < settings.bucket.resourceMining)){
                 Game.flags[flagName].remove()
                 return
             }
