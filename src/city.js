@@ -116,6 +116,7 @@ function runCity(city, creeps){
         checkNukes(room)
     }
 }
+
 //updateCountsCity function
 function updateCountsCity(city, creeps, rooms, claimRoom, unclaimRoom) {
     const spawn = Game.spawns[city]
@@ -771,101 +772,121 @@ function runNuker(city){
 }
 
 function runObs(city){
-    if(Game.time % 100 == 0){
-        //check for Obs
-        if((!Game.spawns[city]) || Game.cpu.bucket < settings.bucket.mining - 200 || settings.miningDisabled.includes(city)){
-            return
-        }
-        const buildings = Game.spawns[city].room.find(FIND_MY_STRUCTURES)
-        const obs = _.find(buildings, structure => structure.structureType === STRUCTURE_OBSERVER)
-        if (obs){
-            //check for list
-            if (!Game.spawns[city].memory.powerRooms){
-                Game.spawns[city].memory.powerRooms = []
-                const myRoom = Game.spawns[city].room.name
-                const pos = u.roomNameToPos(myRoom)
-                let x = pos[0] - 2
-                let y = pos[1] - 2
-                for (let i = 0; i < 5; i++){
-                    for (let j = 0; j < 5; j++){
-                        const coord = [x, y]
-                        const roomName = u.roomPosToName(coord)
-                        Game.spawns[city].memory.powerRooms.push(roomName)
-                        x++
-                    }
-                    y++
-                    x = x - 5
-                }
-            }
-            const roomNum = ((Game.time) % (Game.spawns[city].memory.powerRooms.length * 100))/100
-            //scan next room
-            obs.observeRoom(Game.spawns[city].memory.powerRooms[roomNum])
+    const remainder = Game.time % 100
+    if(remainder == 0){
+        observeNewRoomForMining(city)
+    } else if (remainder == 1){
+        placeMiningFlags(city)
+    }
+}
 
+function observeNewRoomForMining(city) {
+    const obs = getObsForMining(city)
+    if (!obs) return false
+    preparePowerRoomsList(city)
+    const roomNum = timeToRoomNum(Game.time, 1)
+    //scan next room
+    obs.observeRoom(Game.spawns[city].memory.powerRooms[roomNum])
+}
+
+function placeMiningFlags(city) {
+    const obs = getObsForMining(city)
+    if (!obs || !Game.spawns[city].memory.powerRooms.length) return false
+
+    const roomNum = timeToRoomNum(Game.time - 1, city)
+    const roomName = Game.spawns[city].memory.powerRooms[roomNum]
+    console.log("Scanning: " + roomName)
+    if(!Game.rooms[roomName]){//early return if room wasn't scanned
+        return
+    }
+    if (Game.rooms[roomName].controller){
+        Game.spawns[city].memory.powerRooms.splice(roomNum, 1)
+        return
+    }
+    const structures = Game.rooms[roomName].find(FIND_STRUCTURES)
+    if (Game.cpu.bucket >= settings.bucket.powerMining) {
+        flagPowerBanks(structures, city, roomName)
+    }
+    if (Game.cpu.bucket >= settings.bucket.resourceMining) {
+        flagDeposits(structures, city, roomName)
+    }
+}
+
+function timeToRoomNum(time, city) {
+    return Math.floor(time / 100) % Game.spawns[city].memory.powerRooms.length    
+}
+
+function getObsForMining(city) {
+    if((!Game.spawns[city]) || settings.miningDisabled.includes(city)){
+        return false
+    }
+    const buildings = Game.spawns[city].room.find(FIND_MY_STRUCTURES)
+    return _.find(buildings, structure => structure.structureType === STRUCTURE_OBSERVER)
+}
+
+function preparePowerRoomsList(city) {
+    if (Game.spawns[city].memory.powerRooms) {
+        return
+    }
+    Game.spawns[city].memory.powerRooms = []
+    const myRoom = Game.spawns[city].room.name
+    const pos = u.roomNameToPos(myRoom)
+    for (let i = -2; i < +2; i++){
+        for (let j = -2; j < +2; j++){
+            const coord = [pos[0] + i, pos[1] + j]
+            const roomName = u.roomPosToName(coord)
+            Game.spawns[city].memory.powerRooms.push(roomName)
         }
     }
-    if (Game.time % 100 == 1){
-        //check for Obs and list
-        if(!Game.spawns[city] || Game.cpu.bucket < settings.bucket.mining || settings.miningDisabled.includes(city)){
-            return
+}
+
+function flagPowerBanks(structures, city, roomName) {
+    const powerBank = _.find(structures, structure => structure.structureType === STRUCTURE_POWER_BANK)
+    const flagName = city + "powerMine"
+    if (powerBank && powerBank.power > 1500 && powerBank.ticksToDecay > 2800 && !Game.flags[flagName] &&
+            structures.length < 30 && Game.spawns[city].room.storage.store.energy > 600000){
+        const terrain = Game.rooms[roomName].getTerrain()
+        if (!isBlockedByWalls(terrain, powerBank.pos)) {
+            //put a flag on it
+            Game.rooms[roomName].createFlag(powerBank.pos, flagName)
+            console.log("Power Bank found in: " + roomName)
         }
-        const buildings = Game.spawns[city].room.find(FIND_MY_STRUCTURES)
-        const obs = _.find(buildings, structure => structure.structureType === STRUCTURE_OBSERVER)
-        if (obs && Game.spawns[city].memory.powerRooms.length){
-            //do stuff in that room
-            const roomNum = ((Game.time - 1) % (Game.spawns[city].memory.powerRooms.length * 100))/100
-            const roomName = Game.spawns[city].memory.powerRooms[roomNum]
-            console.log("Scanning: " + roomName)
-            if(!Game.rooms[roomName]){//early return if room wasn't scanned
-                return
-            }
-            if (Game.rooms[roomName].controller){
-                Game.spawns[city].memory.powerRooms.splice(roomNum, 1)
-                return
-            }
-            const structures = Game.rooms[roomName].find(FIND_STRUCTURES)
-            const powerBank = _.find(structures, structure => structure.structureType === STRUCTURE_POWER_BANK)
-            const flagName = city + "powerMine"
-            if (powerBank && powerBank.power > 1500 && powerBank.ticksToDecay > 2800 && !Game.flags[flagName] &&
-                    structures.length < 30 && Game.spawns[city].room.storage.store.energy > 600000){
-                let walls = 0
-                const terrain = Game.rooms[roomName].getTerrain()
-                let x = powerBank.pos.x - 1
-                let y = powerBank.pos.y - 1
-                for(let i = 0; i < 3; i++){
-                    for (let j = 0; j < 3; j++){
-                        const result = terrain.get(x,y)
-                        if (result == TERRAIN_MASK_WALL){
-                            walls++
-                        }
-                        x++
-                    }
-                    x = x - 3
-                    y++
-                }
-                console.log(walls)
-                if(walls < 8){
-                    //put a flag on it
-                    Game.rooms[roomName].createFlag(powerBank.pos, flagName)
-                    console.log("Power Bank found in: " + roomName)
-                }
-            }
-            //flag deposits
-            if(structures.length < 30){
-                const deposits = Game.rooms[roomName].find(FIND_DEPOSITS)
-                if(deposits.length){
-                    const depositFlagName = city + "deposit"
-                    let flagPlaced = Game.flags[depositFlagName] ? true : false
-                    for (let i = 0; i < deposits.length; i++) {
-                        if(deposits[i].lastCooldown < 25 && flagPlaced === false){
-                            Game.rooms[roomName].createFlag(deposits[i].pos, depositFlagName)
-                            Game.spawns[city].memory.deposit = Math.floor(Math.pow((deposits[i].lastCooldown / 0.001), 1/1.2))
-                            flagPlaced = true
-                        }
-                    }
-                }
+    }
+}
+
+function flagDeposits(structures, city, roomName) {
+    //flag deposits
+    if (structures.length >= 30) {
+        return false
+    }
+
+    const deposits = Game.rooms[roomName].find(FIND_DEPOSITS)
+    if (!deposits.length) {
+        return false
+    }
+
+    const depositFlagName = city + "deposit"
+    for (let i = 0; i < deposits.length; i++) {
+        if(deposits[i].lastCooldown < 25 && !Game.flags[depositFlagName]){
+            Game.rooms[roomName].createFlag(deposits[i].pos, depositFlagName)
+            Game.spawns[city].memory.deposit = Math.floor(Math.pow((deposits[i].lastCooldown / 0.001), 1/1.2))
+            break // only place one flag
+        }
+    }
+}
+
+// True if a point is surrounded by terrain walls
+function isBlockedByWalls(terrain, pos) {
+    let walls = 0
+    for(let i = -1; i <= +1; i++){
+        for (let j = -1; j <= +1; j++){
+            const result = terrain.get(pos.x + i, pos.y + j)
+            if (result == TERRAIN_MASK_WALL){
+                walls++
             }
         }
     }
+    return walls >= 8
 }
 
 module.exports = {
