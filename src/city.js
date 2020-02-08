@@ -771,7 +771,7 @@ function runNuker(city){
 }
 
 function runObs(city){
-    const remainder = Game.time % 100
+    const remainder = Game.time % settings.observerFrequency
     if(remainder == 0){
         observeNewRoomForMining(city)
     } else if (remainder == 1){

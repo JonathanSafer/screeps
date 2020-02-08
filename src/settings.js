@@ -15,6 +15,7 @@ var settings = {
         repair: 3000 //repairing walls in a room
     },
     miningRange: 5,
+    observerFrequency: 20, // how often each city scans a room
 
     // Profiling
     profileFrequency: 123, // profiler runs every 123 ticks
