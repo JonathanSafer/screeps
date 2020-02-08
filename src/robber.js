@@ -1,5 +1,5 @@
-var actions = require('./actions')
-var u = require('./utils')
+var actions = require("./actions")
+var u = require("./utils")
 
 var rRo = {
     name: "robber",
@@ -12,7 +12,7 @@ var rRo = {
           if(creep.ticksToLive < 150){
               creep.suicide()
           }
-          var target = Game.getObjectById('5d86e27a2a6b4021bee17629')
+          var target = Game.getObjectById("5d86e27a2a6b4021bee17629")
           const mineral = RESOURCE_ENERGY
           if (target){
               if(!target.store[mineral]){
@@ -21,7 +21,7 @@ var rRo = {
               }
               return actions.interact(creep, target, () => creep.withdraw(target, mineral))
           } else {
-              return creep.moveTo(Game.flags['steal'], {reusePath: 50})
+              return creep.moveTo(Game.flags["steal"], {reusePath: 50})
           }
 
       } else {

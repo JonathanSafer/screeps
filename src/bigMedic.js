@@ -1,5 +1,5 @@
-var a = require('./actions')
-var rMe = require('./medic')
+var a = require("./actions")
+var rMe = require("./medic")
 
 var rBM = {
     name: "bigMedic",

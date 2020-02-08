@@ -1,5 +1,5 @@
-var a = require('./actions')
-var sq = require('./spawnQueue')
+var a = require("./actions")
+var sq = require("./spawnQueue")
 
 var rM = {
     name: "remoteMiner",
@@ -21,7 +21,7 @@ var rM = {
         } else if (Game.getObjectById(creep.memory.source) == null){
             creep.moveTo(new RoomPosition(25, 25, creep.memory.sourceRoom), {reusePath: 50}) 
         } else {
-            if (creep.saying != '*'){
+            if (creep.saying != "*"){
                 rM.harvestTarget(creep)
             }
             if (Game.time % 50 === 0){
@@ -45,7 +45,7 @@ var rM = {
                     const link = Game.getObjectById(creep.memory.link)
                     a.charge(creep, link)
                     if (link && link.energy >= link.energyCapacity * .5){
-                        creep.say('*', true)
+                        creep.say("*", true)
                     }
                 }
             }
@@ -62,7 +62,7 @@ var rM = {
     /** pick a target id for creep **/
     nextSource: function(creep) {
         var city = creep.memory.city
-        var miners = _.filter(Game.creeps, creep => creep.memory.role === 'remoteMiner')
+        var miners = _.filter(Game.creeps, creep => creep.memory.role === "remoteMiner")
         var occupied = []
         _.each(miners, function(minerInfo){
             occupied.push(minerInfo.memory.source)

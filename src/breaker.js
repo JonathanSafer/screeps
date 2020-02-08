@@ -1,5 +1,5 @@
-var a = require('./actions')
-var u = require('./utils')
+var a = require("./actions")
+var u = require("./utils")
 
 var rBr = {
     name: "breaker",
@@ -30,11 +30,11 @@ var rBr = {
             var allCreeps = u.splitCreepsByCity()
             const status = creep.memory.role.substring(0, 3)
             var medicSearch = 0
-            if (status == 'big'){
-                medicSearch = _.find(allCreeps[creep.memory.city], localCreep => localCreep.memory.role === 'bigMedic' && localCreep.pos.isNearTo(creep.pos) 
+            if (status == "big"){
+                medicSearch = _.find(allCreeps[creep.memory.city], localCreep => localCreep.memory.role === "bigMedic" && localCreep.pos.isNearTo(creep.pos) 
                                                                                         && localCreep.memory.breaker == creep.id)
             } else {
-                    medicSearch = _.find(allCreeps[creep.memory.city], localCreep => localCreep.memory.role === 'medic' && localCreep.pos.isNearTo(creep.pos) 
+                    medicSearch = _.find(allCreeps[creep.memory.city], localCreep => localCreep.memory.role === "medic" && localCreep.pos.isNearTo(creep.pos) 
                                                                                         && localCreep.memory.breaker == creep.id)
             }                                               
             if (medicSearch){
@@ -43,12 +43,12 @@ var rBr = {
             return
         }
         var city = creep.memory.city
-        var flagName = 'break'
+        var flagName = "break"
         const status = creep.memory.role.substring(0, 3)
-        if(status === 'big'){
-            flagName = city + 'bigBreak'
+        if(status === "big"){
+            flagName = city + "bigBreak"
         } else {
-            flagName = city + 'break'
+            flagName = city + "break"
         }
         if(creep.hits < creep.hitsMax * 0.85){
             creep.memory.retreat = true
@@ -56,7 +56,7 @@ var rBr = {
         if(creep.memory.retreat) {
             return a.retreat(creep)
         }
-        var targetFlag = creep.memory.city + 'breakTarget'
+        var targetFlag = creep.memory.city + "breakTarget"
         if(Game.flags[targetFlag] && creep.pos.roomName === Game.flags[targetFlag].pos.roomName){
             var found = Game.flags[targetFlag].pos.lookFor(LOOK_STRUCTURES)
             if(found.length){
@@ -72,9 +72,9 @@ var rBr = {
             const badStuff = creep.pos.findClosestByPath(FIND_HOSTILE_STRUCTURES, {
                 filter: function(object) {
                     return (object.structureType !== STRUCTURE_CONTROLLER 
-                        && object.owner.username !== 'Invader' && object.owner.username !== 'Source Keeper' 
-                        && object.owner.username !== 'Public'
-                        && object.owner.username !== 'Power Bank'
+                        && object.owner.username !== "Invader" && object.owner.username !== "Source Keeper" 
+                        && object.owner.username !== "Public"
+                        && object.owner.username !== "Power Bank"
                         && object.hits )
                 }
             })
@@ -84,7 +84,7 @@ var rBr = {
                 return
             }
         }
-        var rallyFlag = creep.memory.city + 'breakerRally1'
+        var rallyFlag = creep.memory.city + "breakerRally1"
         if (Game.flags[rallyFlag] && !creep.memory.rally1){
             creep.moveTo(Game.flags[rallyFlag], {reusePath: 50})
             if (Game.flags[rallyFlag].pos.x == creep.pos.x && Game.flags[rallyFlag].pos.y == creep.pos.y && Game.flags[rallyFlag].pos.roomName == creep.pos.roomName){
@@ -92,7 +92,7 @@ var rBr = {
             }
             return
         }
-        var rallyFlag2 = creep.memory.city + 'breakerRally2'
+        var rallyFlag2 = creep.memory.city + "breakerRally2"
         if (Game.flags[rallyFlag2] && !creep.memory.rally2){
             creep.moveTo(Game.flags[rallyFlag2], {reusePath: 50})
             if (Game.flags[rallyFlag2].pos.x == creep.pos.x && Game.flags[rallyFlag2].pos.y == creep.pos.y && Game.flags[rallyFlag2].pos.roomName == creep.pos.roomName){

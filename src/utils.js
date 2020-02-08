@@ -25,7 +25,7 @@ var u = {
     getGoodPickups: function(creep) {
         var city = creep.memory.city
         var localCreeps = u.splitCreepsByCity()
-        var miners = _.filter(localCreeps[city], creep => creep.memory.role == 'remoteMiner')
+        var miners = _.filter(localCreeps[city], creep => creep.memory.role == "remoteMiner")
         var drops = _.flatten(_.map(miners, miner => miner.room.find(FIND_DROPPED_RESOURCES)))
         // var allRooms = u.splitRoomsByCity();
         // var rooms = allRooms[city]
@@ -155,8 +155,8 @@ var u = {
         const x = Number(coords[0])
         const y = Number(coords[1])
         return [
-            quad[0] === 'W' ? 0 - x : 1 + x,
-            quad[1] === 'S' ? 0 - y : 1 + y
+            quad[0] === "W" ? 0 - x : 1 + x,
+            quad[1] === "S" ? 0 - y : 1 + y
         ]
     },
 

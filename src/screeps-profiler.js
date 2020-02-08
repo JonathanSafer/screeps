@@ -1,12 +1,12 @@
-'use strict'
+"use strict"
 
 let usedOnStart = 0
 let enabled = false
 let depth = 0
 
 function AlreadyWrappedError() {
-  this.name = 'AlreadyWrappedError'
-  this.message = 'Error attempted to double wrap a function.'
+  this.name = "AlreadyWrappedError"
+  this.message = "Error attempted to double wrap a function."
   this.stack = ((new Error())).stack
 }
 
@@ -14,16 +14,16 @@ function setupProfiler() {
   depth = 0 // reset depth, this needs to be done each tick.
   Game.profiler = {
     stream(duration, filter) {
-      setupMemory('stream', duration || 10, filter)
+      setupMemory("stream", duration || 10, filter)
     },
     email(duration, filter) {
-      setupMemory('email', duration || 100, filter)
+      setupMemory("email", duration || 100, filter)
     },
     profile(duration, filter) {
-      setupMemory('profile', duration || 100, filter)
+      setupMemory("profile", duration || 100, filter)
     },
     background(filter) {
-      setupMemory('background', false, filter)
+      setupMemory("background", false, filter)
     },
     restart() {
       if (Profiler.isProfiling()) {
@@ -78,8 +78,8 @@ function getFilter() {
 }
 
 const functionBlackList = [
-  'getUsed', // Let's avoid wrapping this... may lead to recursion issues and should be inexpensive.
-  'constructor', // es6 class constructors need to be called with `new`
+  "getUsed", // Let's avoid wrapping this... may lead to recursion issues and should be inexpensive.
+  "constructor", // es6 class constructors need to be called with `new`
 ]
 
 function wrapFunction(name, originalFunction) {
@@ -157,7 +157,7 @@ function profileObjectFunctions(object, label) {
       return
     }
 
-    const isFunction = typeof descriptor.value === 'function'
+    const isFunction = typeof descriptor.value === "function"
     if (!isFunction) {
       return
     }
@@ -171,8 +171,8 @@ function profileObjectFunctions(object, label) {
 function profileFunction(fn, functionName) {
   const fnName = functionName || fn.name
   if (!fnName) {
-    console.log('Couldn\'t find a function name for - ', fn)
-    console.log('Will not profile this function.')
+    console.log("Couldn't find a function name for - ", fn)
+    console.log("Will not profile this function.")
     return fn
   }
 
@@ -193,18 +193,18 @@ const Profiler = {
   output(passedOutputLengthLimit) {
     const outputLengthLimit = passedOutputLengthLimit || 1000
     if (!Memory.profiler || !Memory.profiler.enabledTick) {
-      return 'Profiler not active.'
+      return "Profiler not active."
     }
 
     const endTick = Math.min(Memory.profiler.disableTick || Game.time, Game.time)
     const startTick = Memory.profiler.enabledTick + 1
     const elapsedTicks = endTick - startTick
-    const header = 'calls\t\ttime\t\tavg\t\tfunction'
+    const header = "calls\t\ttime\t\tavg\t\tfunction"
     const footer = [
       `Avg: ${(Memory.profiler.totalTime / elapsedTicks).toFixed(2)}`,
       `Total: ${Memory.profiler.totalTime.toFixed(2)}`,
       `Ticks: ${elapsedTicks}`,
-    ].join('\t')
+    ].join("\t")
 
     const lines = [header]
     let currentLength = header.length + 1 + footer.length
@@ -221,7 +221,7 @@ const Profiler = {
       }
     }
     lines.push(footer)
-    return lines.join('\n')
+    return lines.join("\n")
   },
 
   lines() {
@@ -245,21 +245,21 @@ const Profiler = {
         data.totalTime.toFixed(1),
         data.averageTime.toFixed(3),
         data.name,
-      ].join('\t\t')
+      ].join("\t\t")
     })
 
     return lines
   },
 
   prototypes: [
-    { name: 'Game', val: Game },
-    { name: 'Room', val: Room },
-    { name: 'Structure', val: Structure },
-    { name: 'Spawn', val: Spawn },
-    { name: 'Creep', val: Creep },
-    { name: 'RoomPosition', val: RoomPosition },
-    { name: 'Source', val: Source },
-    { name: 'Flag', val: Flag },
+    { name: "Game", val: Game },
+    { name: "Room", val: Room },
+    { name: "Structure", val: Structure },
+    { name: "Spawn", val: Spawn },
+    { name: "Creep", val: Creep },
+    { name: "RoomPosition", val: RoomPosition },
+    { name: "Source", val: Source },
+    { name: "Flag", val: Flag },
   ],
 
   record(functionName, time) {
@@ -301,14 +301,14 @@ const Profiler = {
   },
 
   shouldPrint() {
-    const streaming = Profiler.type() === 'stream'
-    const profiling = Profiler.type() === 'profile'
+    const streaming = Profiler.type() === "stream"
+    const profiling = Profiler.type() === "profile"
     const onEndingTick = Memory.profiler.disableTick === Game.time
     return streaming || (profiling && onEndingTick)
   },
 
   shouldEmail() {
-    return Profiler.type() === 'email' && Memory.profiler.disableTick === Game.time
+    return Profiler.type() === "email" && Memory.profiler.disableTick === Game.time
   },
 }
 

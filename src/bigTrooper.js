@@ -1,5 +1,5 @@
-var a = require('./actions')
-var rTr = require('./trooper')
+var a = require("./actions")
+var rTr = require("./trooper")
 
 var rBT = {
     name: "bigTrooper",

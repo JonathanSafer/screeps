@@ -1,8 +1,8 @@
-var a = require('./actions')
-var u = require('./utils')
-var rU = require('./upgrader')
-var template = require('./template')
-var rD = require('./defender')
+var a = require("./actions")
+var u = require("./utils")
+var rU = require("./upgrader")
+var template = require("./template")
+var rD = require("./defender")
 
 var rB = {
     name: "builder",
@@ -16,7 +16,7 @@ var rB = {
         if(!creep.memory.state){
           creep.memory.state = 0
         }
-        const boost = 'XLH2O'
+        const boost = "XLH2O"
         rU.checkBoost(creep, city, boost)
         rU.getBoosted(creep, city, boost)
         if (creep.memory.state != 2){

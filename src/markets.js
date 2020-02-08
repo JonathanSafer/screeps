@@ -1,5 +1,5 @@
-var cM = require('./commodityManager')
-var settings = require('./settings')
+var cM = require("./commodityManager")
+var settings = require("./settings")
 
 var markets = {
     sortOrder: function(orders) {
@@ -91,7 +91,7 @@ var markets = {
                         Game.spawns[city].memory.ferryInfo.mineralRequest = null
                         myCities[i].terminal.termUsed = true
                     } else {
-                        Game.notify('Problem at distributeMinerals with ' + mineral, 20)
+                        Game.notify("Problem at distributeMinerals with " + mineral, 20)
                     }
                 }
             }
@@ -107,7 +107,7 @@ var markets = {
                 if (myCities[i].terminal && myCities[i].terminal.store.power > 2000 && !myCities[i].terminal.termUsed){
                     myCities[i].terminal.send(RESOURCE_POWER, 560, receiver)
                     myCities[i].terminal.termUsed = true
-                    console.log('Sending power to ' + receiver)
+                    console.log("Sending power to " + receiver)
                 }
             }
         }
@@ -115,14 +115,14 @@ var markets = {
 
     distributeUpgrade: function(myCities){
         var receiver = null
-        var needUpgrade = _.filter(myCities, city => city.controller.level > 5 && city.terminal && city.terminal.store['XGH2O'] < 1000)
+        var needUpgrade = _.filter(myCities, city => city.controller.level > 5 && city.terminal && city.terminal.store["XGH2O"] < 1000)
         if (needUpgrade.length){
             receiver = needUpgrade[0].name
             for (var i = 0; i < myCities.length; i++){
-                if (myCities[i].terminal && myCities[i].terminal.store['XGH2O'] > 7000 && !myCities[i].terminal.termUsed){
-                    myCities[i].terminal.send('XGH2O', 3000, receiver)
+                if (myCities[i].terminal && myCities[i].terminal.store["XGH2O"] > 7000 && !myCities[i].terminal.termUsed){
+                    myCities[i].terminal.send("XGH2O", 3000, receiver)
                     myCities[i].terminal.termUsed = true
-                    console.log('Sending upgrade boost to ' + receiver)
+                    console.log("Sending upgrade boost to " + receiver)
                     return
                 }
             }
@@ -131,14 +131,14 @@ var markets = {
 
     distributeRepair: function(myCities){
         var receiver = null
-        var needRepair = _.filter(myCities, city => city.controller.level > 5 && city.terminal && city.terminal.store['XLH2O'] < 1000)
+        var needRepair = _.filter(myCities, city => city.controller.level > 5 && city.terminal && city.terminal.store["XLH2O"] < 1000)
         if (needRepair.length){
             receiver = needRepair[0].name
             for (var i = 0; i < myCities.length; i++){
-                if (myCities[i].terminal && myCities[i].terminal.store['XLH2O'] > 7000 && !myCities[i].terminal.termUsed){
-                    myCities[i].terminal.send('XLH2O', 3000, receiver)
+                if (myCities[i].terminal && myCities[i].terminal.store["XLH2O"] > 7000 && !myCities[i].terminal.termUsed){
+                    myCities[i].terminal.send("XLH2O", 3000, receiver)
                     myCities[i].terminal.termUsed = true
-                    console.log('Sending repair boost to ' + receiver)
+                    console.log("Sending repair boost to " + receiver)
                     return
                 }
             }
@@ -154,7 +154,7 @@ var markets = {
                 if (myCities[i].terminal && myCities[i].terminal.store[RESOURCE_OPS] > 7000 && !myCities[i].terminal.termUsed){
                     myCities[i].terminal.send(RESOURCE_OPS, 5000, receiver)
                     myCities[i].terminal.termUsed = true
-                    console.log('Sending power to ' + receiver)
+                    console.log("Sending power to " + receiver)
                     return
                 }
             }
@@ -163,22 +163,22 @@ var markets = {
     
     sellPower: function(city, buyOrders){
         const terminal = city.terminal
-        if ('power' in terminal.store && terminal.store['power'] > 10000){
-            var goodOrders = markets.sortOrder(buyOrders['power'])
+        if ("power" in terminal.store && terminal.store["power"] > 10000){
+            var goodOrders = markets.sortOrder(buyOrders["power"])
             if (goodOrders.length && goodOrders[goodOrders.length - 1].price > .20){
-                Game.market.deal(goodOrders[goodOrders.length - 1].id, Math.min(goodOrders[goodOrders.length - 1].remainingAmount,  Math.max(0, terminal.store['power'] - 10000)), city.name)
-                console.log(Math.min(goodOrders[goodOrders.length - 1].remainingAmount,  Math.max(0, terminal.store['power'] - 10000)) + " " + 'power' + " sold for " + goodOrders[goodOrders.length - 1].price)
+                Game.market.deal(goodOrders[goodOrders.length - 1].id, Math.min(goodOrders[goodOrders.length - 1].remainingAmount,  Math.max(0, terminal.store["power"] - 10000)), city.name)
+                console.log(Math.min(goodOrders[goodOrders.length - 1].remainingAmount,  Math.max(0, terminal.store["power"] - 10000)) + " " + "power" + " sold for " + goodOrders[goodOrders.length - 1].price)
                 return true
             } else {
                 //make a sell order
                 const orderId = _.find(Object.keys(Game.market.orders),
-                        order => Game.market.orders[order].roomName === city.name && Game.market.orders[order].resourceType === 'power')
+                        order => Game.market.orders[order].roomName === city.name && Game.market.orders[order].resourceType === "power")
                 const order = Game.market.orders[orderId]
                 if(!order){
-                    const sellPrice = markets.getPrice('power') * .90
+                    const sellPrice = markets.getPrice("power") * .90
                     Game.market.createOrder({
                         type: ORDER_SELL,
-                        resourceType: 'power',
+                        resourceType: "power",
                         price: sellPrice,
                         totalAmount: 2000,
                         roomName: city.name   
@@ -195,7 +195,7 @@ var markets = {
             var goodOrders = markets.sortOrder(buyOrders[RESOURCE_OPS])
             if (goodOrders.length){
                 Game.market.deal(goodOrders[goodOrders.length - 1].id, Math.min(goodOrders[goodOrders.length - 1].remainingAmount,  Math.max(0, terminal.store[RESOURCE_OPS] - 20000)), city.name)
-                console.log(Math.min(goodOrders[goodOrders.length - 1].remainingAmount,  Math.max(0, terminal.store[RESOURCE_OPS] - 20000)) + " " + 'ops' + " sold for " + goodOrders[goodOrders.length - 1].price)
+                console.log(Math.min(goodOrders[goodOrders.length - 1].remainingAmount,  Math.max(0, terminal.store[RESOURCE_OPS] - 20000)) + " " + "ops" + " sold for " + goodOrders[goodOrders.length - 1].price)
                 return true
             } else {
                 //make a sell order

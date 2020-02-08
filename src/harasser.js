@@ -76,7 +76,7 @@ var rH = {
                 && h.pos.inRangeTo(creep.pos, 2))
         if(attacker){
             //retreat
-            if(creep.saying === 'hold'){
+            if(creep.saying === "hold"){
                 //get less angry
                 creep.memory.anger = creep.memory.anger/2
             }
@@ -106,18 +106,18 @@ var rH = {
                 && (h.fatigue === 0 || h.pos.isNearTo(creep.pos))
                 && h.pos.inRangeTo(creep.pos, 3))
         if(attacker){
-            if(creep.saying === 'attack'){
+            if(creep.saying === "attack"){
                 //get more angry
                 creep.memory.anger++
             }
             const rand = Math.floor(Math.random() * 101)
             if(creep.memory.anger > rand){
                 //give chase
-                creep.say('attack')
+                creep.say("attack")
                 creep.moveTo(attacker)
             } else {
                 //hold position
-                creep.say('hold')
+                creep.say("hold")
             }
         } else {
             if(creep.memory.target){
@@ -135,14 +135,14 @@ var rH = {
     },
 
     removeFlag: function(creep){
-        const flagName = creep.memory.city + 'harass'
+        const flagName = creep.memory.city + "harass"
         if(!Game.flags[flagName]){
             return
         }
         if(creep.pos.roomName == Game.flags[flagName].pos.roomName){
             const flags = creep.room.find(FIND_FLAGS)
             for(var i = 0; i < flags.length; i++){
-                if(flags[i].name.includes('deposit') || flags[i].name.includes('powerMine')){
+                if(flags[i].name.includes("deposit") || flags[i].name.includes("powerMine")){
                     return
                 }
             }
@@ -167,14 +167,14 @@ var rH = {
     },
 
     rally: function(creep){
-        const rallyFlag = creep.memory.city + 'harasserRally'
+        const rallyFlag = creep.memory.city + "harasserRally"
         if (Game.flags[rallyFlag] && !creep.memory.rally){
             creep.moveTo(Game.flags[rallyFlag], {reusePath: 50})
             if (Game.flags[rallyFlag].pos.x == creep.pos.x && Game.flags[rallyFlag].pos.y == creep.pos.y && Game.flags[rallyFlag].pos.roomName == creep.pos.roomName){
                 creep.memory.rally = true
             }
         } else {
-            const destFlag = creep.memory.city + 'harass'
+            const destFlag = creep.memory.city + "harass"
             if(Game.flags[destFlag]){
                 if(creep.pos.roomName === Game.flags[destFlag].pos.roomName){
                     //move to center of room

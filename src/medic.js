@@ -1,4 +1,4 @@
-var u = require('./utils')
+var u = require("./utils")
 
 var rMe = {
     name: "medic",
@@ -27,14 +27,14 @@ var rMe = {
             var allCreeps = u.splitCreepsByCity()
             var status = creep.memory.role.substring(0, 3)
             var breakerSearch = []
-            if(status === 'big'){
-                breakerSearch = _.filter(allCreeps[creep.memory.city], targetCreep => (targetCreep.memory.role == 'bigBreaker' 
-                                                    || targetCreep.memory.role == 'bigTrooper')
+            if(status === "big"){
+                breakerSearch = _.filter(allCreeps[creep.memory.city], targetCreep => (targetCreep.memory.role == "bigBreaker" 
+                                                    || targetCreep.memory.role == "bigTrooper")
                     && (targetCreep.memory.medic == null || targetCreep.memory.medic == creep.id))
             } else {
-                breakerSearch = _.filter(allCreeps[creep.memory.city], targetCreep => (targetCreep.memory.role == 'breaker' 
-                                                || targetCreep.memory.role == 'trooper'
-                                                || targetCreep.memory.role == 'powerMiner')
+                breakerSearch = _.filter(allCreeps[creep.memory.city], targetCreep => (targetCreep.memory.role == "breaker" 
+                                                || targetCreep.memory.role == "trooper"
+                                                || targetCreep.memory.role == "powerMiner")
                     && (targetCreep.memory.medic == null || targetCreep.memory.medic == creep.id))
             }
             if (breakerSearch.length){

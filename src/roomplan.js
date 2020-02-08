@@ -1,7 +1,7 @@
-const u = require('./utils')
-const template = require('./template')
-const rM = require('./remoteMiner')
-const rU = require('./upgrader')
+const u = require("./utils")
+const template = require("./template")
+const rM = require("./remoteMiner")
+const rU = require("./upgrader")
 
 const p = {
     frequency: 2000,
@@ -81,7 +81,7 @@ const p = {
         if(room.controller.level < 5 && structureType == STRUCTURE_TERMINAL){
             structureType = STRUCTURE_CONTAINER
         } else if(structureType == STRUCTURE_TERMINAL){
-            const struct = _.find(look, object => object.type == 'structure')
+            const struct = _.find(look, object => object.type == "structure")
             if(struct && struct.structure.structureType == STRUCTURE_CONTAINER){
                 struct.structure.destroy()
             }
@@ -196,10 +196,10 @@ const p = {
             //now we need a wall
             if(structures.length || wallSpots[i].getRangeTo(room.controller) == 3){//rampart
                 room.createConstructionSite(wallSpots[i], STRUCTURE_RAMPART)
-                room.visual.circle(wallSpots[i], {fill: 'transparent', radius: 0.25, stroke: 'green'})
+                room.visual.circle(wallSpots[i], {fill: "transparent", radius: 0.25, stroke: "green"})
             } else {//wall
                 room.createConstructionSite(wallSpots[i], STRUCTURE_WALL)
-                room.visual.circle(wallSpots[i], {fill: 'transparent', radius: 0.25, stroke: 'blue'})
+                room.visual.circle(wallSpots[i], {fill: "transparent", radius: 0.25, stroke: "blue"})
             }
             counter++
             if(counter > 10){
@@ -413,7 +413,7 @@ const p = {
             counter = csites.length
         }
         for(let i = 0; i < roads.length; i++){
-            room.visual.circle(roads[i], {fill: '#ff1111', radius: 0.1, stroke: 'red'})
+            room.visual.circle(roads[i], {fill: "#ff1111", radius: 0.1, stroke: "red"})
             if(counter < 20){//doesn't update during the tick
                 const look = room.lookForAt(LOOK_STRUCTURES, roads[i])
                 if(look.length){
@@ -574,7 +574,7 @@ const p = {
     },
 
     hasCpu: function () {
-        const used = Memory.stats['cpu.getUsed']
+        const used = Memory.stats["cpu.getUsed"]
         return (used !== undefined) && (used < Game.cpu.tickLimit / 2)
     }
 }

@@ -1,6 +1,6 @@
-var actions = require('./actions')
-var u = require('./utils')
-var linkLib = require('./link')
+var actions = require("./actions")
+var u = require("./utils")
+var linkLib = require("./link")
 
 var CreepState = {
   START: 0,
@@ -20,7 +20,7 @@ var rU = {
       if(!creep.memory.state){
         creep.memory.state = CS.START
       }
-      const boost = 'XGH2O'
+      const boost = "XGH2O"
       rU.checkBoost(creep, city, boost)
       rU.getBoosted(creep, city, boost)
 

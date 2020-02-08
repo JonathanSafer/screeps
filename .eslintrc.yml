@@ -12,6 +12,7 @@ parserOptions:
 rules:
   prefer-const: error
   semi: [error, never]
+  quotes: error
 plugins:
   - 'screeps'
 

@@ -1,4 +1,4 @@
-const rC = require('./claimer')
+const rC = require("./claimer")
 
 var rUC = {
     name: "unclaimer",

@@ -1,5 +1,5 @@
-var a = require('./actions')
-var rBr = require('./breaker')
+var a = require("./actions")
+var rBr = require("./breaker")
 
 var rBB = {
     name: "bigBreaker",

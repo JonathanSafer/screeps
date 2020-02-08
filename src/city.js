@@ -1,32 +1,32 @@
-var rMe = require('./medic')
-var rDM = require('./depositMiner')
-var rBM = require('./bigMedic')
-var rTr = require('./trooper')
-var rBT = require('./bigTrooper')
-var rBB = require('./bigBreaker')
-var rH = require('./harasser')
-var rSB = require('./spawnBuilder')
-var rC = require('./claimer')
-var rUC = require('./unclaimer')
-var rRo = require('./robber')
-var rF = require('./ferry')
-var rMM = require('./mineralMiner')
-var rU = require('./upgrader')
-var rB = require('./builder')
-var rR = require('./runner')
-var rBr = require('./breaker')
-var rT = require('./transporter')
-var rM = require('./remoteMiner')
-var rD = require('./defender')
-var types = require('./types')
-var u = require('./utils')
-var t = require('./tower')
-var rPM = require('./powerMiner')
-var labs = require('./labs')
-var fact = require('./factory')
-var sq = require('./spawnQueue')
-var link = require('./link')
-var settings = require('./settings')
+var rMe = require("./medic")
+var rDM = require("./depositMiner")
+var rBM = require("./bigMedic")
+var rTr = require("./trooper")
+var rBT = require("./bigTrooper")
+var rBB = require("./bigBreaker")
+var rH = require("./harasser")
+var rSB = require("./spawnBuilder")
+var rC = require("./claimer")
+var rUC = require("./unclaimer")
+var rRo = require("./robber")
+var rF = require("./ferry")
+var rMM = require("./mineralMiner")
+var rU = require("./upgrader")
+var rB = require("./builder")
+var rR = require("./runner")
+var rBr = require("./breaker")
+var rT = require("./transporter")
+var rM = require("./remoteMiner")
+var rD = require("./defender")
+var types = require("./types")
+var u = require("./utils")
+var t = require("./tower")
+var rPM = require("./powerMiner")
+var labs = require("./labs")
+var fact = require("./factory")
+var sq = require("./spawnQueue")
+var link = require("./link")
+var settings = require("./settings")
 
 
 function makeCreeps(role, type, target, city) {
@@ -34,7 +34,7 @@ function makeCreeps(role, type, target, city) {
     const room = Game.spawns[city].room
     var energyToSpend = (room.storage && room.storage.store.energy < 50000) ? room.energyAvailable :
             room.energyCapacityAvailable
-    if (role == 'remoteMiner') {
+    if (role == "remoteMiner") {
         energyToSpend = room.energyCapacityAvailable
     }
     const recipe = types.getRecipe(type, energyToSpend, room)
@@ -168,20 +168,20 @@ function makeEmergencyCreeps(extensions, creeps, city, rcl8, emergency) {
     const checkTime = rcl8 ? 2000 : 150
 
     if (emergency || Game.time % checkTime == 0 && extensions >= 5) {
-        if (_.filter(creeps, creep => creep.memory.role == 'remoteMiner') < 1){
-            console.log('Making Emergency Miner')
-            makeCreeps('remoteMiner', "lightMiner", 1, city)
+        if (_.filter(creeps, creep => creep.memory.role == "remoteMiner") < 1){
+            console.log("Making Emergency Miner")
+            makeCreeps("remoteMiner", "lightMiner", 1, city)
         }
 
-        if (_.filter(creeps, creep => creep.memory.role == 'transporter') < 1){
-            console.log('Making Emergency Transporter')
-            makeCreeps('transporter', 'basic', 0, city)
+        if (_.filter(creeps, creep => creep.memory.role == "transporter") < 1){
+            console.log("Making Emergency Transporter")
+            makeCreeps("transporter", "basic", 0, city)
         }
 
         // TODO disable if links are present (not rcl8!! links may be missing for rcl8)
-        if ((emergency || !rcl8) && _.filter(creeps, creep => creep.memory.role == 'runner') < 1) {
-            console.log('Making Emergency Runner')
-            makeCreeps('runner', 'erunner', 1, city)
+        if ((emergency || !rcl8) && _.filter(creeps, creep => creep.memory.role == "runner") < 1) {
+            console.log("Making Emergency Runner")
+            makeCreeps("runner", "erunner", 1, city)
         }
     }
 }
@@ -217,7 +217,7 @@ function runTowers(city){
             notWalls = _.reject(damaged, location => location.structureType == STRUCTURE_WALL || location.structureType == STRUCTURE_RAMPART)
         }
         if(hostiles.length > 0){
-            console.log('Towers up in ' + city)
+            console.log("Towers up in " + city)
             Game.spawns[city].memory.towersActive = true
             //identify target 
             target = t.chooseTarget(towers, hostiles)
@@ -328,14 +328,14 @@ function checkLabs(city){
 }
 
 function updateMilitary(city, memory, rooms) {
-    const flags = ['harass', 'break', 'powerMine', 'bigShoot', 'shoot', 'bigBreak', 'deposit']
+    const flags = ["harass", "break", "powerMine", "bigShoot", "shoot", "bigBreak", "deposit"]
     const updateFns = [updateHarasser, updateBreaker, updatePowerMine, updateBigTrooper, updateTrooper, updateBigBreaker, updateDepositMiner]
     let big = 0
     for (var i = 0; i < flags.length; i++) {
         const flagName = city + flags[i]
         const updateFn = updateFns[i]
         updateFn(Game.flags[flagName], memory, city, rooms)
-        if(Game.flags[flagName] && flagName.includes('big')){
+        if(Game.flags[flagName] && flagName.includes("big")){
             big = 1
         }
     }
@@ -381,7 +381,7 @@ function updateBigDefender(city, memory){
         return false
     }
     if(memory.ferryInfo.boosterInfo){
-        const resources = ['XZHO2', 'XKHO2', 'XLHO2', 'XGHO2']
+        const resources = ["XZHO2", "XKHO2", "XLHO2", "XGHO2"]
         let go = 1
         for (let i = 0; i < resources.length; i++){
             if(room.terminal.store[resources[i]] < 1000){
@@ -628,7 +628,7 @@ function updateRunner(creeps, spawn, extensions, memory, rcl, emergencyTime) {
     var totalDistance = _.sum(distances)
     var minerEnergyPerTick = extensions < 5 ? 10 : 20
     var energyProduced = 1.0 * totalDistance * minerEnergyPerTick
-    var energyCarried = types.carry(types.getRecipe('runner', spawn.room.energyAvailable, spawn.room))
+    var energyCarried = types.carry(types.getRecipe("runner", spawn.room.energyAvailable, spawn.room))
     memory[rR.name] = Math.min(8, Math.max(Math.ceil(energyProduced / energyCarried), 2))
 }
 
@@ -694,7 +694,7 @@ function updateTrooper(flag, memory) {
 function updateBigBreaker(flag, memory, city) {
     if (flag && !memory.towersActive){
         const spawn = Game.spawns[city]
-        const resources = ['XZHO2', 'XZH2O', 'XLHO2', 'XGHO2']
+        const resources = ["XZHO2", "XZH2O", "XLHO2", "XGHO2"]
         let go = 1
         for (let i = 0; i < resources.length; i++){
             if(spawn.room.terminal.store[resources[i]] < 1000){
@@ -728,7 +728,7 @@ function updateBigBreaker(flag, memory, city) {
 function updateBigTrooper(flag, memory, city) {
     if (flag && !memory.towersActive){
         const spawn = Game.spawns[city]
-        const resources = ['XZHO2', 'XKHO2', 'XLHO2', 'XGHO2']
+        const resources = ["XZHO2", "XKHO2", "XLHO2", "XGHO2"]
         let go = 1
         for (let i = 0; i < resources.length; i++){
             if(spawn.room.terminal.store[resources[i]] < 1000){
@@ -762,7 +762,7 @@ function updateBigTrooper(flag, memory, city) {
 }
 
 function runNuker(city){
-    const flag = city + 'nuke'
+    const flag = city + "nuke"
     if(Game.flags[flag]){
         const nuker = _.find(Game.spawns[city].room.find(FIND_MY_STRUCTURES), structure => structure.structureType === STRUCTURE_NUKER)
         nuker.launchNuke(Game.flags[flag].pos)
@@ -814,7 +814,7 @@ function runObs(city){
             //do stuff in that room
             const roomNum = ((Game.time - 1) % (Game.spawns[city].memory.powerRooms.length * 100))/100
             const roomName = Game.spawns[city].memory.powerRooms[roomNum]
-            console.log('Scanning: ' + roomName)
+            console.log("Scanning: " + roomName)
             if(!Game.rooms[roomName]){//early return if room wasn't scanned
                 return
             }
@@ -824,7 +824,7 @@ function runObs(city){
             }
             const structures = Game.rooms[roomName].find(FIND_STRUCTURES)
             const powerBank = _.find(structures, structure => structure.structureType === STRUCTURE_POWER_BANK)
-            const flagName = city + 'powerMine'
+            const flagName = city + "powerMine"
             if (powerBank && powerBank.power > 1500 && powerBank.ticksToDecay > 2800 && !Game.flags[flagName] &&
                     structures.length < 30 && Game.spawns[city].room.storage.store.energy > 600000){
                 let walls = 0
@@ -846,14 +846,14 @@ function runObs(city){
                 if(walls < 8){
                     //put a flag on it
                     Game.rooms[roomName].createFlag(powerBank.pos, flagName)
-                    console.log('Power Bank found in: ' + roomName)
+                    console.log("Power Bank found in: " + roomName)
                 }
             }
             //flag deposits
             if(structures.length < 30){
                 const deposits = Game.rooms[roomName].find(FIND_DEPOSITS)
                 if(deposits.length){
-                    const depositFlagName = city + 'deposit'
+                    const depositFlagName = city + "deposit"
                     let flagPlaced = Game.flags[depositFlagName] ? true : false
                     for (let i = 0; i < deposits.length; i++) {
                         if(deposits[i].lastCooldown < 25 && flagPlaced === false){

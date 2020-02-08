@@ -1,11 +1,11 @@
-var u = require('./utils')
+var u = require("./utils")
 
 var actions = {
     interact: function(creep, location, fnToTry, logSuccess) {
         var result = fnToTry()
         switch (result) {
             case ERR_NOT_IN_RANGE:
-                if(creep.memory.role === 'Upgrader' && location.structureType && location.structureType === STRUCTURE_CONTROLLER){
+                if(creep.memory.role === "Upgrader" && location.structureType && location.structureType === STRUCTURE_CONTROLLER){
                     return creep.moveTo(location, {reusePath: 15, range: 3, swampCost: 2, plainCost: 2})
                 } else {
                     return creep.moveTo(location, {reusePath: 15, maxOps: 10000, maxRooms: 32})
@@ -220,7 +220,7 @@ var actions = {
     },
     
     getBoosted: function(creep){
-        const boosts = {'move': 'XZHO2', 'tough': 'XGHO2', 'work': 'XZH2O', 'heal': 'XLHO2', 'ranged_attack': 'XKHO2'}
+        const boosts = {"move": "XZHO2", "tough": "XGHO2", "work": "XZH2O", "heal": "XLHO2", "ranged_attack": "XKHO2"}
         for(let i = creep.body.length - 1; i >= 0; i--){
             if(!creep.body[i].boost){
                 const type = creep.body[i].type

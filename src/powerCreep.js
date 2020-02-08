@@ -1,5 +1,5 @@
-var a = require('./actions')
-var u = require('./utils')
+var a = require("./actions")
+var u = require("./utils")
 
 var CreepState = {
   START: 1,
@@ -210,7 +210,7 @@ var rPC = {
             factory.cooldown < 30 &&
             creep.powers[PWR_OPERATE_FACTORY] &&
             creep.powers[PWR_OPERATE_FACTORY].cooldown == 0 &&
-            Game.spawns[city].memory.ferryInfo.factoryInfo.produce !== 'dormant') {
+            Game.spawns[city].memory.ferryInfo.factoryInfo.produce !== "dormant") {
             creep.memory.target = factory.id
             return true
         }

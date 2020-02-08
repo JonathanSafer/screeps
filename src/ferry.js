@@ -1,4 +1,4 @@
-var actions = require('./actions')
+var actions = require("./actions")
 
 var rF = {
     name: "ferry",
@@ -7,7 +7,7 @@ var rF = {
 
     /** @param {Creep} creep **/
     run: function(creep) {
-        if (creep.saying == 'getJob'){
+        if (creep.saying == "getJob"){
             creep.memory.target = rF.getJob(creep)
         }
         switch(creep.memory.target){
@@ -15,7 +15,7 @@ var rF = {
                 //no jobs available
                 //console.log('hi')
                 if (Game.time % 10 === 0){
-                    creep.say('getJob')
+                    creep.say("getJob")
                 }
                 break
             case 1:
@@ -76,7 +76,7 @@ var rF = {
                 } else if (link.energy > 0){
                     actions.withdraw(creep, link, RESOURCE_ENERGY)
                 } else {
-                    creep.say('getJob')
+                    creep.say("getJob")
                 }
                 break
             case 6:
@@ -95,14 +95,14 @@ var rF = {
                         if (total >= 5000 || lab.mineralAmount >= 2000){
                             Game.spawns[creep.memory.city].memory.ferryInfo.labInfo[creep.memory.labNum][1] = 0
                         }
-                        creep.say('getJob')
+                        creep.say("getJob")
                     }
                     break
                 }
                 if (creep.room.terminal.store[creep.memory.mineral] > 0){
                     actions.withdraw(creep, creep.room.terminal, creep.memory.mineral)
                 } else {
-                    creep.say('getJob')
+                    creep.say("getJob")
                 }
                 break
             case 7: {
@@ -110,7 +110,7 @@ var rF = {
                 if (_.sum(creep.carry) > 0){
                     const result = actions.charge(creep, creep.room.terminal)
                     if (result == 1){
-                        creep.say('getJob')
+                        creep.say("getJob")
                         break
                     }
                     break
@@ -127,11 +127,11 @@ var rF = {
                     const nuker = Game.getObjectById(creep.memory.nuker)
                     const result = actions.charge(creep, nuker)
                     if(result == 1){
-                        creep.say('getJob')
+                        creep.say("getJob")
                     }
                     break
                 }
-                if (creep.room.terminal.store['G'] >= 4000){
+                if (creep.room.terminal.store["G"] >= 4000){
                     actions.withdraw(creep, creep.room.terminal, RESOURCE_GHODIUM)
                 } else {
                     creep.memory.target = rF.getJob(creep)
@@ -144,14 +144,14 @@ var rF = {
                     const result = actions.charge(creep, lab)
                     if(result == 1){
                         Game.spawns[creep.memory.city].memory.ferryInfo.boosterInfo[creep.memory.labNum][1] = 0
-                        creep.say('getJob')
+                        creep.say("getJob")
                     }
                     break
                 }
                 if (creep.room.terminal.store[creep.memory.mineral] > 0){
                     actions.withdraw(creep, creep.room.terminal, creep.memory.mineral)
                 } else {
-                    creep.say('getJob')
+                    creep.say("getJob")
                 }
                 break
             case 10: {
@@ -159,7 +159,7 @@ var rF = {
                 if (_.sum(creep.carry) > 0){
                     const result = actions.charge(creep, creep.room.terminal)
                     if (result == 1){
-                        creep.say('getJob')
+                        creep.say("getJob")
                         break
                     }
                     break
@@ -176,7 +176,7 @@ var rF = {
                     const result = actions.charge(creep, creep.room.terminal)
                     if(result == 1){//successful deposit, remove element from task list
                         _.pullAt(Game.spawns[creep.memory.city].memory.ferryInfo.factoryInfo.transfer, creep.memory.labNum) //remove element
-                        creep.say('getJob')
+                        creep.say("getJob")
                     }
                     break
                 }
@@ -192,7 +192,7 @@ var rF = {
                     const result = creep.transfer(factory, creep.memory.mineral, creep.memory.quantity)
                     if (result == 0){
                         _.pullAt(Game.spawns[creep.memory.city].memory.ferryInfo.factoryInfo.transfer, creep.memory.labNum) //remove element
-                        creep.say('getJob')
+                        creep.say("getJob")
                         break
                     }
                     creep.moveTo(factory)
@@ -287,7 +287,7 @@ var rF = {
             }
         }
         const nuker = _.find(creep.room.find(FIND_MY_STRUCTURES), structure => structure.structureType == STRUCTURE_NUKER)
-        if (nuker && nuker.ghodium < nuker.ghodiumCapacity && creep.room.terminal.store['G'] >= 4000){
+        if (nuker && nuker.ghodium < nuker.ghodiumCapacity && creep.room.terminal.store["G"] >= 4000){
             creep.memory.nuker = nuker.id
             return 8
         }

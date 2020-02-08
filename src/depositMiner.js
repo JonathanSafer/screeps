@@ -1,4 +1,4 @@
-var actions = require('./actions')
+var actions = require("./actions")
 
 var rDM = {
     name: "depositMiner",
@@ -22,7 +22,7 @@ var rDM = {
         switch(creep.memory.target){
             case 0: {
                 //newly spawned or empty store
-                const flagName = creep.memory.city + 'deposit'
+                const flagName = creep.memory.city + "deposit"
                 if(!Game.flags[flagName]){//if there is no flag, change city.memory.depositMiner to 0, and suicide
                     Game.spawns[creep.memory.city].memory.depositMiner = 0
                     creep.suicide()
@@ -91,7 +91,7 @@ var rDM = {
             }
             if(cooldown > expected || dangerous){
                 //call in harasser
-                const flagName = creep.memory.city + 'harass'
+                const flagName = creep.memory.city + "harass"
                 if(!Game.flags[flagName]){
                     creep.room.createFlag(25, 25, flagName)
                 }

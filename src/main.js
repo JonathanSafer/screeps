@@ -1,14 +1,14 @@
-var u = require('./utils')
-var cM = require('./commodityManager')
-var rPC = require('./powerCreep')
-var c = require('./city')
-var m = require('./markets')
-var s = require('./stats')
-var rp = require('./roomplan')
-var er = require('./error')
-var settings = require('./settings')
-const profiler = require('./screeps-profiler')
-var pp = require('./profiler-prep')
+var u = require("./utils")
+var cM = require("./commodityManager")
+var rPC = require("./powerCreep")
+var c = require("./city")
+var m = require("./markets")
+var s = require("./stats")
+var rp = require("./roomplan")
+var er = require("./error")
+var settings = require("./settings")
+const profiler = require("./screeps-profiler")
+var pp = require("./profiler-prep")
 pp.prepProfile()
 
 //Game.profiler.profile(1000);
@@ -46,7 +46,7 @@ module.exports.loop = function () {
             try {
                 var city = myCities[i].memory.city
                 if(!city){
-                    myCities[i].memory.city = myCities[i].name + '0'
+                    myCities[i].memory.city = myCities[i].name + "0"
                 }
                 const rcl = myCities[i].controller.level
                 if (rcl < 8 && Game.cpu.bucket < settings.bucket.colony) {
@@ -76,7 +76,7 @@ module.exports.loop = function () {
             for (const name in Memory.creeps) {
                 if (!Game.creeps[name]) {
                     delete Memory.creeps[name]
-                    console.log('Clearing non-existing creep memory:', name)
+                    console.log("Clearing non-existing creep memory:", name)
                 }
             }
         }
@@ -85,7 +85,7 @@ module.exports.loop = function () {
            for (const name in Memory.rooms) {
                 if (!Memory.rooms[name].city) {
                     delete Memory.rooms[name]
-                    console.log('Clearing room memory:', name)
+                    console.log("Clearing room memory:", name)
                 }
             }
         }

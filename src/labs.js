@@ -1,4 +1,4 @@
-var settings = require('./settings')
+var settings = require("./settings")
 
 var labs = {
     runLabs: function(city) {
@@ -41,12 +41,12 @@ var labs = {
     },
 
     updateLabs: function(lab0, lab1, lab2, lab3, lab4, lab5, spawn) {
-        if(spawn.memory.ferryInfo.labInfo[6] == 'dormant' && Game.time % 500 != 0){
+        if(spawn.memory.ferryInfo.labInfo[6] == "dormant" && Game.time % 500 != 0){
             return
         }
-        if(lab5.mineralType == spawn.memory.ferryInfo.labInfo[6] || spawn.memory.ferryInfo.labInfo[6] == 'dormant'){
+        if(lab5.mineralType == spawn.memory.ferryInfo.labInfo[6] || spawn.memory.ferryInfo.labInfo[6] == "dormant"){
             labs.chooseBoost(spawn.memory.ferryInfo.labInfo[6], spawn)
-            if(spawn.memory.ferryInfo.labInfo[6] == 'dormant'){
+            if(spawn.memory.ferryInfo.labInfo[6] == "dormant"){
                 return
             }
         }
@@ -74,11 +74,11 @@ var labs = {
     },
 
     chooseBoost: function(currentBoost, spawn) {
-        if(spawn.room.terminal.store['G'] < settings.ghodiumAmount){
-            spawn.memory.ferryInfo.labInfo[6] = 'G'
+        if(spawn.room.terminal.store["G"] < settings.ghodiumAmount){
+            spawn.memory.ferryInfo.labInfo[6] = "G"
             return
         }
-        const boostsList = ['G', 'XKHO2', 'XLHO2', 'XZHO2', 'XGHO2', 'XZH2O', 'XGH2O', 'XLH2O']
+        const boostsList = ["G", "XKHO2", "XLHO2", "XZHO2", "XGHO2", "XZH2O", "XGH2O", "XLH2O"]
         if (boostsList.includes(currentBoost) && spawn.room.terminal.store[currentBoost] > settings.boostAmount - 3000){
             boostsList.splice(boostsList.indexOf(currentBoost), 1)
         }
@@ -89,7 +89,7 @@ var labs = {
             }
         }
         //go dormant
-        spawn.memory.ferryInfo.labInfo[6] = 'dormant'
+        spawn.memory.ferryInfo.labInfo[6] = "dormant"
     },
 
     chooseMineral: function(mineral, spawn) {
@@ -106,7 +106,7 @@ var labs = {
             spawn.memory.ferryInfo.mineralRequest = mineral
             return 0
         }
-        const ferry = _.find(spawn.room.find(FIND_MY_CREEPS), creep => creep.memory.role === 'ferry')
+        const ferry = _.find(spawn.room.find(FIND_MY_CREEPS), creep => creep.memory.role === "ferry")
         if(ferry && _.sum(ferry.carry)){
             return
         }

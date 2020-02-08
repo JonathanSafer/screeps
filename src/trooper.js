@@ -1,5 +1,5 @@
-var a = require('./actions')
-var u = require('./utils')
+var a = require("./actions")
+var u = require("./utils")
 
 var rTr = {
     name: "trooper",
@@ -15,7 +15,7 @@ var rTr = {
         u.updateCheckpoints(creep)
         creep.notifyWhenAttacked(false)
         
-        const hostiles = _.filter(creep.room.find(FIND_HOSTILE_CREEPS), c => c.owner.username != 'Atanner')
+        const hostiles = _.filter(creep.room.find(FIND_HOSTILE_CREEPS), c => c.owner.username != "Atanner")
         const buildings = _.reject(creep.room.find(FIND_HOSTILE_STRUCTURES), structure => structure.structureType == STRUCTURE_CONTROLLER)
         let target = Game.getObjectById(creep.memory.target)
 
@@ -72,7 +72,7 @@ var rTr = {
                         tolerance++
                     }
                 }
-                if(medic.memory.role.substring(0, 3) === 'big'){
+                if(medic.memory.role.substring(0, 3) === "big"){
                     tolerance = (tolerance*12)
                     tolerance = (tolerance*0.5)
                 }
@@ -87,11 +87,11 @@ var rTr = {
             //look for medics
             const status = creep.memory.role.substring(0, 3)
             var medicSearch = 0
-            if (status == 'big'){
-                medicSearch = _.find(allCreeps[creep.memory.city], localCreep => localCreep.memory.role === 'bigMedic' &&
+            if (status == "big"){
+                medicSearch = _.find(allCreeps[creep.memory.city], localCreep => localCreep.memory.role === "bigMedic" &&
                     localCreep.pos.isNearTo(creep.pos) && localCreep.memory.breaker == creep.id)
             } else {
-                medicSearch = _.find(allCreeps[creep.memory.city], localCreep => localCreep.memory.role === 'medic' &&
+                medicSearch = _.find(allCreeps[creep.memory.city], localCreep => localCreep.memory.role === "medic" &&
                     localCreep.pos.isNearTo(creep.pos) && localCreep.memory.breaker == creep.id)
             }
             if (medicSearch){
@@ -151,7 +151,7 @@ var rTr = {
 
     maybeRally: function(creep) {
         // Go to rally en route to target
-        var rallyFlag = creep.memory.city + 'trooperRally'
+        var rallyFlag = creep.memory.city + "trooperRally"
         if (Game.flags[rallyFlag] && !creep.memory.rally){
             creep.moveTo(Game.flags[rallyFlag], {reusePath: 50})
             if (Game.flags[rallyFlag].pos.x == creep.pos.x && Game.flags[rallyFlag].pos.y == creep.pos.y && Game.flags[rallyFlag].pos.roomName == creep.pos.roomName){
@@ -165,12 +165,12 @@ var rTr = {
     maybeShoot: function(creep) {
         // If there is a 'shoot' flag, move to the flag before attacking. 
         var city = creep.memory.city
-        var flagName = 'shoot'
+        var flagName = "shoot"
         var status = creep.memory.role.substring(0, 3)
-        if(status === 'big'){
-            flagName = city + 'bigShoot'
+        if(status === "big"){
+            flagName = city + "bigShoot"
         } else {
-            flagName = city + 'shoot'
+            flagName = city + "shoot"
         }
         if(Game.flags[flagName]){
             if(creep.pos.roomName != Game.flags[flagName].pos.roomName){

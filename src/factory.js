@@ -2,7 +2,7 @@ var fact = {
 
     runFactory: function(city) {
         fact.initFactoryMem(city)
-        if(Game.spawns[city].memory.ferryInfo.factoryInfo.produce === 'dormant' || !Game.spawns[city].memory.ferryInfo.factoryInfo.produce){
+        if(Game.spawns[city].memory.ferryInfo.factoryInfo.produce === "dormant" || !Game.spawns[city].memory.ferryInfo.factoryInfo.produce){
             if(Game.time % 100 != 0){
                 return
             }
@@ -87,7 +87,7 @@ var fact = {
                 return
             }
             //don't choose new produce if ferry just deposited (ferry will be isNearTo and carrying stuff)
-            const ferry = _.find(factory.room.find(FIND_MY_CREEPS), creep => creep.memory.role === 'ferry')
+            const ferry = _.find(factory.room.find(FIND_MY_CREEPS), creep => creep.memory.role === "ferry")
             if(ferry &&  _.sum(ferry.store) > 0 && ferry.pos.isNearTo(factory.pos)) {
                 return
             }
@@ -123,7 +123,7 @@ var fact = {
                 return
             }
             //otherwise go dormant
-            Game.spawns[city].memory.ferryInfo.factoryInfo.produce = 'dormant'
+            Game.spawns[city].memory.ferryInfo.factoryInfo.produce = "dormant"
         } else {
             //make 5k of each base resource commodity (in increments of 200)
             const bars = [RESOURCE_UTRIUM_BAR, RESOURCE_LEMERGIUM_BAR, RESOURCE_ZYNTHIUM_BAR,
@@ -165,7 +165,7 @@ var fact = {
 
             }
             //activate dormant mode
-            Game.spawns[city].memory.ferryInfo.factoryInfo.produce = 'dormant'
+            Game.spawns[city].memory.ferryInfo.factoryInfo.produce = "dormant"
         }
     },
 

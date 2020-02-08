@@ -1,5 +1,5 @@
-var actions = require('./actions')
-var u = require('./utils')
+var actions = require("./actions")
+var u = require("./utils")
 
 var rR = {
     name: "runner",
@@ -22,7 +22,7 @@ var rR = {
                 return
             }
             //check for flag
-            const flagName = creep.memory.city + 'powerMine'
+            const flagName = creep.memory.city + "powerMine"
             if (Game.flags[flagName] && Game.flags[flagName].pos.roomName !== creep.pos.roomName){
                 //move to flag range 5
                 creep.moveTo(Game.flags[flagName], {reusePath: 50}, {range: 4})
@@ -108,7 +108,7 @@ var rR = {
               }
               creep.memory.location = bucket.id
               if (actions.charge(creep, bucket) == ERR_FULL) {
-                    console.log('Container Full')
+                    console.log("Container Full")
                     rR.flipTarget(creep)
               }
           }

@@ -1,6 +1,6 @@
-var a = require('./actions')
-var u = require('./utils')
-var rH = require('./harasser')
+var a = require("./actions")
+var u = require("./utils")
+var rH = require("./harasser")
 var CreepState = {
     START: 1,
     BOOST: 2,
@@ -50,8 +50,8 @@ var rD = {
             rH.shoot(creep, hostiles)
             rH.maybeHeal(creep, hostiles)
             if(!hostiles.length && creep.hits == creep.hitsMax){
-                creep.say('sleep')
-                if(creep.saying == 'sleep'){
+                creep.say("sleep")
+                if(creep.saying == "sleep"){
                     creep.moveTo(Game.spawns[creep.memory.city].room.controller, {range: 2})
                 }
                 if(creep.pos.inRangeTo(Game.spawns[creep.memory.city].room.controller, 2)){
@@ -75,7 +75,7 @@ var rD = {
             var localRooms = u.splitRoomsByCity()
             const rooms = _.filter(localRooms[city], room => room.find(FIND_HOSTILE_CREEPS) != 0)
             if (rooms.length){
-                var enemies = _.filter(rooms[0].find(FIND_HOSTILE_CREEPS), enemy => enemy.owner.username != 'TuN9aN0')
+                var enemies = _.filter(rooms[0].find(FIND_HOSTILE_CREEPS), enemy => enemy.owner.username != "TuN9aN0")
                 if (enemies.length) {
                     console.log(enemies)
                     a.attack(creep, enemies[0])

@@ -1,5 +1,5 @@
-var a = require('./actions')
-var u = require('./utils')
+var a = require("./actions")
+var u = require("./utils")
 
 var rPM = {
     name: "powerMiner",
@@ -35,14 +35,14 @@ var rPM = {
         } else {
             //look for medics
             var allCreeps = u.splitCreepsByCity()
-            var medicSearch = _.find(allCreeps[creep.memory.city], localCreep => localCreep.memory.role === 'medic' && localCreep.pos.isNearTo(creep.pos) 
+            var medicSearch = _.find(allCreeps[creep.memory.city], localCreep => localCreep.memory.role === "medic" && localCreep.pos.isNearTo(creep.pos) 
                                                                                 && localCreep.memory.breaker == creep.id)
             if (medicSearch){
                 creep.memory.medic = medicSearch.id
             }
             return
         }
-        var targetFlag = creep.memory.city + 'powerMine'
+        var targetFlag = creep.memory.city + "powerMine"
         if(Game.flags[targetFlag] && creep.pos.roomName === Game.flags[targetFlag].pos.roomName){
             var found = Game.flags[targetFlag].pos.lookFor(LOOK_STRUCTURES)
             if(found.length){

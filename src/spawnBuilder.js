@@ -1,7 +1,7 @@
-var a = require('./actions')
-var sq = require('./spawnQueue')
-var rU = require('./upgrader')
-var s = require('./settings')
+var a = require("./actions")
+var sq = require("./spawnQueue")
+var rU = require("./upgrader")
+var s = require("./settings")
 
 var rSB = {
     name: "spawnBuilder",
@@ -23,7 +23,7 @@ var rSB = {
         if(!creep.memory.state){
           creep.memory.state = 0
         }
-        const boost = 'XLH2O'
+        const boost = "XLH2O"
         rU.checkBoost(creep, city, boost)
         rU.getBoosted(creep, city, boost)
 
