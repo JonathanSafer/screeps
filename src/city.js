@@ -44,115 +44,114 @@ function makeCreeps(role, type, target, city) {
         Memory.counter = 0
     }
     const name = Memory.counter.toString()
-    if (types.cost(recipe) <= room.energyAvailable){
-        const spawn = u.getAvailableSpawn(spawns)
-        //console.log(spawn);
-        if(spawn != null) {
-            try {
-                Memory.counter++
-                spawn.spawnCreep(recipe, name)
-                Game.creeps[name].memory.role = role
-                Game.creeps[name].memory.target = target
-                Game.creeps[name].memory.city = city
-                Game.creeps[name].memory.new = true
-            } catch (e) {
-                throw new Error("Error making creep of role: " + role)
-            }
-        }
+    if (types.cost(recipe) > room.energyAvailable) return false
+    const spawn = u.getAvailableSpawn(spawns)
+    //console.log(spawn);
+    if (!spawn) return false
+    try {
+        Memory.counter++
+        spawn.spawnCreep(recipe, name)
+        Game.creeps[name].memory.role = role
+        Game.creeps[name].memory.target = target
+        Game.creeps[name].memory.city = city
+        Game.creeps[name].memory.new = true
+    } catch (e) {
+        throw new Error("Error making creep of role: " + role)
     }
 }
 //runCity function
 function runCity(city, creeps){
     const spawn = Game.spawns[city]
-    if (spawn){
-        const room = spawn.room
+    if (!spawn) return false
+    const room = spawn.room
 
-        // Only build required roles during financial stress
-        var coreRoles = [rF, rD, rT, rM, rR, rU, rB]
-        var allRoles = [rF, rD, rT, rM, rR, rU, rB, rMM, rC, rUC,
-            rSB, rH, rBM, rD, rBB, rBT, rMe, rTr, rBr, rPM,
-            rRo, rDM] // order roles for priority
-        var roles = (room.storage && room.storage.store.energy < 50000) ? coreRoles : allRoles
+    // Only build required roles during financial stress
+    var coreRoles = [rF, rD, rT, rM, rR, rU, rB]
+    var allRoles = [rF, rD, rT, rM, rR, rU, rB, rMM, rC, rUC,
+        rSB, rH, rBM, rD, rBB, rBT, rMe, rTr, rBr, rPM,
+        rRo, rDM] // order roles for priority
+    var roles = (room.storage && room.storage.store.energy < 50000) ? coreRoles : allRoles
 
-        // Get counts for roles by looking at all living and queued creeps
-        var nameToRole = _.groupBy(allRoles, role => role.name) // map from names to roles
-        var counts = _.countBy(creeps, creep => creep.memory.role) // lookup table from role to count
-        const queuedCounts = sq.getCounts(spawn)
-        _.forEach(roles, role => {
-            const liveCount = counts[role.name] || 0
-            const queueCount = queuedCounts[role.name] || 0
-            counts[role.name] = liveCount + queueCount
-        })
+    // Get counts for roles by looking at all living and queued creeps
+    var nameToRole = _.groupBy(allRoles, role => role.name) // map from names to roles
+    var counts = _.countBy(creeps, creep => creep.memory.role) // lookup table from role to count
+    const queuedCounts = sq.getCounts(spawn)
+    _.forEach(roles, role => {
+        const liveCount = counts[role.name] || 0
+        const queueCount = queuedCounts[role.name] || 0
+        counts[role.name] = liveCount + queueCount
+    })
 
-        //console.log(JSON.stringify(roles));
-        let nextRole = _.find(roles, role => (typeof counts[role.name] == "undefined" && 
-            spawn.memory[role.name]) || (counts[role.name] < spawn.memory[role.name]))
-        // console.log(Game.spawns[city].memory.rM);
+    //console.log(JSON.stringify(roles));
+    let nextRole = _.find(roles, role => (typeof counts[role.name] == "undefined" && 
+        spawn.memory[role.name]) || (counts[role.name] < spawn.memory[role.name]))
+    // console.log(Game.spawns[city].memory.rM);
 
-        // If quota is met, get a role from the spawn queue
-        if (!nextRole) {
-            const spawnQueueRoleName = sq.getNextRole(spawn)
-            nextRole = spawnQueueRoleName ? nameToRole[spawnQueueRoleName][0] : undefined
-        }
-
-        if (nextRole) {
-            //console.log(JSON.stringify(nextRole));
-            makeCreeps(nextRole.name, nextRole.type, nextRole.target(), city)
-        }
-    
-        // Print out each role & number of workers doing it
-        // var printout = _.map(roles, role => role.name + ": " + counts[role.name]);
-        //console.log(city + ': ' + printout.join(', ' ));
-    
-        // Run all the creeps in this city
-        _.forEach(creeps, (creep) => nameToRole[creep.memory.role][0].run(creep)/* || console.log(creep.memory.role + ' ' + Game.cpu.getUsed())*/)
-        
-        link.run(room)
-
-        //run powerSpawn
-        runPowerSpawn(city)
-        labs.runLabs(city)
-        fact.runFactory(city)
-        checkNukes(room)
+    // If quota is met, get a role from the spawn queue
+    if (!nextRole) {
+        const spawnQueueRoleName = sq.getNextRole(spawn)
+        nextRole = spawnQueueRoleName ? nameToRole[spawnQueueRoleName][0] : undefined
     }
+
+    if (nextRole) {
+        //console.log(JSON.stringify(nextRole));
+        makeCreeps(nextRole.name, nextRole.type, nextRole.target(), city)
+    }
+
+    // Print out each role & number of workers doing it
+    // var printout = _.map(roles, role => role.name + ": " + counts[role.name]);
+    //console.log(city + ': ' + printout.join(', ' ));
+
+    // Run all the creeps in this city
+    _.forEach(creeps, (creep) => nameToRole[creep.memory.role][0].run(creep)/* || console.log(creep.memory.role + ' ' + Game.cpu.getUsed())*/)
+    
+    link.run(room)
+
+    //run powerSpawn
+    runPowerSpawn(city)
+    labs.runLabs(city)
+    fact.runFactory(city)
+    checkNukes(room)
 }
 
 //updateCountsCity function
 function updateCountsCity(city, creeps, rooms, claimRoom, unclaimRoom) {
     const spawn = Game.spawns[city]
-    if (spawn){
-        const memory = spawn.memory
-        const controller = spawn.room.controller
-        const rcl = controller.level
-        const rcl8 = rcl > 7
-        const emergencyTime = spawn.room.storage && spawn.room.storage.store.energy < 5000 || 
-                    (rcl > 6 && !spawn.room.storage)
-        const logisticsTime = rcl8 && !emergencyTime ? 500 : 50
-        if(Game.time % 200 == 0){
-            updateMilitary(city, memory, rooms)
+    if (!spawn) return false
+    const memory = spawn.memory
+    const controller = spawn.room.controller
+    const rcl = controller.level
+    const rcl8 = rcl > 7
+    const emergencyTime = spawn.room.storage && spawn.room.storage.store.energy < 5000 || 
+                (rcl > 6 && !spawn.room.storage)
+    const logisticsTime = rcl8 && !emergencyTime ? 500 : 50
+
+    // Always update defender
+    updateDefender(rooms, memory, rcl8)
+    
+    if(Game.time % 200 == 0){
+        updateMilitary(city, memory, rooms)
+    }
+    if (Game.time % logisticsTime == 0) {
+        const structures = spawn.room.find(FIND_STRUCTURES)
+        const extensions = _.filter(structures, structure => structure.structureType == STRUCTURE_EXTENSION).length
+        const rcl8Room = _.find(Game.rooms, room => room.controller && room.controller.owner && room.controller.owner.username == "Yoner" && room.controller.level == 8)
+        updateRunner(creeps, spawn, extensions, memory, rcl, emergencyTime)
+        updateFerry(spawn, memory, rcl)
+        updateMiner(rooms, rcl8Room, memory, spawn)
+    
+        if (Game.time % 500 === 0) {
+            runNuker(city)
+            checkLabs(city)
+            updateTransporter(extensions, memory)
+            updateColonizers(city, memory, claimRoom, unclaimRoom)
+            updateUpgrader(city, controller, memory, rcl8, creeps, rcl)
+            updateBuilder(rcl, memory, spawn, rooms, rcl8)
+            updateMineralMiner(rcl, structures, spawn, memory)
+            updatePowerSpawn(city, memory)
+            updateStorageLink(spawn, memory, structures)
         }
-        if (Game.time % logisticsTime == 0) {
-            const structures = spawn.room.find(FIND_STRUCTURES)
-            const extensions = _.filter(structures, structure => structure.structureType == STRUCTURE_EXTENSION).length
-            const rcl8Room = _.find(Game.rooms, room => room.controller && room.controller.owner && room.controller.owner.username == "Yoner" && room.controller.level == 8)
-            updateRunner(creeps, spawn, extensions, memory, rcl, emergencyTime)
-            updateFerry(spawn, memory, rcl)
-            updateMiner(rooms, rcl8Room, memory, spawn)
-        
-            if (Game.time % 500 === 0) {
-                runNuker(city)
-                checkLabs(city)
-                updateTransporter(extensions, memory)
-                updateColonizers(city, memory, claimRoom, unclaimRoom)
-                updateUpgrader(city, controller, memory, rcl8, creeps, rcl)
-                updateBuilder(rcl, memory, spawn, rooms, rcl8)
-                updateMineralMiner(rcl, structures, spawn, memory)
-                updatePowerSpawn(city, memory)
-                updateStorageLink(spawn, memory, structures)
-            }
-            makeEmergencyCreeps(extensions, creeps, city, rcl8, emergencyTime) 
-        }
-        updateDefender(rooms, memory, rcl8)
+        makeEmergencyCreeps(extensions, creeps, city, rcl8, emergencyTime) 
     }
 }
 
