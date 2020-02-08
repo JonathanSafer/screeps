@@ -11,7 +11,7 @@ var settings = {
     bucket: {//minimum bucket thresholds
         powerMining: 8500,
         powerRange: 3000, //this keeps all power mining from shutting off at once. 
-            //If powerMining + powerRange/2 > 10000, there may be times where a mining flag is not placed even though the bucket is full
+        //If powerMining + powerRange/2 > 10000, there may be times where a mining flag is not placed even though the bucket is full
         resourceMining: 1000,
         colony: 4000, // building new rooms
         repair: 3000 //repairing walls in a room
