@@ -812,7 +812,7 @@ function placeMiningFlags(city) {
 }
 
 function timeToRoomNum(time, city) {
-    return Math.floor(time / 100) % Game.spawns[city].memory.powerRooms.length    
+    return Math.floor(time / settings.observerFrequency) % Game.spawns[city].memory.powerRooms.length    
 }
 
 function getObsForMining(city) {
