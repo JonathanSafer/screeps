@@ -896,5 +896,6 @@ module.exports = {
     runCity: runCity,
     updateCountsCity: updateCountsCity,
     runTowers: runTowers,
-    runObs: runObs
+    runObs: runObs,
+    runPowerSpawn: runPowerSpawn
 }
