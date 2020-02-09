@@ -13,10 +13,17 @@ var settings = {
         powerMining: 8500,
         powerRange: 3000, //this keeps all power mining from shutting off at once. 
         //If powerMining + powerRange/2 > 10000, there may be times where a mining flag is not placed even though the bucket is full
+        upgrade: 7000,
+        upgradeRange: 4000,
         resourceMining: 1000,
         colony: 5000, // building new rooms
         repair: 3000, //repairing walls in a room
         rclMultiplier: 200, // scale: rcl0 = 5k, 1 => 4.8k etc
+        processPower: 3200,
+    },
+    energy: {//energy thresholds
+        rcl8upgrade: 720000,
+        processPower: 650000
     },
     miningRange: 7,
     observerFrequency: 20, // how often each city scans a room

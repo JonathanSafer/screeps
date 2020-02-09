@@ -258,7 +258,7 @@ function runPowerSpawn(city){
                 Game.spawns[city].memory.ferryInfo.needPower = false
             }
         }
-        if(powerSpawn && powerSpawn.energy >= 50 && powerSpawn.power > 0 && powerSpawn.room.storage.store.energy > 650000 && Game.cpu.bucket > 3000){
+        if(powerSpawn && powerSpawn.energy >= 50 && powerSpawn.power > 0 && powerSpawn.room.storage.store.energy > settings.energy.processPower && Game.cpu.bucket > settings.bucket.processPower){
             powerSpawn.processPower()
         }
     }
@@ -556,8 +556,9 @@ function updateTransporter(extensions, memory) {
 
 function updateUpgrader(city, controller, memory, rcl8, creeps, rcl) {
     if (rcl8){
-        var modifier = Math.random() * 2000
-        if (controller.ticksToDowngrade < 100000 || (controller.room.storage.store.energy > 720000 && Game.cpu.bucket > (7500 + modifier))){
+        var modifier = Math.random() * settings.bucket.upgradeRange
+        if (controller.ticksToDowngrade < 100000 
+            || (controller.room.storage.store.energy > settings.energy.upgrade && Game.cpu.bucket > (settings.bucket.upgrade + modifier - (settings.bucket.upgradeRange/2)))){
             Game.spawns[city].memory[rU.name] = 1
         } else if (controller.ticksToDowngrade > 180000){
             Game.spawns[city].memory[rU.name] = 0
