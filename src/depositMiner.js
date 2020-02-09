@@ -111,6 +111,7 @@ var rDM = {
                 //remove flag
                 const flagName = creep.memory.city + "deposit"
                 Game.flags[flagName].remove()
+                creep.memory.target = 1
                 return true
             }
         }
