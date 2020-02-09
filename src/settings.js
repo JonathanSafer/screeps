@@ -5,7 +5,7 @@ var settings = {
     roomplanTime: 500,
     roomplanOffset: 155,
     creditMin: 4500000, //min credits needed to start buying energy
-    miningDisabled: ["W1N210", "W2N240", "W11N190"], //cities that will attempt any highway mining
+    miningDisabled: ["W2N240"], //cities that will attempt any highway mining
     ghodiumAmount: 15000, //threshold to stop producing ghodium
     boostAmount: 12000, //threshold to stop producing boosts
     wallHeight: 10000000,
@@ -16,9 +16,9 @@ var settings = {
         resourceMining: 1000,
         colony: 5000, // building new rooms
         repair: 3000, //repairing walls in a room
-        rclMultiplier: 200 // scale: rcl0 = 5k, 1 => 4.8k etc
+        rclMultiplier: 200, // scale: rcl0 = 5k, 1 => 4.8k etc
     },
-    miningRange: 5,
+    miningRange: 7,
     observerFrequency: 20, // how often each city scans a room
 
     // Profiling
