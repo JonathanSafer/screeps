@@ -837,7 +837,8 @@ function preparePowerRoomsList(city, range) {
     const myRoom = Game.spawns[city].room.name
     const pos = u.roomNameToPos(myRoom)
     for (let i = -range; i < +range; i++){
-        for (let j = -range; j < +range; j++){
+        const jRange = range - Math.abs(i)
+        for (let j = -jRange; j < +jRange; j++){
             const coord = [pos[0] + i, pos[1] + j]
             const roomName = u.roomPosToName(coord)
             if (u.isHighway(roomName)) {
