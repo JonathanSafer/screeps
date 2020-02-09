@@ -7,9 +7,9 @@ var actions = {
         switch (result) {
         case ERR_NOT_IN_RANGE:
             if((creep.memory.role === "Upgrader" || creep.memory.role === "upgrader") && location.structureType && location.structureType === STRUCTURE_CONTROLLER){
-                return creep.moveTo(location, {reusePath: 15, range: 3, swampCost: 2, plainCost: 2})
+                return u.ownRoomMove(creep, location, 3)
             } else {
-                return creep.moveTo(location, {reusePath: 15, maxOps: 10000, maxRooms: 32})
+                return u.ownRoomMove(creep, location, 1)
             }
         case OK:
             if (logSuccess) {
