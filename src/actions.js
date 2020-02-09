@@ -52,16 +52,15 @@ var actions = {
     enablePower: function(creep) {
         return actions.interact(creep, 
             creep.room.controller, 
-            () => creep.enableRoom(creep.room.controller), 
-            true)
+            () => creep.enableRoom(creep.room.controller))
     },
 
     usePower: function(creep, target, power) {
-        return actions.interact(creep, target, () => creep.usePower(power, target), true)
+        return actions.interact(creep, target, () => creep.usePower(power, target))
     },
 
     renewPowerCreep: function(creep, target) {
-        return actions.interact(creep, target, () => creep.renew(target), true)
+        return actions.interact(creep, target, () => creep.renew(target))
     },
     
     rangedAttack: function(creep, target){
