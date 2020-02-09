@@ -636,7 +636,7 @@ function updateRunner(creeps, spawn, extensions, memory, rcl, emergencyTime) {
     var minerEnergyPerTick = extensions < 5 ? 10 : 20
     var energyProduced = 1.0 * totalDistance * minerEnergyPerTick
     var energyCarried = types.carry(types.getRecipe("runner", spawn.room.energyAvailable, spawn.room))
-    memory[rR.name] = Math.min(8, Math.max(Math.ceil(energyProduced / energyCarried), 2))
+    memory[rR.name] = Math.min(4, Math.max(Math.ceil(energyProduced / energyCarried), 2))
 }
 
 function updateFerry(spawn, memory, rcl) {
