@@ -50,7 +50,9 @@ module.exports.loop = function () {
                     myCities[i].memory.city = myCities[i].name + "0"
                 }
                 const rcl = myCities[i].controller.level
-                if (rcl < 8 && Game.cpu.bucket < settings.bucket.colony) {
+                const rclLimit =
+                    settings.bucket.colony - rcl * settings.bucket.rclMultiplier
+                if (rcl < 8 && Game.cpu.bucket < rclLimit) {
                     continue // skip this city
                 }
                 c.runCity(city, localCreeps[city])
