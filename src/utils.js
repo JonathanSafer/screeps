@@ -105,11 +105,12 @@ var u = {
         }
     },
 
-    findMultiRoomPath: function(startPos, endPos) {
-        return PathFinder.search(startPos, {pos: endPos, range: 1 }, {
+    highwayMoveSettings: function(maxOps, swampCost, startPos, endPos) {
+        return {
+            range: 1,
             plainCost: 1,
-            swampCost: 1,
-            maxOps: 10000,
+            swampCost: swampCost,
+            maxOps: maxOps,
             maxRooms: 64,
             roomCallback: function(roomName) {
                 const isHighway = u.isHighway(roomName)
@@ -123,7 +124,16 @@ var u = {
                 const costs = new PathFinder.CostMatrix()
                 return isHighway ? costs : _.map(costs, cost => cost * 3)
             }
-        })
+        }
+    },
+
+    findMultiRoomPath: function(startPos, endPos) {
+        return PathFinder.search(startPos, {pos: endPos, range: 1 }, 
+            u.highwayMoveSettings(10.000, 1, startPos, endPos))
+    },
+
+    multiRoomMove: function(creep, pos) {
+        creep.moveTo(pos, {reusePath: 50}, u.highwayMoveSettings(5.000, 8, creep.pos, pos))         
     },
 
     // E0,E10... W0, 10 ..., N0, N10 ...
