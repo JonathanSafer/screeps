@@ -13,11 +13,7 @@ pp.prepProfile()
 
 //Game.profiler.profile(1000);
 //Game.profiler.output();
-//Game.spawns['Home'].memory.counter = 934;
-//Game.spawns['Home'].memory["runner"] = 5;
-//Game.spawns['Home'].memory["attacker"] = 0;
-global.T = function() { console.log(Game.time) }
-
+global.T = function() { return `Time: ${Game.time}` }
 
 profiler.enable()
 module.exports.loop = function () {
