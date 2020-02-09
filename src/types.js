@@ -36,7 +36,7 @@ function getRecipe(type, energyAvailable, room){
         break
     case 6:
         // lvl 6 recipes
-        d["normal"] = body([12, 8, 10],[WORK, CARRY, MOVE])
+        d["normal"] = body([12, 8, 10],[WORK, CARRY, MOVE])  // ratio is 5 to 3 wc
         d["mineralMiner"] = body([12, 6, 9], [WORK, CARRY, MOVE])
         d["medic"] = body([7, 7], [MOVE, HEAL])
         d["robber"] = body([20, 20], [CARRY, MOVE])
@@ -165,7 +165,7 @@ function upgraderBody(energyAvailable, rcl) {
     // upgraders. At least 2 work, at least work/2 carry. at least (w+c)/2 move
     const types = [WORK, CARRY, MOVE]
     if(rcl <= 2){
-        return body([1, 1, 1], types)
+        return scalingBody([1, 1, 1], types, energyAvailable)
     }
     return rcl > 7 ? body([15, 15, 15], types) : scalingBody([4, 2, 3], types, energyAvailable)
 }
