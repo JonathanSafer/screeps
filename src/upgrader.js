@@ -10,7 +10,7 @@ var CreepState = {
 var CS = CreepState
 
 var rU = {
-    name: "Upgrader",
+    name: "upgrader",
     type: "normal",
     target: () => 0,
 

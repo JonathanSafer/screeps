@@ -59,6 +59,13 @@ function makeCreeps(role, type, target, city) {
         throw new Error("Error making creep of role: " + role)
     }
 }
+
+/// Temp function. Delete in 1 day
+function trueRole(creep) {
+    return creep.memory.role === "Upgrader" ? "upgrader" : creep.memory.role
+}
+
+
 //runCity function
 function runCity(city, creeps){
     const spawn = Game.spawns[city]
@@ -74,7 +81,7 @@ function runCity(city, creeps){
 
     // Get counts for roles by looking at all living and queued creeps
     var nameToRole = _.groupBy(allRoles, role => role.name) // map from names to roles
-    var counts = _.countBy(creeps, creep => creep.memory.role) // lookup table from role to count
+    var counts = _.countBy(creeps, trueRole) // lookup table from role to count
     const queuedCounts = sq.getCounts(spawn)
     _.forEach(roles, role => {
         const liveCount = counts[role.name] || 0
@@ -103,7 +110,7 @@ function runCity(city, creeps){
     //console.log(city + ': ' + printout.join(', ' ));
 
     // Run all the creeps in this city
-    _.forEach(creeps, (creep) => nameToRole[creep.memory.role][0].run(creep)/* || console.log(creep.memory.role + ' ' + Game.cpu.getUsed())*/)
+    _.forEach(creeps, (creep) => nameToRole[trueRole(creep)][0].run(creep))
     
     link.run(room)
 

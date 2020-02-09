@@ -1,11 +1,13 @@
-var u = require("./utils")
+const u = require("./utils")
+const rU = require("./upgrader")
+
 
 var actions = {
     interact: function(creep, location, fnToTry, logSuccess) {
         var result = fnToTry()
         switch (result) {
         case ERR_NOT_IN_RANGE:
-            if(creep.memory.role === "Upgrader" && location.structureType && location.structureType === STRUCTURE_CONTROLLER){
+            if((creep.memory.role === "Upgrader" || creep.memory.role === rU.name) && location.structureType && location.structureType === STRUCTURE_CONTROLLER){
                 return creep.moveTo(location, {reusePath: 15, range: 3, swampCost: 2, plainCost: 2})
             } else {
                 return creep.moveTo(location, {reusePath: 15, maxOps: 10000, maxRooms: 32})
