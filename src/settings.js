@@ -1,6 +1,7 @@
 
 
 var settings = {
+    allies: ["Atanner"],
     roomplanTime: 500,
     roomplanOffset: 155,
     creditMin: 4500000, //min credits needed to start buying energy

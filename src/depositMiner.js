@@ -79,9 +79,12 @@ var rDM = {
     },
 
     checkEnemies: function(creep, deposit){
-        if(Game.time % 50 == 0 || creep.hits < creep.hitsMax){
+        if(Game.time % 5 == 0 || creep.hits < creep.hitsMax){
             //scan room for hostiles
             const hostiles = creep.room.find(FIND_HOSTILE_CREEPS)
+            if(rDM.checkAllies(creep, deposit, hostiles)){
+                return
+            }
             const dangerous = _.find(hostiles, h => h.getActiveBodyparts(ATTACK) > 0 || h.getActiveBodyparts(RANGED_ATTACK) > 0)
             
             //check for tampering with deposit
@@ -99,7 +102,19 @@ var rDM = {
                 }
             }
         }
-    }
+    },
 
+    checkAllies: function(creep, deposit, hostiles){
+        const allies = settings.allies
+        for(let i = 0; i < hostiles.length; i++){
+            if(hostiles[i].pos.inRangeTo(creep, 8) && allies.includes(hostiles[i].owner.username)){
+                //remove flag
+                const flagName = creep.memory.city + "deposit"
+                Game.flags[flagName].remove()
+                return true
+            }
+        }
+        return false
+    }
 }
 module.exports = rDM
