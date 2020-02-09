@@ -104,74 +104,35 @@ var u = {
         }
     },
 
-    moveSettings: function(maxOps, offRoad, startPos, endPos, range) {
-        const ops = maxOps || 2.000
-        const off = offRoad || 0 // 0 => onRoad, 1 => offRoad, 2 => swamp capable
-        const r = range || 1
+    highwayMoveSettings: function(maxOps, swampCost, startPos, endPos) {
         return {
-            range: r,
-            plainCost: off == 0 ? 2 : 1,
-            swampCost: off == 0 ? 10 : off == 1 ? 5 : 1,
-            maxOps: ops,
+            range: 1,
+            plainCost: 1,
+            swampCost: swampCost,
+            maxOps: maxOps,
             maxRooms: 64,
             roomCallback: function(roomName) {
-                const room = Game.rooms[roomName]
-                return startPos.roomName === roomName && room ? 
-                    u.myRoomCostMatrix(room, startPos, endPos, range) : 
-                    u.multiRoomCostMatrix(roomName, startPos, endPos)
-            } 
-        }
-    },
+                const isHighway = u.isHighway(roomName)
+                const nearStart = u.roomInRange(2, startPos.roomName, roomName)
+                const nearEnd = u.roomInRange(2, endPos.roomName, roomName)
 
-    myRoomCostMatrix: function(room, startPos, endPos, range) {
-        const costs = new PathFinder.CostMatrix()
+                if (!isHighway && !nearStart && !nearEnd) {
+                    return false
+                }
 
-        room.find(FIND_STRUCTURES).forEach(struct => {
-            if (struct.structureType === STRUCTURE_ROAD) {
-                costs.set(struct.pos.x, struct.pos.y, 1)
-            } else if (u.unwalkableBuilding(struct)) {
-                costs.set(struct.pos.x, struct.pos.y, 0xff)
+                const costs = new PathFinder.CostMatrix()
+                return isHighway ? costs : _.map(costs, cost => cost * 3)
             }
-        })
-
-        // Avoid creeps close to target
-        if (startPos.inRangeTo(endPos, range + 2))
-            room.find(FIND_CREEPS)
-                .forEach(creep => costs.set(creep.pos.x, creep.pos.y, 0xff))
-        return costs
-    },
-
-    multiRoomCostMatrix: function(roomName, startPos, endPos) {
-        const isHighway = u.isHighway(roomName)
-        const nearStart = u.roomInRange(2, startPos.roomName, roomName)
-        const nearEnd = u.roomInRange(2, endPos.roomName, roomName)
-
-        if (!isHighway && !nearStart && !nearEnd) {
-            return false
         }
-        return new PathFinder.CostMatrix()
-    },
-
-    unwalkableBuilding: function(structure) {
-        return structure.structureType !== STRUCTURE_CONTAINER &&
-            (structure.structureType !== STRUCTURE_RAMPART || !structure.my)
     },
 
     findMultiRoomPath: function(startPos, endPos) {
         return PathFinder.search(startPos, {pos: endPos, range: 1 }, 
-            u.moveSettings(10.000, 2, startPos, endPos))
+            u.highwayMoveSettings(10.000, 1, startPos, endPos))
     },
 
     multiRoomMove: function(creep, pos) {
-        const moveSettings = u.moveSettings(5.000, 1, creep.pos, pos)
-        moveSettings.reusePath = 50
-        return creep.moveTo(pos, moveSettings)         
-    },
-
-    ownRoomMove: function(creep, pos, range) {
-        const moveSettings = u.moveSettings(10.000, 0, creep.pos, pos, range)
-        moveSettings.reusePath = 15
-        return creep.moveTo(pos, moveSettings)
+        creep.moveTo(pos, {reusePath: 50}, u.highwayMoveSettings(5.000, 8, creep.pos, pos))         
     },
 
     // E0,E10... W0, 10 ..., N0, N10 ...
