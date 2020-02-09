@@ -8,7 +8,6 @@ var rH = require("./harasser")
 var rSB = require("./spawnBuilder")
 var rC = require("./claimer")
 var rUC = require("./unclaimer")
-var rRo = require("./robber")
 var rF = require("./ferry")
 var rMM = require("./mineralMiner")
 var rU = require("./upgrader")
@@ -73,10 +72,8 @@ function runCity(city, creeps){
     const room = spawn.room
 
     // Only build required roles during financial stress
-    var coreRoles = [rF, rD, rT, rM, rR, rU, rB]
-    var allRoles = [rF, rD, rT, rM, rR, rU, rB, rMM, rC, rUC,
-        rSB, rH, rBM, rD, rBB, rBT, rMe, rTr, rBr, rPM,
-        rRo, rDM] // order roles for priority
+    const coreRoles = u.getCoreRoles()
+    const allRoles = u.getRoles()
     var roles = (room.storage && room.storage.store.energy < 50000) ? coreRoles : allRoles
 
     // Get counts for roles by looking at all living and queued creeps
