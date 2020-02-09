@@ -1,6 +1,7 @@
 const rDM = require("./depositMiner")
 const rMM = require("./mineralMiner")
 const u = require("./utils")
+const rr = require("./roles")
 const settings = require("./settings")
 const profiler = require("./screeps-profiler")
 
@@ -45,7 +46,7 @@ var statsLib = {
                 }
             })
             var counts = _.countBy(Game.creeps, creep => creep.memory.role)
-            var roles = u.getRoles()
+            var roles = rr.getRoles()
             _.forEach(roles, function(role){
                 if (counts[role.name]){
                     stats["creeps." + role.name + ".count"] = counts[role.name]

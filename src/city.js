@@ -26,6 +26,7 @@ var fact = require("./factory")
 var sq = require("./spawnQueue")
 var link = require("./link")
 var settings = require("./settings")
+var rr = require("./roles")
 
 
 function makeCreeps(role, type, target, city) {
@@ -72,8 +73,8 @@ function runCity(city, creeps){
     const room = spawn.room
 
     // Only build required roles during financial stress
-    const coreRoles = u.getCoreRoles()
-    const allRoles = u.getRoles()
+    const coreRoles = rr.getCoreRoles()
+    const allRoles = rr.getRoles()
     var roles = (room.storage && room.storage.store.energy < 50000) ? coreRoles : allRoles
 
     // Get counts for roles by looking at all living and queued creeps
