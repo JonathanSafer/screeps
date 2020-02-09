@@ -873,7 +873,7 @@ function flagDeposits(structures, city, roomName) {
 
     const depositFlagName = city + "deposit"
     for (let i = 0; i < deposits.length; i++) {
-        if(deposits[i].lastCooldown < 5 && !Game.flags[depositFlagName]){
+        if(!deposits[i].pos.lookFor(LOOK_FLAGS).length && deposits[i].lastCooldown < 5 && !Game.flags[depositFlagName]){
             Game.rooms[roomName].createFlag(deposits[i].pos, depositFlagName)
             Game.spawns[city].memory.deposit = Math.floor(Math.pow((deposits[i].lastCooldown / 0.001), 1/1.2))
             break // only place one flag
