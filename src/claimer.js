@@ -1,3 +1,5 @@
+const u = require("./utils")
+
 var rC = {
     name: "claimer",
     type: "claimer",
@@ -14,7 +16,7 @@ var rC = {
             return false
         }
 
-        rC.cheapMove(creep, flag)
+        u.multiRoomMove(creep, flag.pos)
         if (flag.pos.x == creep.pos.x && flag.pos.y == creep.pos.y) {
             creep.memory.rally = true
         }
@@ -41,10 +43,6 @@ var rC = {
         creep.signController(creep.room.controller, newCity)
         creep.room.memory.city = newCity
         creep.claimController(creep.room.controller)
-    },
-
-    cheapMove: function(creep, target) {
-        creep.moveTo(target, { reusePath: 50 })
-    }      
+    }    
 }
 module.exports = rC

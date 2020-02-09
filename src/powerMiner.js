@@ -59,7 +59,7 @@ var rPM = {
                 Game.flags[targetFlag].remove()
             }
         } else if(Game.flags[targetFlag]){
-            creep.moveTo(Game.flags[targetFlag], {reusePath: 50})
+            u.multiRoomMove(creep, Game.flags[targetFlag].pos)
             return
         }
     }

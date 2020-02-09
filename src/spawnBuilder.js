@@ -2,6 +2,7 @@ var a = require("./actions")
 var sq = require("./spawnQueue")
 var rU = require("./upgrader")
 var s = require("./settings")
+var u = require("./utils")
 
 var rSB = {
     name: "spawnBuilder",
@@ -36,7 +37,7 @@ var rSB = {
             return
         }
         if (Game.flags.claimRally && !creep.memory.rally){
-            creep.moveTo(Game.flags.claimRally, {reusePath: 50})
+            u.multiRoomMove(creep, Game.flags.claimRally.pos)
             if (Game.flags.claimRally.pos.x == creep.pos.x && Game.flags.claimRally.pos.y == creep.pos.y && Game.flags.claimRally.pos.roomName == creep.pos.roomName){
                 creep.memory.rally = true
             }
@@ -62,7 +63,7 @@ var rSB = {
             }
         } else {
             const pos = Game.flags.claim.pos
-            creep.moveTo(new RoomPosition(pos.x, pos.y, pos.roomName), {reusePath: 50})
+            u.multiRoomMove(creep, pos)
         }
     },
 
