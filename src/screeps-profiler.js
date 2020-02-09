@@ -184,6 +184,7 @@ const Profiler = {
 
     printProfile() {
         // console.log(Profiler.output())
+        Profiler.output()
     },
 
     emailProfile() {
