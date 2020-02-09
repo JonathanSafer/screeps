@@ -801,7 +801,6 @@ function placeMiningFlags(city) {
 
     const roomNum = timeToRoomNum(Game.time - 1, city)
     const roomName = Game.spawns[city].memory.powerRooms[roomNum]
-    console.log("Scanning: " + roomName)
     if(!Game.rooms[roomName]){//early return if room wasn't scanned
         return
     }

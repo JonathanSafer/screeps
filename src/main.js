@@ -16,7 +16,7 @@ pp.prepProfile()
 //Game.spawns['Home'].memory.counter = 934;
 //Game.spawns['Home'].memory["runner"] = 5;
 //Game.spawns['Home'].memory["attacker"] = 0;
-
+global.T = function() { console.log(Game.time) }
 
 
 profiler.enable()
@@ -40,7 +40,6 @@ module.exports.loop = function () {
                 (f.unclaim && f.unclaimRally) || f.unclaim)
             //em.expand() // grow the empire!
         }
-        console.log("Time: " + Game.time)
         //run cities
         var prevCpu = Game.cpu.getUsed()
         for (let i = 0; i < myCities.length; i += 1) {

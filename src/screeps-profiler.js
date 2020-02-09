@@ -183,7 +183,7 @@ const Profiler = {
     results: {},
 
     printProfile() {
-        console.log(Profiler.output())
+        // console.log(Profiler.output())
     },
 
     emailProfile() {
