@@ -550,7 +550,7 @@ function updateTransporter(extensions, memory) {
     } else if (extensions < 10){
         memory[rT.name] = 1
     } else {
-        memory[rT.name] = 2
+        memory[rT.name] = settings.max.transporters
     }
 }
 
@@ -584,7 +584,7 @@ function updateUpgrader(city, controller, memory, rcl8, creeps, rcl) {
             memory[rU.name] = Math.max(memory[rU.name] - 1, 1) 
         }
         else if (money > (capacity * .28)){
-            memory[rU.name] = Math.min(memory[rU.name] + 1, 6)
+            memory[rU.name] = Math.min(memory[rU.name] + 1, settings.max.upgraders)
         } else {
             memory[rU.name] = 1
         }
@@ -608,7 +608,7 @@ function updateBuilder(rcl, memory, spawn, rooms, rcl8) {
         if (room.energyAvailable == room.energyCapacityAvailable) {
             sq.schedule(spawn, "builder")
         }
-        memory[rB.name] = (totalSites > 10 && rcl > 2 && rcl < 6) ? 3 : 1
+        memory[rB.name] = (totalSites > 10 && rcl > 2 && rcl < 6) ? settings.max.builders : 1
     } else {
         memory[rB.name] = 0
     }
@@ -635,7 +635,7 @@ function updateRunner(creeps, spawn, extensions, memory, rcl, emergencyTime) {
     var minerEnergyPerTick = extensions < 5 ? 10 : 20
     var energyProduced = 1.0 * totalDistance * minerEnergyPerTick
     var energyCarried = types.carry(types.getRecipe("runner", spawn.room.energyAvailable, spawn.room))
-    memory[rR.name] = Math.min(4, Math.max(Math.ceil(energyProduced / energyCarried), 2))
+    memory[rR.name] = Math.min(settings.max.runners, Math.max(Math.ceil(energyProduced / energyCarried), 2))
 }
 
 function updateFerry(spawn, memory, rcl) {

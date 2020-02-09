@@ -25,6 +25,12 @@ var settings = {
         rcl8upgrade: 720000,
         processPower: 650000
     },
+    max: {
+        upgraders: 3,
+        runners: 4,
+        builders: 3,
+        transporters: 2,
+    },
     miningRange: 7,
     observerFrequency: 20, // how often each city scans a room
 
