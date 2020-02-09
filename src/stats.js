@@ -1,8 +1,22 @@
-const rDM = require("./depositMiner")
-const rMM = require("./mineralMiner")
-const u = require("./utils")
-const settings = require("./settings")
-const profiler = require("./screeps-profiler")
+var rDM = require("./depositMiner")
+var rMe = require("./medic")
+var rH = require("./harasser")
+var rSB = require("./spawnBuilder")
+var rC = require("./claimer")
+var rRo = require("./robber")
+var rF = require("./ferry")
+var rMM = require("./mineralMiner")
+var rU = require("./upgrader")
+var rB = require("./builder")
+var rR = require("./runner")
+var rBr = require("./breaker")
+var rT = require("./transporter")
+var rM = require("./remoteMiner")
+var rD = require("./defender")
+var u = require("./utils")
+var rPM = require("./powerMiner")
+var settings = require("./settings")
+var profiler = require("./screeps-profiler")
 
 var statsLib = {
     cityCpuMap: {},
@@ -45,7 +59,7 @@ var statsLib = {
                 }
             })
             var counts = _.countBy(Game.creeps, creep => creep.memory.role)
-            var roles = u.getRoles()
+            var roles = [rD, rT, rM, rR, rU, rB, rMM, rF, rC, rSB, rH, rMe, rBr, rPM, rRo] 
             _.forEach(roles, function(role){
                 if (counts[role.name]){
                     stats["creeps." + role.name + ".count"] = counts[role.name]
