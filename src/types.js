@@ -36,14 +36,12 @@ function getRecipe(type, energyAvailable, room){
         break
     case 6:
         // lvl 6 recipes
-        d["normal"] = body([12, 8, 10],[WORK, CARRY, MOVE])  // ratio is 5 to 3 wc
         d["mineralMiner"] = body([12, 6, 9], [WORK, CARRY, MOVE])
         d["medic"] = body([7, 7], [MOVE, HEAL])
         d["robber"] = body([20, 20], [CARRY, MOVE])
         break
     case 7:
         // lvl 7 recipes
-        d["normal"] = body([20, 12, 16],[WORK, CARRY, MOVE])
         d["mineralMiner"] = body([22, 10, 16], [WORK, CARRY, MOVE])
         d["harasser"] = body([9, 8, 1], [MOVE, RANGED_ATTACK, HEAL])
         d["medic"] = body([5, 20, 15], [TOUGH, MOVE, HEAL])
@@ -162,12 +160,12 @@ function minerBody(energyAvailable, rcl) {
 }
 
 function upgraderBody(energyAvailable, rcl) {
-    // upgraders. At least 2 work, at least work/2 carry. at least (w+c)/2 move
     const types = [WORK, CARRY, MOVE]
-    if(rcl <= 2){
-        return scalingBody([1, 1, 1], types, energyAvailable)
+    if (rcl in [6, 7]) { // use boost ratio 5 work, 3 carry
+        return scalingBody([5, 3, 4], [WORK, CARRY, MOVE], energyAvailable)
+    } else { // don't go over 15 work for rcl8
+        return scalingBody([1, 1, 1], types, energyAvailable, 45)
     }
-    return rcl > 7 ? body([15, 15, 15], types) : scalingBody([4, 2, 3], types, energyAvailable)
 }
 
 function builderBody(energyAvailable, rcl) {
@@ -193,7 +191,7 @@ function defenderBody(energyAvailable, rcl) {
     return body(ratio, types)
 }
 
-/**
+/** TODO support for fractional scaling
  * ratio: ratio of parts in an array. i.e. [2, 1, 2]
  * types: types of part in an array. Must be same length as ratio. i.e. [MOVE, CARRY, MOVE]
  * energyAvailable: energy to use on this creep
