@@ -30,7 +30,6 @@ var p = {
             "roles",
             "roomplan",
             "runner",
-            "screeps-profiler",
             "settings",
             "spawnBuilder",
             "spawnQueue",
