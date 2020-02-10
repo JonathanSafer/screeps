@@ -21,7 +21,7 @@ module.exports.loop = function () {
     profiler.wrap(function () {
         er.reset()
 
-        var localRooms = u.splitRoomsByCity()
+        var localRooms = u.splitRoomsByCity() // only used for remote mining?
         var localCreeps = u.splitCreepsByCity()
         var myCities = u.getMyCities()
         let claimRoom, unclaimRoom

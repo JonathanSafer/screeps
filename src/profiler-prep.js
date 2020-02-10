@@ -3,6 +3,14 @@ var profiler = require("./screeps-profiler")
 var p = {
     prepProfile: function() {
         const fileNames = [
+            "actions",
+            "bigBreaker",
+            "bigMedic",
+            "bigTrooper",
+            "breaker",
+            "builder",
+            "city",
+            "claimer",
             "commodityManager",
             "defender",
             "depositMiner",
