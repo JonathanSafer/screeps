@@ -32,6 +32,7 @@ var rDM = {
             }
             if(creep.body.length === 3){
                 Game.flags[flagName].remove()
+                return
             }
             if (Game.flags[flagName].pos.roomName !== creep.pos.roomName){//move to flag until it is visible
                 u.multiRoomMove(creep, Game.flags[flagName].pos)
@@ -47,9 +48,8 @@ var rDM = {
                 return
             }
             //check for enemies. if there is an enemy, call in harasser
-            if(creep.pos.roomName == Game.flags[flagName].pos.roomName){
-                rDM.checkEnemies(creep, deposit[0])
-            }
+            rDM.checkEnemies(creep, deposit[0])
+
             //move towards and mine deposit (actions.harvest)
             if(actions.harvest(creep, deposit[0]) === 1){
                 //record amount harvested
@@ -104,16 +104,16 @@ var rDM = {
         }
     },
 
-    checkAllies: function(creep, deposit, hostiles){
+    checkAllies: function(creep, hostiles){
         const allies = settings.allies
-        for(let i = 0; i < hostiles.length; i++){
-            if(hostiles[i].pos.inRangeTo(creep, 8) && allies.includes(hostiles[i].owner.username)){
-                //remove flag
-                const flagName = creep.memory.city + "deposit"
-                Game.flags[flagName].remove()
-                creep.memory.target = 1
-                return true
-            }
+        const owners = _.map(hostiles, hostiles.owner.username)
+        const ally = _.find(owners, owner => owner in allies)
+        if (ally) {
+            //remove flag
+            const flagName = creep.memory.city + "deposit"
+            Game.flags[flagName].remove()
+            creep.memory.target = 1
+            return true
         }
         return false
     }
