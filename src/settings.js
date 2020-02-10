@@ -26,11 +26,11 @@ var settings = {
         processPower: 650000
     },
     max: {
-        upgraders: 3,
-        runners: 4,
+        upgraders: 3, // low rcl
+        runners: 4, // low rcl
         builders: 3,
         transporters: 2,
-        miners: 1,
+        miners: 1, // rcl8
     },
     miningRange: 7,
     observerFrequency: 20, // how often each city scans a room
