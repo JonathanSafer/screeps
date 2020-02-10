@@ -26,9 +26,9 @@ var rL = {
                 }
             }
 
-            links.store = storageLink.id
-            links.upgrade = upgradeLink.id
-            links.source = _.map(sourceLinks, link => link.id)
+            links.store = storageLink ? storageLink.id : null
+            links.upgrade = upgradeLink ? upgradeLink.id : null
+            links.source = _.map(sourceLinks, link => link ? link.id : null)
             Cache[room].links = links
         }
     },
