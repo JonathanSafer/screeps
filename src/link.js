@@ -6,8 +6,9 @@ var rL = {
     LINK: 1,
 
     fixCacheIfInvalid: function(room) {
-        if (!Cache[room]) Cache[room] = {}
-        const links = Cache[room].links || {}
+        const rN = room.name
+        if (!Cache[rN]) Cache[rN] = {}
+        const links = Cache[rN].links || {}
         let storageLink = Game.getObjectById(links.store)
         let upgradeLink = Game.getObjectById(links.upgrade)
         let sourceLinks = _.map(links.source, src => Game.getObjectById(src))
@@ -29,14 +30,14 @@ var rL = {
             links.store = storageLink ? storageLink.id : null
             links.upgrade = upgradeLink ? upgradeLink.id : null
             links.source = _.map(sourceLinks, link => link ? link.id : null)
-            Cache[room].links = links
+            Cache[rN].links = links
         }
     },
 
     run: function(room) {
         rL.fixCacheIfInvalid(room)
 
-        const links = Cache[room].links
+        const links = Cache[room.name].links
         const storageLink = Game.getObjectById(links.store)
         const upgradeLink = Game.getObjectById(links.upgrade)
         const sourceLinks = _.map(links.source, src => Game.getObjectById(src))
