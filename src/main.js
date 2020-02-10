@@ -14,6 +14,7 @@ pp.prepProfile()
 //Game.profiler.profile(1000);
 //Game.profiler.output();
 global.T = function() { return `Time: ${Game.time}` }
+global.Cache = {}
 
 profiler.enable()
 module.exports.loop = function () {

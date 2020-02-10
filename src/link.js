@@ -5,19 +5,41 @@ var rL = {
     SOURCE: 1,
     LINK: 1,
 
-    run: function(room) {
-        // Initialize links
-        const links = rL.findStructure(room, STRUCTURE_LINK)
-        var storageLink, upgradeLink, sourceLinks = []
-        for (const link of links) {
-            if (link.pos.findInRange(FIND_SOURCES, rL.SOURCE + rL.LINK).length > 0) {
-                sourceLinks.push(link)
-            } else if (rL.isNearStructure(link.pos, STRUCTURE_CONTROLLER, rL.UPGRADE + rL.LINK)) {
-                upgradeLink = link
-            } else if (rL.isNearStructure(link.pos, STRUCTURE_TERMINAL, rL.LINK)) {
-                storageLink = link
+    fixCacheIfInvalid: function(room) {
+        if (!Cache[room]) Cache[room] = {}
+        const links = Cache.room.links || {}
+        let storageLink = Game.getObjectById(links.store)
+        let upgradeLink = Game.getObjectById(links.upgrade)
+        let sourceLinks = _.map(links.source, src => Game.getObjectById(src))
+        if (storageLink && upgradeLink && _.reduce(sourceLinks, (l, r) => l || r)) {
+            return
+        } else {
+            const realLinks = rL.findStructure(room, STRUCTURE_LINK)
+            sourceLinks = []
+            for (const link of realLinks) {
+                if (link.pos.findInRange(FIND_SOURCES, rL.SOURCE + rL.LINK).length > 0) {
+                    sourceLinks.push(link)
+                } else if (rL.isNearStructure(link.pos, STRUCTURE_CONTROLLER, rL.UPGRADE + rL.LINK)) {
+                    upgradeLink = link
+                } else if (rL.isNearStructure(link.pos, STRUCTURE_TERMINAL, rL.LINK)) {
+                    storageLink = link
+                }
             }
+
+            links.store = storageLink.id
+            links.upgrade = upgradeLink.id
+            links.source = _.map(sourceLinks, link => link.id)
+            Cache[room].links = links
         }
+    },
+
+    run: function(room) {
+        rL.fixCacheIfInvalid(room)
+
+        const links = Cache[room].links
+        const storageLink = Game.getObjectById(links.store)
+        const upgradeLink = Game.getObjectById(links.upgrade)
+        const sourceLinks = _.map(links.source, src => Game.getObjectById(src))
 
         // Make transfers
         for (const sourceLink of sourceLinks) {
