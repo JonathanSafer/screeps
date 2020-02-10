@@ -60,7 +60,7 @@ var rPC = {
         case CS.WORK_BALANCE_OPS:
             if (creep.store[RESOURCE_OPS] > POWER_INFO[PWR_OPERATE_FACTORY].ops) {
                 a.charge(creep, creep.room.terminal)
-            } else {
+            } {
                 a.withdraw(creep, creep.room.terminal, RESOURCE_OPS)
             }
             break
@@ -163,15 +163,15 @@ var rPC = {
      * 4. Power factories (power a factor. cost 100)
      */
     getNextWork: function(creep) {
-        return (creep.ticksToLive < 300) ? CS.WORK_RENEW :
-            rPC.canGenerateOps(creep) ? CS.WORK_GENERATE_OPS :
-                rPC.hasSourceUpdate(creep) ? CS.WORK_SOURCE : 
-                    rPC.canOperateFactory(creep) ? rPC.getOpsJob(creep, PWR_OPERATE_FACTORY, CS.WORK_FACTORY) :
-                        rPC.canOperateObserver(creep) ? rPC.getOpsJob(creep, PWR_OPERATE_OBSERVER, CS.WORK_OBSERVER) :
-                            rPC.canOperateExtension(creep) ? rPC.getOpsJob(creep, PWR_OPERATE_EXTENSION, CS.WORK_EXTENSION) :
-                                rPC.canOperateSpawn(creep) ? rPC.getOpsJob(creep, PWR_OPERATE_SPAWN, CS.WORK_SPAWN) :
-                                    rPC.hasExtraOps(creep) ? CS.WORK_BALANCE_OPS :
-                                        CS.SLEEP
+        if (creep.ticksToLive < 300) return CS.WORK_RENEW
+        if (rPC.canGenerateOps(creep)) return CS.WORK_GENERATE_OPS
+        if (rPC.hasSourceUpdate(creep)) return CS.WORK_SOURCE
+        if (rPC.canOperateFactory(creep)) return rPC.getOpsJob(creep, PWR_OPERATE_FACTORY, CS.WORK_FACTORY)
+        if (rPC.canOperateObserver(creep)) return rPC.getOpsJob(creep, PWR_OPERATE_OBSERVER, CS.WORK_OBSERVER)
+        if (rPC.canOperateExtension(creep)) return rPC.getOpsJob(creep, PWR_OPERATE_EXTENSION, CS.WORK_EXTENSION)
+        if (rPC.canOperateSpawn(creep)) return rPC.getOpsJob(creep, PWR_OPERATE_SPAWN, CS.WORK_SPAWN)
+        if (rPC.hasExtraOps(creep)) return CS.WORK_BALANCE_OPS
+        return CS.SLEEP
     },
 
     isPowerEnabled: function(creep) {
