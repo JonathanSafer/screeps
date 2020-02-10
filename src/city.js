@@ -56,7 +56,8 @@ function makeCreeps(role, type, target, city) {
         Game.creeps[name].memory.city = city
         Game.creeps[name].memory.new = true
     } catch (e) {
-        throw new Error("Error making creep of role: " + role)
+        console.log("Error making creep of role: " + role)
+        throw e
     }
 }
 
