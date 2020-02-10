@@ -148,14 +148,21 @@ function test(hpt, ticks, harvested) {
 function minerBody(energyAvailable, rcl) {
     // miners. at least 1 move. 5 works until we can afford 10
     let works = Math.floor((energyAvailable - BODYPART_COST[MOVE]) / BODYPART_COST[WORK])
-    if (works >= 20 && rcl > 7) works = 20
+    if (works >= 25 && rcl > 7) works = 25
     else if (works >= 10) works = 10
     else if (works >= 5) works = 5
     else works = Math.max(1, works)
     const energyAfterWorks = energyAvailable - works * BODYPART_COST[WORK]
-    const moves = Math.floor(Math.min(works / 2, Math.max(1, energyAfterWorks / BODYPART_COST[MOVE])))
+    const moves = Math.floor(Math.min(Math.ceil(works / 2), Math.max(1, energyAfterWorks / BODYPART_COST[MOVE])))
     const energyAfterMoves = energyAfterWorks - moves * BODYPART_COST[MOVE]
-    const carries = rcl >= 7 ? Math.floor(Math.min(works / 2.5, energyAfterMoves / BODYPART_COST[CARRY])) : 0
+    
+    // Figure out how many carries we can afford/will fill the link in fewest ticks
+    const carriesPerLinkFill = Math.ceil(LINK_CAPACITY / CARRY_CAPACITY)
+    const loadsNeeded = (c => c <= 0 ? Infinity : Math.ceil(carriesPerLinkFill / c))
+    const carryChoices = [...Array(carriesPerLinkFill + 1).keys()] // range [0,n + 1]
+        .filter(c => loadsNeeded(c) < loadsNeeded(c - 1)) // more carries => fewer loads?
+        .filter(c => c <= energyAfterMoves / BODYPART_COST[CARRY])  // how many can we afford?
+    const carries = rcl >= 7 ? Math.max(...carryChoices, 0) : 0
     return body([works, carries, moves], [WORK, CARRY, MOVE])
 }
 
