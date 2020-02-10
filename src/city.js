@@ -142,10 +142,9 @@ function updateCountsCity(city, creeps, rooms, claimRoom, unclaimRoom) {
     if (Game.time % logisticsTime == 0) {
         const structures = spawn.room.find(FIND_STRUCTURES)
         const extensions = _.filter(structures, structure => structure.structureType == STRUCTURE_EXTENSION).length
-        const rcl8Room = _.find(Game.rooms, room => room.controller && room.controller.owner && room.controller.owner.username == "Yoner" && room.controller.level == 8)
         updateRunner(creeps, spawn, extensions, memory, rcl, emergencyTime)
         updateFerry(spawn, memory, rcl)
-        updateMiner(rooms, rcl8Room, memory, spawn)
+        updateMiner(rooms, rcl8, memory, spawn)
     
         if (Game.time % 500 === 0) {
             runNuker(city)
@@ -504,17 +503,17 @@ function updateDefender(rooms, memory, rcl8) {
     }
 }
 
-function updateMiner(rooms, rcl8Room, memory, spawn){
-    if(rcl8Room){
+function updateMiner(rooms, rcl8, memory, spawn){
+    if(rcl8){
         if(_.find(spawn.room.find(FIND_MY_CREEPS), c => c.memory.role == rD.name)){
             memory[rM.name] = 0
             return
         }
     }
     if (!memory.sources) memory.sources = {}
-    if (rcl8Room && _.keys(memory.sources).length > 2) memory.sources = {}
+    if (rcl8 && _.keys(memory.sources).length > 2) memory.sources = {}
     let miners = 0
-    const miningRooms = rcl8Room ? [spawn.room] : rooms
+    const miningRooms = rcl8 ? [spawn.room] : rooms
     const sources = _.flatten(_.map(miningRooms, room => room.find(FIND_SOURCES)))
 
     _.each(sources, function(sourceInfo){
@@ -525,7 +524,7 @@ function updateMiner(rooms, rcl8Room, memory, spawn){
         }
     })
     _.each(memory.sources, () => miners++)
-    if (rcl8Room) miners = settings.max.miners // 1 miner in rcl8 to save cpu for resources
+    if (rcl8) miners = settings.max.miners // 1 miner in rcl8 to save cpu for resources
     if(Game.flags.claim && Game.flags.claim.pos.roomName === spawn.pos.roomName &&
         Game.flags.claim.room.controller.level < 6){
         memory[rM.name] = 0
