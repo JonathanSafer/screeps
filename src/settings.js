@@ -22,8 +22,9 @@ var settings = {
         processPower: 3200,
     },
     energy: {//energy thresholds
-        rcl8upgrade: 720000,
-        processPower: 650000
+        rcl8upgrade: 620000,
+        processPower: 600000,
+        powerMine: 650000
     },
     max: {
         upgraders: 3, // low rcl

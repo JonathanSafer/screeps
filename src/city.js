@@ -854,7 +854,7 @@ function flagPowerBanks(structures, city, roomName) {
     const powerBank = _.find(structures, structure => structure.structureType === STRUCTURE_POWER_BANK)
     const flagName = city + "powerMine"
     if (powerBank && powerBank.power > 1500 && powerBank.ticksToDecay > 2800 && !Game.flags[flagName] &&
-            structures.length < 30 && Game.spawns[city].room.storage.store.energy > 600000){
+            structures.length < 30 && Game.spawns[city].room.storage.store.energy > settings.energy.powerMine){
         const terrain = Game.rooms[roomName].getTerrain()
         if (!isBlockedByWalls(terrain, powerBank.pos)) {
             //put a flag on it
