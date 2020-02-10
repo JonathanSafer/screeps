@@ -83,7 +83,7 @@ const functionBlackList = [
 ]
 
 function wrapFunction(name, originalFunction) {
-    if (originalFunction.profilerWrapped) { throw new AlreadyWrappedError() }
+    if (originalFunction.profilerWrapped) { return }
     function wrappedFunction() {
         if (Profiler.isProfiling()) {
             const nameMatchesFilter = name === getFilter()
