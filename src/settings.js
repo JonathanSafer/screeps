@@ -30,6 +30,7 @@ var settings = {
         runners: 4,
         builders: 3,
         transporters: 2,
+        miners: 1,
     },
     miningRange: 7,
     observerFrequency: 20, // how often each city scans a room

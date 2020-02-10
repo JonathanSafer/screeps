@@ -523,6 +523,7 @@ function updateMiner(rooms, rcl8Room, memory, spawn){
         }
     })
     _.each(memory.sources, () => miners++)
+    if (rcl8Room) miners = settings.max.miners // 1 miner in rcl8 to save cpu for resources
     if(Game.flags.claim && Game.flags.claim.pos.roomName === spawn.pos.roomName &&
         Game.flags.claim.room.controller.level < 6){
         memory[rM.name] = 0
