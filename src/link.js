@@ -7,7 +7,7 @@ var rL = {
 
     fixCacheIfInvalid: function(room) {
         if (!Cache[room]) Cache[room] = {}
-        const links = Cache.room.links || {}
+        const links = Cache[room].links || {}
         let storageLink = Game.getObjectById(links.store)
         let upgradeLink = Game.getObjectById(links.upgrade)
         let sourceLinks = _.map(links.source, src => Game.getObjectById(src))
