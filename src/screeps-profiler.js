@@ -4,12 +4,6 @@ let usedOnStart = 0
 let enabled = false
 let depth = 0
 
-function AlreadyWrappedError() {
-    this.name = "AlreadyWrappedError"
-    this.message = "Error attempted to double wrap a function."
-    this.stack = ((new Error())).stack
-}
-
 function setupProfiler() {
     depth = 0 // reset depth, this needs to be done each tick.
     Game.profiler = {
