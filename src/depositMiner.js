@@ -82,7 +82,7 @@ var rDM = {
         if(Game.time % 5 == 0 || creep.hits < creep.hitsMax){
             //scan room for hostiles
             const hostiles = creep.room.find(FIND_HOSTILE_CREEPS)
-            if(rDM.checkAllies(creep, deposit, hostiles)){
+            if(rDM.checkAllies(creep, hostiles)){
                 return
             }
             const dangerous = _.find(hostiles, h => h.getActiveBodyparts(ATTACK) > 0 || h.getActiveBodyparts(RANGED_ATTACK) > 0)
