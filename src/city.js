@@ -27,6 +27,7 @@ var sq = require("./spawnQueue")
 var link = require("./link")
 var settings = require("./settings")
 var rr = require("./roles")
+var e = require("./error")
 
 
 function makeCreeps(role, type, target, city) {
@@ -48,17 +49,17 @@ function makeCreeps(role, type, target, city) {
     const spawn = u.getAvailableSpawn(spawns)
     //console.log(spawn);
     if (!spawn) return false
-    try {
-        Memory.counter++
-        spawn.spawnCreep(recipe, name)
-        Game.creeps[name].memory.role = role
-        Game.creeps[name].memory.target = target
-        Game.creeps[name].memory.city = city
-        Game.creeps[name].memory.new = true
-    } catch (e) {
-        console.log("Error making creep of role: " + role)
-        throw e
+
+    Memory.counter++
+    const result = spawn.spawnCreep(recipe, name)
+    if (result) { // don't spawn and throw an error at the end of the tick
+        e.reportError(new Error(`Error making ${role} in ${city}: ${result}`))
+        return
     }
+    Game.creeps[name].memory.role = role
+    Game.creeps[name].memory.target = target
+    Game.creeps[name].memory.city = city
+    Game.creeps[name].memory.new = true
 }
 
 /// Temp function. Delete in 1 day
