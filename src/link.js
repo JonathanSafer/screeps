@@ -10,7 +10,7 @@ var rL = {
         if (!Cache[rN]) Cache[rN] = {}
         const links = Cache[rN].links || {}
         let storageLink = Game.getObjectById(links.store)
-        let upgradeLink = Game.getObjectById(links.upgrade) || rcl < 7
+        let upgradeLink = Game.getObjectById(links.upgrade) || rcl < 7 || Game.time % 100 != 0
         let sourceLinks = _.map(links.source, src => Game.getObjectById(src))
         if (storageLink && upgradeLink && _.reduce(sourceLinks, (l, r) => l || r)) {
             return
