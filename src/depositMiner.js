@@ -106,7 +106,7 @@ var rDM = {
 
     checkAllies: function(creep, hostiles){
         const allies = settings.allies
-        const owners = _.map(hostiles, hostiles.owner.username)
+        const owners = _.map(hostiles, hostile => hostile.owner.username)
         const ally = _.find(owners, owner => owner in allies)
         if (ally) {
             //remove flag
