@@ -293,7 +293,7 @@ var markets = {
         //can't sell if terminal has been used
         const terminal = city.terminal
         const storage = city.storage
-        let buyThreshold = 600000
+        let buyThreshold = 650000
         if(terminal.store[RESOURCE_POWER] > 2000){
             buyThreshold = 650000//if excess power, buy energy
         }
@@ -337,7 +337,7 @@ var markets = {
                         roomName: city.name   
                     })
                 } else {//update order occasionally
-                    if(Math.random() < 0.5 && order.price < highPrice){
+                    if(order.price <= highPrice){
                         Game.market.changeOrderPrice(orderId, (order.price + 0.001))
                     }
                 }
