@@ -560,7 +560,7 @@ function updateUpgrader(city, controller, memory, rcl8, creeps, rcl) {
     if (rcl8){
         var modifier = Math.random() * settings.bucket.upgradeRange
         if (controller.ticksToDowngrade < 100000 
-            || (controller.room.storage.store.energy > settings.energy.upgrade && Game.cpu.bucket > (settings.bucket.upgrade + modifier - (settings.bucket.upgradeRange/2)))){
+            || (controller.room.storage.store.energy > settings.energy.rcl8upgrade && Game.cpu.bucket > (settings.bucket.upgrade + modifier - (settings.bucket.upgradeRange/2)))){
             Game.spawns[city].memory[rU.name] = 1
         } else if (controller.ticksToDowngrade > 180000){
             Game.spawns[city].memory[rU.name] = 0
