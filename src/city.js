@@ -33,11 +33,13 @@ var e = require("./error")
 function makeCreeps(role, type, target, city) {
     //console.log(types.getRecipe('basic', 2));
     const room = Game.spawns[city].room
-    var energyToSpend = (room.storage && room.storage.store.energy < 50000) ? room.energyAvailable :
+    const unhealthyStore = room.storage && room.storage.store.energy < 5000
+    const unhealthyNoStore = !room.storage
+    var energyToSpend = unhealthyStore || unhealthyNoStore ? room.energyAvailable :
         room.energyCapacityAvailable
-    if (role == "remoteMiner") {
-        energyToSpend = room.energyCapacityAvailable
-    }
+    //if (role == "remoteMiner") {
+        //energyToSpend = room.energyCapacityAvailable
+    //}
     const recipe = types.getRecipe(type, energyToSpend, room)
     //console.log(role)
     const spawns = room.find(FIND_MY_SPAWNS)
