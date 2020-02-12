@@ -9,6 +9,8 @@ var er = require("./error")
 var settings = require("./settings")
 const profiler = require("./screeps-profiler")
 var pp = require("./profiler-prep")
+let MemHack = require("./MemHack")
+MemHack.pretick()
 pp.prepProfile()
 
 //Game.profiler.profile(1000);
