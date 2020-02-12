@@ -9,7 +9,7 @@ var er = require("./error")
 var settings = require("./settings")
 const profiler = require("./screeps-profiler")
 var pp = require("./profiler-prep")
-let MemHack = require("./MemHack")
+const MemHack = require("./MemHack")
 MemHack.pretick()
 pp.prepProfile()
 
