@@ -110,7 +110,11 @@ function runCity(city, creeps){
     //console.log(city + ': ' + printout.join(', ' ));
 
     // Run all the creeps in this city
-    _.forEach(creeps, (creep) => nameToRole[trueRole(creep)][0].run(creep))
+    _.forEach(creeps, (creep) => {
+        Cache[room.name] = Cache[room.name] || {} // initialize if needed
+        Cache[room.name].enemy = u.enemyOwned(creep.room)
+        nameToRole[trueRole(creep)][0].run(creep)
+    })
     
     link.run(room)
 

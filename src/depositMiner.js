@@ -35,7 +35,7 @@ var rDM = {
                 return
             }
             if (Game.flags[flagName].pos.roomName !== creep.pos.roomName){//move to flag until it is visible
-                u.multiRoomMove(creep, Game.flags[flagName].pos)
+                u.multiRoomMove(creep, Game.flags[flagName].pos, true)
                 return
             }
             const deposit = Game.flags[flagName].room.lookForAt(LOOK_DEPOSITS, Game.flags[flagName].pos)//if flag is visible, check for deposit, if no deposit, remove flag

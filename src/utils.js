@@ -104,7 +104,7 @@ var u = {
         }
     },
 
-    highwayMoveSettings: function(maxOps, swampCost, startPos, endPos) {
+    highwayMoveSettings: function(maxOps, swampCost, startPos, endPos, avoidEnemies) {
         return {
             range: 1,
             plainCost: 1,
@@ -113,10 +113,11 @@ var u = {
             maxRooms: 64,
             roomCallback: function(roomName) {
                 const isHighway = u.isHighway(roomName)
+                const isBad = avoidEnemies && Cache[roomName] && Cache[roomName].enemy
                 const nearStart = u.roomInRange(2, startPos.roomName, roomName)
                 const nearEnd = u.roomInRange(2, endPos.roomName, roomName)
 
-                if (!isHighway && !nearStart && !nearEnd) {
+                if ((!isHighway && !nearStart && !nearEnd) || isBad) {
                     return false
                 }
 
@@ -131,8 +132,11 @@ var u = {
             u.highwayMoveSettings(10000, 1, startPos, endPos))
     },
 
-    multiRoomMove: function(creep, pos) {
-        creep.moveTo(pos, {reusePath: 50}, u.highwayMoveSettings(5.000, 8, creep.pos, pos))         
+    multiRoomMove: function(creep, pos, avoidEnemies) {
+        creep.moveTo(pos,
+            {reusePath: 50},
+            u.highwayMoveSettings(5.000, 8, creep.pos, pos),
+            avoidEnemies)         
     },
 
     // E0,E10... W0, 10 ..., N0, N10 ...
