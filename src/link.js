@@ -65,6 +65,7 @@ var rL = {
     },
 
     getUpgradeLink: function(room) {
+        if (room.controller.level < 7) return false
         const links = rL.findNearStructures(room.controller.pos, 
             STRUCTURE_LINK, 
             rL.UPGRADE + rL.LINK)
