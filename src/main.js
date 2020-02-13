@@ -9,8 +9,6 @@ var er = require("./error")
 var settings = require("./settings")
 const profiler = require("./screeps-profiler")
 var pp = require("./profiler-prep")
-const MemHack = require("./MemHack")
-MemHack.pretick()
 pp.prepProfile()
 
 //Game.profiler.profile(1000);
@@ -20,11 +18,16 @@ global.Cache = {}
 global.Log = {}
 Log.info = function(text) { console.log(`[INFO] ${Game.time}: ${text}`) }
 Log.error = function(text) { console.log(`[ERROR] ${Game.time}: ${text}`) }
+global.MemoryCache = Memory
 
 profiler.enable()
 module.exports.loop = function () {
     "use strict"
     profiler.wrap(function () {
+        delete global.Memory
+        global.Memory = MemoryCache
+        RawMemory._parsed = MemoryCache
+
         er.reset()
 
         var localRooms = u.splitRoomsByCity() // only used for remote mining?
