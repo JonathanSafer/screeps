@@ -19,4 +19,4 @@ const MemHack = {
   }
 }
 MemHack.register()
-export default MemHack
+module.exports = MemHack
