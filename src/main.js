@@ -17,7 +17,7 @@ pp.prepProfile()
 //Game.profiler.output();
 global.T = function() { return `Time: ${Game.time}` }
 global.Cache = {}
-global.Log.info = {}
+global.Log = {}
 Log.info = function(text) { console.log(`[INFO] ${Game.time}: ${text}`) }
 Log.error = function(text) { console.log(`[ERROR] ${Game.time}: ${text}`) }
 
