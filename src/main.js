@@ -17,8 +17,9 @@ pp.prepProfile()
 //Game.profiler.output();
 global.T = function() { return `Time: ${Game.time}` }
 global.Cache = {}
-global.Log = function(text) { console.log(`${Game.time}: ${text}`) }
-
+global.Log.info = {}
+Log.info = function(text) { console.log(`[INFO] ${Game.time}: ${text}`) }
+Log.error = function(text) { console.log(`[ERROR] ${Game.time}: ${text}`) }
 
 profiler.enable()
 module.exports.loop = function () {
@@ -79,7 +80,7 @@ module.exports.loop = function () {
             for (const name in Memory.creeps) {
                 if (!Game.creeps[name]) {
                     delete Memory.creeps[name]
-                    Log(`Clearing non-existing creep memory: ${name}`)
+                    Log.info(`Clearing non-existing creep memory: ${name}`)
                 }
             }
         }
@@ -88,7 +89,7 @@ module.exports.loop = function () {
             for (const name in Memory.rooms) {
                 if (!Memory.rooms[name].city) {
                     delete Memory.rooms[name]
-                    Log(`Clearing room memory: ${name}`)
+                    Log.info(`Clearing room memory: ${name}`)
                 }
             }
         }

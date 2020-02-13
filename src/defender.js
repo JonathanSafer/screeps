@@ -77,7 +77,7 @@ var rD = {
             if (rooms.length){
                 var enemies = _.filter(rooms[0].find(FIND_HOSTILE_CREEPS), enemy => enemy.owner.username != "TuN9aN0")
                 if (enemies.length) {
-                    Log(enemies)
+                    Log.info(enemies)
                     a.attack(creep, enemies[0])
                     creep.memory.target = enemies[0].id
                     creep.memory.location = enemies[0].room.name

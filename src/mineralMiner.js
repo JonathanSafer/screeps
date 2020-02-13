@@ -33,7 +33,7 @@ var rMM = {
         var source = Game.getObjectById(creep.memory.source)
         const harvestResult = a.harvest(creep, source)
         if (harvestResult == ERR_NO_PATH) {
-            Log("no path for mining :/")
+            Log.info("no path for mining :/")
         } else if (harvestResult == 1) {
         // Record mining totals in memory for stat tracking
             const works = _.filter(creep.body, part => part.type == WORK).length

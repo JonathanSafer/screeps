@@ -165,8 +165,8 @@ function profileObjectFunctions(object, label) {
 function profileFunction(fn, functionName) {
     const fnName = functionName || fn.name
     if (!fnName) {
-        Log("Couldn't find a function name for - "+ fn)
-        Log("Will not profile this function.")
+        Log.info("Couldn't find a function name for - "+ fn)
+        Log.info("Will not profile this function.")
         return fn
     }
 
@@ -177,7 +177,7 @@ const Profiler = {
     results: {},
 
     printProfile() {
-        // Log(Profiler.output())
+        // Log.info(Profiler.output())
         Profiler.output()
     },
 
@@ -328,7 +328,7 @@ module.exports = {
             // var profilerTime = (end - start) - (callbackEnd - callbackStart);
             // var callbackTime = callbackEnd - callbackStart;
             // var unaccounted = end - profilerTime - callbackTime;
-            // Log('total-', end, 'profiler-', profilerTime, 'callbacktime-',
+            // Log.info('total-', end, 'profiler-', profilerTime, 'callbacktime-',
             // callbackTime, 'start-', start, 'unaccounted', unaccounted);
             return returnVal
         }

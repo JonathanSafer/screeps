@@ -30,7 +30,7 @@ var u = {
         // var rooms = allRooms[city]
         // var drops = _.flatten(_.map(rooms, room => room.find(FIND_DROPPED_RESOURCES)));
         var goodLoads = _.filter(drops, drop => (drop.amount >= 0.5 * creep.carryCapacity) || (drop == !RESOURCE_ENERGY))
-        //Log(JSON.stringify(allRooms));
+        //Log.info(JSON.stringify(allRooms));
         return goodLoads
     },
     
@@ -72,7 +72,7 @@ var u = {
     //splitRoomsByCity
     splitRoomsByCity: function(){
         var rooms = _.filter(Game.rooms, room => u.iReservedOrOwn(room.name))
-        //Log(JSON.stringify(rooms));
+        //Log.info(JSON.stringify(rooms));
         return _.groupBy(rooms, room => room.memory.city)
     },
 

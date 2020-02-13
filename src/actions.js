@@ -13,7 +13,7 @@ var actions = {
             }
         case OK:
             if (logSuccess) {
-                Log(creep.name+ " at " + creep.pos + ": " + fnToTry.toString())
+                Log.info(creep.name+ " at " + creep.pos + ": " + fnToTry.toString())
             }
             return 1
         case ERR_BUSY:
@@ -24,7 +24,7 @@ var actions = {
             creep.memory.path = null
             return result
         default:
-            Log(creep.memory.role + " at " + creep.pos + ": " + result.toString())
+            Log.info(creep.memory.role + " at " + creep.pos + ": " + result.toString())
             return result
         }
     },
@@ -118,10 +118,10 @@ var actions = {
                 return result
             }
         }
-        //Log("finding a target");
+        //Log.info("finding a target");
         
         var newTargets = _.sortBy(goodLoads, drop => -1*drop.amount + 28*PathFinder.search(creep.pos, drop.pos).cost)
-        //Log(newTargets)
+        //Log.info(newTargets)
         if (newTargets.length) {
             creep.memory.targetId = newTargets[0].id
 
@@ -164,7 +164,7 @@ var actions = {
         const buildings = _.flatten(_.map(myRooms[city], room => room.find(FIND_STRUCTURES)))
         const needRepair = _.filter(buildings, structure => (structure.hits < (0.2*structure.hitsMax)) && (structure.structureType != STRUCTURE_WALL) && (structure.structureType != STRUCTURE_RAMPART))
         const walls = _.filter(buildings, structure => (structure.hits < 1000000) && (structure.hits < structure.hitsMax) && (structure.structureType != STRUCTURE_ROAD))
-        //Log(buildings);
+        //Log.info(buildings);
         if(needRepair.length){
             creep.memory.repair = needRepair[0].id
             return actions.repair(creep, needRepair[0])
@@ -198,7 +198,7 @@ var actions = {
         var tombstones = creep.room.find(FIND_TOMBSTONES)
         var closeStones = _.filter(tombstones, stone => stone.pos.isNearTo(creep.pos))
         if (closeStones.length) {
-            //Log(closeStones);
+            //Log.info(closeStones);
             // we can only get one thing per turn, success is assumed since we're close
             const result = creep.withdraw(closeStones[0], _.keys(closeStones[0])[0])
             switch (result) {
@@ -207,7 +207,7 @@ var actions = {
             case ERR_NOT_ENOUGH_RESOURCES:
                 break
             default:
-                //Log(result);
+                //Log.info(result);
                 return result
             }
         }

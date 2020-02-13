@@ -31,7 +31,7 @@ var rM = {
                         var source = Game.getObjectById(creep.memory.source)
                         var structures = creep.room.find(FIND_MY_STRUCTURES)
                         const links = _.filter(structures, structure => structure.structureType === STRUCTURE_LINK && structure.pos.inRangeTo(source.pos, 3))
-                        //Log(link)
+                        //Log.info(link)
                         if (links.length > 1){
                             creep.memory.link = source.pos.findClosestByRange(links).id
                         } else if(links.length){
@@ -69,7 +69,7 @@ var rM = {
         })
         var sources = Object.keys(Game.spawns[city].memory.sources)
         var openSources = _.filter(sources, Id => !occupied.includes(Id))
-        //Log(sources)
+        //Log.info(sources)
         if (openSources.length){
             creep.memory.source = openSources[0]
             creep.memory.sourceRoom = Game.spawns[city].memory.sources[openSources[0]].roomName

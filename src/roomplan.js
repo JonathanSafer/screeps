@@ -76,7 +76,7 @@ const p = {
     },
 
     buildConstructionSite: function(room, structureType, pos, name) {
-        //Log(room.lookAt(pos.x, pos.y)[0].type)
+        //Log.info(room.lookAt(pos.x, pos.y)[0].type)
         const look = room.lookAt(pos.x, pos.y)
         if(room.controller.level < 5 && structureType == STRUCTURE_TERMINAL){
             structureType = STRUCTURE_CONTAINER
@@ -87,7 +87,7 @@ const p = {
             }
         }
         if (look.length == 1) {
-            //Log("hi")
+            //Log.info("hi")
             room.createConstructionSite(pos.x, pos.y, structureType, name)
         }
     },
@@ -103,7 +103,7 @@ const p = {
             return
         }
 
-        Log("Building extractor: " + room.name)
+        Log.info("Building extractor: " + room.name)
         mineralPos.createConstructionSite(STRUCTURE_EXTRACTOR)
     },
 
@@ -216,7 +216,7 @@ const p = {
         const sources = room.find(FIND_SOURCES)
         const neighbors = _.find(sources, p.tooCloseToSource)
         if (neighbors != undefined) {  // sources are next to eachother.
-            Log("Sources are next to each other in: " + room.name)
+            Log.info("Sources are next to each other in: " + room.name)
             return
         }
 
@@ -231,11 +231,11 @@ const p = {
         const creeps = structPos.findInRange(FIND_MY_CREEPS, creepRange)
         const workers = _.filter(creeps, creep => creep.memory.role == creepType)
         if (workers.length != 1) {
-            Log("Wrong number of " + creepType + " for link placement: " + room.name)
+            Log.info("Wrong number of " + creepType + " for link placement: " + room.name)
             return
         }
 
-        Log("Building link: " + room.name)
+        Log.info("Building link: " + room.name)
         const workerPos = workers[0].pos
         const wx = workerPos.x
         const wy = workerPos.y
@@ -503,7 +503,7 @@ const p = {
         for (i = 0; i < 50; i++) {
             for (j = 0; j < 50; j++) {
                 if (sqd[i][j] > 6) {
-                    //Log(i, j)--- save i & j as "planned"
+                    //Log.info(i, j)--- save i & j as "planned"
                     //return
                 }
                 //var hex = sqd[i][j].toString(16)

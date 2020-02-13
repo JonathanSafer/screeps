@@ -13,7 +13,7 @@ var rF = {
         switch(creep.memory.target){
         case 0:
             //no jobs available
-            //Log('hi')
+            //Log.info('hi')
             if (Game.time % 10 === 0){
                 creep.say("getJob")
             }
