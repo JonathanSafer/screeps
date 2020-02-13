@@ -105,9 +105,13 @@ var rDM = {
     },
 
     checkAllies: function(creep, hostiles){
+        Log.info(settings.allies)
         const owners = _.map(hostiles, hostile => hostile.owner.username)
         if (owners.length > 0) (Log.info(JSON.stringify(owners)))
-        const ally = _.find(owners, owner => owner in settings.allies)
+        const ally = _.find(owners, owner => {
+            Log.info(`${owner}: ${owner in settings.allies}`)
+            owner in settings.allies
+        })
         if (ally) {
             //remove flag
             const flagName = creep.memory.city + "deposit"
