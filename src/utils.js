@@ -28,7 +28,9 @@ var u = {
         const container = Game.getObjectById(Cache[room.name].container)
         if (container) return container
             
-        const containers = room.find(FIND_STRUCTURES, { structureType: STRUCTURE_CONTAINER })
+        const containers = room.find(FIND_STRUCTURES,{ 
+            filter: { structureType: STRUCTURE_CONTAINER } 
+        })
         if (containers.length) {
             Cache[room.name].container = containers[0].id
             return containers[0]
@@ -37,7 +39,9 @@ var u = {
         const spawn = Game.getObjectById(Cache[room.name].spawn)
         if (spawn) return spawn
 
-        const spawns = room.find(FIND_STRUCTURES, { structureType: STRUCTURE_SPAWN })
+        const spawns = room.find(FIND_STRUCTURES, { 
+            filter: { structureType: STRUCTURE_SPAWN }
+        })
         if (spawns.length) {
             Cache[room.name].spawn = spawns[0].id
             return spawns[0]

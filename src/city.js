@@ -79,7 +79,7 @@ function runCity(city, creeps){
 
     const storage = u.getStorage(room)
     const halfCapacity = storage && storage.store.getCapacity() / 2
-    const unhealthyStore = storage && storage.store.energy < Math.min(5000, halfCapacity)
+    const unhealthyStore = storage && storage.store[RESOURCE_ENERGY] < Math.min(5000, halfCapacity)
     var roles = (unhealthyStore) ? emergencyRoles : allRoles
 
     // Get counts for roles by looking at all living and queued creeps
