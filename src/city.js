@@ -31,7 +31,7 @@ var e = require("./error")
 
 
 function makeCreeps(role, type, target, city) {
-    //console.log(types.getRecipe('basic', 2));
+    //Log(types.getRecipe('basic', 2));
     const room = Game.spawns[city].room
     const unhealthyStore = room.storage && room.storage.store.energy < 5000
     const unhealthyNoStore = !room.storage
@@ -41,7 +41,7 @@ function makeCreeps(role, type, target, city) {
         //energyToSpend = room.energyCapacityAvailable
     //}
     const recipe = types.getRecipe(type, energyToSpend, room)
-    //console.log(role)
+    //Log(role)
     const spawns = room.find(FIND_MY_SPAWNS)
     if(!Memory.counter){
         Memory.counter = 0
@@ -49,7 +49,7 @@ function makeCreeps(role, type, target, city) {
     const name = Memory.counter.toString()
     if (types.cost(recipe) > room.energyAvailable) return false
     const spawn = u.getAvailableSpawn(spawns)
-    //console.log(spawn);
+    //Log(spawn);
     if (!spawn) return false
 
     Memory.counter++
@@ -91,10 +91,10 @@ function runCity(city, creeps){
         counts[role.name] = liveCount + queueCount
     })
 
-    //console.log(JSON.stringify(roles));
+    //Log(JSON.stringify(roles));
     let nextRole = _.find(roles, role => (typeof counts[role.name] == "undefined" && 
         spawn.memory[role.name]) || (counts[role.name] < spawn.memory[role.name]))
-    // console.log(Game.spawns[city].memory.rM);
+    // Log(Game.spawns[city].memory.rM);
 
     // If quota is met, get a role from the spawn queue
     if (!nextRole) {
@@ -103,13 +103,13 @@ function runCity(city, creeps){
     }
 
     if (nextRole) {
-        //console.log(JSON.stringify(nextRole));
+        //Log(JSON.stringify(nextRole));
         makeCreeps(nextRole.name, nextRole.type, nextRole.target(), city)
     }
 
     // Print out each role & number of workers doing it
     // var printout = _.map(roles, role => role.name + ": " + counts[role.name]);
-    //console.log(city + ': ' + printout.join(', ' ));
+    //Log(city + ': ' + printout.join(', ' ));
 
     // Run all the creeps in this city
     _.forEach(creeps, (creep) => {
@@ -181,18 +181,18 @@ function makeEmergencyCreeps(extensions, creeps, city, rcl8, emergency) {
 
     if (emergency || Game.time % checkTime == 0 && extensions >= 5) {
         if (_.filter(creeps, creep => creep.memory.role == "remoteMiner") < 1){
-            console.log("Making Emergency Miner")
+            Log("Making Emergency Miner")
             makeCreeps("remoteMiner", "lightMiner", 1, city)
         }
 
         if (_.filter(creeps, creep => creep.memory.role == "transporter") < 1){
-            console.log("Making Emergency Transporter")
+            Log("Making Emergency Transporter")
             makeCreeps("transporter", "basic", 0, city)
         }
 
         // TODO disable if links are present (not rcl8!! links may be missing for rcl8)
         if ((emergency || !rcl8) && _.filter(creeps, creep => creep.memory.role == "runner") < 1) {
-            console.log("Making Emergency Runner")
+            Log("Making Emergency Runner")
             makeCreeps("runner", "erunner", 1, city)
         }
     }
@@ -229,7 +229,7 @@ function runTowers(city){
             notWalls = _.reject(damaged, location => location.structureType == STRUCTURE_WALL || location.structureType == STRUCTURE_RAMPART)
         }
         if(hostiles.length > 0){
-            console.log("Towers up in " + city)
+            Log("Towers up in " + city)
             Game.spawns[city].memory.towersActive = true
             //identify target 
             target = t.chooseTarget(towers, hostiles)
@@ -543,7 +543,7 @@ function updateMineralMiner(rcl, buildings, spawn, memory) {
     memory[rMM.name] = 0
     if (rcl > 5){
         var extractor = _.find(buildings, structure => structure.structureType == STRUCTURE_EXTRACTOR)
-        //console.log(extractor)
+        //Log(extractor)
         if(extractor) {
             var cityObject = spawn.room
             var minerals = cityObject.find(FIND_MINERALS)
@@ -584,10 +584,10 @@ function updateUpgrader(city, controller, memory, rcl8, creeps, rcl) {
             return
         }
         var banks = u.getWithdrawLocations(creeps[0])
-        //console.log(banks);
+        //Log(banks);
         var money = _.sum(_.map(banks, bank => bank.store[RESOURCE_ENERGY]))
         var capacity = _.sum(_.map(banks, bank => bank.store.getCapacity()))
-        //console.log('money: ' + money + ', ' + (100*money/capacity));
+        //Log('money: ' + money + ', ' + (100*money/capacity));
         if(money < (capacity * .28)){
             memory[rU.name] = Math.max(memory[rU.name] - 1, 1) 
         }
@@ -865,7 +865,7 @@ function flagPowerBanks(structures, city, roomName) {
         if (!isBlockedByWalls(terrain, powerBank.pos)) {
             //put a flag on it
             Game.rooms[roomName].createFlag(powerBank.pos, flagName)
-            console.log("Power Bank found in: " + roomName)
+            Log("Power Bank found in: " + roomName)
         }
     }
 }

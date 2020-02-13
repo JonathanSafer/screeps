@@ -107,7 +107,7 @@ var markets = {
                 if (myCities[i].terminal && myCities[i].terminal.store.power > 2000 && !myCities[i].terminal.termUsed){
                     myCities[i].terminal.send(RESOURCE_POWER, 560, receiver)
                     myCities[i].terminal.termUsed = true
-                    console.log("Sending power to " + receiver)
+                    Log("Sending power to " + receiver)
                 }
             }
         }
@@ -122,7 +122,7 @@ var markets = {
                 if (myCities[i].terminal && myCities[i].terminal.store["XGH2O"] > 7000 && !myCities[i].terminal.termUsed){
                     myCities[i].terminal.send("XGH2O", 3000, receiver)
                     myCities[i].terminal.termUsed = true
-                    console.log("Sending upgrade boost to " + receiver)
+                    Log("Sending upgrade boost to " + receiver)
                     return
                 }
             }
@@ -138,7 +138,7 @@ var markets = {
                 if (myCities[i].terminal && myCities[i].terminal.store["XLH2O"] > 7000 && !myCities[i].terminal.termUsed){
                     myCities[i].terminal.send("XLH2O", 3000, receiver)
                     myCities[i].terminal.termUsed = true
-                    console.log("Sending repair boost to " + receiver)
+                    Log("Sending repair boost to " + receiver)
                     return
                 }
             }
@@ -154,7 +154,7 @@ var markets = {
                 if (myCities[i].terminal && myCities[i].terminal.store[RESOURCE_OPS] > 7000 && !myCities[i].terminal.termUsed){
                     myCities[i].terminal.send(RESOURCE_OPS, 5000, receiver)
                     myCities[i].terminal.termUsed = true
-                    console.log("Sending power to " + receiver)
+                    Log("Sending power to " + receiver)
                     return
                 }
             }
@@ -167,7 +167,7 @@ var markets = {
             var goodOrders = markets.sortOrder(buyOrders["power"])
             if (goodOrders.length && goodOrders[goodOrders.length - 1].price > .20){
                 Game.market.deal(goodOrders[goodOrders.length - 1].id, Math.min(goodOrders[goodOrders.length - 1].remainingAmount,  Math.max(0, terminal.store["power"] - 10000)), city.name)
-                console.log(Math.min(goodOrders[goodOrders.length - 1].remainingAmount,  Math.max(0, terminal.store["power"] - 10000)) + " " + "power" + " sold for " + goodOrders[goodOrders.length - 1].price)
+                Log(Math.min(goodOrders[goodOrders.length - 1].remainingAmount,  Math.max(0, terminal.store["power"] - 10000)) + " " + "power" + " sold for " + goodOrders[goodOrders.length - 1].price)
                 return true
             } else {
                 //make a sell order
@@ -195,7 +195,7 @@ var markets = {
             var goodOrders = markets.sortOrder(buyOrders[RESOURCE_OPS])
             if (goodOrders.length){
                 Game.market.deal(goodOrders[goodOrders.length - 1].id, Math.min(goodOrders[goodOrders.length - 1].remainingAmount,  Math.max(0, terminal.store[RESOURCE_OPS] - 20000)), city.name)
-                console.log(Math.min(goodOrders[goodOrders.length - 1].remainingAmount,  Math.max(0, terminal.store[RESOURCE_OPS] - 20000)) + " " + "ops" + " sold for " + goodOrders[goodOrders.length - 1].price)
+                Log(Math.min(goodOrders[goodOrders.length - 1].remainingAmount,  Math.max(0, terminal.store[RESOURCE_OPS] - 20000)) + " " + "ops" + " sold for " + goodOrders[goodOrders.length - 1].price)
                 return true
             } else {
                 //make a sell order
@@ -368,7 +368,7 @@ var markets = {
                     cities[i].terminal.termUsed = true
                     memory.ferryInfo.comSend = _.drop(memory.ferryInfo.comSend)
                 } else {
-                    console.log("Error sending " + comSend[0] + " from: " + cities[i].name)
+                    Log("Error sending " + comSend[0] + " from: " + cities[i].name)
                 }
             }
         }
@@ -405,7 +405,7 @@ var markets = {
                 const orders = markets.sortOrder(buyOrders[products[i]]).reverse()
                 if(orders.length && orders[0].price > Memory.sellPoint[products[i]] * 0.9){
                     Game.market.deal(orders[0].id, Math.min(orders[0].remainingAmount, store[products[i]]), city.name)
-                    console.log("Sold ", products[i], " for: ", orders[0].price)
+                    Log("Sold "+ products[i]+ " for: "+ orders[0].price)
                     return true
                 }
             }

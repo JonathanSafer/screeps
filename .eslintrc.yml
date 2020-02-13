@@ -7,6 +7,9 @@ extends: 'eslint:recommended'
 globals:
   Atomics: readonly
   SharedArrayBuffer: readonly
+  Cache: writable
+  Log: writable
+  T: writable
 parserOptions:
   ecmaVersion: 2018
 rules:

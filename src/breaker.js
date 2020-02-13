@@ -21,7 +21,7 @@ var rBr = {
         }
         var medic = Game.getObjectById(creep.memory.medic)
         if (medic){
-            //console.log(!creep.pos.isNearTo(medic.pos) && !creep.memory.attack)
+            //Log(!creep.pos.isNearTo(medic.pos) && !creep.memory.attack)
             if ((!creep.pos.isNearTo(medic.pos) && !(creep.pos.x <= 1 || creep.pos.x >= 48 || creep.pos.y <= 1 || creep.pos.y >= 48)) || (medic.fatigue > 0)){
                 return
             }
@@ -105,7 +105,7 @@ var rBr = {
             return
         }
         var target = Game.getObjectById(creep.memory.target)
-        //console.log(target)
+        //Log(target)
         if (target){
             if (Game.time % 10 === 0 && creep.pos.getRangeTo(target) > 1){
                 var rampart = creep.pos.findClosestByPath(FIND_HOSTILE_STRUCTURES)
@@ -115,7 +115,7 @@ var rBr = {
                     return
                 }
             }
-            //console.log(a.dismantle(creep, target))
+            //Log(a.dismantle(creep, target))
         }
         if(Game.flags[flagName]){
             if(creep.pos.roomName === Game.flags[flagName].pos.roomName){

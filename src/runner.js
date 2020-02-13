@@ -83,7 +83,7 @@ var rR = {
             if (!myPos.lookFor(LOOK_STRUCTURES).length && !myPos.lookFor(LOOK_CONSTRUCTION_SITES).length) {
                 // temp
                 if(creep.memory.new) {
-                    //console.log("new road");
+                    //Log("new road");
                     // myPos.createConstructionSite(STRUCTURE_ROAD); // let's build more road
                 }
             }
@@ -108,7 +108,7 @@ var rR = {
                 }
                 creep.memory.location = bucket.id
                 if (actions.charge(creep, bucket) == ERR_FULL) {
-                    console.log("Container Full")
+                    Log("Container Full")
                     rR.flipTarget(creep)
                 }
             }
