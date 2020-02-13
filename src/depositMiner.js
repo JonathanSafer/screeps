@@ -108,8 +108,8 @@ var rDM = {
         const owners = _.map(hostiles, hostile => hostile.owner.username)
         if (owners.length > 0) (Log.info(JSON.stringify(owners)))
         const ally = _.find(owners, owner => {
-            Log.info(`${owner}: ${owner in settings.allies}`)
-            return owner in settings.allies
+            Log.info(`${owner}: ${settings.allies.includes(owner)}`)
+            return settings.allies.includes(owner)
         })
         if (ally) {
             //remove flag
