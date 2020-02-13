@@ -31,6 +31,10 @@ var rr = {
 
     getCoreRoles: function() {
         return [rF, rD, rT, rM, rR, rU, rB]
+    },
+
+    getEmergencyRoles: function() {
+        return [rF, rD, rT, rM, rR]
     }
 }
 

@@ -30,16 +30,13 @@ var rr = require("./roles")
 var e = require("./error")
 
 
-function makeCreeps(role, type, target, city) {
+function makeCreeps(role, type, target, city, unhealthyStore) {
     //Log.info(types.getRecipe('basic', 2));
     const room = Game.spawns[city].room
-    const unhealthyStore = room.storage && room.storage.store.energy < 5000
-    const unhealthyNoStore = !room.storage
-    var energyToSpend = unhealthyStore || unhealthyNoStore ? room.energyAvailable :
+   
+    var energyToSpend = unhealthyStore ? room.energyAvailable :
         room.energyCapacityAvailable
-    //if (role == "remoteMiner") {
-        //energyToSpend = room.energyCapacityAvailable
-    //}
+
     const recipe = types.getRecipe(type, energyToSpend, room)
     //Log.info(role)
     const spawns = room.find(FIND_MY_SPAWNS)
@@ -77,9 +74,13 @@ function runCity(city, creeps){
     const room = spawn.room
 
     // Only build required roles during financial stress
-    const coreRoles = rr.getCoreRoles()
+    const emergencyRoles = rr.getEmergencyRoles()
     const allRoles = rr.getRoles()
-    var roles = (room.storage && room.storage.store.energy < 50000) ? coreRoles : allRoles
+
+    const storage = u.getStorage(room)
+    const halfCapacity = storage.store.getCapacity() / 2
+    const unhealthyStore = storage && storage.store.energy < Math.min(5000, halfCapacity)
+    var roles = (unhealthyStore) ? emergencyRoles : allRoles
 
     // Get counts for roles by looking at all living and queued creeps
     var nameToRole = _.groupBy(allRoles, role => role.name) // map from names to roles
@@ -104,7 +105,7 @@ function runCity(city, creeps){
 
     if (nextRole) {
         //Log.info(JSON.stringify(nextRole));
-        makeCreeps(nextRole.name, nextRole.type, nextRole.target(), city)
+        makeCreeps(nextRole.name, nextRole.type, nextRole.target(), city, unhealthyStore)
     }
 
     // Print out each role & number of workers doing it

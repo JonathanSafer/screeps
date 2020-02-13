@@ -20,6 +20,20 @@ var u = {
     getNextLocation: function(current, locations) {
         return (current + 1) % locations.length
     },
+
+    getStorage: function(room) {
+        if (room.storage) return room.storage
+        if (!Cache[room.name]) Cache[room.name] = {}
+
+        const container = Game.getObjectById(Cache[room.name].container)
+        if (container) return container
+            
+        const containers = room.find(STRUCTURE_CONTAINER)
+        if (!containers.length) return false
+
+        Cache[room.name].container = containers[0].id
+        return containers[0]
+    },
     
     getGoodPickups: function(creep) {
         var city = creep.memory.city
