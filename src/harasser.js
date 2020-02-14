@@ -1,4 +1,4 @@
-
+const settings = require("./settings")
 var rH = {
     name: "harasser",
     type: "harasser",
@@ -15,7 +15,7 @@ var rH = {
             return
         }
         rH.init(creep)
-        const hostiles = creep.room.find(FIND_HOSTILE_CREEPS)
+        const hostiles = _.filter(creep.room.find(FIND_HOSTILE_CREEPS), c => !settings.allies.includes(c.owner.name))
         rH.maybeHeal(creep, hostiles)
         if(!hostiles.length){
             if(rH.rally(creep)){
