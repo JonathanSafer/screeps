@@ -51,7 +51,7 @@ var rU = {
     getUpgradeLink: function(creep) {
         var link = Game.getObjectById(creep.memory.upgradeLink)
         link = link || linkLib.getUpgradeLink(creep.room)
-        if (link && link.store.getUsedCapacity() > 0) {
+        if (link && link.store.getUsedCapacity(RESOURCE_ENERGY) > 0) {
             creep.memory.upgradeLink = link.id
             return link
         } else {
