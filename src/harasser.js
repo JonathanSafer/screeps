@@ -15,7 +15,7 @@ var rH = {
             return
         }
         rH.init(creep)
-        const hostiles = _.filter(creep.room.find(FIND_HOSTILE_CREEPS), c => !settings.allies.includes(c.owner.name))
+        const hostiles = _.filter(creep.room.find(FIND_HOSTILE_CREEPS), c => !settings.allies.includes(c.owner.username))
         rH.maybeHeal(creep, hostiles)
         if(!hostiles.length){
             if(rH.rally(creep)){
