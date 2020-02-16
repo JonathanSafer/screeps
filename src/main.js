@@ -8,17 +8,14 @@ var rp = require("./roomplan")
 var er = require("./error")
 var settings = require("./settings")
 const profiler = require("./screeps-profiler")
+const b = require("./bucket")
 var pp = require("./profiler-prep")
+require("./globals")
 pp.prepProfile()
 
 //Game.profiler.profile(1000);
 //Game.profiler.output();
-global.T = function() { return `Time: ${Game.time}` }
-global.Cache = {}
-global.Log = {}
-Log.info = function(text) { console.log(`[INFO] ${Game.time}: ${text}`) }
-Log.error = function(text) { console.log(`[ERROR] ${Game.time}: ${text}`) }
-global.MemoryCache = Memory
+
 
 profiler.enable()
 module.exports.loop = function () {
@@ -109,6 +106,9 @@ module.exports.loop = function () {
         if(Game.time % 400 == 39){//run commodity manager every 400 (lower than lowest batched reaction time, on the 39 so it'll be before dormant period ends)
             cM.runManager(myCities)
         }
+
+        // burn extra cpu if the bucket is filling too quickly
+        b.manage()
         
         if (Game.time % settings.profileFrequency == 0) {
             Game.profiler.profile(settings.profileLength)
