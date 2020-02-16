@@ -4,7 +4,7 @@ const b = {
     manage: function() {
         if (b.growingTooQuickly()) {
             Log.info(`Wasting cpu at growth rate ${Cache.bucket.fillRate}`)
-            b.wasteCpu()
+            b.wasteCpu(5)
         }
     },
 
