@@ -24,7 +24,7 @@ const b = {
         Cache.bucket.fillRate = 0.9 * oldRate + 0.1 * delta // exponential moving avg
         Cache.bucket.fillRateLong = 0.95 * oldRateLong + 0.05 * delta
         Cache.bucket.fillRateMax = 0.99 * oldRateMax + 0.01 * delta
-        return (Cache.bucket.fillRate > settings.bucket.growthLimit)
+        return (Cache.bucket.fillRateMax > settings.bucket.growthLimit)
     },
 
     wasteCpu(amount) {
