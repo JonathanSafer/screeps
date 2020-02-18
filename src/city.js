@@ -817,8 +817,8 @@ function placeMiningFlags(city) {
         return
     }
     const structures = Game.rooms[roomName].find(FIND_STRUCTURES)
-    var modifier = Math.random() * Math.sqrt(settings.bucket.powerRange)
-    if (Game.cpu.bucket >= settings.bucket.powerMining + Math.pow(modifier, 2) - (settings.bucket.powerRange/2)) {
+    var modifier = (Math.random() ** (1/4)) * settings.bucket.powerRange
+    if (Game.cpu.bucket >= settings.bucket.powerMining + modifier - (settings.bucket.powerRange/2)) {
         flagPowerBanks(structures, city, roomName)
     }
     if (Game.cpu.bucket >= settings.bucket.resourceMining) {
