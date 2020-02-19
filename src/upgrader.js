@@ -25,13 +25,7 @@ var rU = {
         rU.getBoosted(creep, city, boost)
 
         if (creep.memory.state == CS.UPGRADE){
-            if(creep.memory.upgrading && creep.carry.energy == 0) {
-                creep.memory.upgrading = false
-            } else if(!creep.memory.upgrading && creep.store.energy >= creep.store.getCapacity() * 0.5) {
-                creep.memory.upgrading = true
-            }
-
-            creep.memory.upgrading ? actions.upgrade(creep) : rU.withdraw(creep, city)
+            creep.store.energy > 0 ? actions.upgrade(creep) : rU.withdraw(creep, city)
         }
     },
 
