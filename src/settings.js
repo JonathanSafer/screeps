@@ -20,7 +20,7 @@ var settings = {
         repair: 3000, //repairing walls in a room
         rclMultiplier: 200, // scale: rcl0 = 5k, 1 => 4.8k etc
         processPower: 3200,
-        growthLimit: 0.75, // average bucket growth limit over 100+ ticks
+        growthLimit: 0.25, // average bucket growth limit over 100+ ticks
     },
     energy: {//energy thresholds
         rcl8upgrade: 620000,
