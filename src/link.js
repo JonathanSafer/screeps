@@ -58,6 +58,10 @@ var rL = {
                 sourceLink.transferEnergy(storageLink)
             }
         }
+        //send from storage link to upgrade link
+        if(rL.readyForLinkTransfer(storageLink, upgradeLink)){
+            storageLink.transferEnergy(upgradeLink)
+        }
     },
 
     readyForLinkTransfer(sender, receiver) {
