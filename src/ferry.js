@@ -1,4 +1,5 @@
 var actions = require("./actions")
+var settings = require("./settings")
 
 var rF = {
     name: "ferry",
@@ -10,6 +11,7 @@ var rF = {
         if (creep.saying == "getJob"){
             creep.memory.target = rF.getJob(creep)
         }
+        const link = Game.getObjectById(Game.spawns[creep.memory.city].memory.storageLink)
         switch(creep.memory.target){
         case 0:
             //no jobs available
@@ -70,7 +72,6 @@ var rF = {
         } 
         case 5:
             //move energy from storage link to storage
-            var link = Game.getObjectById(Game.spawns[creep.memory.city].memory.storageLink)
             if (creep.carry.energy > 0){
                 actions.charge(creep, creep.room.storage)
             } else if (link.energy > 0){
@@ -200,8 +201,17 @@ var rF = {
             }
             actions.withdraw(creep, creep.room.terminal, creep.memory.mineral, creep.memory.quantity)
             break
+        case 13:
+            // move energy to storage link from storage
+            if (creep.carry.energy === 0){
+                actions.withdraw(creep, creep.room.storage, RESOURCE_ENERGY)
+            } else if (link.energy === 0){
+                actions.charge(creep, link)
+            } else {
+                creep.say("getJob")
+            }
+            break 
         }
-     
     },
     
     getJob: function(creep){
@@ -209,18 +219,20 @@ var rF = {
             creep.suicide()
             return 0
         }
-        if (Game.getObjectById(Game.spawns[creep.memory.city].memory.storageLink) &&
-            Game.getObjectById(Game.spawns[creep.memory.city].memory.storageLink).energy > 0)
-        {
+        const link = Game.getObjectById(Game.spawns[creep.memory.city].memory.storageLink)
+        if (Game.cpu.bucket > settings.bucket.upgrade && link && !link.energy) {
+            return 13
+        } else if (link && link.energy > 0) {
             return 5
         }
-        if (creep.room.storage && creep.room.storage.store.energy > 150000 && creep.room.terminal.store.energy < 50000 && _.sum(creep.room.terminal.store) < 295000){
+        const storage = creep.room.storage
+        if (storage && storage.store.energy > 150000 && creep.room.terminal.store.energy < 50000 && _.sum(creep.room.terminal.store) < 295000){
             return 1
         }
         if (creep.room.terminal && creep.room.terminal.store.energy > 51000){
             return 3
         }
-        if(creep.room.storage && Object.keys(creep.room.storage.store).length > 1 && _.sum(creep.room.terminal.store) < 295000){
+        if(storage && Object.keys(storage.store).length > 1 && _.sum(creep.room.terminal.store) < 295000){
             return 2
         }
         if (Game.spawns[creep.memory.city].memory.ferryInfo.needPower === true && Game.spawns[creep.memory.city].room.terminal.store[RESOURCE_POWER] > 0){
