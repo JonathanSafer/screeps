@@ -9,6 +9,10 @@ var rPM = {
 
     /** @param {Creep} creep **/
     run: function(creep) {
+        if(creep.hits < creep.hitsMax * 0.5 && Game.flags[creep.memory.city + "powerMine"]){
+            Game.flags[creep.memory.city + "powerMine"].remove()
+            return
+        }
         var breakerTarget = Game.getObjectById(creep.memory.target)
         if (Game.time % 50 == 1 && breakerTarget){
             if (breakerTarget.hits < 600000){
