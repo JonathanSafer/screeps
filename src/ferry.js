@@ -204,7 +204,7 @@ var rF = {
         case 13:
             // move energy to storage to link
             if (creep.store.energy === 0 && link.energy === 0){//both are empty
-                actions.withdraw(creep, creep.room.storage, RESOURCE_ENERGY)
+                actions.withdraw(creep, creep.room.storage, RESOURCE_ENERGY, LINK_CAPACITY)
             } else if (link.energy === 0){//link is empty and creep has energy
                 actions.charge(creep, link)
             } else if(creep.store.energy > 0){//link has energy and creep has energy
@@ -227,7 +227,7 @@ var rF = {
             const links = Cache[creep.room.name].links || {}
             upgradeLink = Game.getObjectById(links.upgrade)
         }
-        if (Game.cpu.bucket > settings.bucket.upgrade && link && !link.energy && upgradeLink && !upgradeLink.energy) {
+        if (Game.cpu.bucket > settings.bucket.upgrade - settings.bucket.upgradeRange/2 && link && !link.energy && upgradeLink && !upgradeLink.energy) {
             return 13
         } else if (link && link.energy > 0) {
             return 5
