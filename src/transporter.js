@@ -1,5 +1,6 @@
 var actions = require("./actions")
 var u = require("./utils")
+var sq = require("./spawnQueue")
 
 var rT = {
     name: "transporter",
@@ -121,6 +122,12 @@ var rT = {
     },
 
     endLife: function(creep){
+        if(creep.ticksToLive == 200){
+            const transporters = _.filter(creep.room.find(FIND_MY_CREEPS), c => c.memory.role == "transporter")
+            if(transporters.length < 2){
+                sq.respawn(creep)
+            }
+        }
         if(creep.ticksToLive > 10 || !creep.room.storage){
             return false
         }
