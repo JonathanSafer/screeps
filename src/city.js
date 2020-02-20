@@ -156,7 +156,7 @@ function updateCountsCity(city, creeps, rooms, claimRoom, unclaimRoom) {
         if (Game.time % 500 === 0) {
             runNuker(city)
             checkLabs(city)
-            updateTransporter(extensions, memory)
+            updateTransporter(extensions, memory, creeps)
             updateColonizers(city, memory, claimRoom, unclaimRoom)
             updateUpgrader(city, controller, memory, rcl8, creeps, rcl)
             updateBuilder(rcl, memory, spawn, rooms, rcl8)
@@ -553,13 +553,15 @@ function updateMineralMiner(rcl, buildings, spawn, memory) {
     }
 }
 
-function updateTransporter(extensions, memory) {
+function updateTransporter(extensions, memory, creeps) {
     if (extensions < 1){
         memory[rT.name] = 0
     } else if (extensions < 10){
         memory[rT.name] = 1
-    } else {
+    } else if(creeps.length > 8){//arbitrary 'load' on transporters
         memory[rT.name] = settings.max.transporters
+    } else {
+        memory[rT.name] = 1
     }
 }
 
