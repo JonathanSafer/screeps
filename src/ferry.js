@@ -202,12 +202,14 @@ var rF = {
             actions.withdraw(creep, creep.room.terminal, creep.memory.mineral, creep.memory.quantity)
             break
         case 13:
-            // move energy to storage link from storage
-            if (creep.carry.energy === 0){
+            // move energy to storage to link
+            if (creep.store.energy === 0 && link.energy === 0){//both are empty
                 actions.withdraw(creep, creep.room.storage, RESOURCE_ENERGY)
-            } else if (link.energy === 0){
+            } else if (link.energy === 0){//link is empty and creep has energy
                 actions.charge(creep, link)
-            } else {
+            } else if(creep.store.energy > 0){//link has energy and creep has energy
+                creep.memory.target = 5//switch to depositing energy in storage
+            } else {//job done: link has energy and creep is empty
                 creep.say("getJob")
             }
             break 
@@ -220,7 +222,12 @@ var rF = {
             return 0
         }
         const link = Game.getObjectById(Game.spawns[creep.memory.city].memory.storageLink)
-        if (Game.cpu.bucket > settings.bucket.upgrade && link && !link.energy) {
+        let upgradeLink = null
+        if(Cache[creep.room.name]){
+            const links = Cache[creep.room.name].links || {}
+            upgradeLink = Game.getObjectById(links.upgrade)
+        }
+        if (Game.cpu.bucket > settings.bucket.upgrade && link && !link.energy && upgradeLink && !upgradeLink.energy) {
             return 13
         } else if (link && link.energy > 0) {
             return 5
