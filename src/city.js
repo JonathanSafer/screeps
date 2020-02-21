@@ -514,8 +514,12 @@ function updateMiner(rooms, rcl8, memory, spawn){
     if(rcl8){
         if(_.find(spawn.room.find(FIND_MY_CREEPS), c => c.memory.role == rD.name)){
             memory[rM.name] = 0
-            return
+        } else if (spawn.room.find(FIND_POWER_CREEPS).length) {
+            memory[rM.name] = 2
+        } else {
+            memory[rM.name] = 0
         }
+        return
     }
     if (!memory.sources) memory.sources = {}
     if (rcl8 && _.keys(memory.sources).length > 2) memory.sources = {}
@@ -531,7 +535,6 @@ function updateMiner(rooms, rcl8, memory, spawn){
         }
     })
     _.each(memory.sources, () => miners++)
-    if (rcl8) miners = settings.max.miners // 1 miner in rcl8 to save cpu for resources
     if(Game.flags.claim && Game.flags.claim.pos.roomName === spawn.pos.roomName &&
         Game.flags.claim.room.controller.level < 6){
         memory[rM.name] = 0
