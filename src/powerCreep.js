@@ -14,7 +14,8 @@ var CreepState = {
     SLEEP: 10,
     WORK_OBSERVER: 11,
     WORK_EXTENSION: 12,
-    WORK_SPAWN: 13
+    WORK_SPAWN: 13,
+    WORK_CONTROLLER: 14,
 }
 var CS = CreepState
 
@@ -75,6 +76,8 @@ var rPC = {
         case CS.WORK_SPAWN:
             a.usePower(creep, Game.getObjectById(creep.memory.target), PWR_OPERATE_SPAWN)
             break
+        case CS.WORK_CONTROLLER:
+            a.usePower(creep, creep.room.controller, PWR_OPERATE_CONTROLLER)
         }
         creep.memory.state = rPC.getNextState(creep)
     },
@@ -95,6 +98,7 @@ var rPC = {
         case CS.WORK_OBSERVER: return rPC.atTarget(creep) ? rPC.getNextWork(creep) : CS.WORK_OBSERVER
         case CS.WORK_EXTENSION: return rPC.atTarget(creep) ? rPC.getNextWork(creep) : CS.WORK_EXTENSION
         case CS.WORK_SPAWN: return rPC.atTarget(creep) ? rPC.getNextWork(creep) : CS.WORK_SPAWN
+        case CS.WORK_CONTROLLER: return rPC.atTarget(creep) ? rPC.getNextWork(creep) : CS.WORK_CONTROLLER
         }
         // If state is unknown then restart
         return CS.START
@@ -139,6 +143,7 @@ var rPC = {
         case CS.WORK_OBSERVER:
         case CS.WORK_EXTENSION:
         case CS.WORK_SPAWN:
+        case CS.WORK_CONTROLLER:
             target = Game.getObjectById(creep.memory.target)
             distance = 3
             break
@@ -170,6 +175,7 @@ var rPC = {
         if (rPC.canOperateObserver(creep)) return rPC.getOpsJob(creep, PWR_OPERATE_OBSERVER, CS.WORK_OBSERVER)
         if (rPC.canOperateExtension(creep)) return rPC.getOpsJob(creep, PWR_OPERATE_EXTENSION, CS.WORK_EXTENSION)
         if (rPC.canOperateSpawn(creep)) return rPC.getOpsJob(creep, PWR_OPERATE_SPAWN, CS.WORK_SPAWN)
+        if (rPC.canOperateController(creep)) return rPC.getOpsJob(creep, PWR_OPERATE_CONTROLLER, CS.WORK_CONTROLLER)
         if (rPC.hasExtraOps(creep)) return CS.WORK_BALANCE_OPS
         return CS.SLEEP
     },
@@ -180,7 +186,9 @@ var rPC = {
     },
 
     canGenerateOps: function(creep) {
-        return creep.powers[PWR_GENERATE_OPS] && creep.powers[PWR_GENERATE_OPS].cooldown < 1 && _.sum(creep.store) < creep.store.getCapacity()
+        return creep.powers[PWR_GENERATE_OPS] &&
+            creep.powers[PWR_GENERATE_OPS].cooldown == 0 &&
+            _.sum(creep.store) < creep.store.getCapacity()
     },
 
     hasSourceUpdate: function(creep) {
@@ -205,50 +213,35 @@ var rPC = {
     canOperateFactory: function(creep) {
         const factory = _.find(creep.room.find(FIND_MY_STRUCTURES), struct => struct.structureType == STRUCTURE_FACTORY)
         const city = creep.memory.city + "0"
-        if (factory &&
-            (!factory.effects || factory.effects.length == 0) &&
-            factory.cooldown < 30 &&
-            creep.powers[PWR_OPERATE_FACTORY] &&
-            creep.powers[PWR_OPERATE_FACTORY].cooldown == 0 &&
-            Game.spawns[city].memory.ferryInfo.factoryInfo.produce !== "dormant") {
-            creep.memory.target = factory.id
-            return true
-        }
-        return false
+        return rPC.canOperate(creep, factory, PWR_OPERATE_FACTORY, 
+            factory && factory.cooldown < 30 && Game.spawns[city].memory.ferryInfo.factoryInfo.produce !== "dormant")
     },
 
     canOperateObserver: function(creep) {
         const observer = _.find(creep.room.find(FIND_MY_STRUCTURES), struct => struct.structureType == STRUCTURE_OBSERVER)
-        if (observer && 
-            (!observer.effects || observer.effects.length == 0) &&
-            creep.powers[PWR_OPERATE_OBSERVER] &&
-            creep.powers[PWR_OPERATE_OBSERVER].cooldown == 0) {
-            creep.memory.target = observer.id
-            return true
-        }
-        return false
+        return rPC.canOperate(creep, observer, PWR_OPERATE_OBSERVER, true)
     },
 
     canOperateExtension: function(creep) {
-        const storage = creep.room.storage
-        if (storage &&
-            creep.powers[PWR_OPERATE_EXTENSION] &&
-            creep.powers[PWR_OPERATE_EXTENSION].cooldown == 0 &&
-            creep.room.energyAvailable < 0.5 * creep.room.energyCapacityAvailable) {
-            creep.memory.target = storage.id
-            return true
-        }
-        return false
+        return rPC.canOperate(creep, creep.room.storage, PWR_OPERATE_EXTENSION,
+            creep.room.energyAvailable < 0.5 * creep.room.energyCapacityAvailable)
     },
 
     canOperateSpawn: function(creep) {
         const spawn = Game.spawns[creep.memory.city + "0"]
-        if (spawn &&
-            (!spawn.effects || spawn.effects.length == 0) &&
-            creep.powers[PWR_OPERATE_SPAWN] &&
-            creep.powers[PWR_OPERATE_SPAWN].cooldown == 0 &&
-            spawn.memory.boost) {
-            creep.memory.target = spawn.id
+        return rPC.canOperate(creep, spawn, PWR_OPERATE_SPAWN, spawn && spawn.memory.boost)
+    },
+
+    canOperateController: function(creep) {
+        return rPC.canOperate(creep, creep.room.controller, PWR_OPERATE_CONTROLLER, true)
+    },
+
+    canOperate: function(creep, target, power, extraRequirements) {
+        if (target &&
+            (!target.effects || target.effects.length == 0) &&
+            creep.powers[power] &&
+            creep.powers[power].cooldown == 0 && extraRequirements) {
+            creep.memory.target = target.id
             return true
         }
         return false
