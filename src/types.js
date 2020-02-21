@@ -5,7 +5,7 @@ function getRecipe(type, energyAvailable, room){
     // used at all rcls
     d.runner = scalingBody([2, 1], [CARRY, MOVE], energyAvailable)
     d.miner = minerBody(energyAvailable, rcl)
-    d.normal = upgraderBody(energyAvailable, rcl)
+    d.normal = upgraderBody(energyAvailable, rcl, room)
     d.transporter = scalingBody([2, 1], [CARRY, MOVE], energyAvailable, 30)
     d.builder = builderBody(energyAvailable, rcl)
     d.defender = defenderBody(energyAvailable, rcl)
@@ -167,11 +167,18 @@ function minerBody(energyAvailable, rcl) {
     return body([works, carries, moves], [WORK, CARRY, MOVE])
 }
 
-function upgraderBody(energyAvailable, rcl) {
+function upgraderBody(energyAvailable, rcl, room) {
+    const controller = room.controller
+    const isBoosted = controller.effects && controller.effects.length > 0
+    const boost = isBoosted ? 
+        POWER_INFO[PWR_OPERATE_CONTROLLER].effect[controller.effects[0].level - 1] : 0
+    const maxWorks = CONTROLLER_MAX_UPGRADE_PER_TICK + boost
     const types = [WORK, CARRY, MOVE]
     if (rcl in [6, 7]) { // use boost ratio 5 work, 3 carry
         return scalingBody([5, 3, 4], [WORK, CARRY, MOVE], energyAvailable)
-    } else { // don't go over 15 work for rcl8
+    } else if (isBoosted) {
+        return scalingBody([4, 1, 1], types, energyAvailable, Math.min(maxWorks * 1.5, MAX_CREEP_SIZE))
+    } else {// don't go over 15 work for rcl8
         return scalingBody([1, 1, 1], types, energyAvailable, 45)
     }
 }
