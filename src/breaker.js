@@ -1,5 +1,6 @@
 var u = require("./utils")
 var settings = require("./settings")
+var rM = require("./medic")
 
 var rBr = {
     name: "breaker",
@@ -52,7 +53,7 @@ var rBr = {
     medicSearch: function(creep){
         //find single medics in your neighborhood
         const creeps = creep.room.find(FIND_MY_CREEPS)
-        const medic = _.find(creeps, c => c.memory.role == medic && !c.memory.partner)
+        const medic = _.find(creeps, c => c.memory.role == rM.role && !c.memory.partner)
         if(medic){
             medic.memory.partner = creep.id
             creep.memory.medic = medic.id
@@ -79,10 +80,10 @@ var rBr = {
             return
         }
         const structures = creep.room.lookForAtArea(LOOK_STRUCTURES, 
-            Math.min(0, creep.pos.y - 1),
-            Math.min(0, creep.pos.x - 1), 
-            Math.max(49, creep.pos.y + 1), 
-            Math.max(49, creep.pos.x + 1), true) //returns an array of structures
+            Math.max(0, creep.pos.y - 1),
+            Math.max(0, creep.pos.x - 1), 
+            Math.min(49, creep.pos.y + 1), 
+            Math.min(49, creep.pos.x + 1), true) //returns an array of structures
         if(structures.length){
             creep.dismantle(structures[0].structure)
         }
