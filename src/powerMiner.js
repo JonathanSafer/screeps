@@ -18,6 +18,11 @@ var rPM = {
                 return
             }
         }
+        if(medic.hits < medic.hitsMax/2 || creep.hits < creep.hitsMax/2){//temp drop operation if under attack
+            if(Game.flags[creep.memory.city + "powerMine"]){
+                Game.flags[creep.memory.city + "powerMine"].remove()
+            }
+        }
         const canMove = rBr.canMove(creep, medic)
         let target = Game.getObjectById(creep.memory.target)//target is pBank
         if(target){
