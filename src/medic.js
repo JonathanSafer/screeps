@@ -1,7 +1,3 @@
-var a = require('actions');
-var t = require('types');
-var u = require('utils');
-
 var rMe = {
     name: "medic",
     type: "medic",
@@ -11,10 +7,10 @@ var rMe = {
     /** @param {Creep} creep **/
     run: function(creep) {
         if(creep.tickToLive === 1490) {
-            creep.notifyWhenAttacked(false);
+            creep.notifyWhenAttacked(false)
         }
         rMe.init(creep)
-        let partner = Game.getObjectById(creep.memory.partner);
+        const partner = Game.getObjectById(creep.memory.partner)
         if(!partner){
             //if partner is dead, suicide
             if(rMe.endlife(creep)){
@@ -41,5 +37,5 @@ var rMe = {
 
 
    
-};
-module.exports = rMe;
+}
+module.exports = rMe
