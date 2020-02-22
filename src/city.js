@@ -206,7 +206,7 @@ function runTowers(city){
         if(Game.spawns[city].memory.towersActive == undefined){
             Game.spawns[city].memory.towersActive = false
         }
-        if(Game.spawns[city].memory.towersActive == false && Game.time % 10 != 0){
+        if(Game.spawns[city].memory.towersActive == false && Game.time % 50 != 0){
             return
         }
         var towers = _.filter(Game.structures, (structure) => structure.structureType == STRUCTURE_TOWER && structure.room.memory.city == city)

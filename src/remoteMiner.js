@@ -13,6 +13,7 @@ var rM = {
             sq.respawn(creep)
         }
         if(creep.hits < creep.hitsMax){
+            Game.spawns[creep.memory.city].memory.towersActive = true
             creep.moveTo(Game.spawns[creep.memory.city])
             return
         }
