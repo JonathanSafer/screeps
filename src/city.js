@@ -248,7 +248,7 @@ function runTowers(city){
                 if(repair < TOWER_POWER_REPAIR * (1 - TOWER_FALLOFF)){
                     continue
                 }
-                const distance = towers[i].pos.getRangeTo(target.pos)
+                const distance = towers[i].pos.getRangeTo(damaged.pos)
                 const damage_distance = Math.max(TOWER_OPTIMAL_RANGE, Math.min(distance, TOWER_FALLOFF_RANGE))
                 const steps = TOWER_FALLOFF_RANGE - TOWER_OPTIMAL_RANGE
                 const step_size = TOWER_FALLOFF * TOWER_POWER_REPAIR / steps
