@@ -220,15 +220,16 @@ function runTowers(city){
         var hostilePower = Game.spawns[city].room.find(FIND_HOSTILE_POWER_CREEPS)
         var hostiles = hostilePower.concat(hostileCreep)
         var injured = injuredPower.concat(injuredCreep)
-        var notWalls = []
+        let damaged = null
+        let repair = 0
         let target = null
-        if (Game.time % 10 === 0) {
-            var damaged = Game.spawns[city].room.find(FIND_STRUCTURES, {
-                filter: (structure) => {
-                    return (structure) && structure.hits < (structure.hitsMax * 0.1)
-                }
-            })
-            notWalls = _.reject(damaged, location => location.structureType == STRUCTURE_WALL || location.structureType == STRUCTURE_RAMPART)
+        if (Game.time % 50 === 0) {
+            damaged = _.find(Game.spawns[city].room.find(FIND_STRUCTURES), s => s.structureType != STRUCTURE_WALL
+                && s.structureType != STRUCTURE_RAMPART
+                && s.hitsMax - s.hits > TOWER_POWER_REPAIR)//structure must need at least as many hits missing as a minimum tower shot
+            if(damaged){
+                repair = damaged.hitsMax - damaged.hits
+            }
         }
         if(hostiles.length > 0){
             Log.info("Towers up in " + city)
@@ -243,8 +244,19 @@ function runTowers(city){
                 towers[i].attack(target)
             } else if (injured.length > 0 && !hostiles.length){
                 towers[i].heal(injured[0])
-            } else if (Game.time % 10 === 0 && notWalls.length > 0){
-                towers[i].repair(notWalls[0])
+            } else if (Game.time % 50 === 0 && damaged){
+                if(repair < TOWER_POWER_REPAIR * (1 - TOWER_FALLOFF)){
+                    continue
+                }
+                const distance = towers[i].pos.getRangeTo(target.pos)
+                const damage_distance = Math.max(TOWER_OPTIMAL_RANGE, Math.min(distance, TOWER_FALLOFF_RANGE))
+                const steps = TOWER_FALLOFF_RANGE - TOWER_OPTIMAL_RANGE
+                const step_size = TOWER_FALLOFF * TOWER_POWER_REPAIR / steps
+                const repStrength = TOWER_POWER_REPAIR - (damage_distance - TOWER_OPTIMAL_RANGE) * step_size
+                if(repStrength <= repair){
+                    towers[i].repair(damaged)
+                    repair -= repStrength 
+                }
             }
         }
     }
