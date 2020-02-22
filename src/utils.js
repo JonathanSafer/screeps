@@ -7,6 +7,14 @@ var u = {
                                                  structure.structureType == STRUCTURE_STORAGE ||
                                                  structure.structureType == STRUCTURE_TERMINAL)
     },
+
+    isOnEdge: function(pos){//determine if a roomPos is on a room edge
+        if(pos.x == 0 || pos.x == 49 || pos.y == 0 || pos.y == 49){
+            return true
+        } else {
+            return false
+        }
+    },
     
     getTransferLocations: function(creep) {
         var city = creep.memory.city

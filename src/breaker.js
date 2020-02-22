@@ -1,5 +1,5 @@
-var a = require("./actions")
 var u = require("./utils")
+var settings = require("./settings")
 
 var rBr = {
     name: "breaker",
@@ -10,123 +10,169 @@ var rBr = {
     /** @param {Creep} creep **/
     run: function(creep) {
         u.updateCheckpoints(creep)
-        var breakerTarget = Game.getObjectById(creep.memory.target)
-        const attacker = _.find(creep.room.find(FIND_HOSTILE_CREEPS), c => c.pos.isNearTo(creep.pos) && c.getActiveBodyparts(ATTACK) > 10)
-        if(attacker){creep.memory.retreat = true}
-        if (breakerTarget && creep.pos.isNearTo(breakerTarget.pos)){
-            creep.dismantle(breakerTarget)
-        } 
-        if (!creep.memory.medic){
+        rBr.init(creep)
+        const medic = Game.getObjectById(creep.memory.medic)
+        if(!medic){
+            if(rBr.endLife(creep)){
+                return
+            } else {
+                rBr.medicSearch(creep)
+                return
+            }
+        }
+        //breaker has a medic
+        const canMove = rBr.canMove(creep, medic)
+        const target = Game.getObjectById(creep.memory.target)
+        //attempt to break target, 
+        //if target is not in range and there is another valid target in range, break new valid target
+        //if target cannot be pathed to, choose new target to be saved as target
+        rBr.breakStuff(creep, target)
+        if(!rBr.maybeRetreat(creep, medic, canMove)){
+            rBr.advance(creep, medic, target, canMove)
+        }
+        rBr.heal(creep, medic)
+    },
+
+    init: function(creep){
+        //initialize memory
+        if(!creep.memory.medic){
             creep.memory.medic = null
         }
-        var medic = Game.getObjectById(creep.memory.medic)
-        if (medic){
-            //Log.info(!creep.pos.isNearTo(medic.pos) && !creep.memory.attack)
-            if ((!creep.pos.isNearTo(medic.pos) && !(creep.pos.x <= 1 || creep.pos.x >= 48 || creep.pos.y <= 1 || creep.pos.y >= 48)) || (medic.fatigue > 0)){
-                return
-            }
-        } else {
-            //look for medics
-            var allCreeps = u.splitCreepsByCity()
-            const status = creep.memory.role.substring(0, 3)
-            var medicSearch = 0
-            if (status == "big"){
-                medicSearch = _.find(allCreeps[creep.memory.city], localCreep => localCreep.memory.role === "bigMedic" && localCreep.pos.isNearTo(creep.pos) 
-                                                                                        && localCreep.memory.breaker == creep.id)
-            } else {
-                medicSearch = _.find(allCreeps[creep.memory.city], localCreep => localCreep.memory.role === "medic" && localCreep.pos.isNearTo(creep.pos) 
-                                                                                        && localCreep.memory.breaker == creep.id)
-            }                                               
-            if (medicSearch){
-                creep.memory.medic = medicSearch.id
-            }
-            return
-        }
-        var city = creep.memory.city
-        var flagName = "break"
-        const status = creep.memory.role.substring(0, 3)
-        if(status === "big"){
-            flagName = city + "bigBreak"
-        } else {
-            flagName = city + "break"
-        }
-        if(creep.hits < creep.hitsMax * 0.85){
-            creep.memory.retreat = true
-        }
-        if(creep.memory.retreat) {
-            return a.retreat(creep)
-        }
-        var targetFlag = creep.memory.city + "breakTarget"
-        if(Game.flags[targetFlag] && creep.pos.roomName === Game.flags[targetFlag].pos.roomName){
-            var found = Game.flags[targetFlag].pos.lookFor(LOOK_STRUCTURES)
-            if(found.length){
-                a.dismantle(creep, found[0])
-                return
-            }
-        }
+    },
 
-        const ignore = Game.spawns[creep.memory.city].memory.ignoreRooms
-        if(ignore != null && ignore.includes(creep.pos.roomName)){
-            //attempt to move through room
+    endLife: function(creep) {
+        // if creep had a medic but no longer does then suicide
+        if(creep.memory.medic){
+            creep.suicide()
+            return true
+        }
+        return false
+    },
+
+    medicSearch: function(creep){
+        //find single medics in your neighborhood
+        const creeps = creep.room.find(FIND_MY_CREEPS)
+        const medic = _.find(creeps, c => c.memory.role == medic && !c.memory.partner)
+        if(medic){
+            medic.memory.partner = creep.id
+            creep.memory.medic = medic.id
+        }
+    },
+
+    canMove: function(creep, medic){
+        //can only move if both creeps are not fatigued OR one of the creeps is on a room edge
+        if((creep.pos.isNearTo(medic) && !creep.fatigue && !medic.fatigue) || u.isOnEdge(creep.pos) || u.isOnEdge(medic.pos)){
+            return true
         } else {
-            const badStuff = creep.pos.findClosestByPath(FIND_HOSTILE_STRUCTURES, {
-                filter: function(object) {
-                    return (object.structureType !== STRUCTURE_CONTROLLER 
-                        && object.owner.username !== "Invader" && object.owner.username !== "Source Keeper" 
-                        && object.owner.username !== "Public"
-                        && object.owner.username !== "Power Bank"
-                        && object.hits )
-                }
-            })
-            if(badStuff != null) { // TODO ignore target room
-                a.dismantle(creep, badStuff)
-                creep.memory.target = badStuff.id
+            return false
+        }
+    },
+
+    breakStuff: function(creep, target) {
+        if(target && target.pos.isNearTo(creep.pos)){
+            creep.dismantle(target)
+            return
+            // if next to target, break it
+        }
+        // if next to enemy structure, break it
+        if(creep.room.controller && creep.room.controller.my){
+            return
+        }
+        const structures = creep.room.lookForAtArea(LOOK_STRUCTURES, 
+            Math.min(0, creep.pos.y - 1),
+            Math.min(0, creep.pos.x - 1), 
+            Math.max(49, creep.pos.y + 1), 
+            Math.max(49, creep.pos.x + 1), true) //returns an array of structures
+        if(structures.length){
+            creep.dismantle(structures[0].structure)
+        }
+    },
+
+    maybeRetreat: function(creep, medic, canMove){//always back out (medic leads retreat)
+        //retreat if necessary
+        //if retreating, determine when it is safe to resume attack
+        //possibly use avoid towers
+        if(creep && medic && canMove){//placeholder
+            return false
+        }
+        //for now we never retreat
+        return false
+    },
+
+    advance: function(creep, medic, target, canMove){
+        if(!canMove && !medic.pos.isNearTo(creep)){
+            medic.moveTo(creep, {range: 1})
+            return
+        }
+        if(target){
+            if(target.pos.isNearTo(creep)){
+                return //nothing to do if already at target
+            }
+            if(creep.moveTo(target, {range: 1}) == ERR_NO_PATH){
+                //no path to target => find new target
+                rBr.findTarget(creep, medic)
                 return
             }
-        }
-        var rallyFlag = creep.memory.city + "breakerRally1"
-        if (Game.flags[rallyFlag] && !creep.memory.rally1){
-            creep.moveTo(Game.flags[rallyFlag], {reusePath: 50})
-            if (Game.flags[rallyFlag].pos.x == creep.pos.x && Game.flags[rallyFlag].pos.y == creep.pos.y && Game.flags[rallyFlag].pos.roomName == creep.pos.roomName){
-                creep.memory.rally1 = true
-            }
+            rBr.medicMove(creep, medic) //move medic
             return
         }
-        var rallyFlag2 = creep.memory.city + "breakerRally2"
-        if (Game.flags[rallyFlag2] && !creep.memory.rally2){
-            creep.moveTo(Game.flags[rallyFlag2], {reusePath: 50})
-            if (Game.flags[rallyFlag2].pos.x == creep.pos.x && Game.flags[rallyFlag2].pos.y == creep.pos.y && Game.flags[rallyFlag2].pos.roomName == creep.pos.roomName){
-                creep.memory.rally2 = true
-            }
-            return
-        }
-        if(Game.flags[targetFlag]){
-            creep.moveTo(Game.flags[targetFlag], {reusePath: 50})
-            return
-        }
-        var target = Game.getObjectById(creep.memory.target)
-        //Log.info(target)
-        if (target){
-            if (Game.time % 10 === 0 && creep.pos.getRangeTo(target) > 1){
-                var rampart = creep.pos.findClosestByPath(FIND_HOSTILE_STRUCTURES)
-                if (rampart) {
-                    creep.memory.target = rampart.id
-                    a.dismantle(creep, rampart)
-                    return
-                }
-            }
-            //Log.info(a.dismantle(creep, target))
-        }
-        if(Game.flags[flagName]){
-            if(creep.pos.roomName === Game.flags[flagName].pos.roomName){
-                a.breakStuff(creep)
+        //find new target or follow rally path
+        rBr.findTarget(creep,medic)
+        // TODO if no target, follow rally path, and attempt to acquire targets along the way
+        //if breaker peeks into a room and there is no clear path to every exit,
+        // clear a path to every exit before continuing the rally
+    },
+
+    findTarget: function(creep, medic){
+        const flag = creep.memory.city + "break"
+        const structures = creep.room.find(FIND_STRUCTURES)
+        //if in a friendly room or my room, ignore structures and rally. Else, set nearest structure as target
+        if(creep.room.controller && creep.room.controller.owner 
+                && (settings.allies.includes(creep.room.controller.owner.username) 
+                || creep.room.controller.my)){
+            rBr.rally(creep, medic, flag)
+        } else {
+            const target = creep.pos.findClosestByPath(structures, {range: 1})
+            if(target){
+                creep.moveTo(target, {range: 1})
+                rBr.medicMove(creep, medic)
             } else {
-                creep.moveTo(Game.flags[flagName].pos, {reusePath: 50})
+                rBr.rally(creep, medic, flag)//no valid targets, attempt to continue rally
+            }
+        }
+    },
+
+    rally: function(creep, medic, flag){
+        if(Game.flags[flag] && creep.room.name != Game.flags[flag].pos.roomName){
+            creep.moveTo(Game.flags[flag], {reusePath: 50})
+            rBr.medicMove(creep, medic)
+        }
+    },
+
+    medicMove: function(creep, medic){
+        if(medic.pos.isNearTo(creep.pos)){
+            medic.move(medic.pos.getDirectionTo(creep))
+        } else {
+            medic.moveTo(creep, {range: 1})
+        }
+    },
+
+    heal: function(creep, medic){
+        //placeholder logic
+        //if creep is in an owned room, heal. Else, only heal if hurt
+        if(creep.pos.roomName == medic.pos.roomName){
+            if(medic.hits < 0.6 * medic.hitsMax){
+                medic.heal(medic)
+            } else if(creep.hits < creep.hitsMax){
+                medic.heal(creep)
+            } else if(medic.hits < medic.hitsMax){
+                medic.heal(medic)
+            } else if(medic.room.controller && medic.room.controller.owner){
+                medic.heal(medic)
             }
         } else {
-            a.breakStuff(creep)
+            medic.heal(medic)
         }
-    }
-   
+    } 
 }
 module.exports = rBr
