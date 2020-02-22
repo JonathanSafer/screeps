@@ -9,7 +9,7 @@ var rM = {
     /** @param {Creep} creep **/
     run: function(creep) {
         // Use the spawn queue to set respawn at 20 ttl
-        if(creep.ticksToLive == 20) {
+        if(creep.ticksToLive == 20 && Game.spawns[creep.memory.city].memory.remoteMiner > 0) {
             sq.respawn(creep)
         }
         if(creep.hits < creep.hitsMax){
