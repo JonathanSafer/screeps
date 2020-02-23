@@ -61,7 +61,7 @@ var rPM = {
     },
 
     findBank: function(creep, flag){
-        if(Game.flags[flag].room){
+        if(Game.flags[flag] && Game.flags[flag].room){
             const bank = Game.flags[flag].pos.lookFor(LOOK_STRUCTURES)
             if(bank.length){
                 return bank[0]
