@@ -67,7 +67,7 @@ var rPM = {
                 return bank[0]
             } else {
                 const look = Game.flags[flag].pos.look()
-                if(look.length() < 2){
+                if(look.length < 3){
                     Game.flags[flag].remove()
                 }
             }
