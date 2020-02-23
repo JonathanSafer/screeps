@@ -13,7 +13,7 @@ var rMe = {
         const partner = Game.getObjectById(creep.memory.partner)
         if(!partner){
             //if partner is dead, suicide
-            if(rMe.endlife(creep)){
+            if(rMe.endLife(creep)){
                 return
             }
             //if creep not matched, wait to be picked up
