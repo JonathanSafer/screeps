@@ -33,13 +33,13 @@ var rPM = {
                 rBr.medicMove(creep, medic)
             }
         } else {
-            target = rPM.findBank(creep)
+            const flag = creep.memory.city + "powerMine"
+            target = rPM.findBank(creep, flag)
             if(canMove) {
                 if(target){//move to it
                     creep.moveTo(target, {range: 1, reusePath: 50})
                     rBr.medicMove(creep, medic)
                 } else { //rally
-                    const flag = creep.memory.city + "powerMine"
                     rBr.rally(creep, medic, flag)
                 }
             }
@@ -58,6 +58,21 @@ var rPM = {
         if(Game.time % 50 == 1 && bank && bank.hits < 600000){
             Game.spawns[creep.memory.city].memory.runner = Math.ceil(bank.power/1600)
         }
+    },
+
+    findBank: function(creep, flag){
+        if(Game.flags[flag].room){
+            const bank = Game.flags[flag].pos.lookFor(LOOK_STRUCTURES)
+            if(bank.length){
+                return bank[0]
+            } else {
+                const look = Game.flags[flag].pos.look()
+                if(look.length() < 2){
+                    Game.flags[flag].remove()
+                }
+            }
+        }
+        return null
     },
 
     hitBank: function(creep, bank){
