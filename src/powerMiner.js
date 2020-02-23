@@ -42,6 +42,8 @@ var rPM = {
                 } else { //rally
                     rBr.rally(creep, medic, flag)
                 }
+            } else if (!medic.pos.isNearTo(creep)){
+                medic.moveTo(creep, {range: 1})
             }
         }
         rBr.heal(creep, medic)//breaker heal should work for now
