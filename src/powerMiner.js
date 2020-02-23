@@ -66,6 +66,7 @@ var rPM = {
         if(Game.flags[flag] && Game.flags[flag].room){
             const bank = Game.flags[flag].pos.lookFor(LOOK_STRUCTURES)
             if(bank.length){
+                creep.memory.target = bank[0].id
                 return bank[0]
             } else {
                 const look = Game.flags[flag].pos.look()
