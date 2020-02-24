@@ -416,7 +416,9 @@ const p = {
             if(counter < 20){//doesn't update during the tick
                 const look = room.lookForAt(LOOK_STRUCTURES, roads[i])
                 if(look.length){
-                    continue
+                    if(look[0].structureType != STRUCTURE_RAMPART){
+                        continue
+                    }
                 }
                 if(!room.createConstructionSite(roads[i], STRUCTURE_ROAD)){
                     counter++
