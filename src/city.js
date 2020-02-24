@@ -229,8 +229,8 @@ function runTowers(city){
                 && s.structureType != STRUCTURE_RAMPART
                 && s.hitsMax - s.hits > TOWER_POWER_REPAIR)//structure must need at least as many hits missing as a minimum tower shot
             if(needRepair.length){
-                damaged =  _.max(needRepair, function(s) {
-                    return s.hitsMax - s.hits
+                damaged =  _.min(needRepair, function(s) {
+                    return s.hits/s.hitsMax
                 })
             }
             if(damaged){
