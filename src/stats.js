@@ -102,9 +102,11 @@ var statsLib = {
                     stats[`profiler.${result.name}.time`] = result.totalTime.toFixed(1)
                 }
             }
-            stats["cpu.bucketfillRate"] = Cache.bucket.fillRate
-            stats["cpu.bucketfillRateLong"] = Cache.bucket.fillRateLong
-            stats["cpu.bucketfillRateMax"] = Cache.bucket.fillRateMax
+            if(Cache.bucket){
+                stats["cpu.bucketfillRate"] = Cache.bucket.fillRate
+                stats["cpu.bucketfillRateLong"] = Cache.bucket.fillRateLong
+                stats["cpu.bucketfillRateMax"] = Cache.bucket.fillRateMax
+            }
 
             RawMemory.segments[0] = JSON.stringify(stats)
         }  
