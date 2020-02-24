@@ -206,7 +206,8 @@ function runTowers(city){
         if(Game.spawns[city].memory.towersActive == undefined){
             Game.spawns[city].memory.towersActive = false
         }
-        if(Game.spawns[city].memory.towersActive == false && Game.time % 50 != 0){
+        const checkTime = 20
+        if(Game.spawns[city].memory.towersActive == false && Game.time % checkTime != 0){
             return
         }
         var towers = _.filter(Game.structures, (structure) => structure.structureType == STRUCTURE_TOWER && structure.room.memory.city == city)
@@ -223,12 +224,14 @@ function runTowers(city){
         let damaged = null
         let repair = 0
         let target = null
-        if (Game.time % 50 === 0) {
+        if (Game.time % checkTime === 0) {
             const needRepair = _.filter(Game.spawns[city].room.find(FIND_STRUCTURES), s => s.structureType != STRUCTURE_WALL
                 && s.structureType != STRUCTURE_RAMPART
                 && s.hitsMax - s.hits > TOWER_POWER_REPAIR)//structure must need at least as many hits missing as a minimum tower shot
             if(needRepair.length){
-                damaged = _.max(needRepair, "hitsMax" - "hits")
+                damaged =  _.max(needRepair, function(s) {
+                    return s.hitsMax - s.hits
+                })
             }
             if(damaged){
                 repair = damaged.hitsMax - damaged.hits
@@ -247,7 +250,7 @@ function runTowers(city){
                 towers[i].attack(target)
             } else if (injured.length > 0 && !hostiles.length){
                 towers[i].heal(injured[0])
-            } else if (Game.time % 50 === 0 && damaged){
+            } else if (Game.time % checkTime === 0 && damaged){
                 if(repair < TOWER_POWER_REPAIR * (1 - TOWER_FALLOFF)){
                     continue
                 }
