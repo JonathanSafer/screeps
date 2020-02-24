@@ -4,7 +4,7 @@ var settings = {
     allies: ["Atanner"],
     roomplanTime: 500,
     roomplanOffset: 155,
-    creditMin: 4500000, //min credits needed to start buying energy
+    creditMin: 1000000, //min credits needed to start buying energy
     miningDisabled: ["W2N240"], //cities that will attempt any highway mining
     ghodiumAmount: 15000, //threshold to stop producing ghodium
     boostAmount: 12000, //threshold to stop producing boosts
