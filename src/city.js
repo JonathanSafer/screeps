@@ -224,9 +224,12 @@ function runTowers(city){
         let repair = 0
         let target = null
         if (Game.time % 50 === 0) {
-            damaged = _.find(Game.spawns[city].room.find(FIND_STRUCTURES), s => s.structureType != STRUCTURE_WALL
+            const needRepair = _.filter(Game.spawns[city].room.find(FIND_STRUCTURES), s => s.structureType != STRUCTURE_WALL
                 && s.structureType != STRUCTURE_RAMPART
                 && s.hitsMax - s.hits > TOWER_POWER_REPAIR)//structure must need at least as many hits missing as a minimum tower shot
+            if(needRepair.length){
+                damaged = _.max(needRepair, "hitsMax" - "hits")
+            }
             if(damaged){
                 repair = damaged.hitsMax - damaged.hits
             }
