@@ -86,7 +86,7 @@ var rU = {
     checkMaterials: function(lab, creep, boost){
         if (!lab || !lab.room.terminal) return false
         const terminal = lab.room.terminal
-        const work = creep.getActiveBodyparts(WORK)
+        const work = _.filter(creep.body, part => !part.boost && part.type == WORK).length
         return (terminal.store[boost] > (LAB_BOOST_MINERAL * work) && lab.mineralAmount == 0)
     },
 
@@ -96,26 +96,27 @@ var rU = {
             return
         }
         const lab = Game.getObjectById(creep.memory.lab)
-        if(_.sum(creep.carry) == 0 && !creep.pos.isNearTo(lab.pos)){
-            if(Game.time % 50 == 0){
+        if(_.sum(creep.carry) == 0 && !lab.store[boost]){//creep and lab empty
+            if(Game.time % 50 == 0){//reset occasionally in case another upgrader stole the last bit of boost
                 creep.memory.state = CS.START
                 return
             }
-            const work = creep.getActiveBodyparts(WORK)
-            actions.withdraw(creep, creep.room.terminal, boost, LAB_BOOST_MINERAL * work)
+            const work = _.filter(creep.body, part => !part.boost && part.type == WORK).length
+            if(!work){//if all works boosted, go upgrade
+                creep.memory.state = CS.UPGRADE
+                return
+            }
+            const carry = creep.getActiveBodyparts(CARRY)
+            //withdraw amount of boost needed or amount can be carried, whichever is less
+            actions.withdraw(creep, creep.room.terminal, boost, Math.min(LAB_BOOST_MINERAL * work, CARRY_CAPACITY * carry))
             return
         }
-        if(_.sum(creep.carry) > 0){
+        if(_.sum(creep.carry) > 0){//creep is carrying boost
             actions.charge(creep, lab)
             return
-        }
-        if(creep.body[0].boost){
-            creep.memory.state = CS.UPGRADE
-            return
-        } else {
+        } else {//creep is next to lab and not holding anything
             lab.boostCreep(creep)
-            creep.memory.state = CS.UPGRADE
-            return
+            creep.memory.state = CS.START
         }
     }
 }
