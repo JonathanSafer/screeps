@@ -145,7 +145,7 @@ var rBr = {
 
     rally: function(creep, medic, flag){
         if(Game.flags[flag] && creep.room.name != Game.flags[flag].pos.roomName){
-            creep.moveTo(Game.flags[flag], {reusePath: 50})
+            u.multiRoomMove(creep, Game.flags[flag].pos, true)
             rBr.medicMove(creep, medic)
         }
     },

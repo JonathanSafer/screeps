@@ -171,7 +171,7 @@ var u = {
     multiRoomMove: function(creep, pos, avoidEnemies) {
         creep.moveTo(pos,
             {reusePath: 50},
-            u.highwayMoveSettings(5.000, 8, creep.pos, pos),
+            u.highwayMoveSettings(5000, 8, creep.pos, pos),
             avoidEnemies)         
     },
 

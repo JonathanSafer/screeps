@@ -16,8 +16,10 @@ var rR = {
                     creep.memory.location = Game.spawns[creep.memory.city].room.storage.id
                 }
                 const target = Game.getObjectById(creep.memory.location)
-                if (target){
+                if (target && target.pos.isNearTo(creep.pos)){
                     actions.charge(creep, target)
+                } else {
+                    u.multiRoomMove(creep, target.pos, true)
                 }
                 return
             }
@@ -25,7 +27,7 @@ var rR = {
             const flagName = creep.memory.city + "powerMine"
             if (Game.flags[flagName] && Game.flags[flagName].pos.roomName !== creep.pos.roomName){
                 //move to flag range 5
-                creep.moveTo(Game.flags[flagName], {reusePath: 50}, {range: 4})
+                u.multiRoomMove(creep, Game.flags[flagName].pos, true)
                 return
             }
             if (Game.flags[flagName]){
