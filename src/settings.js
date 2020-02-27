@@ -34,6 +34,7 @@ var settings = {
         transporters: 2,
         miners: 1, // rcl8
     },
+    powerMiningRange: 3,
     miningRange: 7,
     observerFrequency: 20, // how often each city scans a room
 
