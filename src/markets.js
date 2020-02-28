@@ -261,17 +261,6 @@ var markets = {
                     return true
                 }
             }
-            //alternatively, sell if price is right
-            if(terminal.store[bars[i]] === 3000 && Object.keys(COMMODITIES[bars[i]].components).length === 2){//excludes commodities
-                const sellAmount = 1000
-                const goodOrders = markets.sortOrder(buyOrders[bars[i]]).reverse()
-                //determine price of associated resource
-                const base = _.without(Object.keys(COMMODITIES[bars[i]].components), RESOURCE_ENERGY)[0]
-                if(goodOrders.length && terminal.store[base] >= 5000 && (markets.getPrice(base) * 7) < goodOrders[0].price){//check base quantity to prevent buying from other ppls orders
-                    Game.market.deal(goodOrders[0].id, Math.min(goodOrders[0].remainingAmount,  sellAmount), city.name)
-                    return true
-                }
-            }
         }
         return false
     },
