@@ -23,12 +23,7 @@ var rH = {
             }
         }
         creep.memory.dormant = false
-        let needRetreat = creep.hits < creep.hitsMax*0.75
-        if(needRetreat){
-            rH.goHome(creep)
-        } else {
-            needRetreat = rH.maybeRetreat(creep, hostiles)
-        }
+        const needRetreat = rH.maybeRetreat(creep, hostiles)
         if(!needRetreat && hostiles.length){
             rH.aMove(creep, hostiles)
         }
@@ -66,15 +61,11 @@ var rH = {
         return false
     },
 
-    goHome: function(creep){
-        creep.moveTo(Game.spawns[creep.memory.city], {maxOps: 50, ignoreRoads: true})
-    },
-
     maybeRetreat: function(creep, hostiles) {
         const attacker = _.find(hostiles, h => h.getActiveBodyparts(ATTACK) > 0
                 && (h.fatigue === 0 || h.pos.isNearTo(creep.pos))
                 && h.pos.inRangeTo(creep.pos, 2))
-        if(attacker){
+        if(attacker || creep.hits < creep.hitsMax){
             //retreat
             if(creep.saying === "hold"){
                 //get less angry
