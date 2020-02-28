@@ -148,12 +148,13 @@ var u = {
             maxOps: maxOps,
             maxRooms: 64,
             roomCallback: function(roomName) {
+                const startRoom = roomName == startPos.roomName
                 const isHighway = u.isHighway(roomName)
                 const isBad = avoidEnemies && Cache[roomName] && Cache[roomName].enemy
                 const nearStart = u.roomInRange(2, startPos.roomName, roomName)
                 const nearEnd = u.roomInRange(2, endPos.roomName, roomName)
 
-                if ((!isHighway && !nearStart && !nearEnd) || isBad) {
+                if (((!isHighway && !nearStart && !nearEnd) || isBad) && !startRoom) {
                     return false
                 }
 

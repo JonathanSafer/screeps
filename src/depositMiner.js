@@ -102,6 +102,15 @@ var rDM = {
                 }
             }
         }
+        if(creep.hits < creep.hitMax){
+            //check to see if in enemy room. If so, mark as enemy
+            if(creep.room.controller && creep.controller.owner && !creep.controller.my){
+                if(!Cache[creep.room.name]){
+                    Cache[creep.room.name] = {}
+                }
+                Cache[creep.room.name].enemy = true
+            }
+        }
     },
 
     checkAllies: function(creep, hostiles){
