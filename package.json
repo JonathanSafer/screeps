@@ -4,16 +4,18 @@
   "description": "",
   "main": "main.js",
   "scripts": {
-    "test": "eslint src",
+    "pretest": "eslint src",
+    "test": "node test",
     "postinstall": "cd ./node_modules/eslint-plugin-screeps && npm install"
   },
   "author": "",
   "license": "MIT",
   "devDependencies": {
-    "@types/lodash": "^3.10.1",
-    "@types/screeps": "^2.5.5",
+    "@screeps/common": "2.12.1",
     "eslint": "^6.8.0",
     "eslint-plugin-screeps": "https://github.com/jordansafer/eslint-plugin-screeps.git"
   },
-  "dependencies": {}
+  "dependencies": {
+    "lodash": "^4.17.15"
+  }
 }

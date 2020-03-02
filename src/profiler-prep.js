@@ -44,7 +44,7 @@ var p = {
             "utils",
         ]
         for (const fileName of fileNames) {
-            var lib = require(fileName)
+            var lib = require(`./${fileName}`)
             profiler.registerObject(lib, fileName)
         }
     }
