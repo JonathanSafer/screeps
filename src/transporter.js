@@ -99,7 +99,7 @@ var rT = {
             filter: (structure) => rT.validTargets.includes(structure.structureType)
         })
         const orderedTargets = []
-        const storage = u.getStorage()
+        const storage = u.getStorage(room)
         var currentPos = storage.pos
         while (targets.length > 0) {
             const next = currentPos.findClosestByPath(targets, {
