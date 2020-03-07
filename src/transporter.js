@@ -89,8 +89,8 @@ var rT = {
     },
 
     hasCachedTargets: function(creep) {
-        return Cache[creep.room.name] && Cache[creep.room.name].targets
-        && Cache[creep.room.name].targets.length
+        return Memory[creep.room.name] && Memory[creep.room.name].targets
+        && Memory[creep.room.name].targets.length
     },
 
     cacheTargets: function(creep) {
@@ -109,17 +109,17 @@ var rT = {
             orderedTargets.push(next.id)
             currentPos = next.pos
         }
-        Cache[room.name] = Cache[room.name] || {}
-        Cache[room.name].targets = orderedTargets
+        Memory[room.name] = Memory[room.name] || {}
+        Memory[room.name].targets = orderedTargets
     },
 
     clearCache: function(room) {
-        if (Cache[room.name]) Cache[room.name].targets = null
+        if (Memory[room.name]) Memory[room.name].targets = null
     },
 
     getNextTarget: function(creep) {
         creep.memory.i = creep.memory.i || 0 // default 0
-        const targets = Cache[creep.room.name].targets
+        const targets = Memory[creep.room.name].targets
         for (var i = 0; i < targets.length; i++) {
             const target = Game.getObjectById(targets[creep.memory.i])
             if (rT.needsEnergy(target)) 
