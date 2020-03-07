@@ -121,7 +121,7 @@ var rT = {
         creep.memory.i = creep.memory.i || 0 // default 0
         const targets = Cache[creep.room.name].targets
         for (var i = 0; i < targets.length; i++) {
-            const target = targets[creep.memory.i]
+            const target = Game.getObjectById(targets[creep.memory.i])
             if (rT.needsEnergy(target)) 
                 return target
             else
