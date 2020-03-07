@@ -130,20 +130,22 @@ var rT = {
     },
 
     needsEnergy: function(structure){
+        const store = structure.store
         switch(structure.structureType){
         case STRUCTURE_EXTENSION:
         case STRUCTURE_SPAWN:
+            //if there is any room for energy, needs energy
+            return (store.getCapacity() > store[RESOURCE_ENERGY])  
         case STRUCTURE_LAB:
         case STRUCTURE_NUKER:
-            //if there is any room for energy, needs energy
-            return (structure.store.getFreeCapacity(RESOURCE_ENERGY) > 0)
+            return (store.getCapacity(RESOURCE_ENERGY) > store[RESOURCE_ENERGY])
         case STRUCTURE_TOWER:
+            return (store.getCapacity() > store[RESOURCE_ENERGY] + 400)
         case STRUCTURE_POWER_SPAWN:
-            //arbitrary buffer
-            return (structure.store.getFreeCapacity(RESOURCE_ENERGY) > 400)
+            return (store.getCapacity(RESOURCE_ENERGY) > store[RESOURCE_ENERGY] + 400)
         case STRUCTURE_FACTORY:
             //arbitrary max value
-            return (structure.store.getUsedCapacity(RESOURCE_ENERGY) < 10000)
+            return (store.getUsedCapacity(RESOURCE_ENERGY) < 10000)
         }
     },
 
