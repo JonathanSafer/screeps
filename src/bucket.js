@@ -10,6 +10,7 @@ const b = {
 
     growingTooQuickly: function() {
         if (!Cache.bucket) Cache.bucket = {}
+        Cache.bucket.waste |= 0
         const oldBucket = Cache.bucket.amount
         const newBucket = Game.cpu.bucket
         Cache.bucket.amount = newBucket
@@ -28,6 +29,7 @@ const b = {
     },
 
     wasteCpu(amount) {
+        Cache.bucket.waste += Game.cpu.limit + amount - Game.cpu.getUsed()
         while (Game.cpu.getUsed() < Game.cpu.limit + amount) {
             _.filter(Game.creeps, () => false) // filter creeps an do nothing with it
         }

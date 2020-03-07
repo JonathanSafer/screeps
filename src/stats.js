@@ -106,6 +106,8 @@ var statsLib = {
                 stats["cpu.bucketfillRate"] = Cache.bucket.fillRate
                 stats["cpu.bucketfillRateLong"] = Cache.bucket.fillRateLong
                 stats["cpu.bucketfillRateMax"] = Cache.bucket.fillRateMax
+                stats["cpu.waste"] = Cache.bucket.waste
+                Cache.bucket.waste = 0
             }
 
             RawMemory.segments[0] = JSON.stringify(stats)

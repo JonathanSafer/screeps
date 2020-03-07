@@ -38,7 +38,7 @@ var rT = {
             }
         } else {
             // TODO use findTargetCached for one room
-            const testRoom = creep.room.name == "E11S22" 
+            const testRoom = true//creep.room.name == "E11S22" 
             const target = testRoom ? rT.findTargetCached(creep) : rT.findTarget(creep, null)
             if(!target){
                 creep.say(20)
