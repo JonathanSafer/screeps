@@ -29,7 +29,7 @@ const b = {
     },
 
     wasteCpu(amount) {
-        Cache.bucket.waste += Game.cpu.limit + amount - Game.cpu.getUsed()
+        Cache.bucket.waste += Math.max(Game.cpu.limit + amount - Game.cpu.getUsed(), 0)
         while (Game.cpu.getUsed() < Game.cpu.limit + amount) {
             _.filter(Game.creeps, () => false) // filter creeps an do nothing with it
         }
