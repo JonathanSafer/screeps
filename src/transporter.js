@@ -23,11 +23,12 @@ var rT = {
             creep.say(creep.saying - 1)
             return
         }
+        const testRoom = true//creep.room.name == "E11S22" 
         if (creep.carry.energy == 0) {
             //refill on energy
             if(rT.refill(creep, city) === 1){
                 //start moving to target
-                const target = rT.findTarget(creep, null)
+                const target = testRoom ? rT.findTargetCached(creep) : rT.findTarget(creep, null)
                 if(!target){
                     creep.say(20)
                     return
@@ -38,7 +39,6 @@ var rT = {
             }
         } else {
             // TODO use findTargetCached for one room
-            const testRoom = true//creep.room.name == "E11S22" 
             const target = testRoom ? rT.findTargetCached(creep) : rT.findTarget(creep, null)
             if(!target){
                 creep.say(20)
