@@ -178,24 +178,24 @@ function checkNukes(room){
 }
 
 function makeEmergencyCreeps(extensions, creeps, city, rcl8, emergency) {
-    const checkTime = rcl8 ? 2000 : 150
+    const checkTime = rcl8 ? 200 : 50
     const memory = Game.spawns[city].memory
 
     if (emergency || Game.time % checkTime == 0 && extensions >= 5) {
         if (_.filter(creeps, creep => creep.memory.role == "remoteMiner") < 1 && memory.remoteMiner > 0){
             Log.info("Making Emergency Miner")
-            makeCreeps("remoteMiner", "lightMiner", 1, city)
+            makeCreeps("remoteMiner", "miner", 1, city, true)
         }
 
         if (_.filter(creeps, creep => creep.memory.role == "transporter") < 1){
             Log.info("Making Emergency Transporter")
-            makeCreeps("transporter", "basic", 0, city)
+            makeCreeps("transporter", "transporter", 0, city, true)
         }
 
         // TODO disable if links are present (not rcl8!! links may be missing for rcl8)
         if ((emergency || !rcl8) && _.filter(creeps, creep => creep.memory.role == "runner" ) < 1 && memory.runner > 0) {
             Log.info("Making Emergency Runner")
-            makeCreeps("runner", "erunner", 1, city)
+            makeCreeps("runner", "runner", 1, city, true)
         }
     }
 }
