@@ -3,7 +3,6 @@ const settings = require("./settings")
 const b = {
     manage: function() {
         if (b.growingTooQuickly()) {
-            Log.info(`Wasting cpu at growth rate ${Cache.bucket.fillRateMax}`)
             b.wasteCpu(10 * settings.bucket.growthLimit)
         }
     },
