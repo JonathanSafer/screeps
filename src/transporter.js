@@ -23,12 +23,11 @@ var rT = {
             creep.say(creep.saying - 1)
             return
         }
-        const testRoom = true//creep.room.name == "E11S22" 
         if (creep.store.energy == 0) {
             //refill on energy
             if(rT.refill(creep, city) === 1){
                 //start moving to target
-                const target = testRoom ? rT.findTargetCached(creep) : rT.findTarget(creep, null)
+                const target = rT.findTarget(creep)
                 if(!target){
                     creep.say(20)
                     return
@@ -39,7 +38,7 @@ var rT = {
             }
         } else {
             // TODO use findTargetCached for one room
-            const target = testRoom ? rT.findTargetCached(creep) : rT.findTarget(creep, null)
+            const target = rT.findTarget(creep)
             if(!target){
                 creep.say(20)
                 return
@@ -50,7 +49,7 @@ var rT = {
                 //if creep still has energy, start moving to next target
                 if(creep.store[RESOURCE_ENERGY] > target.store.getFreeCapacity(RESOURCE_ENERGY)){
                     //start moving to next target if target not already in range
-                    const newTarget = testRoom ? rT.findTargetCached(creep) : rT.findTarget(creep, target)
+                    const newTarget = rT.findTarget(creep, target)
                     if(!newTarget){
                         creep.say(20)
                         return
@@ -65,24 +64,8 @@ var rT = {
             }
         }
     },
- 
-    findTarget: function(creep, oldTarget){
-        let id = 0
-        if(oldTarget){
-            id = oldTarget.id
-        }
-        return creep.pos.findClosestByPath(FIND_STRUCTURES, {
-            filter: (structure) => {
-                return (structure.id !== id 
-                    && rT.validTargets.includes(structure.structureType)
-                    && rT.needsEnergy(structure)
-                )
-            },
-            maxOps: 10
-        })
-    },
 
-    findTargetCached: function(creep) {
+    findTarget: function(creep) {
         if (!rT.hasCachedTargets(creep))
             rT.cacheTargets(creep)
         return rT.getNextTarget(creep)
@@ -137,14 +120,28 @@ var rT = {
         case STRUCTURE_LAB:
         case STRUCTURE_NUKER:
             //if there is any room for energy, needs energy
-            return (store.getFreeCapacity(RESOURCE_ENERGY) > 0)  
+            return rT.getCapacity(store, 0) 
         case STRUCTURE_TOWER:
         case STRUCTURE_POWER_SPAWN:
-            return (store.getFreeCapacity(RESOURCE_ENERGY) > 400)
+            return rT.getCapacity(store, 400)
         case STRUCTURE_FACTORY:
             //arbitrary max value
             return (store.getUsedCapacity(RESOURCE_ENERGY) < 10000)
         }
+    },
+
+    getCapacity: function(store, limit) {
+        const sel = Math.floor(Math.random()*2)
+        return sel ? rT.getCapacity1(store, limit) : rT.getCapacity2(store, limit)
+    },
+
+    getCapacity1: function(store, limit) {
+        return store.getFreeCapacity(RESOURCE_ENERGY) > limit
+    },
+
+    getCapacity2: function(store, limit) {
+        const energy = store[RESOURCE_ENERGY] || 0
+        return store.getCapacity(RESOURCE_ENERGY) - energy > limit
     },
 
     endLife: function(creep){
