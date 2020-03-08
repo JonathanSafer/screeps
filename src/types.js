@@ -100,7 +100,7 @@ function dMinerCalc(room){
     if(!harvested){
         harvested = 0
     }
-    const distance = PathFinder.search(spawn.pos, {pos: flag.pos, range: 1}, {maxOps: 10000}).path.length
+    const distance = PathFinder.search(spawn.pos, {pos: flag, range: 1}, {maxOps: 10000}).path.length
     const workTime = 1500 - (distance * 3)//distance x 3 since it'll take 2x as long on return
     let work = 20
     let carryAmount = test(work, workTime, harvested)
