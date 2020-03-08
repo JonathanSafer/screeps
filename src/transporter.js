@@ -48,7 +48,7 @@ var rT = {
             const result = actions.charge(creep, target)
             if(result === 1){//successful deposit
                 //if creep still has energy, start moving to next target
-                if(creep.store[RESOURCE_ENERGY] > target.store.getFreeCapacity(RESOURCE_ENERGY) || creep.store.getFreeCapacity() == 0){
+                if(creep.store[RESOURCE_ENERGY] > target.store.getFreeCapacity(RESOURCE_ENERGY)){
                     //start moving to next target if target not already in range
                     const newTarget = testRoom ? rT.findTargetCached(creep) : rT.findTarget(creep, target)
                     if(!newTarget){
@@ -134,15 +134,13 @@ var rT = {
         switch(structure.structureType){
         case STRUCTURE_EXTENSION:
         case STRUCTURE_SPAWN:
-            //if there is any room for energy, needs energy
-            return (store.getCapacity() > store[RESOURCE_ENERGY])  
         case STRUCTURE_LAB:
         case STRUCTURE_NUKER:
-            return (store.getCapacity(RESOURCE_ENERGY) > store[RESOURCE_ENERGY])
+            //if there is any room for energy, needs energy
+            return (store.getFreeCapacity(RESOURCE_ENERGY) > 0)  
         case STRUCTURE_TOWER:
-            return (store.getCapacity() > store[RESOURCE_ENERGY] + 400)
         case STRUCTURE_POWER_SPAWN:
-            return (store.getCapacity(RESOURCE_ENERGY) > store[RESOURCE_ENERGY] + 400)
+            return (store.getFreeCapacity(RESOURCE_ENERGY) > 400)
         case STRUCTURE_FACTORY:
             //arbitrary max value
             return (store.getUsedCapacity(RESOURCE_ENERGY) < 10000)
