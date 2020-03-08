@@ -128,10 +128,10 @@ var rB = {
     },
 
     decideWhetherToBuild: function(creep) {
-        if(creep.carry.energy == 0 && creep.memory.building) {
+        if(creep.store.energy == 0 && creep.memory.building) {
             creep.memory.building = false
         }
-        if(creep.carry.energy == creep.carryCapacity && !creep.memory.building) {
+        if(creep.store.energy == creep.store.getCapacity() && !creep.memory.building) {
             creep.memory.building = true
         }
     }

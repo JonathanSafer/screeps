@@ -11,7 +11,7 @@ var rR = {
         if (Game.spawns[creep.memory.city].room.controller.level > 7 && Game.spawns[creep.memory.city].room.energyCapacityAvailable > 12500
                 && Game.spawns[creep.memory.city].room.storage && Game.spawns[creep.memory.city].room.storage.store.energy > 50000){
             //RCL 8 mode
-            if (_.sum(creep.carry) > 0){
+            if (_.sum(creep.store) > 0){
                 if (!creep.memory.location){
                     creep.memory.location = Game.spawns[creep.memory.city].room.storage.id
                 }
@@ -79,7 +79,7 @@ var rR = {
 
         // if there's room for more energy, go find some more
         // else find storage
-        if (creep.carry.energy < 0.5 * creep.carryCapacity) {
+        if (creep.store.energy < 0.5 * creep.store.getCapacity()) {
             actions.pickup(creep)
         } else {
             // check if we are walking on sidewalk/construction, and adjust as needed.

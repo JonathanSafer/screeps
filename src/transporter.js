@@ -24,7 +24,7 @@ var rT = {
             return
         }
         const testRoom = true//creep.room.name == "E11S22" 
-        if (creep.carry.energy == 0) {
+        if (creep.store.energy == 0) {
             //refill on energy
             if(rT.refill(creep, city) === 1){
                 //start moving to target
@@ -169,7 +169,7 @@ var rT = {
         let result = 0
         if (Game.getObjectById(creep.memory.location)) {
             var bucket = Game.getObjectById(creep.memory.location)
-            if(creep.carry.getUsedCapacity() > 0){
+            if(creep.store.getUsedCapacity() > 0){
                 if(!creep.pos.isNearTo(bucket.pos)){
                     creep.moveTo(bucket, {reusePath: 15, range: 1})
                 }
@@ -193,7 +193,7 @@ var rT = {
                 creep.memory.noContainers = false
             }
             creep.memory.location = location.id
-            if(creep.carry.getUsedCapacity() > 0){
+            if(creep.store.getUsedCapacity() > 0){
                 if(!creep.pos.isNearTo(location.pos)){
                     creep.moveTo(location, {reusePath: 15, range: 1})
                 }

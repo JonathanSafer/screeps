@@ -74,18 +74,18 @@ function getRecipe(type, energyAvailable, room){
     }
     return d[type]//recipe
 }
-function body(counts, order) { // order is list of types from move, work, attack, carry, heal, ranged, tough, claim
+function body(counts, order) { // order is list of types from move, work, attack, store, heal, ranged, tough, claim
     // assert counts.length == order.length
     const nestedPartsLists = _.map(counts, (count, index) => Array(count).fill(order[index]))
     return _.flatten(nestedPartsLists)
 }
 
-//cost and carry functions
+//cost and store functions
 function cost(recipe){
     var costList = _.map(recipe, part => BODYPART_COST[part])
     return _.sum(costList)
 }
-function carry(recipe){
+function store(recipe){
     return _.filter(recipe, part => part == CARRY).length * CARRY_CAPACITY
 }
 function dMinerCalc(room){
@@ -103,26 +103,26 @@ function dMinerCalc(room){
     const distance = PathFinder.search(spawn.pos, {pos: flag, range: 1}, {maxOps: 10000}).path.length
     const workTime = 1500 - (distance * 3)//distance x 3 since it'll take 2x as long on return
     let work = 20
-    let carryAmount = test(work, workTime, harvested)
-    let carrys = Math.floor(carryAmount/100)*2 //carry must be an even number for 20 works
-    if(carrys < 8){// if we're getting less than 400 resource in a lifetime, drop the source
+    let storeAmount = test(work, workTime, harvested)
+    let stores = Math.floor(storeAmount/100)*2 //store must be an even number for 20 works
+    if(stores < 8){// if we're getting less than 400 resource in a lifetime, drop the source
         flag.remove()
         return [1, 1, 1]
     }
-    if(carrys > 10){
+    if(stores > 10){
         //body is impossible so we have to decrease works
         for(var i = 0; i < 2; i++){
             work = work/2
-            carryAmount = test(work, workTime, harvested)
-            carrys = Math.floor(carryAmount/50)
-            if(carrys < (32 - work)){
-                return [work, carrys, 16]
+            storeAmount = test(work, workTime, harvested)
+            stores = Math.floor(storeAmount/50)
+            if(stores < (32 - work)){
+                return [work, stores, 16]
             }
         }
         //can't go under 5 works => make min body
         return [work, 27, 16]
     } else {
-        return [work, carrys, 20]
+        return [work, stores, 20]
     }
 
 }
@@ -159,11 +159,11 @@ function minerBody(energyAvailable, rcl) {
     // Figure out how many carries we can afford/will fill the link in fewest ticks
     const carriesPerLinkFill = Math.ceil(LINK_CAPACITY / CARRY_CAPACITY)
     const loadsNeeded = (c => c <= 0 ? Infinity : Math.ceil(carriesPerLinkFill / c))
-    const carryChoices = [...Array(carriesPerLinkFill + 1).keys()] // range [0,n + 1]
+    const storeChoices = [...Array(carriesPerLinkFill + 1).keys()] // range [0,n + 1]
         .filter(c => loadsNeeded(c) < loadsNeeded(c - 1)) // more carries => fewer loads?
         .filter(c => c <= energyAfterMoves / BODYPART_COST[CARRY])  // how many can we afford?
         .filter(c => works + c + moves <= MAX_CREEP_SIZE)
-    const carries = rcl >= 7 ? Math.max(...carryChoices, 0) : 0
+    const carries = rcl >= 7 ? Math.max(...storeChoices, 0) : 0
     return body([works, carries, moves], [WORK, CARRY, MOVE])
 }
 
@@ -174,7 +174,7 @@ function upgraderBody(energyAvailable, rcl, room) {
         POWER_INFO[PWR_OPERATE_CONTROLLER].effect[controller.effects[0].level - 1] : 0
     const maxWorks = CONTROLLER_MAX_UPGRADE_PER_TICK + boost
     const types = [WORK, CARRY, MOVE]
-    if (rcl in [6, 7]) { // use boost ratio 5 work, 3 carry
+    if (rcl in [6, 7]) { // use boost ratio 5 work, 3 store
         return scalingBody([5, 3, 4], [WORK, CARRY, MOVE], energyAvailable)
     } else if (isBoosted) {
         return scalingBody([4, 1, 1], types, energyAvailable, Math.min(maxWorks * 1.5, MAX_CREEP_SIZE))
@@ -222,6 +222,6 @@ function scalingBody(ratio, types, energyAvailable, maxOverride) {
 module.exports = {
     getRecipe: getRecipe,
     cost: cost,
-    carry: carry,
+    store: store,
     body: body
 }

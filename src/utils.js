@@ -65,7 +65,7 @@ var u = {
         // var allRooms = u.splitRoomsByCity();
         // var rooms = allRooms[city]
         // var drops = _.flatten(_.map(rooms, room => room.find(FIND_DROPPED_RESOURCES)));
-        var goodLoads = _.filter(drops, drop => (drop.amount >= 0.5 * creep.carryCapacity) || (drop == !RESOURCE_ENERGY))
+        var goodLoads = _.filter(drops, drop => (drop.amount >= 0.5 * creep.store.getCapacity()) || (drop == !RESOURCE_ENERGY))
         //Log.info(JSON.stringify(allRooms));
         return goodLoads
     },

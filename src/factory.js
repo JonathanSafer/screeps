@@ -86,7 +86,7 @@ var fact = {
                 Game.spawns[city].memory.ferryInfo.factoryInfo.transfer.push([produce, 0, factory.store[produce]])
                 return
             }
-            //don't choose new produce if ferry just deposited (ferry will be isNearTo and carrying stuff)
+            //don't choose new produce if ferry just deposited (ferry will be isNearTo and storeing stuff)
             const ferry = _.find(factory.room.find(FIND_MY_CREEPS), creep => creep.memory.role === "ferry")
             if(ferry &&  _.sum(ferry.store) > 0 && ferry.pos.isNearTo(factory.pos)) {
                 return

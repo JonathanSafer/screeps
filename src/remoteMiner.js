@@ -42,7 +42,7 @@ var rM = {
                 }
             }
             if (creep.memory.link){
-                if (creep.carry.energy == creep.carryCapacity){
+                if (creep.store.energy == creep.store.getCapacity()){
                     const link = Game.getObjectById(creep.memory.link)
                     a.charge(creep, link)
                     if (link && link.energy >= link.energyCapacity * .5){

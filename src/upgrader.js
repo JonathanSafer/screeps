@@ -96,7 +96,7 @@ var rU = {
             return
         }
         const lab = Game.getObjectById(creep.memory.lab)
-        if(_.sum(creep.carry) == 0 && !lab.store[boost]){//creep and lab empty
+        if(_.sum(creep.store) == 0 && !lab.store[boost]){//creep and lab empty
             if(Game.time % 50 == 0){//reset occasionally in case another upgrader stole the last bit of boost
                 creep.memory.state = CS.START
                 return
@@ -106,12 +106,12 @@ var rU = {
                 creep.memory.state = CS.UPGRADE
                 return
             }
-            const carry = creep.getActiveBodyparts(CARRY)
+            const store = creep.getActiveBodyparts(CARRY)
             //withdraw amount of boost needed or amount can be carried, whichever is less
-            actions.withdraw(creep, creep.room.terminal, boost, Math.min(LAB_BOOST_MINERAL * work, CARRY_CAPACITY * carry))
+            actions.withdraw(creep, creep.room.terminal, boost, Math.min(LAB_BOOST_MINERAL * work, CARRY_CAPACITY * store))
             return
         }
-        if(_.sum(creep.carry) > 0){//creep is carrying boost
+        if(_.sum(creep.store) > 0){//creep is storeing boost
             actions.charge(creep, lab)
             return
         } else {//creep is next to lab and not holding anything

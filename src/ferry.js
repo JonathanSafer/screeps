@@ -22,7 +22,7 @@ var rF = {
             break
         case 1:
             //move energy from storage to terminal
-            if (creep.carry.energy > 0){
+            if (creep.store.energy > 0){
                 actions.charge(creep, creep.room.terminal)
             } else if(creep.room.storage.store.energy > 150000 && creep.room.terminal.store.energy < 50000){
                 if (Game.time % 10 === 0 || Game.time % 10 === 1){
@@ -36,7 +36,7 @@ var rF = {
             break
         case 2:
             //move minerals from storage to terminal
-            if (_.sum(creep.carry) > 0){
+            if (_.sum(creep.store) > 0){
                 actions.charge(creep, creep.room.terminal)
                 break
             }
@@ -49,7 +49,7 @@ var rF = {
             break
         case 3:
             //move energy from terminal to storage
-            if (creep.carry.energy > 0){
+            if (creep.store.energy > 0){
                 actions.charge(creep, creep.room.storage)
             } else if(creep.room.terminal.store.energy > 51000){
                 actions.withdraw(creep, creep.room.terminal, RESOURCE_ENERGY)
@@ -60,7 +60,7 @@ var rF = {
         case 4: {
             //move power from terminal to power spawn
             const powerSpawn = _.find(Game.structures, (structure) => structure.structureType == STRUCTURE_POWER_SPAWN && structure.room.memory.city == creep.memory.city)
-            if ((creep.carry.power) > 0){
+            if ((creep.store.power) > 0){
                 actions.charge(creep, powerSpawn)
                 //creep.transfer(powerSpawn, 'power')
             } else if(powerSpawn.power < 30 && creep.room.terminal.store.power){
@@ -72,7 +72,7 @@ var rF = {
         } 
         case 5:
             //move energy from storage link to storage
-            if (creep.carry.energy > 0){
+            if (creep.store.energy > 0){
                 actions.charge(creep, creep.room.storage)
             } else if (link.energy > 0){
                 actions.withdraw(creep, link, RESOURCE_ENERGY)
@@ -82,7 +82,7 @@ var rF = {
             break
         case 6:
             //move mineral from terminal to lab
-            if (_.sum(creep.carry) > 0){
+            if (_.sum(creep.store) > 0){
                 const lab = Game.getObjectById(creep.memory.lab)
                 const result = actions.charge(creep, lab)
                 if(result == 1){
@@ -108,7 +108,7 @@ var rF = {
             break
         case 7: {
             //move mineral from lab to terminal
-            if (_.sum(creep.carry) > 0){
+            if (_.sum(creep.store) > 0){
                 const result = actions.charge(creep, creep.room.terminal)
                 if (result == 1){
                     creep.say("getJob")
@@ -124,7 +124,7 @@ var rF = {
         }  
         case 8:
             //load up the nuker
-            if (_.sum(creep.carry) > 0){
+            if (_.sum(creep.store) > 0){
                 const nuker = Game.getObjectById(creep.memory.nuker)
                 const result = actions.charge(creep, nuker)
                 if(result == 1){
@@ -140,7 +140,7 @@ var rF = {
             break
         case 9:
             //move mineral from terminal to booster
-            if (_.sum(creep.carry) > 0){
+            if (_.sum(creep.store) > 0){
                 const lab = Game.getObjectById(creep.memory.lab)
                 const result = actions.charge(creep, lab)
                 if(result == 1){
@@ -157,7 +157,7 @@ var rF = {
             break
         case 10: {
             //move mineral from booster to terminal
-            if (_.sum(creep.carry) > 0){
+            if (_.sum(creep.store) > 0){
                 const result = actions.charge(creep, creep.room.terminal)
                 if (result == 1){
                     creep.say("getJob")

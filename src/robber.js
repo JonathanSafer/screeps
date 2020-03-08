@@ -8,7 +8,7 @@ var rRo = {
 
     /** @param {Creep} creep **/
     run: function(creep) {
-        if (_.sum(creep.carry) < 0.1 * creep.carryCapacity) {
+        if (_.sum(creep.store) < 0.1 * creep.store.getCapacity()) {
             if(creep.ticksToLive < 150){
                 creep.suicide()
             }

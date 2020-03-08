@@ -8,7 +8,7 @@ var rMM = {
 
     /** @param {Creep} creep **/
     run: function(creep) {
-        if (_.sum(creep.carry) == 0 && creep.ticksToLive < 130){
+        if (_.sum(creep.store) == 0 && creep.ticksToLive < 130){
             creep.suicide()
         }
         if (!creep.memory.source){
@@ -25,8 +25,8 @@ var rMM = {
     },
 
     needEnergy: function(creep) {
-        const carry = _.sum(creep.carry)
-        return (carry < creep.carryCapacity)
+        const store = _.sum(creep.store)
+        return (store < creep.store.getCapacity())
     },
 
     harvestTarget: function(creep) {
