@@ -48,7 +48,7 @@ var rT = {
             const result = actions.charge(creep, target)
             if(result === 1){//successful deposit
                 //if creep still has energy, start moving to next target
-                if(creep.store[RESOURCE_ENERGY] > target.store.getFreeCapacity(RESOURCE_ENERGY)){
+                if(creep.store[RESOURCE_ENERGY] > target.store.getFreeCapacity(RESOURCE_ENERGY) || creep.store.getFreeCapacity() == 0){
                     //start moving to next target if target not already in range
                     const newTarget = testRoom ? rT.findTargetCached(creep) : rT.findTarget(creep, target)
                     if(!newTarget){
@@ -122,7 +122,7 @@ var rT = {
         const targets = Memory[creep.room.name].targets
         for (var i = 0; i < targets.length; i++) {
             const target = Game.getObjectById(targets[creep.memory.i])
-            if (rT.needsEnergy(target)) 
+            if (rT.needsEnergy(target) || creep.store.getFreeCapacity() == 0) 
                 return target
             else
                 creep.memory.i = (creep.memory.i + 1) % targets.length
