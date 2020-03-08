@@ -39,8 +39,8 @@ var settings = {
     observerFrequency: 20, // how often each city scans a room
 
     // Profiling
-    profileFrequency: 123, // profiler runs every 123 ticks
-    profileLength: 7, // profiler is run for 7 ticks
+    profileFrequency: 15, // profiler runs every 123 ticks
+    profileLength: 1, // profiler is run for 7 ticks
     profileResultsLength: 50 // top 50 results are recorded
 }
 
