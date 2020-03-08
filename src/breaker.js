@@ -143,9 +143,10 @@ var rBr = {
         }
     },
 
-    rally: function(creep, medic, flag){
-        if(Game.flags[flag] && creep.room.name != Game.flags[flag].pos.roomName){
-            u.multiRoomMove(creep, Game.flags[flag].pos, true)
+    rally: function(creep, medic, flagName){
+        const flag = Memory.flags[flagName]
+        if(flag && creep.room.name != flag.roomName){
+            u.multiRoomMove(creep, new RoomPosition(flag.x, flag.y, flag.roomName), true)
             rBr.medicMove(creep, medic)
         }
     },

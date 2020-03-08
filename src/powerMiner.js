@@ -18,9 +18,10 @@ var rPM = {
                 return
             }
         }
+        const flagName = creep.memory.city + "powerMine"
         if(medic.hits < medic.hitsMax/2 || creep.hits < creep.hitsMax/2){//temp drop operation if under attack
-            if(Game.flags[creep.memory.city + "powerMine"]){
-                Game.flags[creep.memory.city + "powerMine"].remove()
+            if(Memory.flags[flagName]){
+                delete Memory.flags[flagName]
             }
         }
         const canMove = rBr.canMove(creep, medic)
@@ -33,14 +34,13 @@ var rPM = {
                 rBr.medicMove(creep, medic)
             }
         } else {
-            const flag = creep.memory.city + "powerMine"
-            target = rPM.findBank(creep, flag)
+            target = rPM.findBank(creep, flagName)
             if(canMove) {
                 if(target){//move to it
                     creep.moveTo(target, {range: 1, reusePath: 50})
                     rBr.medicMove(creep, medic)
                 } else { //rally
-                    rBr.rally(creep, medic, flag)
+                    rBr.rally(creep, medic, flagName)
                 }
             } else if (!medic.pos.isNearTo(creep)){
                 medic.moveTo(creep, {range: 1})
@@ -62,16 +62,18 @@ var rPM = {
         }
     },
 
-    findBank: function(creep, flag){
-        if(Game.flags[flag] && Game.flags[flag].room){
-            const bank = Game.flags[flag].pos.lookFor(LOOK_STRUCTURES)
+    findBank: function(creep, flagName){
+        const flag = Memory.flags[flagName]
+        if(flag && Game.rooms[flag.roomName]){
+            const flagPos = new RoomPosition(flag.x, flag.y, flag.roomName)
+            const bank = flagPos.lookFor(LOOK_STRUCTURES)
             if(bank.length){
                 creep.memory.target = bank[0].id
                 return bank[0]
             } else {
-                const look = Game.flags[flag].pos.look()
+                const look = flagPos.look()
                 if(look.length < 3){
-                    Game.flags[flag].remove()
+                    delete Memory.flags[flagName]
                 }
             }
         }

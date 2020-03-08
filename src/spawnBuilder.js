@@ -12,7 +12,7 @@ var rSB = {
     /** @param {Creep} creep **/
     run: function(creep) {
         // Use the spawn queue to set respawn
-        if(creep.ticksToLive == 500 && Game.flags.claim) {
+        if(creep.ticksToLive == 500 && Memory.flags.claim) {
             sq.respawn(creep)
         }
 
@@ -36,19 +36,20 @@ var rSB = {
             creep.moveTo(Game.spawns[city])
             return
         }
-        if (Game.flags.claimRally && !creep.memory.rally){
-            u.multiRoomMove(creep, Game.flags.claimRally.pos)
-            if (Game.flags.claimRally.pos.x == creep.pos.x && Game.flags.claimRally.pos.y == creep.pos.y && Game.flags.claimRally.pos.roomName == creep.pos.roomName){
+        if (Memory.flags.claimRally && !creep.memory.rally){
+            const flag = Memory.flag.claimRally
+            u.multiRoomMove(creep, new RoomPosition(flag.x, flag.y, flag.roomName))
+            if (flag.x == creep.pos.x && flag.y == creep.pos.y && flag.roomName == creep.pos.roomName){
                 creep.memory.rally = true
             }
             return
         }
-        if(!Game.flags.claim){
+        if(!Memory.flags.claim){
             return
         }
-        if(creep.pos.roomName === Game.flags.claim.pos.roomName){
+        if(creep.pos.roomName === Memory.flags.claim.roomName){
             if(Game.time % 100 == 0 && rSB.jobDone(creep)){
-                Game.flags.claim.remove()
+                delete Memory.flags.claim
             }
             if(creep.carry.energy == 0 && creep.memory.building){
                 creep.memory.building = false
@@ -62,8 +63,8 @@ var rSB = {
                 rSB.harvest(creep)
             }
         } else {
-            const pos = Game.flags.claim.pos
-            u.multiRoomMove(creep, pos)
+            const flag = Memory.flags.claim
+            u.multiRoomMove(creep, new RoomPosition(flag.x, flag.y, flag.roomName))
         }
     },
 

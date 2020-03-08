@@ -21,7 +21,8 @@ var rRo = {
                 }
                 return actions.interact(creep, target, () => creep.withdraw(target, mineral))
             } else {
-                return creep.moveTo(Game.flags["steal"], {reusePath: 50})
+                const flag = Memory.flags["steal"]
+                return creep.moveTo(new RoomPosition(flag.x, flag.y, flag.roomName), {reusePath: 50})
             }
 
         } else {

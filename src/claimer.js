@@ -7,8 +7,8 @@ var rC = {
 
     /** @param {Creep} creep **/
     run: function(creep) {
-        return rC.claimRally(creep, Game.flags.claimRally) ||
-                rC.runClaimer(creep, Game.flags.claim, rC.claim)
+        return rC.claimRally(creep, Memory.flags.claimRally) ||
+                rC.runClaimer(creep, Memory.flags.claim, rC.claim)
     },
 
     claimRally: function(creep, flag) {
@@ -16,8 +16,8 @@ var rC = {
             return false
         }
 
-        u.multiRoomMove(creep, flag.pos)
-        if (flag.pos.x == creep.pos.x && flag.pos.y == creep.pos.y) {
+        u.multiRoomMove(creep, new RoomPosition(flag.x, flag.y, flag.roomName))
+        if (flag.x == creep.pos.x && flag.y == creep.pos.y) {
             creep.memory.rally = true
         }
         return true
@@ -28,8 +28,8 @@ var rC = {
             return false
         }
 
-        if (flag.pos.roomName != creep.pos.roomName) {
-            u.multiRoomMove(creep, flag.pos)
+        if (flag.roomName != creep.pos.roomName) {
+            u.multiRoomMove(creep, new RoomPosition(flag.x, flag.y, flag.roomName))
         } else if (!creep.pos.isNearTo(creep.room.controller.pos)) {
             u.multiRoomMove(creep, creep.room.controller.pos)
         } else { 

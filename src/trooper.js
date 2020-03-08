@@ -151,10 +151,11 @@ var rTr = {
 
     maybeRally: function(creep) {
         // Go to rally en route to target
-        var rallyFlag = creep.memory.city + "trooperRally"
-        if (Game.flags[rallyFlag] && !creep.memory.rally){
-            creep.moveTo(Game.flags[rallyFlag], {reusePath: 50})
-            if (Game.flags[rallyFlag].pos.x == creep.pos.x && Game.flags[rallyFlag].pos.y == creep.pos.y && Game.flags[rallyFlag].pos.roomName == creep.pos.roomName){
+        var rallyFlagName = creep.memory.city + "trooperRally"
+        const flag = Memory.flags[rallyFlagName]
+        if (flag && !creep.memory.rally){
+            creep.moveTo(new RoomPosition(flag.x, flag.y, flag.roomName), {reusePath: 50})
+            if (flag.x == creep.pos.x && flag.y == creep.pos.y && flag.roomName == creep.pos.roomName){
                 creep.memory.rally = true
             }
             return true
@@ -172,10 +173,11 @@ var rTr = {
         } else {
             flagName = city + "shoot"
         }
-        if(Game.flags[flagName]){
-            if(creep.pos.roomName != Game.flags[flagName].pos.roomName){
-                creep.moveTo(Game.flags[flagName].pos) 
-                return true      
+        const flag = Memory.flags[flagName]
+        if(flag){
+            if(creep.pos.roomName != flag.roomName){
+                creep.moveTo(new RoomPosition(flag.x, flag.y, flag.z)) 
+                return true
             }
         }
         return false

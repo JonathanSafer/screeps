@@ -25,26 +25,28 @@ var rDM = {
         case 0: {
             //newly spawned or empty store
             const flagName = creep.memory.city + "deposit"
-            if(!Game.flags[flagName]){//if there is no flag, change city.memory.depositMiner to 0, and suicide
+            const flag = Memory.flags[flagName]
+            if(!flag){//if there is no flag, change city.memory.depositMiner to 0, and suicide
                 Game.spawns[creep.memory.city].memory.depositMiner = 0
                 creep.suicide()
                 return
             }
+            const flagPos = new RoomPosition(flag.x, flag.y, flag.roomName)
             if(creep.body.length === 3){
-                Game.flags[flagName].remove()
+                delete Memory.flags[flagName]
                 return
             }
-            if (Game.flags[flagName].pos.roomName !== creep.pos.roomName){//move to flag until it is visible
-                u.multiRoomMove(creep, Game.flags[flagName].pos, true)
+            if (flagPos.roomName !== creep.pos.roomName){//move to flag until it is visible
+                u.multiRoomMove(creep, flagPos, true)
                 return
             }
-            const deposit = Game.flags[flagName].room.lookForAt(LOOK_DEPOSITS, Game.flags[flagName].pos)//if flag is visible, check for deposit, if no deposit, remove flag
+            const deposit = Game.rooms[flagPos.roomName].lookForAt(LOOK_DEPOSITS, flagPos)//if flag is visible, check for deposit, if no deposit, remove flag
             if(!deposit.length){
-                Game.flags[flagName].remove()
+                delete Memory.flags[flagName]
                 return
             }
             if(_.sum(creep.store) === 0 && (deposit[0].lastCooldown > 25 && Game.cpu.bucket < settings.bucket.resourceMining)){
-                Game.flags[flagName].remove()
+                delete Memory.flags[flagName]
                 return
             }
             //check for enemies. if there is an enemy, call in harasser
@@ -97,8 +99,8 @@ var rDM = {
             if(cooldown > expected || dangerous){
                 //call in harasser
                 const flagName = creep.memory.city + "harass"
-                if(!Game.flags[flagName]){
-                    creep.room.createFlag(25, 25, flagName)
+                if(!Memory.flags[flagName]){
+                    Memory.flags[flagName] = new RoomPosition(25, 25, creep.room.name)
                 }
             }
         }
@@ -123,7 +125,7 @@ var rDM = {
         if (ally) {
             //remove flag
             const flagName = creep.memory.city + "deposit"
-            Game.flags[flagName].remove()
+            delete Memory.flags[flagName]
             creep.memory.target = 1
             return true
         }

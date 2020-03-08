@@ -7,8 +7,8 @@ var rUC = {
 
     /** @param {Creep} creep **/
     run: function(creep) {
-        return rC.claimRally(creep, Game.flags.unclaimRally) || 
-                rC.runClaimer(creep, Game.flags.unclaim, rUC.unclaim)
+        return rC.claimRally(creep, Memory.flags.unclaimRally) || 
+                rC.runClaimer(creep, Memory.flags.unclaim, rUC.unclaim)
     },
 
     unclaim: function(creep) {

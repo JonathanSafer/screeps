@@ -35,7 +35,7 @@ module.exports.loop = function () {
         // TODO add a setup function to validate memory etc
         if (!Memory.flags) Memory.flags = {}
         if(Game.time % 500 == 0){
-            const f = Game.flags
+            const f = Memory.flags
             claimRoom = c.chooseClosestRoom(myCities,
                 (f.claim && f.claimRally) || f.claim)
             unclaimRoom = c.chooseClosestRoom(myCities,

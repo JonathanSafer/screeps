@@ -366,8 +366,8 @@ function updateMilitary(city, memory, rooms) {
     for (var i = 0; i < flags.length; i++) {
         const flagName = city + flags[i]
         const updateFn = updateFns[i]
-        updateFn(Game.flags[flagName], memory, city, rooms)
-        if(Game.flags[flagName] && flagName.includes("big")){
+        updateFn(Memory.flags[flagName], memory, city, rooms)
+        if(Memory.flags[flagName] && flagName.includes("big")){
             big = 1
         }
     }
@@ -467,19 +467,20 @@ function chooseClosestRoom(myCities, flag){
     if(!flag){
         return 0
     }
+    const flagPos = new RoomPosition(flag.x, flag.y, flag.roomName)
     const goodCities = _.filter(myCities, city => city.controller.level >= 4 && Game.spawns[city.memory.city] && city.storage)
     let closestRoomPos = goodCities[0].getPositionAt(25, 25)
     let closestLength = CREEP_CLAIM_LIFE_TIME + 100//more than max claimer lifetime
     for (let i = 0; i < goodCities.length; i += 1){
         const testRoomPos = goodCities[i].getPositionAt(25, 25)
-        const testPath = u.findMultiRoomPath(testRoomPos, flag.pos)
-        if(!testPath.incomplete && testPath.cost < closestLength && goodCities[i].name != flag.pos.name){
+        const testPath = u.findMultiRoomPath(testRoomPos, flagPos)
+        if(!testPath.incomplete && testPath.cost < closestLength && goodCities[i].name != flagPos.roomName){
             closestRoomPos =  goodCities[i].getPositionAt(25, 25)
             closestLength = testPath.cost
         }
     }
     if(closestLength == 700){
-        Game.notify("No valid rooms in range for claim operation in " + flag.pos.roomName)
+        Game.notify("No valid rooms in range for claim operation in " + flagPos.roomName)
     }
     return closestRoomPos.roomName
 }
@@ -489,17 +490,18 @@ function updateColonizers(city, memory, claimRoom, unclaimRoom) {
     // TODO only make a claimer if city is close
     const roomName = Game.spawns[city].room.name
     if(roomName == claimRoom){
+        const flag = Memory.flags.claim
         if(Game.spawns[city].room.controller.level < 7){
             memory[rSB.name] = 4
-        } else if (Game.flags.claim.room && Game.flags.claim.room.controller && Game.flags.claim.room.controller.level > 6) {
+        } else if (flag && Game.rooms[flag.roomName] && Game.rooms[flag.roomName].controller && Game.rooms[flag.roomName].controller.level > 6) {
             memory[rSB.name] = 4
         } else {
             memory[rSB.name] = 2
         }
-        if(Game.flags.claim && Game.flags.claim.room && Game.flags.claim.room.controller.my){
+        if(flag && Game.rooms[flag.roomName] && Game.rooms[flag.roomName].controller.my){
             memory[rC.name] = 0
         } else {
-            memory[rC.name] = Game.flags.claim ? 1 : 0
+            memory[rC.name] = flag ? 1 : 0
         }
     } else {
         memory[rSB.name] = 0
@@ -554,8 +556,9 @@ function updateMiner(rooms, rcl8, memory, spawn){
         }
     })
     _.each(memory.sources, () => miners++)
-    if(Game.flags.claim && Game.flags.claim.pos.roomName === spawn.pos.roomName &&
-        Game.flags.claim.room.controller.level < 6){
+    const flag = Memory.flags.claim
+    if(flag && flag.roomName === spawn.pos.roomName &&
+        Game.rooms[flag.roomaName].controller.level < 6){
         memory[rM.name] = 0
         return
     }
@@ -803,11 +806,12 @@ function updateBigTrooper(flag, memory, city) {
 }
 
 function runNuker(city){
-    const flag = city + "nuke"
-    if(Game.flags[flag]){
+    const flagName = city + "nuke"
+    const flag = Memory.flags[flagName]
+    if (flag){
         const nuker = _.find(Game.spawns[city].room.find(FIND_MY_STRUCTURES), structure => structure.structureType === STRUCTURE_NUKER)
-        nuker.launchNuke(Game.flags[flag].pos)
-        Game.flags[flag].remove()
+        nuker.launchNuke(new RoomPosition(flag.x, flag.y, flag.roomName))
+        delete Memory.flags[flag]
     }
 }
 
@@ -886,12 +890,12 @@ function preparePowerRoomsList(city, range) {
 function flagPowerBanks(structures, city, roomName) {
     const powerBank = _.find(structures, structure => structure.structureType === STRUCTURE_POWER_BANK)
     const flagName = city + "powerMine"
-    if (powerBank && powerBank.power > 1500 && powerBank.ticksToDecay > 2800 && !Game.flags[flagName] &&
+    if (powerBank && powerBank.power > 1500 && powerBank.ticksToDecay > 2800 && !Memory.flags[flagName] &&
             structures.length < 30 && Game.spawns[city].room.storage.store.energy > settings.energy.powerMine){
         const terrain = Game.rooms[roomName].getTerrain()
         if (!isBlockedByWalls(terrain, powerBank.pos)) {
             //put a flag on it
-            Game.rooms[roomName].createFlag(powerBank.pos, flagName)
+            Memory.flags[flagName] = powerBank.pos
             Log.info("Power Bank found in: " + roomName)
         }
     }
@@ -910,8 +914,8 @@ function flagDeposits(structures, city, roomName) {
 
     const depositFlagName = city + "deposit"
     for (let i = 0; i < deposits.length; i++) {
-        if(!deposits[i].pos.lookFor(LOOK_FLAGS).length && deposits[i].lastCooldown < 5 && !Game.flags[depositFlagName]){
-            Game.rooms[roomName].createFlag(deposits[i].pos, depositFlagName)
+        if(deposits[i].lastCooldown < 5 && !Memory.flags[depositFlagName]){
+            Memory.flags[depositFlagName] = deposits[i].pos
             Game.spawns[city].memory.deposit = Math.floor(Math.pow((deposits[i].lastCooldown / 0.001), 1/1.2))
             break // only place one flag
         }

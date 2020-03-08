@@ -40,11 +40,12 @@ const p = {
                 room.memory.plan.y = spawnPos.y - 3
             }
 
-            if(Game.flags.plan && Game.flags.plan.pos.roomName == roomName && room.controller.owner && room.controller.owner.username == "Yoner"){
+            const planFlag = Memory.flags.plan
+            if(planFlag && planFlag.roomName == roomName && room.controller.owner && room.controller.owner.username == "Yoner"){
                 room.memory.plan = {}
-                room.memory.plan.x = Game.flags.plan.pos.x
-                room.memory.plan.y = Game.flags.plan.pos.y
-                Game.flags.plan.remove()
+                room.memory.plan.x = planFlag.x
+                room.memory.plan.y = planFlag.y
+                delete Memory.flags.plan
                 p.clearAllStructures(room)
             }
             if (room.memory.plan) {

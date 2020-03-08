@@ -92,7 +92,7 @@ function dMinerCalc(room){
     const city = room.memory.city
     const spawn = Game.spawns[city]
     const flagName = city + "deposit"
-    const flag = Game.flags[flagName]
+    const flag = Memory.flags[flagName]
     if(!flag){
         return [1, 1, 1]//return 1,1, 1
     }

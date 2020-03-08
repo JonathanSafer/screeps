@@ -127,17 +127,17 @@ var rH = {
 
     removeFlag: function(creep){
         const flagName = creep.memory.city + "harass"
-        if(!Game.flags[flagName]){
+        if(!Memory.flags[flagName]){
             return
         }
-        if(creep.pos.roomName == Game.flags[flagName].pos.roomName){
+        if(creep.pos.roomName == Memory.flags[flagName].roomName){
             const flags = creep.room.find(FIND_FLAGS)
             for(var i = 0; i < flags.length; i++){
                 if(flags[i].name.includes("deposit") || flags[i].name.includes("powerMine")){
                     return
                 }
             }
-            Game.flags[flagName].remove()
+            delete Memory.flags[flagName]
         }
     },
 
@@ -158,16 +158,18 @@ var rH = {
     },
 
     rally: function(creep){
-        const rallyFlag = creep.memory.city + "harasserRally"
-        if (Game.flags[rallyFlag] && !creep.memory.rally){
-            creep.moveTo(Game.flags[rallyFlag], {reusePath: 50})
-            if (Game.flags[rallyFlag].pos.x == creep.pos.x && Game.flags[rallyFlag].pos.y == creep.pos.y && Game.flags[rallyFlag].pos.roomName == creep.pos.roomName){
+        const rallyFlagName = creep.memory.city + "harasserRally"
+        const flag = Memory.flags[rallyFlagName]
+        if (flag && !creep.memory.rally){
+            creep.moveTo(new RoomPosition(flag.x, flag.y, flag.roomName), {reusePath: 50})
+            if (flag.x == creep.pos.x && flag.y == creep.pos.y && flag.roomName == creep.pos.roomName){
                 creep.memory.rally = true
             }
         } else {
-            const destFlag = creep.memory.city + "harass"
-            if(Game.flags[destFlag]){
-                if(creep.pos.roomName === Game.flags[destFlag].pos.roomName){
+            const destFlagName = creep.memory.city + "harass"
+            const dFlag = Memory.flags[destFlagName]
+            if (dFlag){
+                if(creep.pos.roomName === dFlag.roomName){
                     //move to center of room
                     if(!creep.pos.inRangeTo(25, 25, 8)){
                         creep.moveTo(25, 25, {range: 5})
@@ -177,7 +179,7 @@ var rH = {
                     }
                 } else {
                     //move to flag
-                    creep.moveTo(Game.flags[destFlag], {reusePath: 50})
+                    creep.moveTo(new RoomPosition(dFlag.x, dFlag.y, dFlag.roomName), {reusePath: 50})
                 }
             }
         }
