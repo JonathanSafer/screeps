@@ -103,16 +103,17 @@ var rT = {
     getNextTarget: function(creep) {
         creep.memory.i = creep.memory.i || 0 // default 0
         const targets = Memory[creep.room.name].targets
+        const sel = Math.floor(Math.random()*2)
         for (var i = 0; i < targets.length; i++) {
             const target = Game.getObjectById(targets[creep.memory.i])
-            if (rT.needsEnergy(target)) 
+            if (rT.needsEnergy(target, sel)) 
                 return target
             else
                 creep.memory.i = (creep.memory.i + 1) % targets.length
         }
     },
 
-    needsEnergy: function(structure){
+    needsEnergy: function(structure, sel){
         const store = structure.store
         switch(structure.structureType){
         case STRUCTURE_EXTENSION:
@@ -120,18 +121,17 @@ var rT = {
         case STRUCTURE_LAB:
         case STRUCTURE_NUKER:
             //if there is any room for energy, needs energy
-            return rT.getCapacity(store, 0) 
+            return rT.getCapacity(store, 0, sel) 
         case STRUCTURE_TOWER:
         case STRUCTURE_POWER_SPAWN:
-            return rT.getCapacity(store, 400)
+            return rT.getCapacity(store, 400, sel)
         case STRUCTURE_FACTORY:
             //arbitrary max value
             return (store.getUsedCapacity(RESOURCE_ENERGY) < 10000)
         }
     },
 
-    getCapacity: function(store, limit) {
-        const sel = Math.floor(Math.random()*2)
+    getCapacity: function(store, limit, sel) {
         return sel ? rT.getCapacity1(store, limit) : rT.getCapacity2(store, limit)
     },
 
