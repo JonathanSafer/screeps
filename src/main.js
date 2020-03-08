@@ -57,7 +57,7 @@ module.exports.loop = function () {
                     continue // skip this city
                 }
                 c.runCity(city, localCreeps[city])
-                c.updateCountsCity(city, localCreeps[city], localRooms[city], 
+                c.updateCountsCity(city, localCreeps[city] || [], localRooms[city], 
                     claimRoom, unclaimRoom)
                 c.runTowers(city)
                 // TODO: obs runs in dead cities
