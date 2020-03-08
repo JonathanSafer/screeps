@@ -135,12 +135,12 @@ var actions = {
     },
     
     charge: function(creep, location) {
-        const carry = creep.carry
-        if (Object.keys(carry).length > 1){
-            const mineral = _.keys(carry)[1]
+        const store = creep.store
+        if (Object.keys(store).length > 1){
+            const mineral = _.keys(store)[1]
             return actions.interact(creep, location, () => creep.transfer(location, mineral))
-        } else{
-            return actions.interact(creep, location, () => creep.transfer(location, Object.keys(carry)[0]))
+        } else if (Object.keys(store).length > 0) {
+            return actions.interact(creep, location, () => creep.transfer(location, Object.keys(store)[0]))
         }
     },
 
