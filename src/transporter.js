@@ -122,7 +122,7 @@ var rT = {
         const targets = Memory[creep.room.name].targets
         for (var i = 0; i < targets.length; i++) {
             const target = Game.getObjectById(targets[creep.memory.i])
-            if (rT.needsEnergy(target) || creep.store.getFreeCapacity() == 0) 
+            if (rT.needsEnergy(target)) 
                 return target
             else
                 creep.memory.i = (creep.memory.i + 1) % targets.length
