@@ -117,7 +117,6 @@ var rDM = {
 
     checkAllies: function(creep, hostiles){
         const owners = _.map(hostiles, hostile => hostile.owner.username)
-        if (owners.length > 0) (Log.info(JSON.stringify(owners)))
         const ally = _.find(owners, owner => {
             Log.info(`Is Ally ${owner}: ${settings.allies.includes(owner)}`)
             return settings.allies.includes(owner)
