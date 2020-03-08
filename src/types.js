@@ -106,7 +106,7 @@ function dMinerCalc(room){
     let storeAmount = test(work, workTime, harvested)
     let stores = Math.floor(storeAmount/100)*2 //store must be an even number for 20 works
     if(stores < 8){// if we're getting less than 400 resource in a lifetime, drop the source
-        flag.remove()
+        delete Memory.flags[flagName]
         return [1, 1, 1]
     }
     if(stores > 10){
