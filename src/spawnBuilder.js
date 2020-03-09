@@ -50,6 +50,7 @@ var rSB = {
         if(creep.pos.roomName === Memory.flags.claim.roomName){
             if(Game.time % 100 == 0 && rSB.jobDone(creep)){
                 delete Memory.flags.claim
+                delete Memory.flags.claimRally
             }
             if(creep.store.energy == 0 && creep.memory.building){
                 creep.memory.building = false

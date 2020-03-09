@@ -13,8 +13,14 @@ var pp = require("./profiler-prep")
 require("./globals")
 pp.prepProfile()
 
+//Code to manually profile:
 //Game.profiler.profile(1000);
 //Game.profiler.output();
+
+//Code to claim a new room:
+//Memory.flags["W11N190break"] = new RoomPosition(25,25,"W16N21")
+//Memory.flags["claim"] = new RoomPosition(25,25,"W16N21")
+//Memory.flags["plan"] = new RoomPosition(30,33,"W16N21")
 
 
 profiler.enable()

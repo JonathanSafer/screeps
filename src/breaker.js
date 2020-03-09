@@ -70,15 +70,19 @@ var rBr = {
     },
 
     breakStuff: function(creep, target) {
+        const flagName = creep.memory.city + "break"
+        const reachedFlag = creep.pos.roomName == Memory.flags[flagName].roomName
         if(target && target.pos.isNearTo(creep.pos)){
             creep.dismantle(target)
             return
             // if next to target, break it
         }
-        // if next to enemy structure, break it
+        // if room is claimed by us, stop coming
         if(creep.room.controller && creep.room.controller.my){
+            if (reachedFlag) delete Memory.flags[flagName]
             return
         }
+        // if next to enemy structure, break it
         const structures = creep.room.lookForAtArea(LOOK_STRUCTURES, 
             Math.max(0, creep.pos.y - 1),
             Math.max(0, creep.pos.x - 1), 
@@ -86,6 +90,8 @@ var rBr = {
             Math.min(49, creep.pos.x + 1), true) //returns an array of structures
         if(structures.length){
             creep.dismantle(structures[0].structure)
+        } else if (reachedFlag) {
+            delete Memory.flags[flagName]
         }
     },
 
