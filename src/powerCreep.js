@@ -106,10 +106,10 @@ var rPC = {
 
     initializePowerCreep: function(creep) {
         if (!creep.memory.city) {
-            // const cities = u.getMyCities()
-            // const fullPower = _.filter(cities, (city) => city.controller.level == 8)
-            // const city = _.sample(fullPower) // pick a random city
-            creep.memory.city = "E11N14"
+            const cities = u.getMyCities()
+            const fullPower = _.filter(cities, (city) => city.controller.level == 8)
+            const city = _.sample(fullPower) // pick a random city
+            creep.memory.city = city.name
         }
     },
 
