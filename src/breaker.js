@@ -132,7 +132,9 @@ var rBr = {
 
     findTarget: function(creep, medic){
         const flag = creep.memory.city + "break"
-        const structures = creep.room.find(FIND_STRUCTURES)
+        const structures = creep.room.find(FIND_STRUCTURES, {
+            filter: structure => [STRUCTURE_WALL, STRUCTURE_RAMPART].includes(structure.structureType)
+        })
         //if in a friendly room or my room, ignore structures and rally. Else, set nearest structure as target
         if(creep.room.controller && creep.room.controller.owner 
                 && (settings.allies.includes(creep.room.controller.owner.username) 

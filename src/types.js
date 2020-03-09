@@ -16,6 +16,7 @@ function getRecipe(type, energyAvailable, room){
 
     // used at rcl 5+
     d.ferry = scalingBody([2, 1], [CARRY, MOVE], energyAvailable, 30)
+    d.breaker = scalingBody([1, 1], [MOVE, WORK], energyAvailable)
 
     // rcl 8 only
     d.powerMiner = body([20, 20], [MOVE, ATTACK])
@@ -45,7 +46,6 @@ function getRecipe(type, energyAvailable, room){
         d["mineralMiner"] = body([22, 10, 16], [WORK, CARRY, MOVE])
         d["harasser"] = body([9, 8, 1], [MOVE, RANGED_ATTACK, HEAL])
         d["medic"] = body([5, 20, 15], [TOUGH, MOVE, HEAL])
-        d["breaker"] = body([10, 10], [MOVE, WORK])
         d["robber"] = body([25, 25], [CARRY, MOVE])
         break
     case 8:
@@ -53,7 +53,6 @@ function getRecipe(type, energyAvailable, room){
         d["mineralMiner"] = body([22, 10, 16], [WORK, CARRY, MOVE])
         d["harasser"] = body([20, 25, 5], [RANGED_ATTACK, MOVE, HEAL])
         d["medic"] = body([25, 25], [MOVE, HEAL])
-        d["breaker"] = body([25, 25], [MOVE, WORK])
         d["robber"] = body([25, 25], [CARRY, MOVE])
         d["defender"] = body([3, 31, 6, 10], [TOUGH, RANGED_ATTACK, HEAL, MOVE])
         break
