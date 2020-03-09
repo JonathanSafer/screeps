@@ -174,7 +174,7 @@ function upgraderBody(energyAvailable, rcl, room) {
         POWER_INFO[PWR_OPERATE_CONTROLLER].effect[controller.effects[0].level - 1] : 0
     const maxWorks = CONTROLLER_MAX_UPGRADE_PER_TICK + boost
     const types = [WORK, CARRY, MOVE]
-    if (rcl in [6, 7]) { // use boost ratio 5 work, 3 store
+    if ([6, 7].includes(rcl)) { // use boost ratio 5 work, 3 store
         return scalingBody([5, 3, 4], [WORK, CARRY, MOVE], energyAvailable)
     } else if (isBoosted) {
         return scalingBody([4, 1, 1], types, energyAvailable, Math.min(maxWorks * 1.5, MAX_CREEP_SIZE))
