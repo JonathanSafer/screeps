@@ -51,7 +51,7 @@ var rSB = {
         if(creep.pos.roomName === Memory.flags.claim.roomName){
             if (!creep.room.controller || !creep.room.controller.my) {
                 rBr.breakStuff(creep, null)
-                creep.moveTo(creep.room.controller, { reusePath: 15, range: 3 })
+                creep.moveTo(creep.room.controller, { reusePath: 15, range: 3, ignoreDestructibleStructures: true })
                 return
             }
 

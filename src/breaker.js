@@ -71,7 +71,8 @@ var rBr = {
 
     breakStuff: function(creep, target) {
         const flagName = creep.memory.city + "break"
-        const reachedFlag = creep.pos.roomName == Memory.flags[flagName].roomName
+        const flag = Memory.flags[flagName]
+        const reachedFlag = flag && (creep.pos.roomName == flag.roomName)
         if(target && target.pos.isNearTo(creep.pos)){
             creep.dismantle(target)
             return
