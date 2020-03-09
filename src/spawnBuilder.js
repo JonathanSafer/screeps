@@ -3,6 +3,7 @@ var sq = require("./spawnQueue")
 var rU = require("./upgrader")
 var s = require("./settings")
 var u = require("./utils")
+var rBr = require("./breaker")
 
 var rSB = {
     name: "spawnBuilder",
@@ -48,6 +49,12 @@ var rSB = {
             return
         }
         if(creep.pos.roomName === Memory.flags.claim.roomName){
+            if (!creep.room.controller || !creep.room.controller.my) {
+                rBr.breakStuff(creep, null)
+                creep.moveTo(creep.room.controller, { reusePath: 15, range: 3 })
+                return
+            }
+
             if(Game.time % 100 == 0 && rSB.jobDone(creep)){
                 delete Memory.flags.claim
                 delete Memory.flags.claimRally
