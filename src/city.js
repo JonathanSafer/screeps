@@ -531,8 +531,19 @@ function updateDefender(rooms, memory, rcl8) {
     }
 }
 
-function updateMiner(rooms, rcl8, memory, spawn){
+function cityFraction(cityName) {
+    const myCities = _.map(u.getMyCities(), city => city.name).sort()
+    return _.indexOf(myCities, cityName) / myCities.length
+}
+
+function updateMiner(rooms, rcl8, memory, spawn){        
     if(rcl8){
+        const bucketThreshold = settings.bucket.energyMining + settings.bucket.range * cityFraction(spawn.room.name)
+        if (Game.cpu.bucket < bucketThreshold) {
+            memory[rM.name] = 0
+            return
+        }
+
         if(_.find(spawn.room.find(FIND_MY_CREEPS), c => c.memory.role == rD.name)){
             memory[rM.name] = 0
         } else if (spawn.room.find(FIND_POWER_CREEPS).length) {
@@ -593,22 +604,24 @@ function updateTransporter(extensions, memory, creeps) {
 }
 
 function updateUpgrader(city, controller, memory, rcl8, creeps, rcl) {
+    const room = Game.spawns[city].room
     if (rcl8){
-        var modifier = Math.random() * settings.bucket.upgradeRange
+        const bucketThreshold = settings.bucket.upgrade + settings.bucket.range * cityFraction(room.name)
+        const haveEnoughCpu = Game.cpu.bucket > bucketThreshold
         if (controller.ticksToDowngrade < 100000 
-            || (controller.room.storage.store.energy > settings.energy.rcl8upgrade && Game.cpu.bucket > (settings.bucket.upgrade + modifier - (settings.bucket.upgradeRange/2)))){
-            Game.spawns[city].memory[rU.name] = 1
+            || (controller.room.storage.store.energy > settings.energy.rcl8upgrade && haveEnoughCpu)){
+            memory[rU.name] = 1
         } else if (controller.ticksToDowngrade > 180000){
-            Game.spawns[city].memory[rU.name] = 0
+            memory[rU.name] = 0
         }
     } else {
-        if(rcl >= 6 && Game.spawns[city].room.storage && Game.spawns[city].room.storage.store[RESOURCE_ENERGY] < 250000
-                && Game.spawns[city].room.terminal && Game.spawns[city].room.terminal.store[RESOURCE_CATALYZED_GHODIUM_ACID] < 1000
+        if(rcl >= 6 && room.storage && room.storage.store[RESOURCE_ENERGY] < 250000
+                && room.terminal && room.terminal.store[RESOURCE_CATALYZED_GHODIUM_ACID] < 1000
                 && controller.ticksToDowngrade > CONTROLLER_DOWNGRADE[rcl.toString()]/2){
             memory[rU.name] = 0
             return
         }
-        const constructionSites = Game.spawns[city].room.find(FIND_MY_CONSTRUCTION_SITES)
+        const constructionSites = room.find(FIND_MY_CONSTRUCTION_SITES)
         if(constructionSites.length){
             memory[rU.name] = 1
             return

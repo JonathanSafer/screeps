@@ -10,16 +10,18 @@ var settings = {
     boostAmount: 12000, //threshold to stop producing boosts
     wallHeight: 10000000,
     bucket: {//minimum bucket thresholds
-        powerMining: 8500,
+        resourceMining: 1000,
+        repair: 2000, //repairing walls in a room
+        processPower: 2200,
+        colony: 4000, // building new rooms
+        upgrade: 5000,
+        energyMining: 6500,
+        powerMining: 8500, // TODO split pc-powered & unpowered
+        // other constants we use with these
+        range: 1000,
         powerRange: 3000, //this keeps all power mining from shutting off at once. 
         //If powerMining + powerRange/2 > 10000, there may be times where a mining flag is not placed even though the bucket is full
-        upgrade: 6000,
-        upgradeRange: 2000,
-        resourceMining: 1000,
-        colony: 5000, // building new rooms
-        repair: 3000, //repairing walls in a room
         rclMultiplier: 200, // scale: rcl0 = 5k, 1 => 4.8k etc
-        processPower: 3200,
         growthLimit: 0.25, // average bucket growth limit over 100+ ticks
     },
     energy: {//energy thresholds
