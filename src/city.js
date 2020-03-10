@@ -182,7 +182,7 @@ function makeEmergencyCreeps(extensions, creeps, city, rcl8, emergency) {
     const memory = Game.spawns[city].memory
 
     if (emergency || Game.time % checkTime == 0 && extensions >= 5) {
-        if (_.filter(creeps, creep => creep.memory.role == "remoteMiner") < 1 && memory.remoteMiner > 0){
+        if (_.filter(creeps, creep => creep.memory.role == "remoteMiner") < 1 && memory[rM.role] > 0){
             Log.info("Making Emergency Miner")
             makeCreeps("remoteMiner", "miner", 1, city, true)
         }
