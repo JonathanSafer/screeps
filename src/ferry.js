@@ -16,7 +16,7 @@ var rF = {
         case 0:
             //no jobs available
             //Log.info('hi')
-            if (Game.time % 2 === 0){
+            if (Game.time % 10 === 0){
                 creep.say("getJob")
             }
             break
