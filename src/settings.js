@@ -22,7 +22,7 @@ var settings = {
         powerRange: 3000, //this keeps all power mining from shutting off at once. 
         //If powerMining + powerRange/2 > 10000, there may be times where a mining flag is not placed even though the bucket is full
         rclMultiplier: 200, // scale: rcl0 = 5k, 1 => 4.8k etc
-        growthLimit: 0.25, // average bucket growth limit over 100+ ticks
+        growthLimit: 5, // average bucket growth limit over 100+ ticks
     },
     energy: {//energy thresholds
         rcl8upgrade: 620000,

@@ -1,6 +1,8 @@
 const settings = require("./settings")
 
 const b = {
+    SIZE: 10000, // 10K constant cpu bucket size
+
     manage: function() {
         if (b.growingTooQuickly()) {
             b.wasteCpu(10 * settings.bucket.growthLimit)
@@ -24,7 +26,9 @@ const b = {
         Cache.bucket.fillRate = 0.9 * oldRate + 0.1 * delta // exponential moving avg
         Cache.bucket.fillRateLong = 0.95 * oldRateLong + 0.05 * delta
         Cache.bucket.fillRateMax = 0.99 * oldRateMax + 0.01 * delta
-        return (Cache.bucket.fillRateMax > settings.bucket.growthLimit)
+
+        const percentEmpty = 1 - Game.cpu.bucket / b.SIZE
+        return (Cache.bucket.fillRateMax > percentEmpty**2 * settings.bucket.growthLimit)
     },
 
     wasteCpu(amount) {
