@@ -11,8 +11,8 @@ var rT = {
 
     /** @param {Creep} creep **/
     run: function(creep) {
-        if (Game.time % 5000 == 0) {
-            rT.clearCache(creep.room)
+        if (Game.time % 100 == 0) {
+            rT.checkResetCache(creep.room)
         }
 
         if(rT.endLife(creep)){
@@ -78,9 +78,7 @@ var rT = {
 
     cacheTargets: function(creep) {
         const room = creep.room
-        const targets = room.find(FIND_STRUCTURES, {
-            filter: (structure) => rT.validTargets.includes(structure.structureType)
-        })
+        const targets = rT.getAllTargets(room)
         const orderedTargets = []
         const storage = u.getStorage(room)
         var currentPos = storage.pos
@@ -96,8 +94,21 @@ var rT = {
         Memory[room.name].targets = orderedTargets
     },
 
-    clearCache: function(room) {
-        if (Memory[room.name]) Memory[room.name].targets = null
+    getAllTargets: function(room) {
+        return room.find(FIND_STRUCTURES, {
+            filter: (structure) => rT.validTargets.includes(structure.structureType)
+        })
+    },
+
+    checkResetCache: function(room) {
+        if (Memory[room.name] && Memory[room.name].targets) {
+            const cachedLength = Memory[room.name].targets.length
+            const trueLength = rT.getAllTargets(room).length
+            if (cachedLength != trueLength) {
+                Log.info(`Update transporter path cache in ${room.name}`)
+                Memory[room.name].targets = null
+            }
+        }
     },
 
     getNextTarget: function(creep) {
