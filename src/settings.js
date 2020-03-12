@@ -15,7 +15,7 @@ var settings = {
         processPower: 2200,
         colony: 4000, // building new rooms
         upgrade: 5000,
-        energyMining: 6500,
+        energyMining: 4000,
         powerMining: 8500, // TODO split pc-powered & unpowered
         // other constants we use with these
         range: 1000,

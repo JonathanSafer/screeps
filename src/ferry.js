@@ -227,7 +227,7 @@ var rF = {
             const links = Cache[creep.room.name].links || {}
             upgradeLink = Game.getObjectById(links.upgrade)
         }
-        if (Game.cpu.bucket > settings.bucket.upgrade && link && !link.energy && upgradeLink) {
+        if (Game.cpu.bucket > settings.bucket.upgrade && link && !link.energy && upgradeLink && !upgradeLink.energy) {
             return 13
         } else if (link && link.energy > 0) {
             return 5
