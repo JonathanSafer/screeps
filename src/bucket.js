@@ -28,7 +28,7 @@ const b = {
         Cache.bucket.fillRateMax = 0.99 * oldRateMax + 0.01 * delta
 
         const percentEmpty = 1 - Game.cpu.bucket / b.SIZE
-        return (Cache.bucket.fillRateMax > percentEmpty**2 * settings.bucket.growthLimit)
+        return (Cache.bucket.fillRateMax > percentEmpty * settings.bucket.growthLimit)
     },
 
     wasteCpu(amount) {
