@@ -14,7 +14,7 @@ var markets = {
             var sortedCities = _.sortBy(needEnergy, city => city.storage.store.energy)
             receiver = sortedCities[0].name
             for (var i = 0; i < myCities.length; i++){
-                if (myCities[i].storage && myCities[i].storage.store.energy > 500000 && !myCities[i].terminal.termUsed){
+                if (myCities[i].storage && myCities[i].storage.store.energy > settings.energy.processPower && !myCities[i].terminal.termUsed){
                     myCities[i].terminal.send(RESOURCE_ENERGY, 25000, receiver)
                     myCities[i].terminal.termUsed = true
                 }
