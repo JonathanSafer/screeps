@@ -32,7 +32,9 @@ var rPM = {
             if(!creep.pos.isNearTo(target) && canMove){//move to target
                 creep.moveTo(target, {range: 1, reusePath: 50})
                 rBr.medicMove(creep, medic)
-            }
+            } else if (!medic.pos.isNearTo(creep)){
+                medic.moveTo(creep, {range: 1})
+            } 
         } else {
             target = rPM.findBank(creep, flagName)
             if(canMove) {
