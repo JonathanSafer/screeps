@@ -72,7 +72,7 @@ var rPM = {
                 return bank[0]
             } else {
                 const look = flagPos.look()
-                if(look.length < 3){
+                if(look.length < 2){//terrain always shows up, so if there is anything else there, leave the flag on
                     delete Memory.flags[flagName]
                 }
             }
