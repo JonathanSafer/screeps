@@ -174,11 +174,13 @@ function upgraderBody(energyAvailable, rcl, room) {
     const maxWorks = CONTROLLER_MAX_UPGRADE_PER_TICK + boost
     const types = [WORK, CARRY, MOVE]
     if ([6, 7].includes(rcl)) { // use boost ratio 5 work, 3 store
-        return scalingBody([5, 3, 4], [WORK, CARRY, MOVE], energyAvailable)
+        return scalingBody([5, 3, 4], types, energyAvailable)
     } else if (isBoosted) {
         return scalingBody([4, 1, 1], types, energyAvailable, Math.min(maxWorks * 1.5, MAX_CREEP_SIZE))
-    } else {// don't go over 15 work for rcl8
-        return scalingBody([1, 1, 1], types, energyAvailable, 45)
+    } else if (rcl == 8){// don't go over 15 work for rcl8
+        return scalingBody([5, 3, 4], types, energyAvailable, 36)
+    } else {
+        return scalingBody([1, 1, 1], types, energyAvailable)
     }
 }
 
