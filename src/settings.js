@@ -37,7 +37,7 @@ var settings = {
         miners: 1, // rcl8
     },
     motion: {
-        backRoadPenalty: 2
+        backRoadPenalty: 1.5
     },
     powerMiningRange: 2,
     miningRange: 7,
