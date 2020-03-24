@@ -12,6 +12,7 @@ var rDM = {
 
     /** @param {Creep} creep **/
     run: function(creep) {
+        rDM.checkRoom(creep)
         if (_.sum(creep.store) === 0 && creep.ticksToLive < 500){//if old and no store, suicide
             creep.suicide()
             return
@@ -104,6 +105,18 @@ var rDM = {
                 }
             }
         }
+        if(creep.hits < creep.hitMax){
+            //check to see if in enemy room. If so, mark as enemy
+            if(creep.room.controller && creep.controller.owner && !creep.controller.my){
+                if(!Cache[creep.room.name]){
+                    Cache[creep.room.name] = {}
+                }
+                Cache[creep.room.name].enemy = true
+            }
+        }
+    },
+
+    checkRoom: function(creep){
         if(creep.hits < creep.hitMax){
             //check to see if in enemy room. If so, mark as enemy
             if(creep.room.controller && creep.controller.owner && !creep.controller.my){

@@ -3,8 +3,11 @@ var settings = require("./settings")
 
 var m = {
     //newMove will override all long and short distance motion
-    newMove: function(creep, endPos, avoidEnemies = true, range = 0){
+    newMove: function(creep, endPos,  range = 0, avoidEnemies = true){
         //check for cached path and cached route
+        if(!Cache[creep]){
+            Cache[creep] = {}
+        }
         const routeVerified = m.checkRoute(creep, endPos)
         const pathVerified = m.checkPath(creep, endPos)
         //if everything is good to go, MBP
@@ -16,7 +19,7 @@ var m = {
             }
         }
         //recalc needed
-        const pathCalc = m.calcPath(creep, endPos, avoidEnemies, range)
+        const pathCalc = m.pathCalc(creep, endPos, avoidEnemies, range)
 
         if(pathCalc){//if pathing successful, MBP
             creep.moveByPath(Cache[creep].path)
@@ -52,7 +55,7 @@ var m = {
             //we can also assume that we are moving to the first room in the route, since we just recalculated
             const exit = route[0].exit
             const goals = _.map(creep.room.find(exit), function(e) {
-                return { pos: e.pos, range: 0 } 
+                return { pos: e, range: 0 } 
             })
             const maxRooms = 1//could be 2 (if we can path to the next room's exit rather than our room's exit)
             const result = m.getPath(creep, goals, avoidEnemies, maxRooms)
@@ -72,7 +75,7 @@ var m = {
             swampCost: 5,//TODO, change terrain values based on creep mobility
             maxRooms: maxRooms,
             roomCallback: function(roomName){
-                if(avoidEnemies && Cache[roomName].enemy){
+                if(avoidEnemies && Cache[roomName] && Cache[roomName].enemy){
                     return false
                 }
                 const room = Game.rooms[roomName]
@@ -106,7 +109,7 @@ var m = {
     getRoute: function(start, finish, avoidEnemies){
         const route = Game.map.findRoute(start, finish, {
             routeCallback: function(roomName){
-                if(Cache[roomName].enemy && avoidEnemies){
+                if(Cache[roomName] && Cache[roomName].enemy && avoidEnemies){
                     return Infinity
                 }
                 if(u.isHighway(roomName)){
