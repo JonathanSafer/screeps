@@ -75,6 +75,14 @@ var rQ = {
             creep.memory.state = CS.FORM
         }
     },
+
+    spawnQuad: function(city){
+        const sq = require("./spawnQueue")
+        sq.initialize(Game.spawns[city])
+        for(let i = 0; i < 4; i++){
+            sq.schedule(Game.spawns[city], "quad")
+        }
+    },
     
     formUp: function(creep){
         //maybe creeps could make sure that their entire squad is spawned until determining a captain and forming up, until then
@@ -254,7 +262,7 @@ var rQ = {
         for(let i = 0; i < quad.length; i++){
             if(!quad[i] || quad[i].ticksToLive == 1){
                 if(!quad[i] && creep.ticksToLive >= creep.body.length * 12 + 200){
-                    spawnQuad(creep.memory.city)
+                    rQ.spawnQuad(creep.memory.city)
                 }
                 console.log("yolo")
                 for(let j = 0; j < quad.length; j++){
@@ -274,9 +282,9 @@ var rQ = {
 
         /****************************TEMPORARY LOGIC*********************************/
         if(creep.ticksToLive == creep.body.length * 12 + 200 && Game.flags[creep.memory.city + "quadRally"]){
-            spawnQuad(creep.memory.city)
+            rQ.spawnQuad(creep.memory.city)
         } else if(creep.hits < 200 && Game.flags[creep.memory.city + "quadRally"]){
-            spawnQuad(creep.memory.city)
+            rQ.spawnQuad(creep.memory.city)
             creep.suicide()
         }
         
