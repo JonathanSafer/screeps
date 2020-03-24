@@ -927,12 +927,23 @@ function flagDeposits(structures, city, roomName) {
 
     const depositFlagName = city + "deposit"
     for (let i = 0; i < deposits.length; i++) {
-        if(deposits[i].lastCooldown < 5 && !Memory.flags[depositFlagName]){
+        if(deposits[i].lastCooldown < 5 && !Memory.flags[depositFlagName] && !checkFlags(deposits[i].pos)){
             Memory.flags[depositFlagName] = deposits[i].pos
             Game.spawns[city].memory.deposit = Math.floor(Math.pow((deposits[i].lastCooldown / 0.001), 1/1.2))
             break // only place one flag
         }
     }
+}
+
+function checkFlags(roomPos){
+    const flags = Object.keys(Memory.flags)
+    for(let i = 0; i < flags.length; i++){
+        const flagPos = new RoomPosition(flags[i].x, flags[i].y, flags[i].roomName)
+        if(flagPos.isEqualTo(roomPos)){
+            return flags[i]
+        }
+    }
+    return false
 }
 
 // True if a point is surrounded by terrain walls
