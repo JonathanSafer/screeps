@@ -14,5 +14,12 @@ global.BuyToken = function function_name(price) {
         roomName: "E11S22" 
     })
 }
+global.spawnQuad = function function_name(city){
+    const sq = require("./spawnQueue")
+    sq.initialize(Game.spawns[city])
+    for(let i = 0; i < 4; i++){
+        sq.schedule(Game.spawns[city], "quad")
+    }
+}
 
 global.MemoryCache = Memory
