@@ -176,51 +176,6 @@ var u = {
             avoidEnemies)         
     },
 
-    //newMove will override all long and short distance motion
-    newMove: function(creep, endPos, avoidEnemies = true, range = 0){
-        //check for cached path and cached route
-        //if route exists, verify that the destination is still the same
-        //after the route is verified, make sure that the destination of the path is still the same
-
-        //if everything is good to go AND we are not at the destination of the path, MBP
-        //otherwise, recalc route, then recalc path, then MBP
-        if (Cache[creep].route && endPos.roomName == Cache[creep].route[Cache[creep].route.length - 1]){
-            //route is verified
-            if(Cache[creep].path && endPos.isEqualTo == Cache[creep].path[Cache[creep].path.length - 1]){
-                //path verified
-                if(creep.moveByPath(Cache[creep].path) != ERR_NOT_FOUND){
-                    return
-                }
-            }
-        }
-
-        //motion unsuccessful, recalc required
-        const route = Game.map.findRoute(creep.pos.roomName, endPos.roomName, {
-            routeCallback: function(roomName){
-                if(Cache[roomName].enemy && avoidEnemies){
-                    return Infinity
-                }
-                if(u.isHighway(roomName)){
-                    return 1
-                }
-                return 2
-            }
-        })
-        let exit = null
-        for(let i = 0; i < route.length; i++){
-            if(route[i].room == creep.pos.roomName){
-                exit = route[i + 1].exit
-                break
-            }
-        }
-        const goals = _.map(creep.room.find(exit), function(e) {
-            return { pos: e.pos, range: 0 } 
-        })
-        const path = PathFinder.search(creep.pos, goals, {
-            //adjust motion settings based on creep move speed
-        })
-        return path, range
-    },
 
     // E0,E10... W0, 10 ..., N0, N10 ...
     isHighway: function(roomName) {
