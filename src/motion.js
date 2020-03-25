@@ -72,14 +72,14 @@ var m = {
     moveSpeed: function(creep){
         //if PC, movespeed = 0.1 aka above max
         if(creep.level){
-            return 0.1
+            return 0.001
         }
         const moves = creep.getActiveBodyparts(MOVE)
         const bodySize = creep.body.length
         const carries = _.filter(creep.body, part => part == CARRY).length//can't use getActive bc inactive carry parts need to be weightless
         const usedCarries = Math.ceil(creep.store.getUsedCapacity() / CARRY_CAPACITY)//used carries have weight
         const fatigues = bodySize - moves - carries + usedCarries
-        return fatigues/moves
+        return Math.max(fatigues, 0.001)/Math.max(moves, 0.001)
     },
 
     getPath: function(creep, goals, avoidEnemies, maxRooms){
