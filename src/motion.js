@@ -52,6 +52,7 @@ var m = {
             if(!result.incomplete){
                 Cache[creep.name].route = null //no route since creep is in required room already
                 Cache[creep.name].path = result.path
+                Cache[creep.name].endPos = endPos
                 return true
             } else {
                 return false
@@ -74,6 +75,7 @@ var m = {
             if(!result.incomplete){
                 Cache[creep.name].route = route
                 Cache[creep.name].path = result.path
+                Cache[creep.name].endPos = endPos
                 return true
             } else {
                 return false
@@ -167,8 +169,8 @@ var m = {
     },
 
     checkPath: function(creep, endPos){//verify that cached path is up to date
-        //if creep is at the end of the path, moveByPath should return an error code => recalc and try to move again
-        if(Cache[creep.name].path && endPos.isEqualTo == Cache[creep.name].path[Cache[creep.name].path.length - 1]){
+        //destination must match destination of cached path
+        if(Cache[creep.name].endPos && endPos.isEqualTo(Cache[creep.name].endPos)){
             return true
         } else {
             return false
