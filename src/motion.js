@@ -69,10 +69,24 @@ var m = {
         }
     },
 
+    moveSpeed: function(creep){
+        //if PC, movespeed = 0.1 aka above max
+        if(creep.level){
+            return 0.1
+        }
+        const moves = creep.getActiveBodyparts(MOVE)
+        const bodySize = creep.body.length
+        const carries = _.filter(creep.body, part => part == CARRY).length//can't use getActive bc inactive carry parts need to be weightless
+        const usedCarries = Math.ceil(creep.store.getUsedCapacity() / CARRY_CAPACITY)//used carries have weight
+        const fatigues = bodySize - moves - carries + usedCarries
+        return fatigues/moves
+    },
+
     getPath: function(creep, goals, avoidEnemies, maxRooms){
+        const moveSpeed = m.moveSpeed(creep)//moveSpeed is inverse of fatigue ratio
         const result = PathFinder.search(creep.pos, goals, {
-            plainCost: 1,
-            swampCost: 5,//TODO, change terrain values based on creep mobility
+            plainCost: Math.ceil(moveSpeed),
+            swampCost: Math.ceil(moveSpeed * 5),
             maxRooms: maxRooms,
             roomCallback: function(roomName){
                 if(avoidEnemies && Cache[roomName] && Cache[roomName].enemy){
@@ -87,7 +101,7 @@ var m = {
                 room.find(FIND_STRUCTURES).forEach(function(struct) {
                     if (struct.structureType === STRUCTURE_ROAD) {
                         // Favor roads over plain tiles
-                        costs.set(struct.pos.x, struct.pos.y, 1)
+                        costs.set(struct.pos.x, struct.pos.y, Math.ceil(moveSpeed/2))
                     } else if (struct.structureType !== STRUCTURE_CONTAINER &&
                              (struct.structureType !== STRUCTURE_RAMPART ||
                               !struct.my)) {
