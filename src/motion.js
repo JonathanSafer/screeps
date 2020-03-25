@@ -100,6 +100,9 @@ var m = {
                 room.find(FIND_CREEPS).forEach(function(c) {
                     costs.set(c.pos.x, c.pos.y, 0xff)
                 })
+                room.find(FIND_POWER_CREEPS).forEach(function(c) {
+                    costs.set(c.pos.x, c.pos.y, 0xff)
+                })
                 return costs
             }
         })
