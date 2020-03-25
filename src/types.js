@@ -102,7 +102,7 @@ function dMinerCalc(room){
         harvested = 0
     }
     //distance calculated using method of travel for consistency
-    const distance = motion.getRoute(spawn.pos.roomName, flag).length * 50//PathFinder.search(spawn.pos, {pos: flag, range: 1}, {maxOps: 10000}).path.length
+    const distance = motion.getRoute(spawn.pos.roomName, flag.roomName, true).length * 50//PathFinder.search(spawn.pos, {pos: flag, range: 1}, {maxOps: 10000}).path.length
     const workTime = 1500 - (distance * 3)//distance x 3 since it'll take 2x as long on return
     let work = 20
     let storeAmount = test(work, workTime, harvested)
