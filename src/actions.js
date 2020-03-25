@@ -1,16 +1,13 @@
 const u = require("./utils")
+const motion = require("./motion")
 
 
 var actions = {
-    interact: function(creep, location, fnToTry, logSuccess) {
+    interact: function(creep, location, fnToTry, range, logSuccess) {
         var result = fnToTry()
         switch (result) {
         case ERR_NOT_IN_RANGE:
-            if((creep.memory.role === "Upgrader" || creep.memory.role === "upgrader") && location.structureType && location.structureType === STRUCTURE_CONTROLLER){
-                return creep.moveTo(location, {reusePath: 15, range: 3, swampCost: 2, plainCost: 2})
-            } else {
-                return creep.moveTo(location, {reusePath: 15, maxOps: 10000, maxRooms: 32})
-            }
+            return motion.newMove(creep, location.pos, range)
         case OK:
             if (logSuccess) {
                 Log.info(creep.name+ " at " + creep.pos + ": " + fnToTry.toString())
@@ -37,66 +34,45 @@ var actions = {
         if(target.room.memory.city != city){
             creep.room.memory.city = city
         } else {
-            return actions.interact(creep, target, () => creep.reserveController(target))
+            return actions.interact(creep, target, () => creep.reserveController(target), 1)
         }
     },
 
     dismantle: function(creep, target){
-        return actions.interact(creep, target, () => creep.dismantle(target))
+        return actions.interact(creep, target, () => creep.dismantle(target), 1)
     },
     
     attack: function(creep, target){
-        return actions.interact(creep, target, () => creep.attack(target))
+        return actions.interact(creep, target, () => creep.attack(target), 1)
     },
 
     enablePower: function(creep) {
         return actions.interact(creep, 
             creep.room.controller, 
-            () => creep.enableRoom(creep.room.controller))
+            () => creep.enableRoom(creep.room.controller), 1)
     },
 
     usePower: function(creep, target, power) {
-        return actions.interact(creep, target, () => creep.usePower(power, target))
+        return actions.interact(creep, target, () => creep.usePower(power, target), POWER_INFO[power].range)
     },
 
     renewPowerCreep: function(creep, target) {
-        return actions.interact(creep, target, () => creep.renew(target))
+        return actions.interact(creep, target, () => creep.renew(target), 1)
     },
-    
-    rangedAttack: function(creep, target){
-        var result = creep.rangedAttack(target)
-        switch(result){
-        case ERR_NOT_IN_RANGE:
-            if (creep.pos.roomName == target.pos.roomName){
-                creep.moveTo(target, {reusePath: 5})
-            }
-            break
-        case OK:
-            if(creep.memory.noFear){
-                creep.moveTo(target, {reusePath: 5})
-                break
-            }
-            creep.moveTo(Game.spawns[creep.memory.city], {reusePath: 5})
-            break
-        case ERR_NO_BODYPART:
-            creep.moveTo(Game.spawns[creep.memory.city], {reusePath: 5})
-        }
-        return
-    },
-    
+     
     withdraw: function(creep, location, mineral, amount) {
         if (mineral == undefined){
             if (!location || !location.store.getUsedCapacity(RESOURCE_ENERGY)) return ERR_NOT_ENOUGH_RESOURCES
-            return actions.interact(creep, location, () => creep.withdraw(location, RESOURCE_ENERGY))
+            return actions.interact(creep, location, () => creep.withdraw(location, RESOURCE_ENERGY), 1)
         } else if (amount == undefined){
-            return actions.interact(creep, location, () => creep.withdraw(location, mineral))
+            return actions.interact(creep, location, () => creep.withdraw(location, mineral), 1)
         } else {
-            return actions.interact(creep, location, () => creep.withdraw(location, mineral, amount))
+            return actions.interact(creep, location, () => creep.withdraw(location, mineral, amount), 1)
         }
     },
 
     harvest: function(creep, target) {
-        return actions.interact(creep, target, () => creep.harvest(target))
+        return actions.interact(creep, target, () => creep.harvest(target), 1)
     },
     
     pickup: function(creep) {
@@ -105,7 +81,7 @@ var actions = {
         if(creep.memory.targetId) {
             var target = Game.getObjectById(creep.memory.targetId)
             if(_.contains(goodLoads, target)) {
-                const result = actions.interact(creep, target, () => creep.pickup(target))
+                const result = actions.interact(creep, target, () => creep.pickup(target), 1)
                 switch (result) {
                 case OK:
                     break
@@ -131,16 +107,16 @@ var actions = {
 
     upgrade: function(creep) {
         location = creep.room.controller
-        return actions.interact(creep, location, () => creep.upgradeController(location))
+        return actions.interact(creep, location, () => creep.upgradeController(location), 3)
     },
     
     charge: function(creep, location) {
         const store = creep.store
         if (Object.keys(store).length > 1){
             const mineral = _.keys(store)[1]
-            return actions.interact(creep, location, () => creep.transfer(location, mineral))
+            return actions.interact(creep, location, () => creep.transfer(location, mineral), 1)
         } else if (Object.keys(store).length > 0) {
-            return actions.interact(creep, location, () => creep.transfer(location, Object.keys(store)[0]))
+            return actions.interact(creep, location, () => creep.transfer(location, Object.keys(store)[0]), 1)
         }
     },
 
@@ -173,7 +149,7 @@ var actions = {
             var targets = _.flatten(_.map(myRooms[city], room => room.find(FIND_MY_CONSTRUCTION_SITES)))
             //var targets = creep.room.find(FIND_CONSTRUCTION_SITES);
             if(targets.length) {
-                return actions.interact(creep, targets[0], () => creep.build(targets[0]))
+                return actions.interact(creep, targets[0], () => creep.build(targets[0]), 3)
             } else {
                 var damagedStructures = _.filter(buildings, structure => (structure.hits < (0.4*structure.hitsMax)) && (structure.structureType != STRUCTURE_WALL) && (structure.structureType != STRUCTURE_RAMPART))
                 if (damagedStructures.length) {
@@ -190,7 +166,7 @@ var actions = {
     },
 
     repair: function(creep, target){
-        return actions.interact(creep, target, () => creep.repair(target))
+        return actions.interact(creep, target, () => creep.repair(target), 3)
     },
     
     // Pick up stuff lying next to you as you pass by
@@ -230,7 +206,7 @@ var actions = {
                         const lab = Game.getObjectById(Game.spawns[creep.memory.city].memory.ferryInfo.boosterInfo[j][0])
                         //boost self
                         if (lab.boostCreep(creep) === ERR_NOT_IN_RANGE) {
-                            creep.moveTo(lab)
+                            motion.newMove(creep, lab.pos, 1)
                         }
                         return
                     }
@@ -266,7 +242,7 @@ var actions = {
         if (checkpoints) {
             const oldCheckpoint = checkpoints[0]
             const o = oldCheckpoint
-            return creep.moveTo(new RoomPosition(o.x, o.y, o.roomName), {reusePath: 0})
+            return motion.newMove(creep, new RoomPosition(o.x, o.y, o.roomName), 0)//creep.moveTo(new RoomPosition(o.x, o.y, o.roomName), {reusePath: 0})
         }
     }
 }
