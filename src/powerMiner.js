@@ -42,13 +42,25 @@ var rPM = {
                     creep.moveTo(target, {range: 1, reusePath: 50})
                     rBr.medicMove(creep, medic)
                 } else { //rally
-                    rBr.rally(creep, medic, flagName)
+                    if(creep.room.name != Memory.flags[flagName].roomName){
+                        rBr.rally(creep, medic, flagName)
+                    } else {
+                        //if there's a flag, but no bank under it, retreat
+                        rPM.retreat(creep, medic, flagName)
+                    }
                 }
             } else if (!medic.pos.isNearTo(creep)){
                 medic.moveTo(creep, {range: 1})
             }
         }
         rBr.heal(creep, medic)//breaker heal should work for now
+    },
+
+    retreat: function(creep, medic, flagName){
+        if(creep.inRangeTo(new RoomPosition(Memory.flags[flagName].x, Memory.flags[flagName].y, Memory.flags[flagName].roomName, 4))){
+            medic.moveTo(new RoomPosition(25, 25, medic.pos.roomName))
+            rBr.medicMove(medic, creep)
+        }
     },
 
     init: function(creep){
@@ -73,6 +85,7 @@ var rPM = {
                 creep.memory.target = bank[0].id
                 return bank[0]
             } else {
+                //if no bank, move away
                 const look = flagPos.look()
                 if(look.length < 2){//terrain always shows up, so if there is anything else there, leave the flag on
                     delete Memory.flags[flagName]
