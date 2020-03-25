@@ -10,10 +10,19 @@ var m = {
         }
         const routeVerified = m.checkRoute(creep, endPos)
         const pathVerified = m.checkPath(creep, endPos)
+        //if creep thinks it moved last tick, but pos is the same, it's stuck/needs recalc
+        const moveFailed = (Cache[creep.name].lastPos 
+            && Cache[creep.name].lastPos.isEqualTo(creep.pos) 
+            && Cache[creep.name].lastMove 
+            && Cache[creep.name].lastMove == Game.time - 1)
         //if everything is good to go, MBP
-        if(pathVerified && routeVerified){
+        if(pathVerified && routeVerified && !moveFailed){
             //this is where traffic management should happen wrt early recalc if stuck
             const result = creep.moveByPath(Cache[creep.name].path)
+            if(result == OK){
+                Cache[creep.name].lastMove = Game.time
+                Cache[creep.name].lastPos = creep.pos
+            }
             if([OK, ERR_TIRED, ERR_BUSY, ERR_NO_BODYPART].includes(result)){//MBP returns OK, OR a different error that we don't mind (like ERR_TIRED)
                 return
             }
@@ -22,7 +31,10 @@ var m = {
         const pathCalc = m.pathCalc(creep, endPos, avoidEnemies, range)
 
         if(pathCalc){//if pathing successful, MBP
-            creep.moveByPath(Cache[creep.name].path)
+            if(creep.moveByPath(Cache[creep.name].path) == OK){
+                Cache[creep.name].lastMove = Game.time
+                Cache[creep.name].lastPos = creep.pos
+            }
         } else {
             Log.info(`Pathing failure at ${creep.pos}`)
         }
@@ -112,7 +124,9 @@ var m = {
 
                 // Avoid creeps in the room
                 room.find(FIND_CREEPS).forEach(function(c) {
-                    costs.set(c.pos.x, c.pos.y, 0xff)
+                    if(!Cache[c.name] || !Cache[c.name].lastMove || Cache[c.name].lastMove < (Game.time - 1)){
+                        costs.set(c.pos.x, c.pos.y, 0xff)
+                    }
                 })
                 room.find(FIND_POWER_CREEPS).forEach(function(c) {
                     costs.set(c.pos.x, c.pos.y, 0xff)
