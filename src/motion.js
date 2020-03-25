@@ -5,15 +5,15 @@ var m = {
     //newMove will override all long and short distance motion
     newMove: function(creep, endPos,  range = 0, avoidEnemies = true){
         //check for cached path and cached route
-        if(!Cache[creep]){
-            Cache[creep] = {}
+        if(!Cache[creep.name]){
+            Cache[creep.name] = {}
         }
         const routeVerified = m.checkRoute(creep, endPos)
         const pathVerified = m.checkPath(creep, endPos)
         //if everything is good to go, MBP
         if(pathVerified && routeVerified){
             //this is where traffic management should happen wrt early recalc if stuck
-            const result = creep.moveByPath(Cache[creep].path)
+            const result = creep.moveByPath(Cache[creep.name].path)
             if([OK, ERR_TIRED, ERR_BUSY, ERR_NO_BODYPART].includes(result)){//MBP returns OK, OR a different error that we don't mind (like ERR_TIRED)
                 return
             }
@@ -22,7 +22,7 @@ var m = {
         const pathCalc = m.pathCalc(creep, endPos, avoidEnemies, range)
 
         if(pathCalc){//if pathing successful, MBP
-            creep.moveByPath(Cache[creep].path)
+            creep.moveByPath(Cache[creep.name].path)
         } else {
             Log.info(`Pathing failure at ${creep.pos}`)
         }
@@ -38,8 +38,8 @@ var m = {
             const goal = {pos: endPos, range: range}
             const result = m.getPath(creep, goal, avoidEnemies, maxRooms)//limit maxRooms to 1
             if(!result.incomplete){
-                Cache[creep].route = null //no route since creep is in required room already
-                Cache[creep].path = result.path
+                Cache[creep.name].route = null //no route since creep is in required room already
+                Cache[creep.name].path = result.path
                 return true
             } else {
                 return false
@@ -60,8 +60,8 @@ var m = {
             const maxRooms = 1//could be 2 (if we can path to the next room's exit rather than our room's exit)
             const result = m.getPath(creep, goals, avoidEnemies, maxRooms)
             if(!result.incomplete){
-                Cache[creep].route = route
-                Cache[creep].path = result.path
+                Cache[creep.name].route = route
+                Cache[creep.name].path = result.path
                 return true
             } else {
                 return false
@@ -126,7 +126,7 @@ var m = {
 
     checkRoute: function(creep, endPos){//verify that cached route is up to date
         //if creep is already in the same room aas destination, route does not need to be checked
-        if (Cache[creep].route && endPos.roomName == Cache[creep].route[Cache[creep].route.length - 1].room){
+        if (Cache[creep.name].route && endPos.roomName == Cache[creep.name].route[Cache[creep.name].route.length - 1].room){
             return true
         } else if(endPos.roomName == creep.pos.roomName){
             return true
@@ -137,7 +137,7 @@ var m = {
 
     checkPath: function(creep, endPos){//verify that cached path is up to date
         //if creep is at the end of the path, moveByPath should return an error code => recalc and try to move again
-        if(Cache[creep].path && endPos.isEqualTo == Cache[creep].path[Cache[creep].path.length - 1]){
+        if(Cache[creep.name].path && endPos.isEqualTo == Cache[creep.name].path[Cache[creep.name].path.length - 1]){
             return true
         } else {
             return false
