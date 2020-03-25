@@ -1,6 +1,6 @@
 var actions = require("./actions")
 var settings = require("./settings")
-var u = require("./utils")
+var motion = require("./motion")
 
 var rDM = {
     name: "depositMiner",
@@ -38,7 +38,7 @@ var rDM = {
                 return
             }
             if (flagPos.roomName !== creep.pos.roomName){//move to flag until it is visible
-                u.multiRoomMove(creep, flagPos, true)
+                motion.newMove(creep, flagPos, 1)
                 return
             }
             const deposit = Game.rooms[flagPos.roomName].lookForAt(LOOK_DEPOSITS, flagPos)//if flag is visible, check for deposit, if no deposit, remove flag
