@@ -938,7 +938,7 @@ function flagDeposits(structures, city, roomName) {
 function checkFlags(roomPos){
     const flags = Object.keys(Memory.flags)
     for(let i = 0; i < flags.length; i++){
-        const flagPos = new RoomPosition(flags[i].x, flags[i].y, flags[i].roomName)
+        const flagPos = new RoomPosition(Memory.flags[flags[i]].x, Memory.flags[flags[i]].y, Memory.flags[flags[i]].roomName)
         if(flagPos.isEqualTo(roomPos)){
             return flags[i]
         }
