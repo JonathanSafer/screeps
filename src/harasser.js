@@ -1,4 +1,6 @@
 const settings = require("./settings")
+const motion = require("./require")
+
 var rH = {
     name: "harasser",
     type: "harasser",
@@ -179,7 +181,7 @@ var rH = {
                     }
                 } else {
                     //move to flag
-                    creep.moveTo(new RoomPosition(dFlag.x, dFlag.y, dFlag.roomName), {reusePath: 50})
+                    motion.newMove(creep, new RoomPosition(dFlag.x, dFlag.y, dFlag.roomName))
                 }
             }
         }
