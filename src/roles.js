@@ -19,12 +19,13 @@ var rT = require("./transporter")
 var rM = require("./remoteMiner")
 var rD = require("./defender")
 var rPM = require("./powerMiner")
+var rQ = require("./quad")
 
 
 var rr = {
     // order roles for priority. TODO powercreep?
     getRoles: function() {
-        return [rF, rD, rT, rM, rR, rU, rB, rMM, rC, rUC,
+        return [rF, rD, rT, rM, rR, rU, rB, rQ, rMM, rC, rUC,
             rSB, rH, rBM, rD, rBB, rBT, rMe, rTr, rBr, rPM,
             rRo, rDM]
     },
