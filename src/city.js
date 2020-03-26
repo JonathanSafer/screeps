@@ -84,28 +84,30 @@ function runCity(city, creeps){
 
     // Get counts for roles by looking at all living and queued creeps
     var nameToRole = _.groupBy(allRoles, role => role.name) // map from names to roles
-    var counts = _.countBy(creeps, trueRole) // lookup table from role to count
+    var counts = _.countBy(creeps, creep => creep.memory.role) // lookup table from role to count
     const queuedCounts = sq.getCounts(spawn)
     _.forEach(roles, role => {
         const liveCount = counts[role.name] || 0
         const queueCount = queuedCounts[role.name] || 0
         counts[role.name] = liveCount + queueCount
     })
+    
+    
+    let usedQueue = true
+    const spawnQueueRoleName = sq.getNextRole(spawn)
+    let nextRole = spawnQueueRoleName ? nameToRole[spawnQueueRoleName][0] : undefined
 
-    //Log.info(JSON.stringify(roles));
-    let nextRole = _.find(roles, role => (typeof counts[role.name] == "undefined" && 
-        spawn.memory[role.name]) || (counts[role.name] < spawn.memory[role.name]))
-    // Log.info(Game.spawns[city].memory.rM);
-
-    // If quota is met, get a role from the spawn queue
     if (!nextRole) {
-        const spawnQueueRoleName = sq.getNextRole(spawn)
-        nextRole = spawnQueueRoleName ? nameToRole[spawnQueueRoleName][0] : undefined
+        nextRole = _.find(roles, role => (typeof counts[role.name] == "undefined" && 
+        spawn.memory[role.name]) || (counts[role.name] < spawn.memory[role.name]))
+        usedQueue = false
     }
-
+    
     if (nextRole) {
-        //Log.info(JSON.stringify(nextRole));
-        makeCreeps(nextRole.name, nextRole.type, nextRole.target(), city, unhealthyStore)
+        //Log.info(JSON.stringify(Object.entries(nextRole)))
+        if(makeCreeps(nextRole.name, nextRole.type, nextRole.target(), city, unhealthyStore) && usedQueue){
+            spawn.memory.sq.shift()
+        }
     }
 
     // Print out each role & number of workers doing it
@@ -116,7 +118,7 @@ function runCity(city, creeps){
     _.forEach(creeps, (creep) => {
         Cache[room.name] = Cache[room.name] || {} // initialize if needed
         Cache[room.name].enemy = u.enemyOwned(creep.room)
-        nameToRole[trueRole(creep)][0].run(creep)
+        nameToRole[creep.memory.role][0].run(creep)
     })
     
     link.run(room)

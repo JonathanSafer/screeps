@@ -6,7 +6,7 @@ var sq = {
 
     getNextRole: function(spawn) {
         sq.initialize(spawn)
-        return spawn.memory.sq.shift()
+        return spawn.memory.sq[0]
     },
 
     getCounts: function(spawn) {
