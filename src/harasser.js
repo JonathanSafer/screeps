@@ -1,5 +1,5 @@
 const settings = require("./settings")
-const motion = require("./require")
+const motion = require("./motion")
 
 var rH = {
     name: "harasser",
