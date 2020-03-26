@@ -70,7 +70,8 @@ var rQ = {
     
     checkBoost: function(creep){
         if(creep.room.controller.level == 8){
-            creep.memory.state = CS.BOOST
+            //creep.memory.state = CS.BOOST
+            creep.memory.state = CS.FORM
         } else {
             creep.memory.state = CS.FORM
         }
