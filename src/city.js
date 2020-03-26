@@ -59,6 +59,7 @@ function makeCreeps(role, type, target, city, unhealthyStore) {
     Game.creeps[name].memory.target = target
     Game.creeps[name].memory.city = city
     Game.creeps[name].memory.new = true
+    return true
 }
 
 //runCity function
