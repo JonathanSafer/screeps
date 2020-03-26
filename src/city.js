@@ -61,12 +61,6 @@ function makeCreeps(role, type, target, city, unhealthyStore) {
     Game.creeps[name].memory.new = true
 }
 
-/// Temp function. Delete in 1 day
-function trueRole(creep) {
-    return creep.memory.role === "Upgrader" ? "upgrader" : creep.memory.role
-}
-
-
 //runCity function
 function runCity(city, creeps){
     const spawn = Game.spawns[city]
