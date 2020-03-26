@@ -41,7 +41,7 @@ var rPM = {
                 if(target){//move to it
                     creep.moveTo(target, {range: 1, reusePath: 50})
                     rBr.medicMove(creep, medic)
-                } else { //rally
+                } else if(Memory.flags[flagName]){ //rally
                     if(creep.room.name != Memory.flags[flagName].roomName){
                         rBr.rally(creep, medic, flagName)
                     } else {
