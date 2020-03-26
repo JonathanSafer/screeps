@@ -281,6 +281,7 @@ var rQ = {
 
 
         /****************************TEMPORARY LOGIC*********************************/
+        //auto respawn
         if(creep.ticksToLive == creep.body.length * 12 + 200 && Game.flags[creep.memory.city + "quadRally"]){
             rQ.spawnQuad(creep.memory.city)
         } else if(creep.hits < 200 && Game.flags[creep.memory.city + "quadRally"]){
@@ -288,6 +289,8 @@ var rQ = {
             creep.suicide()
         }
         
+
+        //group quad and targets by room, then each creep shoots best target in room
         const creepsByRoom = _.groupBy(quad, c => c.pos.roomName)
         const everythingByRoom = {}
         const allHostiles = []
@@ -392,7 +395,7 @@ var rQ = {
         }
     },
 
-    shoot: function(quad){
+    shoot: function(quad){//not in use (yet). should be a variation of rH.shoot
         const groupedByRoom = _.groupBy(quad, c => c.pos.roomName)
         Object.keys(groupedByRoom).forEach(function (roomName) {
             const creeps = groupedByRoom[roomName]
@@ -445,9 +448,10 @@ var rQ = {
             for(let i = 0; i < quad.length; i++){
                 quad[i].move(direction)
             }
-        } else if(!status.roomEdge){
+        } else if(!status.roomEdge){//if not moving do an idle dance?
+            const nextLocation = Math.floor(Math.random() * 3) + 1//1, 2, or 3
             for(let i = 0; i < quad.length; i++){
-                let nextCreep = i + 1
+                let nextCreep = i + nextLocation
                 if(nextCreep >= quad.length){
                     nextCreep -= quad.length
                 }

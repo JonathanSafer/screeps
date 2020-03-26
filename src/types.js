@@ -5,6 +5,7 @@ function getRecipe(type, energyAvailable, room){
     const rcl = room.controller.level
 
     // used at all rcls
+    d.quad = quadBody(energyAvailable, rcl, room)
     d.runner = scalingBody([2, 1], [CARRY, MOVE], energyAvailable)
     d.miner = minerBody(energyAvailable, rcl)
     d.normal = upgraderBody(energyAvailable, rcl, room)
@@ -196,6 +197,44 @@ function builderBody(energyAvailable, rcl) {
     if (rcl >= 4 && energyAvailable > cost(body(ratio4, types))) ratio = ratio4
     if (rcl >= 7 && energyAvailable > cost(body(ratio7, types))) ratio = ratio7
     return body(ratio, types)
+}
+
+function quadBody(energyAvailable, rcl, room){
+    if(Memory[room.name] && Memory[room.name].boosts 
+        && _.intersection(Memory[room.name].boosts, Object.keys(BOOSTS[TOUGH])).length 
+        && _.intersection(Memory[room.name].boosts, Object.keys(BOOSTS[RANGED_ATTACK])).length
+        && _.intersection(Memory[room.name].boosts, Object.keys(BOOSTS[HEAL])).length
+        && _.intersection(Memory[room.name].boosts, Object.keys(BOOSTS[MOVE])).length){
+        //make boosted variant
+    } else {
+        //make unboosted variant
+        const types = [RANGED_ATTACK, MOVE, HEAL]
+        let ratio = [0, 1, 0]
+        switch(rcl){
+        case 2:
+            ratio = [1, 2, 1]
+            break
+        case 3:
+            ratio = [2, 3, 1]
+            break
+        case 4:
+            ratio = [5, 6, 1]
+            break
+        case 5:
+            ratio = [3, 4, 1]
+            break
+        case 6:
+            ratio = [7, 10, 3]
+            break
+        case 7:
+            ratio = [19, 25, 6]
+            break
+        case 8:
+            ratio = [15, 25, 10]
+            break
+        }
+        return scalingBody(ratio, types, energyAvailable)
+    }
 }
 
 function defenderBody(energyAvailable, rcl) {
