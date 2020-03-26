@@ -57,7 +57,7 @@ var rPM = {
     },
 
     retreat: function(creep, medic, flagName){
-        if(creep.inRangeTo(new RoomPosition(Memory.flags[flagName].x, Memory.flags[flagName].y, Memory.flags[flagName].roomName, 4))){
+        if(creep.pos.inRangeTo(new RoomPosition(Memory.flags[flagName].x, Memory.flags[flagName].y, Memory.flags[flagName].roomName, 4))){
             medic.moveTo(new RoomPosition(25, 25, medic.pos.roomName))
             rBr.medicMove(medic, creep)
         }

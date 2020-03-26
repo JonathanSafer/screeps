@@ -255,7 +255,6 @@ var rQ = {
         //if a member has died, go into YOLO mode
         //captain should preemptively send everybody in YOLO mode if it is at 1 ttl
 
-        //explore exits
         const quad = [creep, Game.getObjectById(creep.memory.privates[0]),
             Game.getObjectById(creep.memory.privates[1]),
             Game.getObjectById(creep.memory.privates[2])]
