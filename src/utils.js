@@ -1,3 +1,5 @@
+var settings = require("./settings")
+
 var u = {
     getWithdrawLocations: function(creep) {
         var city = creep.memory.city
@@ -217,6 +219,29 @@ var u = {
         return (x <= 0 ? "W" + String(-x) : "E" + String(x - 1)) +
             (y <= 0 ? "S" + String(-y) : "N" + String(y - 1))
     },
+
+    isFriendlyRoom: function(room){
+        if(room.controller 
+            && (room.controller.my
+                || (room.controller.owner 
+                    && settings.allies.includes(room.controller.owner.username))
+                || (room.controller.reservation
+                    && settings.allies.includes(room.controller.reservation.username)))){
+            return true
+        } else {
+            return false
+        }
+    },
+
+    findHostileCreeps: function(room){
+        return _.filter(room.find(FIND_HOSTILE_CREEPS), c => !settings.allies.includes(c.owner.username))
+    },
+
+    findHostileStructures: function(room){
+        if(!u.isFriendlyRoom(room)){
+            return room.find(FIND_STRUCTURES)
+        }
+    }
 }
 
 module.exports = u
