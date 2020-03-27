@@ -1,6 +1,7 @@
 var actions = require("./actions")
 var settings = require("./settings")
 var motion = require("./motion")
+var u = require("./utils")
 
 var rDM = {
     name: "depositMiner",
@@ -105,21 +106,13 @@ var rDM = {
                 }
             }
         }
-        if(creep.hits < creep.hitMax){
-            //check to see if in enemy room. If so, mark as enemy
-            if(creep.room.controller && creep.controller.owner && !creep.controller.my){
-                if(!Cache[creep.room.name]){
-                    Cache[creep.room.name] = {}
-                }
-                Cache[creep.room.name].enemy = true
-            }
-        }
     },
 
     checkRoom: function(creep){
-        if(creep.hits < creep.hitMax){
-            //check to see if in enemy room. If so, mark as enemy
-            if(creep.room.controller && creep.controller.owner && !creep.controller.my){
+        if(creep.hits < creep.hitsMax*0.8){
+            //search for hostile towers. if there are towers, room is enemy
+            const tower = _.find(u.findHostileStructures(creep.room), s => s.structureType == STRUCTURE_TOWER)
+            if(tower){
                 if(!Cache[creep.room.name]){
                     Cache[creep.room.name] = {}
                 }

@@ -1,4 +1,5 @@
 var rBr = require("./breaker")
+var rDM = require("./depositMiner")
 
 var rPM = {
     name: "powerMiner",
@@ -9,6 +10,7 @@ var rPM = {
     /** @param {Creep} creep **/
     run: function(creep) {
         rPM.init(creep)
+        rDM.checkRoom(creep)//check if in hostile room
         const medic = Game.getObjectById(creep.memory.medic)
         if(!medic){
             if(rBr.endLife(creep)){
