@@ -98,6 +98,8 @@ var m = {
 
     getPath: function(creep, goals, avoidEnemies, maxRooms){
         const moveSpeed = m.moveSpeed(creep)//moveSpeed is inverse of fatigue ratio
+        //if room is highway with novice walls, make an object with each of the neighboring rooms as keys
+        //values should be arrays of locations for walls in those rooms
         const result = PathFinder.search(creep.pos, goals, {
             plainCost: Math.ceil(moveSpeed),
             swampCost: Math.ceil(moveSpeed * 5),
@@ -108,6 +110,7 @@ var m = {
                 }
                 const room = Game.rooms[roomName]
                 if(!room){
+                    //if room is not visible AND is on the novice highway list, set wall spots accordingly
                     return
                 }
                 const costs = new PathFinder.CostMatrix
@@ -142,7 +145,7 @@ var m = {
     getRoute: function(start, finish, avoidEnemies){
         const route = Game.map.findRoute(start, finish, {
             routeCallback: function(roomName){
-                if(Cache[roomName] && Cache[roomName].enemy && avoidEnemies){
+                if(!!Cache[roomName] && Cache[roomName].enemy && avoidEnemies){
                     return Infinity
                 }
                 if(u.isHighway(roomName)){
