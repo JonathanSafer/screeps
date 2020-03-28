@@ -167,7 +167,7 @@ var m = {
                 for(let k = 0; k < walls.length; k++){
                     if(exitPositions[j].isEqualTo(walls[k].pos)){
                         //find necessary wallSpots
-                        noviceWallRooms[exitRoomName] = noviceWallRooms[exitRoomName].concat(m.findNoviceWallSpots(exitPositions[j], Object.keys(exits)[i]), exitRoomName)
+                        noviceWallRooms[exitRoomName] = (m.findNoviceWallSpots(exitPositions[j], Object.keys(exits)[i], exitRoomName))
                         found++
                         break
                     }
