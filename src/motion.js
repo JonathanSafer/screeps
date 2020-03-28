@@ -240,7 +240,7 @@ var m = {
     getRoute: function(start, finish, avoidEnemies){
         const route = Game.map.findRoute(start, finish, {
             routeCallback: function(roomName){
-                if(!!Cache[roomName] && Cache[roomName].enemy && avoidEnemies){
+                if(!!Cache[roomName] && !!Cache[roomName].enemy && avoidEnemies){
                     return 20
                 }
                 if(u.isHighway(roomName)){
