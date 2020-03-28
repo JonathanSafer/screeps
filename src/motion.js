@@ -96,8 +96,93 @@ var m = {
         return Math.max(fatigues, 0.001)/Math.max(moves, 0.001)
     },
 
+    findNoviceWallSpots: function(pos, direction, roomName){
+        const wallSpots = []
+        let loopStart = 0
+        let loopEnd = 25
+        let loopVar = "x"
+        let constVar = "y"
+        switch(direction){
+        case TOP:
+            loopStart = 25
+            loopEnd = 50
+            loopVar = "y"
+            constVar = "x"
+            break
+        case BOTTOM:
+            loopStart = 0
+            loopEnd = 25
+            loopVar = "y"
+            constVar = "x"
+            break
+        case RIGHT:
+            loopStart = 0
+            loopEnd = 25
+            loopVar = "x"
+            constVar = "y"
+            break
+        case LEFT:
+            loopStart = 25
+            loopEnd = 50
+            loopVar = "x"
+            constVar = "y"
+            break
+        }
+
+        for(let i = loopStart; i < loopEnd; i++){
+            const newPos = {}
+            newPos[loopVar] = i
+            newPos[constVar] = pos[constVar]
+            wallSpots.push(new RoomPosition(newPos.x, newPos.y, roomName))
+        }
+        return wallSpots
+        //find wall spots in room adjacent to this spot
+        // |---------------|    |---------------|
+        // | (current room)|    |(x=wallSpot)   |
+        // |               |    |               |
+        // |               x    xxxxxxxxx       |
+        // |               |    |               |
+        // |               |    |               |
+        // |_______________|    |_______________|
+    },
+
+    findNoviceWallRooms: function(room){
+        //return value will be an object, with lists as values for keys
+        //check if current room even has novice walls
+        const walls = _.filter(room.find(FIND_STRUCTURES), s => s.structureType == STRUCTURE_WALL && u.isOnEdge(s.pos))
+        if(!walls.length){
+            return {}
+        }
+        const noviceWallRooms = {}
+        const exits = Game.map.describeExits(room.name)
+        for(let i = 0; i < Object.keys(exits).length; i++){
+            const exitRoomName = exits[Object.keys(exits)[i]]
+            noviceWallRooms[exitRoomName] = []//establish keys as neighboring room names
+
+            //find exit points to each room, and scan for walls on the exit
+            const exitName = Game.map.findExit(room.name, exitRoomName)
+            const exitPositions = room.find(exitName)//list of roomPos on that exit
+            let found = 0
+            for(let j = 0; j < exitPositions.length; j++){
+                for(let k = 0; k < walls.length; k++){
+                    if(exitPositions[j].isEqualTo(walls[k].pos)){
+                        //find necessary wallSpots
+                        noviceWallRooms[exitRoomName] = noviceWallRooms[exitRoomName].concat(m.findNoviceWallSpots(exitPositions[j], Object.keys(exits)[i]), exitRoomName)
+                        found++
+                        break
+                    }
+                }
+                if(found > 1){
+                    break//no need to loop more than needed, a room won't have more than 2 wall lines
+                }
+            }
+        }
+        return noviceWallRooms
+    },
+
     getPath: function(creep, goals, avoidEnemies, maxRooms){
         const moveSpeed = m.moveSpeed(creep)//moveSpeed is inverse of fatigue ratio
+        const noviceWallRooms = m.findNoviceWallRooms(creep.room)
         //if room is highway with novice walls, make an object with each of the neighboring rooms as keys
         //values should be arrays of locations for walls in those rooms
         const result = PathFinder.search(creep.pos, goals, {
@@ -110,6 +195,13 @@ var m = {
                 }
                 const room = Game.rooms[roomName]
                 if(!room){
+                    if(noviceWallRooms[roomName] && noviceWallRooms[roomName].length){
+                        const costs = new PathFinder.CostMatrix
+                        for(let i = 0; i < noviceWallRooms[roomName].length; i++){
+                            costs.set(noviceWallRooms[roomName][i].x, noviceWallRooms[roomName][i].y, 0xff)
+                        }
+                        return costs
+                    }
                     //if room is not visible AND is on the novice highway list, set wall spots accordingly
                     return
                 }
@@ -161,7 +253,7 @@ var m = {
     },
 
     checkRoute: function(creep, endPos){//verify that cached route is up to date
-        //if creep is already in the same room aas destination, route does not need to be checked
+        //if creep is already in the same room as destination, route does not need to be checked
         if (Cache[creep.name].route && endPos.roomName == Cache[creep.name].route[Cache[creep.name].route.length - 1].room){
             return true
         } else if(endPos.roomName == creep.pos.roomName){
