@@ -193,6 +193,9 @@ var m = {
                 if(avoidEnemies && Cache[roomName] && Cache[roomName].enemy){
                     return false
                 }
+                if(Game.map.getRoomStatus(roomName).status != "normal"){
+                    return false
+                }
                 const room = Game.rooms[roomName]
                 if(!room){
                     if(noviceWallRooms[roomName] && noviceWallRooms[roomName].length){
