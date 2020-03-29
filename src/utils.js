@@ -241,6 +241,48 @@ var u = {
         if(!u.isFriendlyRoom(room)){
             return room.find(FIND_STRUCTURES)
         }
+    },
+
+    findExitPos: function(roomName, exit){
+        if(Game.rooms[roomName]){
+            return Game.rooms[roomName].find(exit)
+        }
+        const exits = []
+        let constSide = 0
+        let loopVar = "x"
+        let constVar = "y"
+        switch(exit){
+        case FIND_EXIT_TOP:
+            constSide = 0
+            loopVar = "x"
+            constVar = "y"
+            break
+        case FIND_EXIT_BOTTOM:
+            constSide = 49
+            loopVar = "x"
+            constVar = "y"
+            break
+        case FIND_EXIT_RIGHT:
+            constSide = 49
+            loopVar = "y"
+            constVar = "x"
+            break
+        case FIND_EXIT_LEFT:
+            constSide = 0
+            loopVar = "y"
+            constVar = "x"
+            break
+        }
+        const terrain = new Room.Terrain(roomName)
+        for(let i = 0; i < 49; i++){
+            const newPos = {}
+            newPos[loopVar] = i
+            newPos[constVar] = constSide
+            if(!terrain.get(newPos.x, newPos.y)){//terrain is plain
+                exits.push(new RoomPosition(newPos.x, newPos.y, roomName))
+            }
+        }
+        return exits
     }
 }
 
