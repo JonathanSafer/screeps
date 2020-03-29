@@ -4,6 +4,7 @@ var rU = require("./upgrader")
 var s = require("./settings")
 var u = require("./utils")
 var rBr = require("./breaker")
+var motion = require("./motion")
 
 var rSB = {
     name: "spawnBuilder",
@@ -34,7 +35,7 @@ var rSB = {
         }
 
         if (creep.hits < creep.hitsMax){
-            creep.moveTo(Game.spawns[city])
+            motion.newMove(creep, Game.spawns[city].pos, 10)
             return
         }
         if (Memory.flags.claimRally && !creep.memory.rally){

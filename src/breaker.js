@@ -2,6 +2,7 @@ var u = require("./utils")
 var settings = require("./settings")
 var rMe = require("./medic")
 var rBM = require("./bigMedic")
+var motion = require("./motion")
 
 var rBr = {
     name: "breaker",
@@ -164,7 +165,7 @@ var rBr = {
     rally: function(creep, medic, flagName){
         const flag = Memory.flags[flagName]
         if(flag && creep.room.name != flag.roomName){
-            u.multiRoomMove(creep, new RoomPosition(flag.x, flag.y, flag.roomName), true)
+            motion.newMove(creep, new RoomPosition(flag.x, flag.y, flag.roomName))
             rBr.medicMove(creep, medic)
         }
     },
