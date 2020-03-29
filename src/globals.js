@@ -21,7 +21,7 @@ global.spawnQuad = function function_name(city){
         sq.schedule(Game.spawns[city], "quad")
     }
 }
-global.Flag = function function_name(flagName, x, y, roomName){
+global.PlaceFlag = function function_name(flagName, x, y, roomName){
     Memory.flags[flagName] = new RoomPosition(x, y, roomName)
 }
 
