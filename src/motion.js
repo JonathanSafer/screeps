@@ -192,7 +192,7 @@ var m = {
             plainCost: Math.ceil(moveSpeed),
             swampCost: Math.ceil(moveSpeed * 5),
             maxRooms: maxRooms,
-            maxOps: 5000,
+            maxOps: 10000,
             roomCallback: function(roomName){
                 if(avoidEnemies && Cache[roomName] && Cache[roomName].enemy){
                     return false

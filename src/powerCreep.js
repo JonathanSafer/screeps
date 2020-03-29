@@ -23,6 +23,9 @@ var rPC = {
 
     /** @param {Creep} creep **/
     run: function(creep) {
+        if(creep.shard && creep.shard != Game.shard.name){
+            return
+        }
         if(creep.hits < creep.hitsMax && creep.memory.city){
             creep.moveTo(Game.rooms[creep.memory.city].storage)
             return
