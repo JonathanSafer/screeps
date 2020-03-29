@@ -132,7 +132,10 @@ var rBr = {
     },
 
     findTarget: function(creep, medic){
-        const flag = creep.memory.city + "break"
+        let flag = creep.memory.city + "break"
+        if(creep.memory.boosted){
+            flag = creep.memory.city + "bigBreak"
+        }
         const structures = creep.room.find(FIND_STRUCTURES, {
             filter: structure => [STRUCTURE_WALL, STRUCTURE_RAMPART].includes(structure.structureType)
         })
