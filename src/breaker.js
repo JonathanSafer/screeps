@@ -1,6 +1,7 @@
 var u = require("./utils")
 var settings = require("./settings")
 var rMe = require("./medic")
+var rBM = require("./bigMedic")
 
 var rBr = {
     name: "breaker",
@@ -53,7 +54,12 @@ var rBr = {
     medicSearch: function(creep){
         //find single medics in your neighborhood
         const creeps = creep.room.find(FIND_MY_CREEPS)
-        const medic = _.find(creeps, c => c.memory.role == rMe.name && !c.memory.partner)
+        let medic
+        if(creep.memory.boosted){
+            medic = _.find(creeps, c => c.memory.role == rBM.name && !c.memory.partner)
+        } else {
+            medic = _.find(creeps, c => c.memory.role == rMe.name && !c.memory.partner)
+        }
         if(medic){
             medic.memory.partner = creep.id
             creep.memory.medic = medic.id
