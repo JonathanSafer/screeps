@@ -42,8 +42,6 @@ var m = {
 
     pathCalc: function(creep, endPos, avoidEnemies, range){//bool, returns success of pathfinding ops
         //if creep is in same room as target, path to target. Otherwise, path to nearest exit in the right direction
-        //IMPORTANT: once we are in target room, we must restrict motion to that room to prevent edge bouncing
-        //might be necessary to do this for all pathfinding
         const sameRoom = creep.pos.roomName == endPos.roomName
         if(sameRoom){
             const maxRooms = 1
@@ -63,14 +61,19 @@ var m = {
                 Log.info(`No route from ${creep.pos} to ${endPos}`)
                 return false
             }
-            //we can assume that the route has length, 
+            //we can assume that the route has length 
             //since we already checked to make sure that we are not in the destination room
-            //we can also assume that we are moving to the first room in the route, since we just recalculated
-            const exit = route[0].exit
-            const goals = _.map(creep.room.find(exit), function(e) {
-                return { pos: e, range: 0 } 
-            })
-            const maxRooms = 1//could be 2 (if we can path to the next room's exit rather than our room's exit)
+            //we can also assume that we are outside the first room in the route, since we just recalculated
+            let goals
+            if(route.length < 3){
+                goals = {pos: endPos, range: range}
+            } else {
+                const exit = route[0].exit
+                goals = _.map(creep.room.find(exit), function(e) {
+                    return { pos: e, range: 0 } 
+                })
+            }
+            const maxRooms = 16
             const result = m.getPath(creep, goals, avoidEnemies, maxRooms)
             if(!result.incomplete){
                 Cache[creep.name].route = route
@@ -189,6 +192,7 @@ var m = {
             plainCost: Math.ceil(moveSpeed),
             swampCost: Math.ceil(moveSpeed * 5),
             maxRooms: maxRooms,
+            maxOps: 5000,
             roomCallback: function(roomName){
                 if(avoidEnemies && Cache[roomName] && Cache[roomName].enemy){
                     return false
@@ -240,14 +244,14 @@ var m = {
     getRoute: function(start, finish, avoidEnemies){
         const route = Game.map.findRoute(start, finish, {
             routeCallback: function(roomName){
-                if(!!Cache[roomName] && !!Cache[roomName].enemy && avoidEnemies){
-                    return 20
-                }
                 if(u.isHighway(roomName)){
                     return 1
                 }
                 if(Game.map.getRoomStatus(roomName).status != "normal") {
                     return Infinity
+                }
+                if(!!Cache[roomName] && !!Cache[roomName].enemy && avoidEnemies){
+                    return 20
                 }
                 return settings.motion.backRoadPenalty
             }
