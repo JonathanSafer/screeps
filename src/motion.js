@@ -68,8 +68,8 @@ var m = {
             if(route.length < 3){
                 goals = {pos: endPos, range: range}
             } else {
-                const exit = route[0].exit
-                goals = _.map(creep.room.find(exit), function(e) {
+                const exits = u.findExitPos(route[1].room, route[2].exit)
+                goals = _.map(exits, function(e) {
                     return { pos: e, range: 0 } 
                 })
             }
