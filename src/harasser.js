@@ -145,7 +145,7 @@ var rH = {
         if(creep.pos.roomName == Memory.flags[flagName].roomName){
             const flags = Object.keys(Memory.flags)
             for(var i = 0; i < flags.length; i++){
-                if(!flags[i].includes("harass") && flags[i].roomName == creep.pos.roomName){
+                if(!flags[i].includes("harass") && Memory.flags[flags[i]].roomName == creep.pos.roomName){
                     return
                 }
             }
