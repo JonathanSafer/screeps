@@ -124,6 +124,9 @@ var rT = {
     },
 
     needsEnergy: function(structure){
+        if(!structure){
+            return false
+        }
         const store = structure.store
         switch(structure.structureType){
         case STRUCTURE_EXTENSION:
