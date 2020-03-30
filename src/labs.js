@@ -51,9 +51,7 @@ var labs = {
         //if reactors are empty, choose next reaction, set all receivers to get emptied
         if(reactor0.store.getFreeCapacity() >= LAB_MINERAL_CAPACITY || reactor1.store.getFreeCapacity() >= LAB_MINERAL_CAPACITY){
             //if reactors are not requesting fill, update reaction
-            if(!spawn.memory.ferryInfo.labInfo.reactors[0].fill && !spawn.memory.ferryInfo.labInfo.reactors[1].fill){
-                labs._updateLabs(reactor0, reactor1, spawn)
-            }
+            labs._updateLabs(reactor0, reactor1, spawn)
             return
         }
 
@@ -67,7 +65,7 @@ var labs = {
     },
 
     _updateLabs: function(reactor0, reactor1, spawn){
-        if(spawn.memory.ferryInfo.labInfo.reactors[0].fill || spawn.memory.ferryInfo.labInfo.reactors[0].fill){
+        if(spawn.memory.ferryInfo.labInfo.reactors[0].fill || spawn.memory.ferryInfo.labInfo.reactors[1].fill){
             return//if either of the reactors is requesting a fill up, no need to choose a new mineral
         }
         //if that is not the case, all receivers must be emptied
