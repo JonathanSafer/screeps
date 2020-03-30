@@ -7,7 +7,7 @@ var labs = {
     //reactors are in a list in labInfo.reactors
     //receivers are in a list in labInfo.receivers
     //receivers have a mineral attribute. if null or undefined, operate as normal
-    //if receiver has a mineral assigned in it's mineral attribute, don't react into it, and use it for boosting (with assigned mineral)
+    //if receiver has a mineral assigned in its mineral attribute, don't react into it, and use it for boosting (with assigned mineral)
     //fill codes:
     //  0: do nothing
     //  [positive integer]: fill with integer * 1000 resource
@@ -38,10 +38,7 @@ var labs = {
 
     _runLabs: function(city){
         const spawn = Game.spawns[city]
-        if (!spawn.memory.ferryInfo){
-            return
-        }
-        if (!spawn.memory.ferryInfo.labInfo){
+        if (!spawn.memory.ferryInfo || !spawn.memory.ferryInfo.labInfo){
             return
         }
         //if a reactor is missing, return
@@ -52,8 +49,11 @@ var labs = {
         }
 
         //if reactors are empty, choose next reaction, set all receivers to get emptied
-        if(reactor0.store.getFreeCapacity() >= LAB_MINERAL_CAPACITY || reactor0.store.getFreeCapacity() >= LAB_MINERAL_CAPACITY){
-            labs._updateLabs(reactor0, reactor1, spawn)
+        if(reactor0.store.getFreeCapacity() >= LAB_MINERAL_CAPACITY || reactor1.store.getFreeCapacity() >= LAB_MINERAL_CAPACITY){
+            //if reactors are not requesting fill, update reaction
+            if(!spawn.memory.ferryInfo.labInfo.reactors[0].fill && !spawn.memory.ferryInfo.labInfo.reactors[1].fill){
+                labs._updateLabs(reactor0, reactor1, spawn)
+            }
             return
         }
 
@@ -131,7 +131,7 @@ var labs = {
 
 
 
-    
+
     runLabs: function(city) {
         const spawn = Game.spawns[city]
         if (!spawn.memory.ferryInfo){
