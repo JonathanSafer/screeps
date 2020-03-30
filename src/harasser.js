@@ -13,15 +13,15 @@ var rH = {
         if(Game.time % 51 == 0){
             //check to remove flag and respawn
             rH.removeFlag(creep)
-            if(Memory.flags[creep.memory.city + "harass"]){
+            if(Memory.flags[creep.memory.city + "harass"] && !creep.memory.respawnTime){
                 const route = motion.getRoute(Memory.flags[creep.memory.city + "harass"].roomName, Game.spawns[creep.memory.city].room.name, true)
                 if(route && route.length){
-                    const respawnTime = CREEP_LIFE_TIME - (route.length * 50) + (creep.body.length * CREEP_SPAWN_TIME)
-                    if(Math.abs(respawnTime - creep.ticksToLive) <= 25){
-                        sq.respawn(creep)
-                    }
+                    creep.memory.respawnTime = CREEP_LIFE_TIME - (route.length * 50) + (creep.body.length * CREEP_SPAWN_TIME)
                 }
             }
+        }
+        if(creep.memory.respawnTime && creep.ticksToLive == creep.memory.respawnTime && Memory.flags[creep.memory.city + "harass"]){
+            sq.respawn(creep)
         }
         if(rH.dormant(creep)){
             return
