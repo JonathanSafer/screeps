@@ -195,8 +195,8 @@ var labs = {
             if (!minerals){
                 return
             }
-            spawn.memory.ferryInfo.labInfo[0][1] = 1
-            spawn.memory.ferryInfo.labInfo[1][1] = 1
+            spawn.memory.ferryInfo.labInfo[0][1] = 3
+            spawn.memory.ferryInfo.labInfo[1][1] = 3
             spawn.memory.ferryInfo.labInfo[0][2] = minerals[0]
             spawn.memory.ferryInfo.labInfo[1][2] = minerals[1]
         }
