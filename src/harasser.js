@@ -14,7 +14,7 @@ var rH = {
             //check to remove flag and respawn
             rH.removeFlag(creep)
             if(Memory.flags[creep.memory.city + "harass"]){
-                const route = motion.getRoute(creep.room.name, Game.spawns[creep.memory.city].room.name, true)
+                const route = motion.getRoute(Memory.flags[creep.memory.city + "harass"].roomName, Game.spawns[creep.memory.city].room.name, true)
                 if(route && route.length){
                     const respawnTime = CREEP_LIFE_TIME - (route.length * 50) + (creep.body.length * CREEP_SPAWN_TIME)
                     if(Math.abs(respawnTime - creep.ticksToLive) <= 25){
