@@ -5,7 +5,7 @@ Log.info = function(text) { console.log(`[INFO] ${Game.time}: ${text}`) }
 Log.error = function(text) { console.log(`[ERROR] ${Game.time}: ${text}`) }
 
 // Function to buy sub token. Price in millions. BuyToken(3) will pay 3 million
-global.BuyToken = function function_name(price) {
+global.BuyToken = function(price) {
     Game.market.createOrder({ 
         type: ORDER_BUY, 
         resourceType: SUBSCRIPTION_TOKEN,
@@ -14,14 +14,14 @@ global.BuyToken = function function_name(price) {
         roomName: "E11S22" 
     })
 }
-global.spawnQuad = function function_name(city){
+global.spawnQuad = function(city){
     const sq = require("./spawnQueue")
     sq.initialize(Game.spawns[city])
     for(let i = 0; i < 4; i++){
         sq.schedule(Game.spawns[city], "quad")
     }
 }
-global.PlaceFlag = function function_name(flagName, x, y, roomName){
+global.PlaceFlag = function(flagName, x, y, roomName){
     Memory.flags[flagName] = new RoomPosition(x, y, roomName)
 }
 
