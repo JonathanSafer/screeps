@@ -1,5 +1,6 @@
 const settings = require("./settings")
 const motion = require("./motion")
+const sq = require("./spawnQueue")
 
 var rH = {
     name: "harasser",
@@ -9,9 +10,18 @@ var rH = {
 
     /** @param {Creep} creep **/
     run: function(creep) {
-        if(Game.time % 50 == 0){
-            //check to remove flag
+        if(Game.time % 51 == 0){
+            //check to remove flag and respawn
             rH.removeFlag(creep)
+            if(Memory.flags[creep.memory.city + "harass"]){
+                const route = motion.getRoute(creep.room.name, Game.spawns[creep.memory.city].room.name, true)
+                if(route && route.length){
+                    const respawnTime = CREEP_LIFE_TIME - (route.length * 50) + (creep.body.length * CREEP_SPAWN_TIME)
+                    if(Math.abs(respawnTime - creep.ticksToLive) <= 25){
+                        sq.respawn(creep)
+                    }
+                }
+            }
         }
         if(rH.dormant(creep)){
             return
@@ -135,8 +145,7 @@ var rH = {
         if(creep.pos.roomName == Memory.flags[flagName].roomName){
             const flags = Object.keys(Memory.flags)
             for(var i = 0; i < flags.length; i++){
-                if((flags[i].includes("deposit") || flags[i].includes("powerMine"))
-                    && flags[i].roomName == creep.pos.roomName){
+                if(!flags[i].includes("harass") && flags[i].roomName == creep.pos.roomName){
                     return
                 }
             }
