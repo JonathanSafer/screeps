@@ -3,6 +3,7 @@ var u = require("./utils")
 var rU = require("./upgrader")
 var template = require("./template")
 var rD = require("./defender")
+var motion = require("./motion")
 
 var rB = {
     name: "builder",
@@ -75,7 +76,7 @@ var rB = {
             if(site){//if there is a build site, build it, else set build to null
                 //build site
                 if(creep.build(site) === ERR_NOT_IN_RANGE){
-                    creep.moveTo(site, {reusePath: 15, range: 3, swampCost: 2, plainCost: 2})
+                    motion.newMove(creep, site.pos, 3)
                 }
                 return true
             } else {
