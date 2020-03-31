@@ -36,6 +36,7 @@ module.exports = {
         },
         "lab":{
             "pos":[
+            //first two labs must be reactors to be identified properly
                 {"x":22,"y":21},{"x":23,"y":20},{"x":22,"y":19},{"x":23,"y":19},{"x":21,"y":20},
                 {"x":24,"y":20},{"x":21,"y":21},{"x":24,"y":21},{"x":22,"y":22},{"x":23,"y":22}
             ]
