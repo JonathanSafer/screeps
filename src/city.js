@@ -821,7 +821,7 @@ function runNuker(city){
     if (flag){
         const nuker = _.find(Game.spawns[city].room.find(FIND_MY_STRUCTURES), structure => structure.structureType === STRUCTURE_NUKER)
         nuker.launchNuke(new RoomPosition(flag.x, flag.y, flag.roomName))
-        delete Memory.flags[flag]
+        delete Memory.flags[flagName]
     }
 }
 
