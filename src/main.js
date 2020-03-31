@@ -32,7 +32,9 @@ module.exports.loop = function () {
         RawMemory._parsed = MemoryCache
 
         er.reset()
-
+        if(Game.shard != 3){
+            return
+        }
         var localRooms = u.splitRoomsByCity() // only used for remote mining?
         var localCreeps = u.splitCreepsByCity()
         var myCities = u.getMyCities()
