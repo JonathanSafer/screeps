@@ -57,7 +57,7 @@ var rU = {
         if(creep.memory.state != CS.START){
             return
         }
-        if(Game.spawns[city].room.controller.level < 6 || !creep.room.terminal){
+        if(Game.spawns[city].room.controller.level < 9 || !creep.room.terminal){
             creep.memory.state = CS.UPGRADE
             return
         }
