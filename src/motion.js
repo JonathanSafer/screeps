@@ -225,7 +225,11 @@ var m = {
                         costs.set(struct.pos.x, struct.pos.y, 0xff)
                     }
                 })
-
+                room.find(FIND_MY_CONSTRUCTION_SITES).forEach(function(struct) {
+                    if(struct.structureType != STRUCTURE_ROAD && struct.structureType != STRUCTURE_RAMPART){
+                        costs.set(struct.pos.x, struct.pos.y, 0xff)
+                    }
+                })
                 // Avoid creeps in the room
                 room.find(FIND_CREEPS).forEach(function(c) {
                     if(!Cache[c.name] || !Cache[c.name].lastMove || Cache[c.name].lastMove < (Game.time - 1)){
