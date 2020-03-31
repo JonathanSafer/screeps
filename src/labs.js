@@ -38,7 +38,7 @@ var labs = {
 
     _runLabs: function(city){
         const spawn = Game.spawns[city]
-        if (!spawn.memory.ferryInfo || !spawn.memory.ferryInfo.labInfo){
+        if (!spawn.memory.ferryInfo || !spawn.memory.ferryInfo.labInfo || !spawn.memory.ferryInfo.labInfo.reactors){
             return
         }
         //if a reactor is missing, return
