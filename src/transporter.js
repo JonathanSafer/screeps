@@ -1,6 +1,7 @@
 var actions = require("./actions")
 var u = require("./utils")
 var sq = require("./spawnQueue")
+var motion = require("./motion")
 
 var rT = {
     name: "transporter",
@@ -33,7 +34,7 @@ var rT = {
                     return
                 }
                 if(!creep.pos.isNearTo(target.pos)){
-                    creep.moveTo(target, {reusePath: 15, range: 1})
+                    motion.newMove(creep, target.pos, 1)
                 }
             }
         } else {
@@ -55,7 +56,7 @@ var rT = {
                         return
                     }
                     if(!newTarget.pos.isNearTo(creep.pos)){
-                        creep.moveTo(newTarget, {reusePath: 15, range: 1})
+                        motion.newMove(creep, newTarget.pos, 1)
                     }
                 } else {
                     //start moving to storage already
