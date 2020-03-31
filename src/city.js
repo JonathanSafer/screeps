@@ -301,7 +301,7 @@ function updatePowerSpawn(city, memory) {
 function checkLabs(city){
     const spawn = Game.spawns[city]
     const labs = _.filter(spawn.room.find(FIND_MY_STRUCTURES), structure => structure.structureType === STRUCTURE_LAB)
-    if (labs.length < 10){
+    if (labs.length < 11){
         return
     }
     if(spawn.memory.ferryInfo.labInfo){
