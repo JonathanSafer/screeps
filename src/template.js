@@ -48,6 +48,6 @@ module.exports = {
         "nuker":{"pos":[{"x":15,"y":15}]},
         "link":{"pos":[{"x":19,"y":18}]},
         "observer":{"pos":[{"x":25,"y":22}]},
-        "factory":{"x":21,"y":15}
+        "factory":{"pos":[{"x":21,"y":15}]}
     }
 }
