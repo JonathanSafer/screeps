@@ -59,7 +59,7 @@ var rL = {
             }
         }
         //send from storage link to upgrade link
-        if(rL.readyForLinkTransfer(storageLink, upgradeLink)){
+        if(storageLink && rL.readyForLinkTransfer(storageLink, upgradeLink)){
             storageLink.transferEnergy(upgradeLink)
         }
     },
