@@ -187,6 +187,13 @@ var u = {
         return (x % 10 == 0) || (y % 10 == 0)
     },
 
+    isIntersection: function(roomName){
+        const coords = roomName.match(/[0-9]+/g)
+        const x = Number(coords[0])
+        const y = Number(coords[1])
+        return (x % 10 == 0) && (y % 10 == 0)
+    },
+
     getAllRoomsInRange: function(d, rooms) {
         const pos = _.map(rooms, u.roomNameToPos)
         const posXY = _.unzip(pos)

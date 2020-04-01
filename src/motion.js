@@ -16,15 +16,18 @@ var m = {
             && Cache[creep.name].lastMove 
             && Cache[creep.name].lastMove == Game.time - 1)
         //if everything is good to go, MBP
-        if(pathVerified && routeVerified && !moveFailed){
-            //this is where traffic management should happen wrt early recalc if stuck
-            const result = creep.moveByPath(Cache[creep.name].path)
-            if(result == OK){
-                Cache[creep.name].lastMove = Game.time
-                Cache[creep.name].lastPos = creep.pos
-            }
-            if([OK, ERR_TIRED, ERR_BUSY, ERR_NO_BODYPART].includes(result)){//MBP returns OK, OR a different error that we don't mind (like ERR_TIRED)
-                return
+        if(pathVerified && routeVerified && !moveFailed){ 
+            //check for portals
+            if(!Cache[creep.name].lastPos || Cache[creep.name].lastPos.roomName == creep.pos.roomName
+                || !u.isIntersection(creep.pos.roomName)){//if new room is an intersection, check for portals
+                const result = creep.moveByPath(Cache[creep.name].path)
+                if(result == OK){
+                    Cache[creep.name].lastMove = Game.time
+                    Cache[creep.name].lastPos = creep.pos
+                }
+                if([OK, ERR_TIRED, ERR_BUSY, ERR_NO_BODYPART].includes(result)){//MBP returns OK, OR a different error that we don't mind (like ERR_TIRED)
+                    return
+                }
             }
         }
         //recalc needed
@@ -46,7 +49,7 @@ var m = {
         if(sameRoom){
             const maxRooms = 1
             const goal = {pos: endPos, range: range}
-            const result = m.getPath(creep, goal, avoidEnemies, maxRooms)//limit maxRooms to 1
+            const result = m.getPath(creep, goal, avoidEnemies, maxRooms)
             if(!result.incomplete){
                 Cache[creep.name].route = null //no route since creep is in required room already
                 Cache[creep.name].path = result.path
