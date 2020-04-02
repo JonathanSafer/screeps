@@ -38,6 +38,7 @@ const spawns = {
 
 var used = 0
 global.Game = {
+    shard: { name: "shard3" },
     rooms: rooms,
     spawns: spawns,
     flags: {},
