@@ -191,7 +191,7 @@ var rH = {
                     }
                 } else {
                     //move to flag
-                    motion.newMove(creep, new RoomPosition(dFlag.x, dFlag.y, dFlag.roomName))
+                    motion.newMove(creep, new RoomPosition(dFlag.x, dFlag.y, dFlag.roomName), 5)
                 }
             }
         }
