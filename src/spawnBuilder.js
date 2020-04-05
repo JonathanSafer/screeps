@@ -52,7 +52,7 @@ var rSB = {
         if(creep.pos.roomName === Memory.flags.claim.roomName){
             if (!creep.room.controller || !creep.room.controller.my) {
                 rBr.breakStuff(creep, null)
-                creep.moveTo(creep.room.controller, { reusePath: 15, range: 3, ignoreDestructibleStructures: true })
+                motion.newMove(creep, creep.room.controller.pos, 3)
                 return
             }
 
@@ -73,7 +73,7 @@ var rSB = {
             }
         } else {
             const flag = Memory.flags.claim
-            u.multiRoomMove(creep, new RoomPosition(flag.x, flag.y, flag.roomName))
+            motion.newMove(creep, new RoomPosition(flag.x, flag.y, flag.roomName), 5)
         }
     },
 
