@@ -14,9 +14,9 @@ var settings = {
         repair: 2000, //repairing walls in a room
         processPower: 2200,
         colony: 4000, // building new rooms
-        upgrade: 5000,
+        upgrade: 8000,
         energyMining: 4000,
-        powerMining: 8500, // TODO split pc-powered & unpowered
+        powerMining: 6000,
         // other constants we use with these
         range: 1000,
         powerRange: 3000, //this keeps all power mining from shutting off at once. 
