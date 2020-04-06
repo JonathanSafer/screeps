@@ -71,11 +71,11 @@ var labs = {
         }
         //if that is not the case, all receivers must be emptied
         let oldMineral = null
-        for(let i = 0; i < spawn.memory.ferryInfo.labInfo.receivers.length; i++){
-            const receiver = Game.getObjectById(spawn.memory.ferryInfo.labInfo.receivers[i].id)
-            if(!spawn.memory.ferryInfo.labInfo.receivers[i].boost && receiver.store.getFreeCapacity() < LAB_MINERAL_CAPACITY){
+        for(let i = 0; i < Object.keys(spawn.memory.ferryInfo.labInfo.receivers).length; i++){
+            const receiver = Game.getObjectById(Object.keys(spawn.memory.ferryInfo.labInfo.receivers)[i])
+            if(!spawn.memory.ferryInfo.labInfo.receivers[receiver.id].boost && receiver.store.getFreeCapacity() < LAB_MINERAL_CAPACITY){
                 //empty receivers if they are not boosters and have minerals
-                spawn.memory.ferryInfo.labInfo.receivers[i].fill = -1
+                spawn.memory.ferryInfo.labInfo.receivers[receiver.id].fill = -1
                 //record mineral that was produced
                 if(receiver.mineralType){
                     oldMineral = receiver.mineralType
@@ -83,7 +83,7 @@ var labs = {
             }
         }
         if(oldMineral == spawn.memory.ferryInfo.labInfo.boost){
-            labs._chooseBoost(oldMineral, spawn)
+            labs.chooseBoost(oldMineral, spawn)
             if(spawn.memory.ferryInfo.labInfo.boost == "dormant"){
                 return
             }
@@ -95,10 +95,10 @@ var labs = {
         if (!minerals){
             return
         }
-        spawn.memory.ferryInfo.labInfo.reactors[0].mineral = minerals[0]
-        spawn.memory.ferryInfo.labInfo.reactors[1].mineral = minerals[1]
-        spawn.memory.ferryInfo.labInfo.reactors[0].fill = 3
-        spawn.memory.ferryInfo.labInfo.reactors[1].fill = 3
+        Object.values(spawn.memory.ferryInfo.labInfo.reactors)[0].mineral = minerals[0]
+        Object.values(spawn.memory.ferryInfo.labInfo.reactors)[1].mineral = minerals[1]
+        Object.values(spawn.memory.ferryInfo.labInfo.reactors)[0].fill = 3
+        Object.values(spawn.memory.ferryInfo.labInfo.reactors)[1].fill = 3
     },
 
     chooseBoost: function(currentBoost, spawn){
@@ -127,7 +127,7 @@ var labs = {
             if (Game.time % reactionTime === 4 && Game.cpu.bucket > 2000){
                 const receiverList = Object.keys(receivers)
                 for(let i = 0; i < receiverList.length; i++){
-                    const lab = Game.getObjectById(receivers[receiverList[i]])
+                    const lab = Game.getObjectById(receiverList[i])
                     if(lab){
                         lab.runReaction(reactor0, reactor1)
                     }
