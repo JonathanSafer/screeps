@@ -145,9 +145,9 @@ var rF = {
                 const result = actions.charge(creep, lab)
                 if(result == 1){
                     if(creep.memory.reactor){
-                        Game.spawns[creep.memory.city].memory.ferryInfo.reactors[creep.memory.lab].fill--
+                        Game.spawns[creep.memory.city].memory.ferryInfo.labInfo.reactors[creep.memory.lab].fill--
                     } else {
-                        Game.spawns[creep.memory.city].memory.ferryInfo.receivers[creep.memory.lab].fill--
+                        Game.spawns[creep.memory.city].memory.ferryInfo.labInfo.receivers[creep.memory.lab].fill--
                     }
                     creep.say("getJob")
                 }
@@ -170,12 +170,15 @@ var rF = {
                 break
             }
             const lab = Game.getObjectById(creep.memory.lab)
-            if(actions.withdraw(creep, lab, lab.mineralType) == 1 && lab.store[lab.mineralType] <= 1000){
+            if(!lab.mineralType || actions.withdraw(creep, lab, lab.mineralType) == 1 && lab.store[lab.mineralType] <= 1000){
                 if(creep.memory.reactor){
-                    Game.spawns[creep.memory.city].memory.ferryInfo.reactors[creep.memory.lab].fill = 0
+                    Game.spawns[creep.memory.city].memory.ferryInfo.labInfo.reactors[creep.memory.lab].fill = 0
                 } else {
-                    Game.spawns[creep.memory.city].memory.ferryInfo.receivers[creep.memory.lab].fill = 0
+                    Game.spawns[creep.memory.city].memory.ferryInfo.labInfo.receivers[creep.memory.lab].fill = 0
                 }
+            }
+            if(!lab.mineralType){
+                creep.say("getJob")
             }
             break
         }

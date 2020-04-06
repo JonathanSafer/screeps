@@ -49,9 +49,9 @@ var labs = {
         }
 
         //if reactors are empty, choose next reaction, set all receivers to get emptied
-        if(reactor0.store.getFreeCapacity() >= LAB_MINERAL_CAPACITY || reactor1.store.getFreeCapacity() >= LAB_MINERAL_CAPACITY){
+        if(!reactor0.mineralType || !reactor1.mineralType){
             //if reactors are not requesting fill, update reaction
-            labs._updateLabs(reactor0, reactor1, spawn)
+            labs.updateLabs(reactor0, reactor1, spawn)
             return
         }
 
@@ -66,14 +66,14 @@ var labs = {
     },
 
     updateLabs: function(reactor0, reactor1, spawn){
-        if(spawn.memory.ferryInfo.labInfo.reactors[0].fill || spawn.memory.ferryInfo.labInfo.reactors[1].fill){
+        if(spawn.memory.ferryInfo.labInfo.reactors[reactor0.id].fill || spawn.memory.ferryInfo.labInfo.reactors[reactor1.id].fill){
             return//if either of the reactors is requesting a fill up, no need to choose a new mineral
         }
         //if that is not the case, all receivers must be emptied
         let oldMineral = null
         for(let i = 0; i < Object.keys(spawn.memory.ferryInfo.labInfo.receivers).length; i++){
             const receiver = Game.getObjectById(Object.keys(spawn.memory.ferryInfo.labInfo.receivers)[i])
-            if(!spawn.memory.ferryInfo.labInfo.receivers[receiver.id].boost && receiver.store.getFreeCapacity() < LAB_MINERAL_CAPACITY){
+            if(!spawn.memory.ferryInfo.labInfo.receivers[receiver.id].boost && receiver.mineralType){
                 //empty receivers if they are not boosters and have minerals
                 spawn.memory.ferryInfo.labInfo.receivers[receiver.id].fill = -1
                 //record mineral that was produced
@@ -82,7 +82,7 @@ var labs = {
                 }
             }
         }
-        if(oldMineral == spawn.memory.ferryInfo.labInfo.boost){
+        if(oldMineral == spawn.memory.ferryInfo.labInfo.boost || !spawn.memory.ferryInfo.labInfo.boost){
             labs.chooseBoost(oldMineral, spawn)
             if(spawn.memory.ferryInfo.labInfo.boost == "dormant"){
                 return
