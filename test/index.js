@@ -48,6 +48,15 @@ global.Game = {
             used += 0.1
             return used
         }
+    },
+    creeps: {
+        7: {
+            memory: {
+                role: "remoteMiner"
+            },
+            city: city,
+            notifyWhenAttacked: () => 0
+        }
     }
 }
 global.Room = {}
