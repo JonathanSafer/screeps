@@ -42,8 +42,8 @@ var labs = {
             return
         }
         //if a reactor is missing, return
-        const reactor0 = Game.getObjectById(Object.keys(spawn.memory.ferryInfo.labInfo.reactors)[0].id)
-        const reactor1 = Game.getObjectById(Object.keys(spawn.memory.ferryInfo.labInfo.reactors)[1].id)
+        const reactor0 = Game.getObjectById(Object.keys(spawn.memory.ferryInfo.labInfo.reactors)[0])
+        const reactor1 = Game.getObjectById(Object.keys(spawn.memory.ferryInfo.labInfo.reactors)[1])
         if(!reactor0 || !reactor1){
             return
         }

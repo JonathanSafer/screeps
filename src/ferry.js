@@ -253,7 +253,9 @@ var rF = {
         if (Game.spawns[creep.memory.city].memory.ferryInfo.needPower === true && Game.spawns[creep.memory.city].room.terminal.store[RESOURCE_POWER] > 0){
             return 4
         }
-        if(Game.spawns[creep.memory.city].memory.ferryInfo.labInfo){
+        if(Game.spawns[creep.memory.city].memory.ferryInfo.labInfo 
+            && Game.spawns[creep.memory.city].memory.ferryInfo.labInfo.reactors 
+            && Game.spawns[creep.memory.city].memory.ferryInfo.labInfo.receivers){
             const reactors = Object.keys(Game.spawns[creep.memory.city].memory.ferryInfo.labInfo.reactors)
             const reactorInfo = Object.values(Game.spawns[creep.memory.city].memory.ferryInfo.labInfo.reactors)
             for(let i = 0; i < reactors.length; i++){
