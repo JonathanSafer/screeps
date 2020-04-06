@@ -271,7 +271,7 @@ var rF = {
                     creep.memory.reactor = true
                     return 10
                 }
-                if(reactorInfo.fill > 0){
+                if(reactorInfo[i].fill > 0 && creep.room.terminal.store[reactorInfo[i].mineral] >= 1000){
                     //fill reactor
                     creep.memory.lab = reactors[i]
                     creep.memory.reactor = true
@@ -291,7 +291,7 @@ var rF = {
                     creep.memory.reactor = false
                     return 10
                 }
-                if(receiverInfo.fill > 0){
+                if(receiverInfo[i].fill > 0 && creep.room.terminal.store[receiverInfo[i].mineral] >= 1000){
                     //fill receiver
                     creep.memory.lab = receivers[i]
                     creep.memory.reactor = false
