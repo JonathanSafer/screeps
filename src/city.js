@@ -305,7 +305,7 @@ function initLabInfo(memory){
     }
     if(!memory.ferryInfo.labInfo){
         memory.ferryInfo.labInfo = {}
-        memory.ferryInfo.labInfo.boosters = {}
+        memory.ferryInfo.labInfo.receivers = {}
         memory.ferryInfo.labInfo.reactors = {}
     }
 }
