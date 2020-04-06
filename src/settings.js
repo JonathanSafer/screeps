@@ -25,9 +25,9 @@ var settings = {
         growthLimit: 5, // average bucket growth limit over 100+ ticks
     },
     energy: {//energy thresholds
-        rcl8upgrade: 500000,
-        processPower: 600000,
-        powerMine: 650000
+        rcl8upgrade: 550000,
+        processPower: 500000,
+        powerMine: 550000
     },
     max: {
         upgraders: 3, // low rcl
