@@ -115,6 +115,9 @@ module.exports.loop = function () {
             cM.runManager(myCities)
         }
 
+        // disable emailing
+        u.silenceCreeps()
+
         // burn extra cpu if the bucket is filling too quickly
         b.manage()
         

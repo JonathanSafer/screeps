@@ -61,11 +61,6 @@ var rD = {
             return
         }
 
-
-        //rcl 7 and below dumb melee defender
-        if(creep.ticksToLive === 1490) {
-            creep.notifyWhenAttacked(false)
-        }
         const target = Game.getObjectById(creep.memory.target)
         if (target){
             a.attack(creep, target)

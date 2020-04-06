@@ -100,14 +100,20 @@ var u = {
         var drops = _.flatten(_.map(rooms, room => room.find(FIND_DROPPED_RESOURCES)))
         return _.sum(_.map(drops, drop => drop.amount))
     },
+
+    silenceCreeps: function() {
+        if (Game.time % 50 == 0) {
+            for (const creep of Game.creeps) {
+                creep.notifyWhenAttacked(false)
+            }
+        }
+    },
     
-    //splitCreepsByCity
     splitCreepsByCity: function(){
         var creeps = _.filter(Game.creeps, creep => creep.my)
         return _.groupBy(creeps, creep => creep.memory.city)
     },
     
-    //splitRoomsByCity
     splitRoomsByCity: function(){
         var rooms = _.filter(Game.rooms, room => u.iReservedOrOwn(room.name))
         //Log.info(JSON.stringify(rooms));

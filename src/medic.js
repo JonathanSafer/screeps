@@ -6,9 +6,6 @@ var rMe = {
 
     /** @param {Creep} creep **/
     run: function(creep) {
-        if(creep.tickToLive === 1490) {
-            creep.notifyWhenAttacked(false)
-        }
         rMe.init(creep)
         const partner = Game.getObjectById(creep.memory.partner)
         if(!partner){

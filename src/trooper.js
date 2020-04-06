@@ -9,11 +9,7 @@ var rTr = {
 
     /** @param {Creep} creep **/
     run: function(creep) {
-        if(creep.ticksToLive === 1490) {
-            creep.notifyWhenAttacked(false)
-        }
         u.updateCheckpoints(creep)
-        creep.notifyWhenAttacked(false)
         
         const hostiles = _.filter(creep.room.find(FIND_HOSTILE_CREEPS), c => c.owner.username != "Atanner")
         const buildings = _.reject(creep.room.find(FIND_HOSTILE_STRUCTURES), structure => structure.structureType == STRUCTURE_CONTROLLER)
