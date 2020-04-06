@@ -1,5 +1,6 @@
 var a = require("./actions")
 var u = require("./utils")
+var rU = require("./upgrader")
 
 var CreepState = {
     START: 1,
@@ -236,7 +237,11 @@ var rPC = {
     },
 
     canOperateController: function(creep) {
-        return rPC.canOperate(creep, creep.room.controller, PWR_OPERATE_CONTROLLER, true)
+        if(Game.spawns[creep.memory.city + "0"].memory[rU.name] > 0){
+            return rPC.canOperate(creep, creep.room.controller, PWR_OPERATE_CONTROLLER, true)
+        } else {
+            return false
+        }
     },
 
     canOperate: function(creep, target, power, extraRequirements) {
