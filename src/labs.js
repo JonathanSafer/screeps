@@ -36,14 +36,14 @@ var labs = {
             .
     */
 
-    _runLabs: function(city){
+    run: function(city){
         const spawn = Game.spawns[city]
         if (!spawn.memory.ferryInfo || !spawn.memory.ferryInfo.labInfo || !spawn.memory.ferryInfo.labInfo.reactors){
             return
         }
         //if a reactor is missing, return
-        const reactor0 = Game.getObjectById(spawn.memory.ferryInfo.labInfo.reactors[0].id)
-        const reactor1 = Game.getObjectById(spawn.memory.ferryInfo.labInfo.reactors[1].id)
+        const reactor0 = Game.getObjectById(Object.keys(spawn.memory.ferryInfo.labInfo.reactors)[0].id)
+        const reactor1 = Game.getObjectById(Object.keys(spawn.memory.ferryInfo.labInfo.reactors)[1].id)
         if(!reactor0 || !reactor1){
             return
         }
@@ -60,11 +60,12 @@ var labs = {
             const reactionTime = REACTION_TIME[spawn.memory.ferryInfo.labInfo.boost]
             if(Game.time % reactionTime == 4){
                 //loop thru receivers, react in each one that is not designated as a booster
+                labs.runReactions()
             }
         }
     },
 
-    _updateLabs: function(reactor0, reactor1, spawn){
+    updateLabs: function(reactor0, reactor1, spawn){
         if(spawn.memory.ferryInfo.labInfo.reactors[0].fill || spawn.memory.ferryInfo.labInfo.reactors[1].fill){
             return//if either of the reactors is requesting a fill up, no need to choose a new mineral
         }
@@ -100,7 +101,7 @@ var labs = {
         spawn.memory.ferryInfo.labInfo.reactors[1].fill = 3
     },
 
-    _chooseBoost: function(currentBoost, spawn){
+    chooseBoost: function(currentBoost, spawn){
         if(spawn.room.terminal.store[RESOURCE_GHODIUM] < settings.ghodiumAmount){
             spawn.memory.ferryInfo.labInfo.boost = RESOURCE_GHODIUM
             return
@@ -119,106 +120,22 @@ var labs = {
         spawn.memory.ferryInfo.labInfo.boost = "dormant"
     },
 
-
-
-
-
-
-
-
-
-
-
-
-    runLabs: function(city) {
-        const spawn = Game.spawns[city]
-        if (!spawn.memory.ferryInfo){
-            return
-        }
-        if (!spawn.memory.ferryInfo.labInfo){
-            return
-        }
-        const lab0 = Game.getObjectById(spawn.memory.ferryInfo.labInfo[0][0])
-        const lab1 = Game.getObjectById(spawn.memory.ferryInfo.labInfo[1][0])
-        const lab2 = Game.getObjectById(spawn.memory.ferryInfo.labInfo[2][0])
-        const lab3 = Game.getObjectById(spawn.memory.ferryInfo.labInfo[3][0])
-        const lab4 = Game.getObjectById(spawn.memory.ferryInfo.labInfo[4][0])
-        const lab5 = Game.getObjectById(spawn.memory.ferryInfo.labInfo[5][0])
-        if (!lab0 || !lab1 || !lab2 || !lab3 || !lab4 || !lab5){
-            return
-        }
-        const reaction = labs.runReaction(lab0, lab1, lab2, lab3, lab4, lab5, spawn)
-        // if no reaction, update labs
-        if (reaction){
-            labs.updateLabs(lab0, lab1, lab2, lab3, lab4, lab5, spawn)
-        }
-    },
-
-    runReaction: function(lab0, lab1, lab2, lab3, lab4, lab5, spawn) {
-        if (lab0.mineralAmount > 0 && lab1.mineralAmount > 0){
-            const produce = REACTIONS[spawn.memory.ferryInfo.labInfo[0][2]][spawn.memory.ferryInfo.labInfo[1][2]]
+    runReaction: function(receivers, reactor0, reactor1) {
+        if (!!reactor0.mineralType && !!reactor1.mineralType){
+            const produce = REACTIONS[reactor0.mineralType][reactor1.mineralType]
             const reactionTime = REACTION_TIME[produce]
             if (Game.time % reactionTime === 4 && Game.cpu.bucket > 2000){
-                lab2.runReaction(lab0, lab1)
-                lab3.runReaction(lab0, lab1)
-                lab4.runReaction(lab0, lab1)
-                lab5.runReaction(lab0, lab1)
+                const receiverList = Object.keys(receivers)
+                for(let i = 0; i < receiverList.length; i++){
+                    const lab = Game.getObjectById(receivers[receiverList[i]])
+                    if(lab){
+                        lab.runReaction(reactor0, reactor1)
+                    }
+                }
             }
             return 0
         }
-        return 1
-    },
-
-    updateLabs: function(lab0, lab1, lab2, lab3, lab4, lab5, spawn) {
-        if(spawn.memory.ferryInfo.labInfo[6] == "dormant" && Game.time % 500 != 0){
-            return
-        }
-        if(lab5.mineralType == spawn.memory.ferryInfo.labInfo[6] || spawn.memory.ferryInfo.labInfo[6] == "dormant"){
-            labs.chooseBoost(spawn.memory.ferryInfo.labInfo[6], spawn)
-            if(spawn.memory.ferryInfo.labInfo[6] == "dormant"){
-                return
-            }
-        }
-        const receivers = [lab2, lab3, lab4, lab5]
-        for (let i = 0; i < receivers.length; i++){
-            if (receivers[i].mineralAmount >= 750){
-                spawn.memory.ferryInfo.labInfo[i + 2][1] = 1
-                return
-            } else {
-                spawn.memory.ferryInfo.labInfo[i + 2][1] = 0
-            }
-        }
-        // if lab0 and lab1 are not requesting more resource, run new resource decider
-        if (spawn.memory.ferryInfo.labInfo[0][1] == 0 && spawn.memory.ferryInfo.labInfo[1][1] == 0){
-            const boost = spawn.memory.ferryInfo.labInfo[6]
-            const minerals = labs.chooseMineral(boost, spawn)
-            if (!minerals){
-                return
-            }
-            spawn.memory.ferryInfo.labInfo[0][1] = 3
-            spawn.memory.ferryInfo.labInfo[1][1] = 3
-            spawn.memory.ferryInfo.labInfo[0][2] = minerals[0]
-            spawn.memory.ferryInfo.labInfo[1][2] = minerals[1]
-        }
-    },
-
-    chooseBoost: function(currentBoost, spawn) {
-        if(spawn.room.terminal.store["G"] < settings.ghodiumAmount){
-            spawn.memory.ferryInfo.labInfo[6] = "G"
-            return
-        }
-        const boostsList = ["G", "XKHO2", "XLHO2", "XZHO2", "XGHO2", "XZH2O", "XGH2O", "XLH2O"]
-        if (boostsList.includes(currentBoost) && spawn.room.terminal.store[currentBoost] > settings.boostAmount - 3000){
-            boostsList.splice(boostsList.indexOf(currentBoost), 1)
-        }
-        for(let i = 0; i < boostsList.length; i++){
-            if(spawn.room.terminal.store[boostsList[i]] < settings.boostAmount){
-                spawn.memory.ferryInfo.labInfo[6] = boostsList[i]
-                return
-            }
-        }
-        //go dormant
-        spawn.memory.ferryInfo.labInfo[6] = "dormant"
+        return -1
     },
 
     chooseMineral: function(mineral, spawn) {

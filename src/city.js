@@ -28,6 +28,7 @@ var link = require("./link")
 var settings = require("./settings")
 var rr = require("./roles")
 var e = require("./error")
+var template = require("./template")
 
 
 function makeCreeps(role, type, target, city, unhealthyStore) {
@@ -120,7 +121,7 @@ function runCity(city, creeps){
 
     //run powerSpawn
     runPowerSpawn(city)
-    labsLib.runLabs(city)
+    labsLib.run(city)
     fact.runFactory(city)
     checkNukes(room)
 }
@@ -298,60 +299,57 @@ function updatePowerSpawn(city, memory) {
     }
 }
 
+function initLabInfo(memory){
+    if(!memory.ferryInfo){
+        memory.ferryInfo = {}
+    }
+    if(!memory.ferryInfo.labInfo){
+        memory.ferryInfo.labInfo = {}
+        memory.ferryInfo.labInfo.boosters = {}
+        memory.ferryInfo.labInfo.reactors = {}
+    }
+}
+
 function checkLabs(city){
     const spawn = Game.spawns[city]
     const labs = _.filter(spawn.room.find(FIND_MY_STRUCTURES), structure => structure.structureType === STRUCTURE_LAB)
-    if (labs.length < 11){
+    if (labs.length < 3){
         return
     }
-    if(spawn.memory.ferryInfo.labInfo){
-        const lab0 = Game.getObjectById(spawn.memory.ferryInfo.labInfo[0][0])
-        const lab1 = Game.getObjectById(spawn.memory.ferryInfo.labInfo[1][0])
-        const lab2 = Game.getObjectById(spawn.memory.ferryInfo.labInfo[2][0])
-        const lab3 = Game.getObjectById(spawn.memory.ferryInfo.labInfo[3][0])
-        const lab4 = Game.getObjectById(spawn.memory.ferryInfo.labInfo[4][0])
-        const lab5 = Game.getObjectById(spawn.memory.ferryInfo.labInfo[5][0])
-        if (lab0 && lab1 && lab2 && lab3 && lab4 && lab5){
-            return
+    initLabInfo(spawn.memory)
+    //check if we need to do a rescan
+    let rescan = false
+    const receivers = Object.keys(spawn.memory.ferryInfo.receivers)
+    const reactors = Object.keys(spawn.memory.ferryInfo.reactors)
+    for(let i = 0; i < receivers.length; i++){
+        if(!Game.getObjectById(receivers[i])){
+            rescan = true
         }
     }
-    const group1 = []
-    const group2 = []
-    spawn.memory.ferryInfo.labInfo = []
-    spawn.memory.ferryInfo.boosterInfo = []
-    group1.push(labs[0].id)
-    for(let i = 1; i < labs.length; i++){
-        if(labs[0].pos.inRangeTo(labs[i].pos, 2)){
-            group1.push(labs[i].id)
+    for(let i = 0; i < reactors.length; i++){
+        if(!Game.getObjectById(reactors[i])){
+            rescan = true
+        }
+    }
+    if(labs.length > receivers.length + reactors.length){
+        rescan = true
+    }
+    if(!rescan){
+        return
+    }
+
+    //now we need a rescan, but we must make sure not to overwrite any labInfo that already exists
+    const unassignedLabs = _.filter(labs, lab => !receivers.includes(lab.id) && !reactors.includes(lab.id))
+    const plan = spawn.room.memory.plan
+    for(let i = 0; i < unassignedLabs.length; i++){
+        const templatePos = {"x": unassignedLabs[i].pos.x + template.offset.x - plan.x, "y": unassignedLabs[i].pos.y + template.offset.y - plan.y}
+        if((templatePos.x == template.buildings.lab.pos[0].x && templatePos.y == template.buildings.lab.pos[0].y) 
+            ||(templatePos.x == template.buildings.lab.pos[1].x && templatePos.y == template.buildings.lab.pos[1].y)){
+            //lab is a reactor
+            spawn.memory.ferryInfo.labInfo.reactors[unassignedLabs[i].id] = {}
         } else {
-            group2.push(labs[i].id)
-        }
-    }
-    if (group1.length == 6){
-        for (let i = 0; i < 6; i++){
-            spawn.memory.ferryInfo.labInfo[i] = []
-            spawn.memory.ferryInfo.labInfo[i][0] = group1[i]
-            spawn.memory.ferryInfo.labInfo[i][1] = 0
-            spawn.memory.ferryInfo.labInfo[i][2] = null
-        }
-        for (let i = 0; i < 4; i++){
-            spawn.memory.ferryInfo.boosterInfo[i] = []
-            spawn.memory.ferryInfo.boosterInfo[i][0] = group2[i]
-            spawn.memory.ferryInfo.boosterInfo[i][1] = 0
-            spawn.memory.ferryInfo.boosterInfo[i][2] = null
-        }
-    } else {
-        for (let i = 0; i < 6; i++){
-            spawn.memory.ferryInfo.labInfo[i] = []
-            spawn.memory.ferryInfo.labInfo[i][0] = group2[i]
-            spawn.memory.ferryInfo.labInfo[i][1] = 0
-            spawn.memory.ferryInfo.labInfo[i][2] = null
-        }
-        for (let i = 0; i < 4; i++){
-            spawn.memory.ferryInfo.boosterInfo[i] = []
-            spawn.memory.ferryInfo.boosterInfo[i][0] = group1[i]
-            spawn.memory.ferryInfo.boosterInfo[i][1] = 0
-            spawn.memory.ferryInfo.boosterInfo[i][2] = null
+            //lab is a receiver
+            spawn.memory.ferryInfo.labInfo.receivers[unassignedLabs[i].id] = {}
         }
     }
 }
