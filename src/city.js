@@ -319,8 +319,8 @@ function checkLabs(city){
     initLabInfo(spawn.memory)
     //check if we need to do a rescan
     let rescan = false
-    const receivers = Object.keys(spawn.memory.ferryInfo.receivers)
-    const reactors = Object.keys(spawn.memory.ferryInfo.reactors)
+    const receivers = Object.keys(spawn.memory.ferryInfo.labInfo.receivers)
+    const reactors = Object.keys(spawn.memory.ferryInfo.labInfo.reactors)
     for(let i = 0; i < receivers.length; i++){
         if(!Game.getObjectById(receivers[i])){
             rescan = true
