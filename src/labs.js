@@ -60,7 +60,7 @@ var labs = {
             const reactionTime = REACTION_TIME[spawn.memory.ferryInfo.labInfo.boost]
             if(Game.time % reactionTime == 4){
                 //loop thru receivers, react in each one that is not designated as a booster
-                labs.runReactions(spawn.memory.ferryInfo.labInfo.receivers, reactor0, reactor1)
+                labs.runReaction(spawn.memory.ferryInfo.labInfo.receivers, reactor0, reactor1)
             }
         }
     },
