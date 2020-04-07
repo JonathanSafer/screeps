@@ -391,7 +391,7 @@ var rQ = {
         //if no viable target found, move to rally flag
         if(!target){
             const flagName = quad[0].memory.city + "quadRally"
-            if(Memory.flags[flagName] && Object.keys(everythingByRoom).contains(Memory.flags[flagName].roomName)){
+            if(Memory.flags[flagName] && Object.keys(everythingByRoom).includes(Memory.flags[flagName].roomName)){
                 //we are at destination
                 if(everythingByRoom[Memory.flags[flagName].roomName].structures.length){
                     target = everythingByRoom[Memory.flags[flagName].roomName].creeps[0].pos.findClosestByPath(everythingByRoom[Memory.flags[flagName].roomName].structures)
