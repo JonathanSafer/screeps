@@ -1,6 +1,13 @@
 var settings = require("./settings")
 
 var u = {
+    getsetd: function (object, prop, defaultValue) {
+        if (object[prop] === undefined) {
+            object[prop] = defaultValue
+        }
+        return object[prop]
+    },
+
     getWithdrawLocations: function(creep) {
         var city = creep.memory.city
         var spawn = Game.spawns[city]
