@@ -259,7 +259,7 @@ var u = {
 
     findHostileStructures: function(room){
         if(!u.isFriendlyRoom(room)){
-            return room.find(FIND_STRUCTURES)
+            return _.filter(room.find(FIND_STRUCTURES), s => s.hits)
         }
     },
 
