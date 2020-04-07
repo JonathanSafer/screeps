@@ -15,7 +15,7 @@ var statsLib = {
             const rcache = u.getsetd(Cache, creep.room, {})
             if (u.getsetd(ccache, "lastHits", creep.hits) > creep.hits) {
                 ccache.attacks = u.getsetd(ccache, "attacks", 0) + 1
-                rcache.attacks = u.getsetd(ccache, "attacks", 0) + 1
+                rcache.attacks = u.getsetd(rcache, "attacks", 0) + 1
             }
             ccache.lastHits = creep.hits
         }
