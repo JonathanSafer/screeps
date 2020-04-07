@@ -136,6 +136,12 @@ var statsLib = {
                 }
             }
 
+            // Enemies
+            for (const enemy in Cache.enemies) {
+                stats[`enemies.${enemy}`] = Cache.enemies[enemy]
+                Cache.enemies[enemy] = 0
+            }
+
             RawMemory.segments[0] = JSON.stringify(stats)
         }  
     }
