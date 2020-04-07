@@ -66,7 +66,7 @@ var statsLib = {
                     stats[`creeps.${role.name}.count`] = 0
                 }
 
-                const creeps = creepsByRole[role] || []
+                const creeps = creepsByRole[role.name] || []
                 const attackList = _.map(creeps, creep => Cache[creep].attacks)
                 stats[`creeps.${role.name}.attacks`] = _.sum(attackList)
                 for (const creep of creeps) 
