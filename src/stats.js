@@ -56,7 +56,7 @@ var statsLib = {
                     stats["cities." + city + ".cpu"] = statsLib.cityCpuMap[city]
                 }
 
-                stats[`rooms.${roomName}.attacks`] = Cache[roomName].attacks
+                stats[`rooms.${roomName}.attacks`] = u.getsetd(Cache, roomName, {}).attacks
                 Cache[roomName].attacks = 0
             })
             var counts = _.countBy(Game.creeps, creep => creep.memory.role)
