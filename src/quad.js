@@ -456,6 +456,7 @@ var rQ = {
                     }
                 }
             }
+            return
         }
         if(!target.structureType){
             //target is a creep
