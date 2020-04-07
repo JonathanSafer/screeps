@@ -11,13 +11,13 @@ var statsLib = {
 
     collectStats: function(myCities) {
         for (const creep of Object.values(Game.creeps)) {
-            const ccache = Cache.getsetd(creep, {})
-            const rcache = Cache.getsetd(creep.room, {})
-            if (ccache.getsetd("lastHits", creep.hits) > creep.hits) {
-                ccache.attacks = ccache.getsetd("attacks", 0) + 1
-                rcache.attacks = rcache.getsetd("attacks", 0) + 1
-            }
-            ccache.lastHits = creep.hits
+            Cache[creep] = Cache[creep] || {}
+            const cache = Cache[creep]
+            cache.lastHits = cache.lastHits || creep.hits
+            cache.attacks = cache.attacks || 0
+            if (cache.lastHits > creep.hits)
+                cache.attacks++
+            cache.lastHits = creep.hits
         }
 
         //stats
@@ -43,21 +43,18 @@ var statsLib = {
                 cities.push(city)
         
                 if(room.controller && room.controller.my){
-                    stats["cities." + city + ".rcl.level"] = room.controller.level
-                    stats["cities." + city + ".rcl.progress"] = room.controller.progress
-                    stats["cities." + city + ".rcl.progressTotal"] = room.controller.progressTotal
+                    stats["rooms." + city + ".rcl.level"] = room.controller.level
+                    stats["rooms." + city + ".rcl.progress"] = room.controller.progress
+                    stats["rooms." + city + ".rcl.progressTotal"] = room.controller.progressTotal
         
-                    stats["cities." + city + ".spawn.energy"] = room.energyAvailable
-                    stats["cities." + city + ".spawn.energyTotal"] = room.energyCapacityAvailable
+                    stats["rooms." + city + ".spawn.energy"] = room.energyAvailable
+                    stats["rooms." + city + ".spawn.energyTotal"] = room.energyCapacityAvailable
         
                     if(room.storage){
-                        stats["cities." + city + ".storage.energy"] = room.storage.store.energy
+                        stats["rooms." + city + ".storage.energy"] = room.storage.store.energy
                     }
-                    stats["cities." + city + ".cpu"] = statsLib.cityCpuMap[city]
+                    stats["rooms." + city + ".cpu"] = statsLib.cityCpuMap[city]
                 }
-
-                stats[`rooms.${roomName}.attacks`] = Cache[roomName].attacks
-                Cache[roomName].attacks = 0
             })
             var counts = _.countBy(Game.creeps, creep => creep.memory.role)
             var creepsByRole = _.groupBy(Game.creeps, creep => creep.memory.role)
