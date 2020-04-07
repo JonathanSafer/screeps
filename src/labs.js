@@ -41,6 +41,9 @@ var labs = {
         if (!spawn.memory.ferryInfo || !spawn.memory.ferryInfo.labInfo || !spawn.memory.ferryInfo.labInfo.reactors){
             return
         }
+        if(spawn.memory.ferryInfo.labInfo.boost == "dormant" && Game.time % 1000 != 0){
+            return
+        }
         //if a reactor is missing, return
         const reactor0 = Game.getObjectById(Object.keys(spawn.memory.ferryInfo.labInfo.reactors)[0])
         const reactor1 = Game.getObjectById(Object.keys(spawn.memory.ferryInfo.labInfo.reactors)[1])
