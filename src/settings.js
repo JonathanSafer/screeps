@@ -2,6 +2,7 @@
 
 var settings = {
     allies: ["Atanner"],
+    boosts: [RESOURCE_CATALYZED_LEMERGIUM_ACID],
     roomplanTime: 500,
     roomplanOffset: 155,
     creditMin: 1000000, //min credits needed to start buying energy
@@ -44,7 +45,7 @@ var settings = {
     observerFrequency: 20, // how often each city scans a room
 
     // Profiling
-    profileFrequency: 15, // profiler runs every 123 ticks
+    profileFrequency: 19, // profiler runs every 123 ticks
     profileLength: 1, // profiler is run for 7 ticks
     profileResultsLength: 50, // top 50 results are recorded
 

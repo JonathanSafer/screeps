@@ -10,6 +10,15 @@ var statsLib = {
     cityCpuMap: {},
 
     collectStats: function(myCities) {
+        for (const creep of Object.values(Game.creeps)) {
+            Cache[creep] |= {}
+            Cache[creep].lastHits |= creep.hits
+            Cache[creep].attacks |= 0
+            if (Cache[creep].lastHits < creep.hits)
+                Cache.creep.attacks++
+            Cache[creep].lastHits = creep.hits
+        }
+
         //stats
         if(Game.time % settings.statTime == 0){
             //activate segment
@@ -47,13 +56,20 @@ var statsLib = {
                 }
             })
             var counts = _.countBy(Game.creeps, creep => creep.memory.role)
+            var creepsByRole = _.groupBy(Game.creeps, creep => creep.memory.role)
             var roles = rr.getRoles()
             _.forEach(roles, function(role){
                 if (counts[role.name]){
-                    stats["creeps." + role.name + ".count"] = counts[role.name]
+                    stats[`creeps.${role.name}.count`] = counts[role.name]
                 } else {
-                    stats["creeps." + role.name + ".count"] = 0
+                    stats[`creeps.${role.name}.count`] = 0
                 }
+
+                const creeps = creepsByRole[role] || []
+                const attackList = _.map(creeps, creep => Cache[creep].attacks)
+                stats[`creeps.${role.name}.attacks`] = _.sum(attackList)
+                for (const creep of creeps) 
+                    Cache[creep].attacks = 0
             })
 
             // City level stats
