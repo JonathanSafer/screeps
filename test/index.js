@@ -55,6 +55,7 @@ global.Game = {
                 role: "remoteMiner"
             },
             city: city,
+            room: room,
             notifyWhenAttacked: () => 0
         }
     }
