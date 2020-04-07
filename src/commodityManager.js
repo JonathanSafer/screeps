@@ -113,11 +113,11 @@ var cM = {
 
     empireStore: function(cities){//combine store of all cities given
         const empireStore = {}
-        for(var i = 0; i < RESOURCES_ALL.length; i++){
+        for (const resource of RESOURCES_ALL){
             if(!cities.length){
-                empireStore[RESOURCES_ALL[i]] = 0
+                empireStore[resource] = 0
             } else {
-                empireStore[RESOURCES_ALL[i]] = _.sum(cities, city => city.terminal.store[RESOURCES_ALL[i]])
+                empireStore[resource] = _.sum(cities, city => city.terminal.store[resource])
             }
         }
         return empireStore

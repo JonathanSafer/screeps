@@ -2,13 +2,14 @@ const rDM = require("./depositMiner")
 const rMM = require("./mineralMiner")
 const u = require("./utils")
 const rr = require("./roles")
+const cM = require("./commodityManager")
 const settings = require("./settings")
 const profiler = require("./screeps-profiler")
 
 var statsLib = {
     cityCpuMap: {},
 
-    collectStats: function() {
+    collectStats: function(myCities) {
         //stats
         if(Game.time % 19 == 0){
             //activate segment
@@ -108,6 +109,15 @@ var statsLib = {
                 stats["cpu.bucketfillRateMax"] = Cache.bucket.fillRateMax
                 stats["cpu.waste"] = Cache.bucket.waste
                 Cache.bucket.waste = 0
+            }
+
+            // Resources
+            if (Game.time % settings.resourceStatTime == 0) {
+                const citiesWithTerminals = _.filter(myCities, c => c.terminal)
+                const empireStore = cM.empireStore(citiesWithTerminals)
+                for (const resource of RESOURCES_ALL) {
+                    stats[`resource.${resource}`] = empireStore[resource]
+                }
             }
 
             RawMemory.segments[0] = JSON.stringify(stats)

@@ -110,7 +110,7 @@ module.exports.loop = function () {
         if (Game.time % settings.roomplanTime == settings.roomplanOffset){
             rp.buildConstructionSites() 
         }// TODO: this could go in run city?
-        s.collectStats()
+        s.collectStats(myCities)
         if(Game.time % 400 == 39){//run commodity manager every 400 (lower than lowest batched reaction time, on the 39 so it'll be before dormant period ends)
             cM.runManager(myCities)
         }

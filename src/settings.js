@@ -46,7 +46,10 @@ var settings = {
     // Profiling
     profileFrequency: 15, // profiler runs every 123 ticks
     profileLength: 1, // profiler is run for 7 ticks
-    profileResultsLength: 50 // top 50 results are recorded
+    profileResultsLength: 50, // top 50 results are recorded
+
+    // Stats
+    resourceStatTime: 5,
 }
 
 module.exports = settings
