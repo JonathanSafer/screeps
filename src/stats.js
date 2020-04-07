@@ -97,9 +97,9 @@ var statsLib = {
 
                     // Record construction progress in the city
                     const sites = spawn.room.find(FIND_CONSTRUCTION_SITES)
-                    stats[`cities.${city}.hits`] = 
+                    stats[`cities.${city}.sites.progress`] = 
                         _.reduce(sites, (sum, site) => sum + site.progress, 0)
-                    stats[`cities.${city}.hitsMax`] = 
+                    stats[`cities.${city}.sites.progressTotal`] = 
                         _.reduce(sites, (sum, site) => sum + site.progressTotal, 0)
                 }
             })
