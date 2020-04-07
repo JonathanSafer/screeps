@@ -10,8 +10,8 @@ const b = {
     },
 
     growingTooQuickly: function() {
-        if (!Cache.bucket) Cache.bucket = {}
-        Cache.bucket.waste |= 0
+        Cache.bucket = Cache.bucket || {}
+        Cache.bucket.waste = Cache.bucket.waste || 0
         const oldBucket = Cache.bucket.amount
         const newBucket = Game.cpu.bucket
         Cache.bucket.amount = newBucket

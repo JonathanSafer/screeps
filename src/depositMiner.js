@@ -125,8 +125,8 @@ var rDM = {
         const owners = _.map(hostiles, hostile => hostile.owner.username)
         const ally = _.find(owners, owner => {
             Log.info(`Is Ally ${owner}: ${settings.allies.includes(owner)}`)
-            Cache.enemies |= {}
-            Cache.enemies[owner] |= 0
+            Cache.enemies = Cache.enemies || {}
+            Cache.enemies[owner] = Cache.enemies[owner] || 0
             Cache.enemies[owner]++
             return settings.allies.includes(owner)
         })

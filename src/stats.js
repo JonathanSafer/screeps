@@ -11,12 +11,13 @@ var statsLib = {
 
     collectStats: function(myCities) {
         for (const creep of Object.values(Game.creeps)) {
-            Cache[creep] |= {}
-            Cache[creep].lastHits |= creep.hits
-            Cache[creep].attacks |= 0
-            if (Cache[creep].lastHits < creep.hits)
-                Cache.creep.attacks++
-            Cache[creep].lastHits = creep.hits
+            Cache[creep] = Cache[creep] || {}
+            const cache = Cache[creep]
+            cache.lastHits = cache.lastHits || creep.hits
+            cache.attacks = cache.attacks || 0
+            if (cache.lastHits < creep.hits)
+                cache.attacks++
+            cache.lastHits = creep.hits
         }
 
         //stats
