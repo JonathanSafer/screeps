@@ -117,13 +117,13 @@ module.exports.loop = function () {
 
         // disable emailing
         u.silenceCreeps()
-
-        // burn extra cpu if the bucket is filling too quickly
-        b.manage()
         
         if (Game.time % settings.profileFrequency == 0) {
             Game.profiler.profile(settings.profileLength)
         }
+
+        // burn extra cpu if the bucket is filling too quickly
+        b.manage()
 
         // This will always be last. Throw an exception if any city failed.
         er.finishTick()

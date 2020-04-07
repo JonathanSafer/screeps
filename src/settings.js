@@ -51,7 +51,7 @@ var settings = {
 
     // Stats
     statTime: 19,
-    resourceStatTime: 19 * 5,
+    resourceStatTime: 19 * 50,
 }
 
 module.exports = settings
