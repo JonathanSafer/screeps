@@ -12,7 +12,7 @@ var statsLib = {
     collectStats: function(myCities) {
         for (const creep of Object.values(Game.creeps)) {
             const ccache = u.getsetd(Cache, creep, {})
-            const rcache = u.getsetd(Cache, creep.room, {})
+            const rcache = u.getsetd(Cache, creep.room.name, {})
             if (u.getsetd(ccache, "lastHits", creep.hits) > creep.hits) {
                 ccache.attacks = u.getsetd(ccache, "attacks", 0) + 1
                 rcache.attacks = u.getsetd(rcache, "attacks", 0) + 1
