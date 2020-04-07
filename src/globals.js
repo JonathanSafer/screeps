@@ -25,4 +25,11 @@ global.PlaceFlag = function(flagName, x, y, roomName){
     Memory.flags[flagName] = new RoomPosition(x, y, roomName)
 }
 
+Object.prototype.getsetd = function (prop, defaultValue) {
+    if (this[prop] === undefined) {
+        this[prop] = defaultValue
+    }
+    return this[prop]
+}
+
 global.MemoryCache = Memory
