@@ -86,15 +86,24 @@ var statsLib = {
                 stats["cities." + city + ".deposits"] = 0
                 stats["cities." + city + ".minerals"] = 0
                 
-                // Record the weakest wall in each city
+                
                 const spawn = Game.spawns[city]
                 if(spawn){
+                    // Record the weakest wall in each city
                     const buildings = spawn.room.find(FIND_STRUCTURES)
                     const walls = _.filter(buildings, building => building.structureType == STRUCTURE_WALL)
                     const minWall = _.min(_.toArray(_.map(walls, wall => wall.hits)))
                     stats["cities." + city + ".wall"] = walls.length  > 0 ? minWall : 0
+
+                    // Record construction progress in the city
+                    const sites = spawn.room.find(FIND_CONSTRUCTION_SITES)
+                    stats[`cities.${city}.hits`] = 
+                        _.reduce(sites, (sum, site) => sum + site.progress, 0)
+                    stats[`cities.${city}.hitsMax`] = 
+                        _.reduce(sites, (sum, site) => sum + site.progressTotal, 0)
                 }
             })
+
             // Mining stats
             _.forEach(Game.creeps, creep => {
                 const city = creep.memory.city
