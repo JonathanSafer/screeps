@@ -2,7 +2,7 @@
 
 var settings = {
     allies: ["Atanner"],
-    boosts: [RESOURCE_CATALYZED_LEMERGIUM_ACID],
+    boosts: ["XKHO2", "XGHO2", "XZHO2", "XLHO2", "XZH2O", "XLH2O", "XGH2O"],
     roomplanTime: 500,
     roomplanOffset: 155,
     creditMin: 1000000, //min credits needed to start buying energy
