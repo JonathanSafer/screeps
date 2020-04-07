@@ -11,11 +11,11 @@ var statsLib = {
 
     collectStats: function(myCities) {
         //stats
-        if(Game.time % 19 == 0){
+        if(Game.time % settings.statTime == 0){
             //activate segment
             RawMemory.setActiveSegments([0])
         }
-        if (Game.time % 19 == 1){
+        if (Game.time % settings.statTime == 1){
             RawMemory.setActiveSegments([])
             const stats = {}
             stats["cpu.bucket"] = Game.cpu.bucket
@@ -112,7 +112,7 @@ var statsLib = {
             }
 
             // Resources
-            if (Game.time % settings.resourceStatTime == 0) {
+            if (Game.time % settings.resourceStatTime == 1) {
                 const citiesWithTerminals = _.filter(myCities, c => c.terminal)
                 const empireStore = cM.empireStore(citiesWithTerminals)
                 for (const resource of RESOURCES_ALL) {

@@ -49,7 +49,8 @@ var settings = {
     profileResultsLength: 50, // top 50 results are recorded
 
     // Stats
-    resourceStatTime: 5,
+    statTime: 19,
+    resourceStatTime: 19 * 5,
 }
 
 module.exports = settings
