@@ -15,7 +15,7 @@ var statsLib = {
             const cache = Cache[creep]
             cache.lastHits = cache.lastHits || creep.hits
             cache.attacks = cache.attacks || 0
-            if (cache.lastHits < creep.hits)
+            if (cache.lastHits > creep.hits)
                 cache.attacks++
             cache.lastHits = creep.hits
         }
