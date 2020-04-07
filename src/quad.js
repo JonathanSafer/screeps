@@ -370,7 +370,17 @@ var rQ = {
 
     checkMelee: function(quad, everythingByRoom){//bool
         //return true if there is a melee creep adjacent to any of the quad members
-        return quad, everythingByRoom
+        for(let i = 0; i < Object.keys(everythingByRoom).length; i++){
+            const melee = _.filter(Object.values(everythingByRoom)[i].hostiles, c => c.getActiveBodyparts(ATTACK))
+            for(let j = 0; j < Object.values(everythingByRoom)[i].creeps.length; j++){
+                for(let k = 0; k < melee.length; k++){
+                    if(Object.values(everythingByRoom)[i].creeps[j].pos.isNearTo(melee[k].pos)){
+                        return true
+                    }
+                }
+            }
+        }
+        return false
     },
 
     advance: function(quad, everythingByRoom, target, status){
@@ -385,17 +395,21 @@ var rQ = {
     attemptRetreat: function(quad, everythingByRoom){//bool
         //retreat may fail if there is nothing to retreat from
         //although it might be smart to move to a checkpoint if there is nothing to retreat from
-        // const dangerous = _.filter(allHostiles, c => c.getActiveBodyparts(ATTACK) || c.getActiveBodyparts(RANGED_ATTACK))
-        // const goals = _.map(dangerous, function(c) {
-        //     return { pos: c.pos, range: 5 }
-        // })
-
-        // const towers = _.filter(creep.room.find(FIND_HOSTILE_STRUCTURES), s => s.structureType == STRUCTURE_TOWER)
-        // if(towers.length){
-        //     goals.concat(_.map(towers, function(t) { return { pos: t.pos, range: 20 } }))
-        // }
-        // rQ.move(quad, goals, status, 0, true)
-        return quad, everythingByRoom
+        let allHostiles = []
+        for(let i = 0; i < Object.keys(everythingByRoom).length; i++){
+            allHostiles = allHostiles.concat(Object.values(everythingByRoom)[i].hostiles)
+        }
+        const dangerous = _.filter(allHostiles, c => c.getActiveBodyparts(ATTACK) || c.getActiveBodyparts(RANGED_ATTACK))
+        let goals = _.map(dangerous, function(c) {
+            return { pos: c.pos, range: 5 }
+        })
+        let allTowers = []
+        for(let i = 0; i < Object.keys(everythingByRoom).length; i++){
+            allTowers = allTowers.concat(_.filter(Object.values(everythingByRoom)[i].structures), s => s.structureType == STRUCTURE_TOWER)
+        }
+        goals = goals.concat(_.map(allTowers, function(t) { return { pos: t.pos, range: 20 } }))
+        rQ.move(quad, goals, status, 0, true)
+        return true
     },
 
     shoot: function(quad, everythingByRoom, target){
