@@ -11,7 +11,7 @@ var statsLib = {
 
     collectStats: function(myCities) {
         for (const creep of Object.values(Game.creeps)) {
-            const ccache = u.getsetd(Cache, creep, {})
+            const ccache = u.getsetd(Cache, creep.name, {})
             const rcache = u.getsetd(Cache, creep.room.name, {})
             if (u.getsetd(ccache, "lastHits", creep.hits) > creep.hits) {
                 ccache.attacks = u.getsetd(ccache, "attacks", 0) + 1
@@ -70,10 +70,10 @@ var statsLib = {
                 }
 
                 const creeps = creepsByRole[role.name] || []
-                const attackList = _.map(creeps, creep => Cache[creep].attacks)
+                const attackList = _.map(creeps, creep => Cache[creep.name].attacks)
                 stats[`creeps.${role.name}.attacks`] = _.sum(attackList)
                 for (const creep of creeps) 
-                    Cache[creep].attacks = 0
+                    Cache[creep.name].attacks = 0
             })
 
             // City level stats
