@@ -321,7 +321,7 @@ var rQ = {
         //"creeps" will never be empty, the other two could be
         const everythingByRoom = rQ.splitEverythingByRoom(quad)
         //each creep shoots best target in room
-        rQ.shoot(quad, everythingByRoom, target)
+        rQ.shoot(everythingByRoom, target)
 
         let needRetreat = rQ.heal(quad)//if below certain health thresholds, we might need to retreat
         if(!needRetreat){
@@ -389,10 +389,29 @@ var rQ = {
         //  if we aren't in the destination room, a target must be impeding motion to the target room to be considered
         //  if we are in the target room, there should be a certain prioritization to killing essential structures
         //if no viable target found, move to rally flag
-        return quad, everythingByRoom, target, status
+        if(!target){
+            const flagName = quad[0].memory.city + "quadRally"
+            if(Memory.flags[flagName] && Object.keys(everythingByRoom).contains(Memory.flags[flagName].roomName)){
+                //we are at destination
+                if(everythingByRoom[Memory.flags[flagName].roomName].structures.length){
+                    target = everythingByRoom[Memory.flags[flagName].roomName].creeps[0].pos.findClosestByPath(everythingByRoom[Memory.flags[flagName].roomName].structures)
+                } else {
+                    target = everythingByRoom[Memory.flags[flagName].roomName].creeps[0].pos.findClosestByPath(everythingByRoom[Memory.flags[flagName].roomName].hostiles)
+                }
+            } else {
+                //we are not at destination
+                //only target something if it is in the way
+            }
+        }
+        if(target){
+            rQ.move(quad, target.pos, status, 1)
+        } else {
+            const flag = Memory.flags[quad[0].memory.city + "quadRally"]
+            rQ.move(quad, new RoomPosition(flag.x, flag.y, flag.roomName), status, 5)
+        }
     },
 
-    attemptRetreat: function(quad, everythingByRoom){//bool
+    attemptRetreat: function(quad, everythingByRoom, status){//bool
         //retreat may fail if there is nothing to retreat from
         //although it might be smart to move to a checkpoint if there is nothing to retreat from
         let allHostiles = []
@@ -412,11 +431,32 @@ var rQ = {
         return true
     },
 
-    shoot: function(quad, everythingByRoom, target){
+    shoot: function(everythingByRoom, target){
         //prioritize creeps if the target is a structure
         //ignore creeps that are under a ramp
         //and don't forget to RMA when at melee
         //maybe even RMA if total damage dealt will be greater than RA?
+        if(!target){
+            for(let i = 0; i < Object.keys(everythingByRoom).length; i++){
+                const hostiles = _.filter(Object.values(everythingByRoom)[i].hostiles, hostile => !rQ.isUnderRampart(hostile))
+                const creeps = Object.values(everythingByRoom)[i].creeps
+                for(let j = 0; j < creeps.length; j++){
+                    if(_.find(hostiles, h => h.pos.isNearTo(creeps[j]))){
+                        creeps[j].rangedMassAttack()
+                    } else {
+                        const newTarget = _.find(hostiles, h => h.pos.inRangeTo(creeps[j].pos), 3)
+                        if(newTarget){
+                            creeps[j].rangedAttack(newTarget)
+                        } else {
+                            const structureTarget = _.find(Object.values(everythingByRoom)[i].structures, h => h.pos.inRangeTo(creeps[j].pos), 3)
+                            if(structureTarget){
+                                creeps[j].rangedAttack(structureTarget)
+                            }
+                        }
+                    }
+                }
+            }
+        }
         if(!target.structureType){
             //target is a creep
             let rampart = false
