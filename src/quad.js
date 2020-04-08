@@ -443,12 +443,13 @@ var rQ = {
             if(flag && Object.keys(everythingByRoom).includes(flag.roomName)){
                 const everythingInRoom = everythingByRoom[flag.roomName]
                 //we are at destination
-                if(everythingByRoom[flag.roomName].structures && everythingByRoom[flag.roomName].structures.length){
+                if(everythingInRoom.structures && everythingInRoom.structures.length){
                     target = everythingInRoom.creeps[0].pos.findClosestByPath(everythingInRoom.structures)
-                } else {
+                } else if(everythingInRoom.hostiles && everythingInRoom.hostiles.length) {
                     target = everythingInRoom.creeps[0].pos.findClosestByPath(everythingInRoom.hostiles)
+                } else {
+                    delete Memory.flags[flagName]
                 }
-                delete Memory.flags[flagName]
             } else {
                 //we are not at destination
                 //only target something if it is in the way
