@@ -117,7 +117,7 @@ var rT = {
         return true
     },
 
-    refill: function(creep, city){
+    refill: function(creep){
         let result = 0
         if (Game.getObjectById(creep.memory.location)) {
             var bucket = Game.getObjectById(creep.memory.location)
@@ -136,7 +136,7 @@ var rT = {
                 }
             }
         } else {
-            const location = u.getStorage(creep)
+            const location = u.getStorage(creep.room)
             creep.memory.location = location.id
             if(creep.store.getUsedCapacity() > 0){
                 if(!creep.pos.isNearTo(location.pos)){
