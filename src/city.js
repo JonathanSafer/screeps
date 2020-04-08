@@ -563,7 +563,7 @@ function updateMiner(rooms, rcl8, memory, spawn){
     _.each(memory.sources, () => miners++)
     const flag = Memory.flags.claim
     if(flag && flag.roomName === spawn.pos.roomName &&
-        Game.rooms[flag.roomaName].controller.level < 6){
+        Game.rooms[flag.roomName].controller.level < 6){
         memory[rM.name] = 0
         return
     }
