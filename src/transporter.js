@@ -7,8 +7,6 @@ var rT = {
     name: "transporter",
     type: "transporter",
     target: () => 0,
-    validTargets: [STRUCTURE_EXTENSION, STRUCTURE_SPAWN, STRUCTURE_LAB,
-        STRUCTURE_NUKER, STRUCTURE_POWER_SPAWN, STRUCTURE_FACTORY, STRUCTURE_TOWER],
 
     /** @param {Creep} creep **/
     run: function(creep) {
