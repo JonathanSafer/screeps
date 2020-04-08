@@ -2,9 +2,47 @@ var cM = require("./commodityManager")
 var settings = require("./settings")
 
 var markets = {
-    sortOrder: function(orders) {
-        const sortedOrders = _.sortBy(orders, order => order.price) 
-        return sortedOrders
+    manageMarket: function(myCities){//this function is now in charge of all terminal acitivity
+        if(Game.time % 10 != 0){
+            return
+        }
+        const termCities = _.filter(myCities, c => c.terminal && Game.spawns[c.memory.city])
+
+        markets.sendComs(termCities)
+
+        switch (Game.time % 1000) {
+        case 0: markets.relocateBaseMins(termCities); break
+        case 40: markets.distributeOps(termCities); break
+        case 50: markets.distributeRepair(termCities); break
+        }
+
+        if(Game.time % 50 === 0){
+            markets.distributeMinerals(termCities)
+        }
+
+        switch (Game.time % 200) {
+        case 0: markets.distributeEnergy(termCities); break
+        case 10: markets.distributePower(termCities); break
+        case 20: markets.distributeUpgrade(termCities); break
+        case 30: markets.buyAndSell(termCities); break
+        }
+    },
+
+    ///////// TOP LEVEL MARKET FUNCTIONS (There are 9) ////////
+    sendComs: function(cities){
+        for(var i = 0; i < cities.length; i++){
+            const memory = Game.spawns[cities[i].memory.city].memory
+            if(memory.ferryInfo.factoryInfo && memory.ferryInfo.comSend.length){
+                const comSend = memory.ferryInfo.comSend[0]
+                if(cities[i].terminal.store[comSend[0]] >= comSend[1] && !cities[i].terminal.termUsed){
+                    cities[i].terminal.send(comSend[0], comSend[1], comSend[2])
+                    cities[i].terminal.termUsed = true
+                    memory.ferryInfo.comSend = _.drop(memory.ferryInfo.comSend)
+                } else {
+                    Log.info("Error sending " + comSend[0] + " from: " + cities[i].name)
+                }
+            }
+        }
     },
     
     distributeEnergy: function(myCities){
@@ -21,7 +59,6 @@ var markets = {
             }
         }
     },
-
 
     relocateBaseMins: function(myCities){
         //receivers are rooms with a lvl 0 factory
@@ -160,6 +197,87 @@ var markets = {
             }
         }
     },
+
+    buyAndSell: function(termCities) {
+        // cancel active orders
+        for(let i = 0; i < Object.keys(Game.market.orders).length; i++){
+            if(!Game.market.orders[Object.keys(Game.market.orders)[i]].active){
+                Game.market.cancelOrder(Object.keys(Game.market.orders)[i])
+            }
+        }
+
+        // load order info
+        const orders = Game.market.getAllOrders()
+        global.MarketHistory = _.groupBy(Game.market.getHistory(), history => history.resourceType)
+        const buyOrders = _.groupBy(_.filter(orders, order => order.type == ORDER_BUY), order => order.resourceType)
+        const sellOrders = _.groupBy(_.filter(orders, order => order.type == ORDER_SELL), order => order.resourceType)
+        const energyOrders = markets.sortOrder(buyOrders[RESOURCE_ENERGY]).reverse()
+        const highEnergyOrder = energyOrders[0]
+        
+        // resources we care about
+        const baseMins = [RESOURCE_HYDROGEN, RESOURCE_OXYGEN, RESOURCE_UTRIUM, RESOURCE_LEMERGIUM, RESOURCE_KEANIUM, RESOURCE_ZYNTHIUM, RESOURCE_CATALYST]
+        const bars = [RESOURCE_UTRIUM_BAR, RESOURCE_LEMERGIUM_BAR, RESOURCE_ZYNTHIUM_BAR, RESOURCE_KEANIUM_BAR, RESOURCE_GHODIUM_MELT, 
+            RESOURCE_OXIDANT, RESOURCE_REDUCTANT, RESOURCE_PURIFIER, RESOURCE_CELL, RESOURCE_WIRE, RESOURCE_ALLOY, RESOURCE_CONDENSATE]
+        const highTier = [RESOURCE_ORGANISM, RESOURCE_MACHINE, RESOURCE_DEVICE, RESOURCE_ESSENCE]
+        
+        markets.updateSellPoint(highTier, termCities, buyOrders)
+        
+        for (const city of termCities) {
+            //if no terminal continue or no spawn
+            if(!city.terminal || !Game.spawns[city.memory.city].memory.ferryInfo){
+                continue
+            }
+            let termUsed = false //only one transaction can be run using each cities terminal
+            if(city.terminal.cooldown){
+                termUsed = true
+            }
+            if(!termUsed){
+                termUsed = markets.sellPower(city, buyOrders)
+            }
+            if(!termUsed){
+                termUsed = markets.sellOps(city, buyOrders)
+            }
+            const memory = Game.spawns[city.memory.city].memory
+            const level = memory.ferryInfo.factoryInfo.factoryLevel
+            //cities w/o level send all base resources to non levelled cities
+            //base mins are NOT sold, they are made into bars instead.
+            //bars can be sold if in excess
+            //if any base mineral (besides ghodium) is low, an order for it will be placed on the market. If an order already exists, update quantity
+            //if an order already exists and is above threshold (arbitrary?), increase price
+            //buy minerals as needed
+            markets.buyMins(city, baseMins)
+            if(!level && !termUsed){
+                termUsed = markets.sellBars(city, bars, buyOrders)
+            }
+            //buy/sell energy
+            termUsed = markets.processEnergy(city, termUsed, highEnergyOrder, energyOrders)
+            //sell products
+            termUsed = markets.sellProducts(city, termUsed, buyOrders, highTier)
+
+            termUsed = markets.buyPower(city, termUsed, sellOrders)
+        }
+    },
+
+    //////////// BUY/SELL MARKET FUNCTIONS (There are 8) //////////////
+    updateSellPoint: function(resources, cities, buyOrders){
+        if(!Memory.sellPoint){
+            Memory.sellPoint = {}
+        }
+        const empireStore = cM.empireStore(cities)
+        for(var i = 0; i < resources.length; i++){
+            if(!Memory.sellPoint[resources[i]]){
+                Memory.sellPoint[resources[i]] === 0
+            }
+            const orders = markets.sortOrder(buyOrders[resources[i]]).reverse()
+            if(orders.length && orders[0].price > Memory.sellPoint[resources[i]]){
+                //if there is a higher order than what we are willing to sell for, get pickier
+                Memory.sellPoint[resources[i]] = orders[0].price
+                continue
+            }
+            //otherwise, walk down sell price proportionally to how badly we need to sell
+            Memory.sellPoint[resources[i]] = Memory.sellPoint[resources[i]] * (1 - (Math.pow(empireStore[resources[i]], 2)/ 100000000))//100 million (subject to change)
+        }
+    },
     
     sellPower: function(city, buyOrders){
         const terminal = city.terminal
@@ -265,19 +383,6 @@ var markets = {
         return false
     },
 
-    getPrice: function(resource){
-        //determine price using history
-        const history = MarketHistory[resource] // TODO this may not be declared yet
-        let totalVol = 0
-        let totalPrice = 0
-        for(var i = 0; i < history.length; i++){
-            totalVol = totalVol + history[i].volume
-            totalPrice = totalPrice + (history[i].volume * history[i].avgPrice)
-        }
-        const price = totalPrice/totalVol
-        return price
-    },
-
     processEnergy: function(city, termUsed, highEnergyOrder, energyOrders){
         //can't sell if terminal has been used
         const terminal = city.terminal
@@ -347,43 +452,6 @@ var markets = {
         return termUsed
     },
 
-    sendComs: function(cities){
-        for(var i = 0; i < cities.length; i++){
-            const memory = Game.spawns[cities[i].memory.city].memory
-            if(memory.ferryInfo.factoryInfo && memory.ferryInfo.comSend.length){
-                const comSend = memory.ferryInfo.comSend[0]
-                if(cities[i].terminal.store[comSend[0]] >= comSend[1] && !cities[i].terminal.termUsed){
-                    cities[i].terminal.send(comSend[0], comSend[1], comSend[2])
-                    cities[i].terminal.termUsed = true
-                    memory.ferryInfo.comSend = _.drop(memory.ferryInfo.comSend)
-                } else {
-                    Log.info("Error sending " + comSend[0] + " from: " + cities[i].name)
-                }
-            }
-        }
-    },
-
-    updateSellPoint: function(resources, cities, buyOrders){
-        if(!Memory.sellPoint){
-            Memory.sellPoint = {}
-        }
-        const empireStore = cM.empireStore(cities)
-        for(var i = 0; i < resources.length; i++){
-            if(!Memory.sellPoint[resources[i]]){
-                Memory.sellPoint[resources[i]] === 0
-            }
-            const orders = markets.sortOrder(buyOrders[resources[i]]).reverse()
-            if(orders.length && orders[0].price > Memory.sellPoint[resources[i]]){
-                //if there is a higher order than what we are willing to sell for, get pickier
-                Memory.sellPoint[resources[i]] = orders[0].price
-                continue
-            }
-            //otherwise, walk down sell price proportionally to how badly we need to sell
-            Memory.sellPoint[resources[i]] = Memory.sellPoint[resources[i]] * (1 - (Math.pow(empireStore[resources[i]], 2)/ 100000000))//100 million (subject to change)
-        }
-
-    },
-
     sellProducts: function(city, termUsed, buyOrders, products){
         if(termUsed){
             return termUsed
@@ -399,91 +467,53 @@ var markets = {
                 }
             }
         }
+        return false
     },
 
-    manageMarket: function(myCities){//this function is now in charge of all terminal acitivity
-        if(Game.time % 10 != 0){
-            return
+    buyPower: function(city, termUsed, sellOrders) {
+        if (termUsed) {
+            return termUsed
         }
-        const termCities = _.filter(myCities, c => c.terminal && Game.spawns[c.memory.city])
-        //send coms (every 10 ticks)
-        markets.sendComs(termCities)
-        //relocate base mins (every 1k ticks)
-        if(Game.time % 1000 === 0){
-            markets.relocateBaseMins(termCities)
+        const store = city.terminal.store
+
+        // if terminal doesn't have power then buy 5000
+        if (store[RESOURCE_POWER]) {
+            return false
         }
-        if(Game.time % 1000 === 40){
-            markets.distributeOps(termCities)
+
+        const orders = markets.sortOrder(sellOrders[RESOURCE_POWER])
+        if (!orders.length) {
+            return false
         }
-        if(Game.time % 1000 === 50){
-            markets.distributeRepair(termCities)
+        const currentPrice = markets.getPrice(RESOURCE_POWER)
+        const cheapest = orders[0]
+        if (cheapest.price > currentPrice * 1.1 || cheapest.price > settings.powerPrice) {
+            return false
         }
-        //distribure minerals (every 50 ticks)
-        if(Game.time % 50 === 0){
-            markets.distributeMinerals(termCities)
+
+        const buyAmount = Math.min(cheapest.remainingAmount, settings.powerBuyVolume)
+        Game.market.deal(cheapest.id, buyAmount, city.name)
+        return true
+    },
+
+    //////////////// MARKET UTILS ////////////////////
+    // Sort orders from low to high
+    sortOrder: function(orders) {
+        const sortedOrders = _.sortBy(orders, order => order.price) 
+        return sortedOrders
+    },
+
+    getPrice: function(resource){
+        //determine price using history
+        const history = MarketHistory[resource] // TODO this may not be declared yet
+        let totalVol = 0
+        let totalPrice = 0
+        for(var i = 0; i < history.length; i++){
+            totalVol = totalVol + history[i].volume
+            totalPrice = totalPrice + (history[i].volume * history[i].avgPrice)
         }
-        //distribute energy (every 200 ticks)
-        if(Game.time % 200 === 0){
-            markets.distributeEnergy(termCities)
-        }
-        //distribute power (every 200 ticks, offset by 10)
-        if(Game.time % 200 === 10){
-            markets.distributePower(termCities)
-        }
-        //distribute upgrade boost (every 200, offset by 20)
-        if(Game.time % 200 === 20){
-            markets.distributeUpgrade(termCities)
-        }
-        //regular market stuff (every 200 ticks, offset by 30)
-        if(Game.time % 200 === 30){
-            for(let i = 0; i < Object.keys(Game.market.orders).length; i++){
-                if(!Game.market.orders[Object.keys(Game.market.orders)[i]].active){
-                    Game.market.cancelOrder(Object.keys(Game.market.orders)[i])
-                }
-            }
-            const orders = Game.market.getAllOrders()
-            global.MarketHistory = _.groupBy(Game.market.getHistory(), history => history.resourceType)
-            const buyOrders = _.groupBy(_.filter(orders, order => order.type == ORDER_BUY), order => order.resourceType)
-            const energyOrders = markets.sortOrder(buyOrders[RESOURCE_ENERGY]).reverse()
-            const highEnergyOrder = energyOrders[0]
-            const baseMins = [RESOURCE_HYDROGEN, RESOURCE_OXYGEN, RESOURCE_UTRIUM, RESOURCE_LEMERGIUM, RESOURCE_KEANIUM, RESOURCE_ZYNTHIUM, RESOURCE_CATALYST]
-            const bars = [RESOURCE_UTRIUM_BAR, RESOURCE_LEMERGIUM_BAR, RESOURCE_ZYNTHIUM_BAR, RESOURCE_KEANIUM_BAR, RESOURCE_GHODIUM_MELT, 
-                RESOURCE_OXIDANT, RESOURCE_REDUCTANT, RESOURCE_PURIFIER, RESOURCE_CELL, RESOURCE_WIRE, RESOURCE_ALLOY, RESOURCE_CONDENSATE]
-            const highTier = [RESOURCE_ORGANISM, RESOURCE_MACHINE, RESOURCE_DEVICE, RESOURCE_ESSENCE]
-            markets.updateSellPoint(highTier, termCities, buyOrders)
-            for (let i = 0; i < termCities.length; i++){
-                //if no terminal continue or no spawn
-                if(!termCities[i].terminal || !Game.spawns[termCities[i].memory.city].memory.ferryInfo){
-                    continue
-                }
-                let termUsed = false //only one transaction can be run using each cities terminal
-                if(termCities[i].terminal.cooldown){
-                    termUsed = true
-                }
-                if(!termUsed){
-                    termUsed = markets.sellPower(termCities[i], buyOrders)
-                }
-                if(!termUsed){
-                    termUsed = markets.sellOps(termCities[i], buyOrders)
-                }
-                const memory = Game.spawns[termCities[i].memory.city].memory
-                const level = memory.ferryInfo.factoryInfo.factoryLevel
-                //cities w/o level send all base resources to non levelled cities
-                //base mins are NOT sold, they are made into bars instead.
-                //bars can be sold if in excess
-                //if any base mineral (besides ghodium) is low, an order for it will be placed on the market. If an order already exists, update quantity
-                //if an order already exists and is above threshold (arbitrary?), increase price
-                //buy minerals as needed
-                markets.buyMins(termCities[i], baseMins)
-                if(!level && !termUsed){
-                    termUsed = markets.sellBars(termCities[i], bars, buyOrders)
-                }
-                //buy/sell energy
-                termUsed = markets.processEnergy(termCities[i], termUsed, highEnergyOrder, energyOrders)
-                //sell products
-                termUsed = markets.sellProducts(termCities[i], termUsed, buyOrders, highTier)
-            }
-        }
+        const price = totalPrice/totalVol
+        return price
     }
 }
 module.exports = markets

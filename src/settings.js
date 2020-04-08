@@ -5,7 +5,12 @@ var settings = {
     boosts: ["XKHO2", "XGHO2", "XZHO2", "XLHO2", "XZH2O", "XLH2O", "XGH2O"],
     roomplanTime: 500,
     roomplanOffset: 155,
+
+    // market
     creditMin: 1000000, //min credits needed to start buying energy
+    powerPrice: 8, // price we will pay for power
+    powerBuyVolume: 5000, // amount of power we will buy at once
+
     miningDisabled: ["W2N240"], //cities that will attempt any highway mining
     ghodiumAmount: 15000, //threshold to stop producing ghodium
     boostAmount: 12000, //threshold to stop producing boosts
