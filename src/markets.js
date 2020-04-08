@@ -8,7 +8,7 @@ var markets = {
         }
         const termCities = _.filter(myCities, c => c.terminal && Game.spawns[c.memory.city])
 
-        markets.sendComs(termCities)
+        markets.sendCommodities(termCities)
 
         switch (Game.time % 1000) {
         case 0: markets.relocateBaseMins(termCities); break
@@ -29,7 +29,7 @@ var markets = {
     },
 
     ///////// TOP LEVEL MARKET FUNCTIONS (There are 9) ////////
-    sendComs: function(cities){
+    sendCommodities: function(cities){
         for(var i = 0; i < cities.length; i++){
             const memory = Game.spawns[cities[i].memory.city].memory
             if(memory.ferryInfo.factoryInfo && memory.ferryInfo.comSend.length){

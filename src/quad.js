@@ -102,7 +102,7 @@ var rQ = {
         if(lengths[i] > CREEP_LIFE_TIME) {
             Log.info(`No valid rooms in range for ${rQ.name} in ${flagPos.roomName}`)
         }
-        return nearestCity.roomName
+        return nearestCity.name
     },
 
     canSpawnQuad: function(city) {
