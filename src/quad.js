@@ -321,6 +321,17 @@ var rQ = {
                         costs.set(struct.pos.x, struct.pos.y, 1)
                     }
                 })
+                Game.rooms[roomName].find(FIND_CONSTRUCTION_SITES).forEach(function(struct) {
+                    if (struct.structureType !== STRUCTURE_CONTAINER && struct.structureType !== STRUCTURE_ROAD &&
+                             (struct.structureType !== STRUCTURE_RAMPART ||
+                              !struct.my)) {
+                        // Can't walk through non-walkable buildings
+                        costs.set(struct.pos.x, struct.pos.y, 255)
+                    }
+                    if(struct.structureType == STRUCTURE_ROAD){
+                        costs.set(struct.pos.x, struct.pos.y, 1)
+                    }
+                })
             }
             
             //loop through everything again, if value of pos is greater than any of the positions TOP, TOP_LEFT or LEFT, then reset those postions to the value of original pos
