@@ -55,6 +55,13 @@ var statsLib = {
                         stats["cities." + city + ".storage.energy"] = room.storage.store.energy
                     }
                     stats["cities." + city + ".cpu"] = statsLib.cityCpuMap[city]
+
+                    // Record construction progress in the city
+                    const sites = room.find(FIND_CONSTRUCTION_SITES)
+                    stats[`cities.${city}.sites.progress`] = 
+                        _.reduce(sites, (sum, site) => sum + site.progress, 0)
+                    stats[`cities.${city}.sites.progressTotal`] = 
+                        _.reduce(sites, (sum, site) => sum + site.progressTotal, 0)
                 }
 
                 stats[`rooms.${roomName}.attacks`] = u.getsetd(Cache, roomName, {}).attacks
@@ -91,7 +98,6 @@ var statsLib = {
                 stats["cities." + city + ".deposits"] = 0
                 stats["cities." + city + ".minerals"] = 0
                 
-                
                 const spawn = Game.spawns[city]
                 if(spawn){
                     // Record the weakest wall in each city
@@ -99,13 +105,6 @@ var statsLib = {
                     const walls = _.filter(buildings, building => building.structureType == STRUCTURE_WALL)
                     const minWall = _.min(_.toArray(_.map(walls, wall => wall.hits)))
                     stats["cities." + city + ".wall"] = walls.length  > 0 ? minWall : 0
-
-                    // Record construction progress in the city
-                    const sites = spawn.room.find(FIND_CONSTRUCTION_SITES)
-                    stats[`cities.${city}.sites.progress`] = 
-                        _.reduce(sites, (sum, site) => sum + site.progress, 0)
-                    stats[`cities.${city}.sites.progressTotal`] = 
-                        _.reduce(sites, (sum, site) => sum + site.progressTotal, 0)
                 }
             })
 
