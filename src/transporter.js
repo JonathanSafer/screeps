@@ -12,10 +12,6 @@ var rT = {
 
     /** @param {Creep} creep **/
     run: function(creep) {
-        if (Game.time % 100 == 0) {
-            rT.checkResetCache(creep.room)
-        }
-
         if(rT.endLife(creep)){
             return
         }
@@ -28,7 +24,7 @@ var rT = {
             //refill on energy
             if(rT.refill(creep, city) === 1){
                 //start moving to target
-                const target = rT.findTarget(creep)
+                const target = rT.findTarget(creep, null)
                 if(!target){
                     creep.say(20)
                     return
@@ -38,8 +34,8 @@ var rT = {
                 }
             }
         } else {
-            // TODO use findTargetCached for one room
-            const target = rT.findTarget(creep)
+            const target = rT.findTarget(creep, null)
+
             if(!target){
                 creep.say(20)
                 return
@@ -50,7 +46,7 @@ var rT = {
                 //if creep still has energy, start moving to next target
                 if(creep.store[RESOURCE_ENERGY] > target.store.getFreeCapacity(RESOURCE_ENERGY)){
                     //start moving to next target if target not already in range
-                    const newTarget = rT.findTarget(creep, target)
+                    const newTarget = rT.findTarget(creep, target)//make sure to remove current target from search list
                     if(!newTarget){
                         creep.say(20)
                         return
@@ -62,67 +58,24 @@ var rT = {
                     //start moving to storage already
                     rT.refill(creep, city)
                 }
+
             }
         }
     },
-
-    findTarget: function(creep) {
-        if (!rT.hasCachedTargets(creep))
-            rT.cacheTargets(creep)
-        return rT.getNextTarget(creep)
-    },
-
-    hasCachedTargets: function(creep) {
-        return Memory[creep.room.name] && Memory[creep.room.name].targets
-        && Memory[creep.room.name].targets.length
-    },
-
-    cacheTargets: function(creep) {
-        const room = creep.room
-        const targets = rT.getAllTargets(room)
-        const orderedTargets = []
-        const storage = u.getStorage(room)
-        var currentPos = storage.pos
-        while (targets.length > 0) {
-            const next = currentPos.findClosestByPath(targets, {
-                ignoreCreeps: true
-            })
-            _.remove(targets, target => target.id == next.id)
-            orderedTargets.push(next.id)
-            currentPos = next.pos
+ 
+    findTarget: function(creep, oldTarget){
+        let id = 0
+        if(oldTarget){
+            id = oldTarget.id
         }
-        Memory[room.name] = Memory[room.name] || {}
-        Memory[room.name].targets = orderedTargets
-    },
-
-    getAllTargets: function(room) {
-        return room.find(FIND_STRUCTURES, {
-            filter: (structure) => rT.validTargets.includes(structure.structureType)
+        return creep.pos.findClosestByRange(FIND_MY_STRUCTURES, {
+            filter: (structure) => {
+                return structure.id !== id && rT.needsEnergy(structure)
+            },
+            maxOps: 10
         })
     },
 
-    checkResetCache: function(room) {
-        if (Memory[room.name] && Memory[room.name].targets) {
-            const cachedLength = Memory[room.name].targets.length
-            const trueLength = rT.getAllTargets(room).length
-            if (cachedLength != trueLength) {
-                Log.info(`Update transporter path cache in ${room.name}`)
-                Memory[room.name].targets = null
-            }
-        }
-    },
-
-    getNextTarget: function(creep) {
-        creep.memory.i = creep.memory.i || 0 // default 0
-        const targets = Memory[creep.room.name].targets
-        for (var i = 0; i < targets.length; i++) {
-            const target = Game.getObjectById(targets[creep.memory.i])
-            if (rT.needsEnergy(target)) 
-                return target
-            else
-                creep.memory.i = (creep.memory.i + 1) % targets.length
-        }
-    },
 
     needsEnergy: function(structure){
         if(!structure){
@@ -135,13 +88,16 @@ var rT = {
         case STRUCTURE_LAB:
         case STRUCTURE_NUKER:
             //if there is any room for energy, needs energy
-            return (store.getFreeCapacity(RESOURCE_ENERGY) > 0)  
+            return (store.getFreeCapacity(RESOURCE_ENERGY) > 0)
         case STRUCTURE_TOWER:
         case STRUCTURE_POWER_SPAWN:
+            //arbitrary buffer
             return (store.getFreeCapacity(RESOURCE_ENERGY) > 400)
         case STRUCTURE_FACTORY:
             //arbitrary max value
             return (store.getUsedCapacity(RESOURCE_ENERGY) < 10000)
+        default:
+            return false
         }
     },
 

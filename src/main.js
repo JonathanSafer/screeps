@@ -22,6 +22,14 @@ pp.prepProfile()
 //Memory.flags["claim"] = new RoomPosition(25,25,"W16N21")
 //Memory.flags["plan"] = new RoomPosition(30,33,"W16N21")
 
+//  Resources/CPU    | Buying Price (CR) | Selling Price (CR)
+//   250 energy      |    20   CR        |   10 CR
+//   1.6 commodities |    25   CR        |   25   CR
+//   .85 power       |    3.45 CR        |   3.45 CR
+
+// Control vs Power
+// Power =>   4 CR / power
+// Control => 50 control / CPU. 25 CR/CPU => 2 CR / control
 
 profiler.enable()
 module.exports.loop = function () {
