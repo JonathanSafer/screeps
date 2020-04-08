@@ -256,7 +256,7 @@ var rQ = {
 
         //if we didn't retreat, move to target or rally point
         if(!retreated){
-            rQ.advance(quad, everythingByRoom, target, status)
+            rQ.advance(creep, quad, everythingByRoom, target, status)
         }
 
         //auto respawn can be requested directly from quad, but overarching manager should actually make it happen
@@ -431,7 +431,7 @@ var rQ = {
         return false
     },
 
-    advance: function(quad, everythingByRoom, target, status){
+    advance: function(creep, quad, everythingByRoom, target, status){
         //if no target, find a target.
         //  a target shouldn't simply be "anything that breathes".
         //  if we aren't in the destination room, a target must be impeding motion to the target room to be considered
@@ -450,6 +450,7 @@ var rQ = {
                 } else {
                     delete Memory.flags[flagName]
                 }
+                creep.memory.target = target
             } else {
                 //we are not at destination
                 //only target something if it is in the way
