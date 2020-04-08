@@ -138,10 +138,10 @@ var rF = {
                 creep.memory.target = rF.getJob(creep)
             }
             break
-        case 9:
+        case 9:{
             //move mineral from terminal to booster
+            const lab = Game.getObjectById(creep.memory.lab)
             if (_.sum(creep.store) > 0){
-                const lab = Game.getObjectById(creep.memory.lab)
                 const result = actions.charge(creep, lab)
                 if(result == 1){
                     if(creep.memory.reactor){
@@ -153,12 +153,14 @@ var rF = {
                 }
                 break
             }
-            if (creep.room.terminal.store[creep.memory.mineral] > 0){
-                actions.withdraw(creep, creep.room.terminal, creep.memory.mineral)
+            const amountNeeded = Math.min(lab.store.getFreeCapacity(creep.memory.mineral), creep.store.getFreeCapacity())
+            if (creep.room.terminal.store[creep.memory.mineral] > amountNeeded){
+                actions.withdraw(creep, creep.room.terminal, creep.memory.mineral, amountNeeded)
             } else {
                 creep.say("getJob")
             }
             break
+        }
         case 10: {
             //move mineral from booster to terminal
             if (_.sum(creep.store) > 0){
@@ -171,9 +173,10 @@ var rF = {
             }
             const lab = Game.getObjectById(creep.memory.lab)
             if(!lab.mineralType || actions.withdraw(creep, lab, lab.mineralType) == 1 && lab.store[lab.mineralType] <= 1000){
-                if(creep.memory.reactor){
-                    Game.spawns[creep.memory.city].memory.ferryInfo.labInfo.reactors[creep.memory.lab].fill = 0
-                } else {
+                const labInfo = Game.spawns[creep.memory.city].memory.ferryInfo.labInfo
+                if(creep.memory.reactor && labInfo.reactors[creep.memory.lab].fill == -1){
+                    labInfo.reactors[creep.memory.lab].fill = 0
+                } else if (labInfo.receivers[creep.memory.lab].fill == -1){
                     Game.spawns[creep.memory.city].memory.ferryInfo.labInfo.receivers[creep.memory.lab].fill = 0
                 }
             }
@@ -293,8 +296,13 @@ var rF = {
                 }
                 if(receiverInfo[i].fill > 0 && creep.room.terminal.store[receiverInfo[i].mineral] >= 1000){
                     //fill receiver
+                    const lab = Game.getObjectById(receivers[i])
                     creep.memory.lab = receivers[i]
                     creep.memory.reactor = false
+                    if(lab.mineralType && lab.mineralType != receiverInfo[i].mineral){
+
+                        return 10
+                    }
                     creep.memory.mineral = receiverInfo[i].mineral
                     return 9
                 }
