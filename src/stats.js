@@ -28,6 +28,7 @@ var statsLib = {
         if (Game.time % settings.statTime == 1){
             RawMemory.setActiveSegments([])
             const stats = {}
+            stats["cpu.getUsed"] = Game.cpu.getUsed()
             stats["cpu.bucket"] = Game.cpu.bucket
             stats["gcl.progress"] = Game.gcl.progress
             stats["gcl.progressTotal"] = Game.gcl.progressTotal
@@ -121,7 +122,6 @@ var statsLib = {
             })
 
             stats["market.credits"] = Game.market.credits
-            stats["cpu.getUsed"] = Game.cpu.getUsed()
 
             if (profiler.results && profiler.results.stats) {
                 const pstats = profiler.results.stats
