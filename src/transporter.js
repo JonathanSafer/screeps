@@ -123,7 +123,7 @@ var rT = {
             var bucket = Game.getObjectById(creep.memory.location)
             if(creep.store.getUsedCapacity() > 0){
                 if(!creep.pos.isNearTo(bucket.pos)){
-                    creep.moveTo(bucket, {reusePath: 15, range: 1})
+                    motion.newMove(creep, bucket.pos, 1)
                 }
                 return result
             }
@@ -147,7 +147,7 @@ var rT = {
             creep.memory.location = location.id
             if(creep.store.getUsedCapacity() > 0){
                 if(!creep.pos.isNearTo(location.pos)){
-                    creep.moveTo(location, {reusePath: 15, range: 1})
+                    motion.newMove(creep, location.pos, 1)
                 }
                 return result
             }
