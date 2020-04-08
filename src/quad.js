@@ -496,11 +496,11 @@ var rQ = {
                     if(_.find(hostiles, h => h.pos.isNearTo(creeps[j]))){
                         creeps[j].rangedMassAttack()
                     } else {
-                        const newTarget = _.find(hostiles, h => h.pos.inRangeTo(creeps[j].pos), 3)
+                        const newTarget = _.find(hostiles, h => h.pos.inRangeTo(creeps[j].pos, 3))
                         if(newTarget){
                             creeps[j].rangedAttack(newTarget)
                         } else {
-                            const structureTarget = _.find(Object.values(everythingByRoom)[i].structures, h => h.pos.inRangeTo(creeps[j].pos), 3)
+                            const structureTarget = _.find(Object.values(everythingByRoom)[i].structures, h => h.pos.inRangeTo(creeps[j].pos, 3))
                             if(structureTarget){
                                 creeps[j].rangedAttack(structureTarget)
                             }
@@ -526,11 +526,11 @@ var rQ = {
                     } else if(!rampart && target.pos.inRangeTo(creeps[j].pos, 3)){
                         creeps[j].rangedAttack(target)
                     } else {
-                        const newTarget = _.find(hostiles, h => h.pos.inRangeTo(creeps[j].pos), 3)
+                        const newTarget = _.find(hostiles, h => h.pos.inRangeTo(creeps[j].pos, 3))
                         if(newTarget){
                             creeps[j].rangedAttack(newTarget)
                         } else {
-                            const structureTarget = _.find(Object.values(everythingByRoom)[i].structures, h => h.pos.inRangeTo(creeps[j].pos), 3)
+                            const structureTarget = _.find(Object.values(everythingByRoom)[i].structures, h => h.pos.inRangeTo(creeps[j].pos, 3))
                             if(structureTarget){
                                 creeps[j].rangedAttack(structureTarget)
                             }
@@ -547,13 +547,13 @@ var rQ = {
                     if(_.find(hostiles, h => h.pos.isNearTo(creeps[j]))){
                         creeps[j].rangedMassAttack()
                     } else {
-                        const newTarget = _.find(hostiles, h => h.pos.inRangeTo(creeps[j].pos), 3)
+                        const newTarget = _.find(hostiles, h => h.pos.inRangeTo(creeps[j].pos, 3))
                         if(newTarget){
                             creeps[j].rangedAttack(newTarget)
                         } else if(target.pos.inRangeTo(creeps[j].pos, 3)){
                             creeps[j].rangedAttack(target)
                         } else {
-                            const structureTarget = _.find(Object.values(everythingByRoom)[i].structures, h => h.pos.inRangeTo(creeps[j].pos), 3)
+                            const structureTarget = _.find(Object.values(everythingByRoom)[i].structures, h => h.pos.inRangeTo(creeps[j].pos, 3))
                             if(structureTarget){
                                 creeps[j].rangedAttack(structureTarget)
                             }
