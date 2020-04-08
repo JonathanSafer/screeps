@@ -136,14 +136,7 @@ var rT = {
                 }
             }
         } else {
-            const targets = u.getWithdrawLocations(creep)
-            var location = targets[creep.memory.target]
-            if (location == undefined) {
-                location = Game.spawns[city]
-                creep.memory.noContainers = true
-            } else {
-                creep.memory.noContainers = false
-            }
+            const location = u.getStorage(creep)
             creep.memory.location = location.id
             if(creep.store.getUsedCapacity() > 0){
                 if(!creep.pos.isNearTo(location.pos)){
@@ -152,9 +145,6 @@ var rT = {
                 return result
             }
             result = actions.withdraw(creep, location)
-            if (result == ERR_NOT_ENOUGH_RESOURCES){
-                creep.memory.target = u.getNextLocation(creep.memory.target, targets)
-            }
         }
         return result
     }

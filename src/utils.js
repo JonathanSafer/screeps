@@ -53,6 +53,8 @@ var u = {
             return containers[0]
         }
 
+        if(room.terminal) return room.terminal
+            
         const spawn = Game.getObjectById(Cache[room.name].spawn)
         if (spawn) return spawn
 
