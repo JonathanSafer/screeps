@@ -128,7 +128,10 @@ var u = {
     },
 
     getMyCities: function() {
-        return _.filter(Game.rooms, (room) => u.iOwn(room.name))
+        if (!Cache.myCities) {
+            Cache.myCities = _.filter(Game.rooms, (room) => u.iOwn(room.name))
+        }
+        return Cache.myCities
     },
 
     getAvailableSpawn: function(spawns) {

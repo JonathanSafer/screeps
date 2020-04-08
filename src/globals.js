@@ -25,4 +25,9 @@ global.PlaceFlag = function(flagName, x, y, roomName){
     Memory.flags[flagName] = new RoomPosition(x, y, roomName)
 }
 
+global.DeployQuad = function(roomName) {
+    const quad = require("./quad")
+    quad.deployQuad(roomName)
+}
+
 global.MemoryCache = Memory

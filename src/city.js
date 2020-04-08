@@ -462,20 +462,19 @@ function chooseClosestRoom(myCities, flag){
     if(!flag){
         return 0
     }
-    const flagPos = new RoomPosition(flag.x, flag.y, flag.roomName)
     const goodCities = _.filter(myCities, city => city.controller.level >= 4 && Game.spawns[city.memory.city] && city.storage)
     let closestRoomPos = goodCities[0].getPositionAt(25, 25)
     let closestLength = CREEP_CLAIM_LIFE_TIME + 100//more than max claimer lifetime
     for (let i = 0; i < goodCities.length; i += 1){
         const testRoomPos = goodCities[i].getPositionAt(25, 25)
-        const testPath = u.findMultiRoomPath(testRoomPos, flagPos)
-        if(!testPath.incomplete && testPath.cost < closestLength && goodCities[i].name != flagPos.roomName){
+        const testPath = u.findMultiRoomPath(testRoomPos, flag)
+        if(!testPath.incomplete && testPath.cost < closestLength && goodCities[i].name != flag.roomName){
             closestRoomPos =  goodCities[i].getPositionAt(25, 25)
             closestLength = testPath.cost
         }
     }
     if(closestLength == 700){
-        Game.notify("No valid rooms in range for claim operation in " + flagPos.roomName)
+        Game.notify("No valid rooms in range for claim operation in " + flag.roomName)
     }
     return closestRoomPos.roomName
 }
