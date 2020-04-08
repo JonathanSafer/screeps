@@ -211,6 +211,64 @@ var rQ = {
         }
     },
 
+    engage: function(creep){
+        //TODO: check formation status. If formation is broken up, reform
+        //if a member has died, go into YOLO mode
+        //captain should preemptively send everybody in YOLO mode if it is at 1 ttl
+
+        const quad = [creep, Game.getObjectById(creep.memory.privates[0]),
+            Game.getObjectById(creep.memory.privates[1]),
+            Game.getObjectById(creep.memory.privates[2])]
+
+        if(!rQ.allPresent(quad)){//if quad not fully formed, yolo mode
+            rQ.yolo(quad)
+            return
+        }
+
+        const status = rQ.getQuadStatus(quad)
+
+        const target = Game.getObjectById(creep.memory.target)
+
+        for(let i = 0; i < quad.length; i++){
+            if(!Cache[quad[i].room.name] || !Cache[quad[i].room.name].quadMatrix){//this can be combined with the part where we find enemies
+                rQ.getRoomMatrix(quad[i].room.name)
+            }
+        }
+        //everythingByRoom should be an object with keys being roomNames
+        //values should be objects, with keys "creeps", "hostiles", "structures"
+        //each of those keys will be paired with arrays
+        //"creeps" will never be empty, the other two could be
+        const everythingByRoom = rQ.splitEverythingByRoom(quad)
+        //each creep shoots best target in room
+        rQ.shoot(everythingByRoom, target)
+
+        let needRetreat = rQ.heal(quad)//if below certain health thresholds, we might need to retreat
+        if(!needRetreat){
+            needRetreat = rQ.checkMelee(quad, everythingByRoom)
+        }
+
+        let retreated = false
+        if(needRetreat){
+            retreated = rQ.attemptRetreat(quad, everythingByRoom, status)
+            //retreat may fail if there is nothing to retreat from
+            //although it might be smart to move to a checkpoint if there is nothing to retreat from
+        }
+
+        //if we didn't retreat, move to target or rally point
+        if(!retreated){
+            rQ.advance(quad, everythingByRoom, target, status)
+        }
+
+        //auto respawn can be requested directly from quad, but overarching manager should actually make it happen
+
+        // if(creep.ticksToLive == creep.body.length * 12 + 200 && Game.flags[creep.memory.city + "quadRally"]){
+        //     rQ.spawnQuad(creep.memory.city)
+        // } else if(creep.hits < 200 && Game.flags[creep.memory.city + "quadRally"]){
+        //     rQ.spawnQuad(creep.memory.city)
+        //     creep.suicide()
+        // }
+    },
+
     getDamageMatrix: function(roomName){
         if(Cache[roomName].damageMatrix){
             return Cache[roomName].damageMatrix.clone()
@@ -341,64 +399,6 @@ var rQ = {
         }
     },
 
-    engage: function(creep){
-        //TODO: check formation status. If formation is broken up, reform
-        //if a member has died, go into YOLO mode
-        //captain should preemptively send everybody in YOLO mode if it is at 1 ttl
-
-        const quad = [creep, Game.getObjectById(creep.memory.privates[0]),
-            Game.getObjectById(creep.memory.privates[1]),
-            Game.getObjectById(creep.memory.privates[2])]
-
-        if(!rQ.allPresent(quad)){//if quad not fully formed, yolo mode
-            rQ.yolo(quad)
-            return
-        }
-
-        const status = rQ.getQuadStatus(quad)
-
-        const target = Game.getObjectById(creep.memory.target)
-
-        for(let i = 0; i < quad.length; i++){
-            if(!Cache[quad[i].room.name] || !Cache[quad[i].room.name].quadMatrix){//this can be combined with the part where we find enemies
-                rQ.getRoomMatrix(quad[i].room.name)
-            }
-        }
-        //everythingByRoom should be an object with keys being roomNames
-        //values should be objects, with keys "creeps", "hostiles", "structures"
-        //each of those keys will be paired with arrays
-        //"creeps" will never be empty, the other two could be
-        const everythingByRoom = rQ.splitEverythingByRoom(quad)
-        //each creep shoots best target in room
-        rQ.shoot(everythingByRoom, target)
-
-        let needRetreat = rQ.heal(quad)//if below certain health thresholds, we might need to retreat
-        if(!needRetreat){
-            needRetreat = rQ.checkMelee(quad, everythingByRoom)
-        }
-
-        let retreated = false
-        if(needRetreat){
-            retreated = rQ.attemptRetreat(quad, everythingByRoom, status)
-            //retreat may fail if there is nothing to retreat from
-            //although it might be smart to move to a checkpoint if there is nothing to retreat from
-        }
-
-        //if we didn't retreat, move to target or rally point
-        if(!retreated){
-            rQ.advance(quad, everythingByRoom, target, status)
-        }
-
-        //auto respawn can be requested directly from quad, but overarching manager should actually make it happen
-
-        // if(creep.ticksToLive == creep.body.length * 12 + 200 && Game.flags[creep.memory.city + "quadRally"]){
-        //     rQ.spawnQuad(creep.memory.city)
-        // } else if(creep.hits < 200 && Game.flags[creep.memory.city + "quadRally"]){
-        //     rQ.spawnQuad(creep.memory.city)
-        //     creep.suicide()
-        // }
-    },
-
     findClosestByPath: function(everythingByRoom){
         const targets = []
         Object.keys(everythingByRoom).forEach(function (roomName) {
@@ -437,15 +437,18 @@ var rQ = {
         //  if we aren't in the destination room, a target must be impeding motion to the target room to be considered
         //  if we are in the target room, there should be a certain prioritization to killing essential structures
         //if no viable target found, move to rally flag
+        const flagName = quad[0].memory.city + "quadRally"
+        const flag = Memory.flags[flagName]
         if(!target){
-            const flagName = quad[0].memory.city + "quadRally"
-            if(Memory.flags[flagName] && Object.keys(everythingByRoom).includes(Memory.flags[flagName].roomName)){
+            if(flag && Object.keys(everythingByRoom).includes(flag.roomName)){
+                const everythingInRoom = everythingByRoom[flag.roomName]
                 //we are at destination
-                if(everythingByRoom[Memory.flags[flagName].roomName].structures && everythingByRoom[Memory.flags[flagName].roomName].structures.length){
-                    target = everythingByRoom[Memory.flags[flagName].roomName].creeps[0].pos.findClosestByPath(everythingByRoom[Memory.flags[flagName].roomName].structures)
+                if(everythingByRoom[flag.roomName].structures && everythingByRoom[flag.roomName].structures.length){
+                    target = everythingInRoom.creeps[0].pos.findClosestByPath(everythingInRoom.structures)
                 } else {
-                    target = everythingByRoom[Memory.flags[flagName].roomName].creeps[0].pos.findClosestByPath(everythingByRoom[Memory.flags[flagName].roomName].hostiles)
+                    target = everythingInRoom.creeps[0].pos.findClosestByPath(everythingInRoom.hostiles)
                 }
+                delete Memory.flags[flagName]
             } else {
                 //we are not at destination
                 //only target something if it is in the way
@@ -453,8 +456,7 @@ var rQ = {
         }
         if(target){
             rQ.move(quad, target.pos, status, 1)
-        } else {
-            const flag = Memory.flags[quad[0].memory.city + "quadRally"]
+        } else if(flag) {
             rQ.move(quad, new RoomPosition(flag.x, flag.y, flag.roomName), status, 5)
         }
     },
