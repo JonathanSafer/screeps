@@ -22,7 +22,7 @@ var cM = {
     },
 
     storeCacheByCity: function(cities) {
-        const termCities = _(cities).filter(city => city.terminal)
+        const termCities = _(cities).filter(city => city.terminal).value()
         return _(termCities)
             .map("name")
             .zipObject(termCities)
