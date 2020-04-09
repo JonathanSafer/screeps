@@ -154,7 +154,7 @@ var rF = {
                 break
             }
             const amountNeeded = Math.min(lab.store.getFreeCapacity(creep.memory.mineral), creep.store.getFreeCapacity())
-            if (creep.room.terminal.store[creep.memory.mineral] > amountNeeded){
+            if (creep.room.terminal.store[creep.memory.mineral] >= amountNeeded){
                 actions.withdraw(creep, creep.room.terminal, creep.memory.mineral, amountNeeded)
             } else {
                 creep.say("getJob")
