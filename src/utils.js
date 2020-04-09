@@ -38,31 +38,54 @@ var u = {
         return (current + 1) % locations.length
     },
 
-    getStorage: function(room) {
-        if (room.storage) return room.storage
-        if (!Cache[room.name]) Cache[room.name] = {}
+    getFactory: function(room) {
+        if (room.controller.level < 7) return false
 
-        const container = Game.getObjectById(Cache[room.name].container)
-        if (container) return container
-            
+        // check for existing
+        const roomCache = u.getsetd(Cache, room.name, {})
+        const factory = Game.getObjectById(roomCache.factory)
+        if (factory) return factory
+
+        // look up uncached factory
+        const factories = room.find(FIND_STRUCTURES,{ 
+            filter: { structureType: STRUCTURE_FACTORY } 
+        })
+        if (factories.length) {
+            roomCache.factory = factories[0].id
+            return factories[0]
+        }
+        return false
+    },
+
+    // Get the room's storage location. Priority for storage:
+    // 1. Storage 2. Container 3. Terminal 4. Spawn
+    getStorage: function(room) {
+        // 1. Storage
+        if (room.storage) return room.storage
+        const roomCache = u.getsetd(Cache, room.name, {})
+
+        // 2. Container
+        const container = Game.getObjectById(roomCache.container)
+        if (container) return container     
         const containers = room.find(FIND_STRUCTURES,{ 
             filter: { structureType: STRUCTURE_CONTAINER } 
         })
         if (containers.length) {
-            Cache[room.name].container = containers[0].id
+            roomCache.container = containers[0].id
             return containers[0]
         }
 
+        // 3. Terminal
         if(room.terminal) return room.terminal
-            
-        const spawn = Game.getObjectById(Cache[room.name].spawn)
+         
+        // 4. Spawn   
+        const spawn = Game.getObjectById(roomCache.spawn)
         if (spawn) return spawn
-
         const spawns = room.find(FIND_STRUCTURES, { 
             filter: { structureType: STRUCTURE_SPAWN }
         })
         if (spawns.length) {
-            Cache[room.name].spawn = spawns[0].id
+            roomCache.spawn = spawns[0].id
             return spawns[0]
         }
         return false
