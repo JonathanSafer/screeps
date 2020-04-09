@@ -68,6 +68,7 @@ function runCity(city, creeps){
     const spawn = Game.spawns[city]
     if (!spawn) return false
     const room = spawn.room
+    // Clear all commodity moves: spawn.memory.ferryInfo.comSend = []
 
     // Only build required roles during financial stress
     const emergencyRoles = rr.getEmergencyRoles()
