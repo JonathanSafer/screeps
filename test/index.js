@@ -33,7 +33,8 @@ const rooms = {
 const spawns = {
     city: {
         room: room
-    }
+    },
+    test: {}
 }
 
 var used = 0
@@ -58,6 +59,11 @@ global.Game = {
             room: room,
             notifyWhenAttacked: () => 0
         }
+    },
+    getObjectById: function() {
+        const factory = {}
+        factory.level = 1
+        return factory
     }
 }
 global.Room = {}

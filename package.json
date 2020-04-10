@@ -5,7 +5,7 @@
   "main": "main.js",
   "scripts": {
     "pretest": "eslint src",
-    "test": "node test",
+    "test": "mocha",
     "postinstall": "cd ./node_modules/eslint-plugin-screeps && npm install"
   },
   "author": "",
@@ -16,6 +16,7 @@
     "eslint-plugin-screeps": "https://github.com/jordansafer/eslint-plugin-screeps.git"
   },
   "dependencies": {
-    "lodash": "^4.17.15"
+    "lodash": "^3.10.1",
+    "mocha": "^7.1.1"
   }
 }

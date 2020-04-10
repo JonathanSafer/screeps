@@ -10,6 +10,8 @@ globals:
   Cache: writable
   Log: writable
   T: writable
+  describe: readonly
+  it: readonly
   MemoryCache: writable
 parserOptions:
   ecmaVersion: 2018
