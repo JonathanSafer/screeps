@@ -8,7 +8,7 @@ var markets = {
         }
         const termCities = _.filter(myCities, c => c.terminal && Game.spawns[c.memory.city])
         for (const city of termCities) {
-            Memory[city.name].termUsed = false// TODO city.terminal.cooldown
+            Memory[city.name].termUsed = city.terminal.cooldown
         }
 
         markets.sendCommodities(termCities)
@@ -234,9 +234,9 @@ var markets = {
                 continue
             }
             let termUsed = false //only one transaction can be run using each cities terminal
-            // TODO: if(city.terminal.cooldown){
-            //     termUsed = true
-            // }
+            if(city.terminal.cooldown){
+                termUsed = true
+            }
             if(!termUsed){
                 termUsed = markets.sellPower(city, buyOrders)
             }

@@ -74,7 +74,6 @@ Call `DeployQuad("E9N32")` to deploy a quad to E9N32.
 There are some automated roles that currently run off of flagging mechanisms. These include the Power Miner, Deposit Miner, and Harasser. You do not need to interact with their respective flags (`-powerMine`, `-deposit`, `-harass`) for them to operate successfully.
 
 # Best Practices for making changes
-- Use memory from the root. For example Memory.xxxx instead of creep.memory, spawn.memory
 - Make new paths in memory for new usecases. For example Memory.attacks.xxxx instead of Memory.xxxx. Easier to change and clean up this way.
 - Cache things in Cache.xxx if we can afford to lose them. This saves cpu from memory lookups on each tick.
 - Always store room names/ids instead of the objects. Saving an object causes bugs because the internal fields within the object will be incorrect over time. For example creep.store values will change in game, but not in the copy you have stored. Names/Ids also take less memory.
