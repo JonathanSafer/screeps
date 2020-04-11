@@ -153,7 +153,7 @@ var u = {
     },
 
     getMyCities: function() {
-        return Cache.myCities
+        return _.filter(Game.rooms, (room) => u.iOwn(room.name))
     },
 
     getAvailableSpawn: function(spawns) {
