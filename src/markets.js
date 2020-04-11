@@ -8,7 +8,7 @@ var markets = {
         }
         const termCities = _.filter(myCities, c => c.terminal && Game.spawns[c.memory.city])
         for (const city of termCities) {
-            Memory[city.name].termUsed = false
+            Memory[city.name].termUsed = city.terminal.cooldown
         }
 
         markets.sendCommodities(termCities)
