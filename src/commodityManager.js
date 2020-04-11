@@ -9,7 +9,7 @@ var cM = {
         const terminalCache = cM.storeCacheByCity(cities)
    
         //go through each city:
-        for(let i = citiesByFactoryLevel.length - 1; i > 0; i--){
+        for(let i = Object.keys(citiesByFactoryLevel).length - 1; i > 0; i--){
             const citiesAtLevel = citiesByFactoryLevel[i]
             const products = _.filter(Object.keys(COMMODITIES), key => COMMODITIES[key].level === i)
             
@@ -62,7 +62,7 @@ var cM = {
 
         //if we don't have enough of the comp, we are no go for this product (move on to next product)
         status.clearedToShip = (empireHasEnough && !cityHasTooMuch)
-        status.highTier = status.goForDelivery && compLvl === COMMODITIES[product].level - 1
+        status.highTier = status.clearedToShip && compLvl === COMMODITIES[product].level - 1
         return status
     },
 
@@ -82,11 +82,11 @@ var cM = {
 
             for (const source of sourceCities) { //for each city at the relevant level, send resources until the quantity is satisfied
                 const memory = Game.spawns[source.memory.city].memory
-                const sourceAmount = terminalCache[source.name][component]
+                const sourceAmount = terminalCache[source.name][component] || 0
                 if (quantity == 0) {
                     break
                 } else if (sourceAmount > 0) {
-                    const amount = _.min(quantity, sourceAmount)
+                    const amount = Math.min(quantity, sourceAmount)
                     // schedule terminal transfer
                     memory.ferryInfo.comSend.push([component, amount, destination])
                     // update values to reflect move
