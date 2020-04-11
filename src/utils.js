@@ -153,9 +153,6 @@ var u = {
     },
 
     getMyCities: function() {
-        if (!Cache.myCities) {
-            Cache.myCities = _.filter(Game.rooms, (room) => u.iOwn(room.name))
-        }
         return Cache.myCities
     },
 
