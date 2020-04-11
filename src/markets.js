@@ -37,13 +37,16 @@ var markets = {
             const memory = Game.spawns[city.memory.city].memory
             if(memory.ferryInfo.factoryInfo && memory.ferryInfo.comSend.length){
                 const comSend = memory.ferryInfo.comSend[0]
-                if(city.terminal.store[comSend[0]] >= comSend[1] && !Memory[city.name].termUsed){
+                if (Memory[city.name].termUsed) {
+                    return
+                }
+
+                if(city.terminal.store[comSend[0]] >= comSend[1]){
                     city.terminal.send(comSend[0], comSend[1], comSend[2])
                     Memory[city.name].termUsed = true
-                    memory.ferryInfo.comSend = _.drop(memory.ferryInfo.comSend)
-                } else {
-                    Log.info("Error sending " + comSend[0] + " from: " + city.name)
                 }
+                
+                memory.ferryInfo.comSend = _.drop(memory.ferryInfo.comSend)
             }
         }
     },
