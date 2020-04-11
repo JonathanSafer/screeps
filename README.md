@@ -6,18 +6,17 @@ Functional screeps AI.
 
 ## Instructions
 ### Startup
-1. Place your spawn in a large open area. Name it roomName0, for example, if the room is called E12N14, the spawn should be E12N140. The spawn should have 6 open squares on each side (13 by 13 square with spawn in the middle).
+1. Place your spawn in a large open area. Name it <roomName>0, for example, if the room is called E12N14, the spawn should be E12N140. The spawn should have 6 open squares on each side (13 by 13 square with spawn in the middle).
 
 ### Claiming and Attacking (see "New City" section below and "Attacking" section below)
-TLDR place flags in other rooms like "claim" (claim room), "plan" (build base at flag location), "break" (break buildings), "shoot" (send ranged troops).
+TLDR flag other rooms to "claim" (claim room), "plan" (build base at flag location), "break" (break buildings). Use the PlaceFlag() function from the console.
 
 ## Features
-1. Cities can mine remote rooms.
 1. Cities will use market to trade for minerals and sell excess resources for credits.
 1. Cities use labs to make max power boosts for military and upgraders from minerals.
 1. Cities mine power for power creeps.
-1. Cities mine commodities and will attempt to create high level products with available factories
-1. Nearly all structures and roads are placed automatically
+1. Cities mine commodities and will attempt to create high level products with available factories and sell them.
+1. All structures and roads are placed automatically
 1. AI optomized for Shard 3 (low CPU)
 
 ## Current Roles
@@ -32,9 +31,9 @@ TLDR place flags in other rooms like "claim" (claim room), "plan" (build base at
 ### Military
 1. (big)Breaker       - destroys enemy buildings. Pair with healer.
 1. (big)Medic         - heals other military units
-1. (big)Trooper       - ranged unit. Pair with healer.
+1. Quad               - ranged group of 4 units. units heal each other and focus attacks.
 1. Defender           - Defend against enemy invaders.
-1. Harasser           - Small attacking unit for cheap damage to enemy remote miners and protecting highways
+1. Harasser           - Ranged attacking unit for cheap damage to enemy remote miners and protecting highways
 1. Robber             - takes resources from enemy rooms
 
 ### Other
@@ -43,12 +42,20 @@ TLDR place flags in other rooms like "claim" (claim room), "plan" (build base at
 1. Mineral Miner      - mine mineral source in the room
 1. Power Creep        - boost other creeps/resources/structures in a room
 1. Power Miner        - mine power in nearby highway rooms
-1. Scout              - reserves rooms for remote mining
 1. Spawn Builder      - build initial buildings in a new city
 
-## Flag usage
-Most flags require a city name to be part of their name to specify the city that will be sending creeps to the flag.
-For example: a flag named `E11N140shoot` will send a trooper from E11N140. A city's name will always be the room name with a '0' added to the end. For flags that require a city name, we will use a '-' to convey that. So in the example above, the flag would referred to as `-shoot`.
+## Flagging targets
+The PlaceFlag function can be used from the console to flag a target with a flag.
+For example: `PlaceFlag("claim", 25, 25, "E9N32")`
+
+Flag Types:
+1. claim                   - claim a room
+1. plan                    - create a layout for a structures in a new room
+1. <roomName>break         - send a breaker to a room to destroy structures
+1. <roomName>bigBreak      - send a boosted breaker to a room to destroy structures
+
+If a flag requires a city name to be part of its name, this specifies the city that will send the creeps.
+For example: a flag named `E11N140break` will send a breaker from E11N140. A city's name will always be the room name with a '0' added to the end. For flags that require a city name, we will use a '-' to convey that. So in the example above, the flag would referred to as `-break`.
 
 ## New City
 ### How to build a new city (not the first spawn)
@@ -60,23 +67,9 @@ For example: a flag named `E11N140shoot` will send a trooper from E11N140. A cit
 1. Wait ~500 ticks for the `claim` flag to be recognized and processed. The closest room (greater than rcl 4) will create claimers to claim the room and spawnBuilders to build the spawn & get the room started.
 1. The `plan` flag will be replaced with construction sites for core buildings in the room after the room has been claimed.
 
-## Offensive Flags
-### Breaker attack (destroy structures in a room), with medic support
-1. Place a flag `-break` in the target room.
-1. (optional) Place a flag `-breakTarget` on any structure in the room to manually override the targeting system to that location.
-1. (optional) Place a flag `-breakerRally` to force the breaker to walk through a particular space on its way to the destination
-1. (optional) If the attack is being launched from an RCL 8 room, `-bigBreak` can be used instead of `-break` to use a more powerful boosted breaker for the job. All other flag names remain the same for the big breaker.
-Notes: Don't forget to remove your flags when you are done with them! Your cities will continually try to reinforce flags until they are removed.
-
-### Trooper attack (for creep destruction, and less fortified opponents), with medic support
-1. Place a flag `-shoot` in the target room.
-1. (optional) Place a flag `-trooperRally` to force the breaker to walk through a particular space on its way to the destination
-1. (optional) If the attack is being launched from an RCL 8 room, `-bigShoot` can be used instead of `-shoot` to use a more powerful boosted trooper for the job. All other flag names remain the same for the big trooper.
-Notes: Don't forget to remove your flags when you are done with them! Your cities will continually try to reinforce flags until they are removed.
-
-### Robber
-*Coming soon*
+## Quad Attack
+Call `DeployQuad("E9N32")` to deploy a quad to E9N32.
 
 ## Other flag info
-There are some automated roles that currently run off of flags. These include the Power Miner, Deposit Miner, and Harasser. You do not need to interact with their respective flags (`-powerMine`, `-deposit`, `-harass`) for them to operate successfully.
+There are some automated roles that currently run off of flagging mechanisms. These include the Power Miner, Deposit Miner, and Harasser. You do not need to interact with their respective flags (`-powerMine`, `-deposit`, `-harass`) for them to operate successfully.
 
