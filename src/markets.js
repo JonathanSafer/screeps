@@ -30,16 +30,16 @@ var markets = {
 
     ///////// TOP LEVEL MARKET FUNCTIONS (There are 9) ////////
     sendCommodities: function(cities){
-        for(var i = 0; i < cities.length; i++){
-            const memory = Game.spawns[cities[i].memory.city].memory
+        for(const city of cities) {
+            const memory = Game.spawns[city.memory.city].memory
             if(memory.ferryInfo.factoryInfo && memory.ferryInfo.comSend.length){
                 const comSend = memory.ferryInfo.comSend[0]
-                if(cities[i].terminal.store[comSend[0]] >= comSend[1] && !cities[i].terminal.termUsed){
-                    cities[i].terminal.send(comSend[0], comSend[1], comSend[2])
-                    cities[i].terminal.termUsed = true
+                if(city.terminal.store[comSend[0]] >= comSend[1] && !Memory[city.name].termUsed){
+                    city.terminal.send(comSend[0], comSend[1], comSend[2])
+                    Memory[city.name].termUsed = true
                     memory.ferryInfo.comSend = _.drop(memory.ferryInfo.comSend)
                 } else {
-                    Log.info("Error sending " + comSend[0] + " from: " + cities[i].name)
+                    Log.info("Error sending " + comSend[0] + " from: " + city.name)
                 }
             }
         }
@@ -51,10 +51,10 @@ var markets = {
         if (needEnergy.length){
             var sortedCities = _.sortBy(needEnergy, city => city.storage.store.energy)
             receiver = sortedCities[0].name
-            for (var i = 0; i < myCities.length; i++){
-                if (myCities[i].storage && myCities[i].storage.store.energy > settings.energy.processPower + 100000 && !myCities[i].terminal.termUsed){
-                    myCities[i].terminal.send(RESOURCE_ENERGY, 25000, receiver)
-                    myCities[i].terminal.termUsed = true
+            for (const city of myCities){
+                if (city.storage && city.storage.store.energy > settings.energy.processPower + 100000 && !Memory[city.name].termUsed){
+                    city.terminal.send(RESOURCE_ENERGY, 25000, receiver)
+                    Memory[city.name].termUsed = true
                 }
             }
         }
@@ -67,30 +67,30 @@ var markets = {
         const senders = _.filter(myCities, city => city.terminal && (Game.spawns[city.memory.city].memory.ferryInfo.factoryInfo.factoryLevel > 0 || city.controller.level == 6))
         const baseMins = [RESOURCE_HYDROGEN, RESOURCE_OXYGEN, RESOURCE_UTRIUM, RESOURCE_LEMERGIUM, RESOURCE_KEANIUM, RESOURCE_ZYNTHIUM, RESOURCE_CATALYST]
         const baseComs = [RESOURCE_SILICON, RESOURCE_METAL, RESOURCE_BIOMASS, RESOURCE_MIST]
-        for(var i = 0; i < senders.length; i++){
+        for(const sender of senders){
             //if a sender has more than 8k of a base mineral, or ANY of a base commodity, send it to a random receiver
             let go = true
-            for(let j = 0; j < baseMins.length; j++){
+            for(const baseMin of baseMins){
                 if(!go){
                     continue
                 }
-                if(senders[i].terminal.store[baseMins[j]] > 8000 && !senders[i].terminal.termUsed){
-                    const amount = senders[i].terminal.store[baseMins[j]] - 8000
+                if(sender.terminal.store[baseMin] > 8000 && !Memory[sender.name].termUsed){
+                    const amount = sender.terminal.store[baseMin] - 8000
                     const receiver = receivers[Math.floor(Math.random() * Math.floor(receivers.length))].name
-                    senders[i].terminal.send(baseMins[j], amount, receiver)
-                    senders[i].terminal.termUsed = true
+                    sender.terminal.send(baseMin, amount, receiver)
+                    Memory[sender.name].termUsed = true
                     go = false
                 }
             }
-            for(let j = 0; j < baseComs.length; j++){
+            for(const baseCom of baseComs){
                 if(!go){
                     continue
                 }
-                if(senders[i].terminal.store[baseComs[j]] > 0 && !senders[i].terminal.termUsed){
-                    const amount = senders[i].terminal.store[baseComs[j]]
+                if(sender.terminal.store[baseCom] > 0 && !Memory[sender.name].termUsed){
+                    const amount = sender.terminal.store[baseCom]
                     const receiver = receivers[Math.floor(Math.random() * Math.floor(receivers.length))].name
-                    senders[i].terminal.send(baseComs[j], amount, receiver)
-                    senders[i].terminal.termUsed = true
+                    sender.terminal.send(baseCom, amount, receiver)
+                    Memory[sender.name].termUsed = true
                     go = false
                 }
             }
@@ -99,34 +99,34 @@ var markets = {
     
     distributeMinerals: function(myCities){
         let senders = myCities
-        for (var i = 0; i < myCities.length; i++){
-            const city = myCities[i].memory.city
+        for (const myCity of myCities){
+            const city = myCity.memory.city
             if(!Game.spawns[city]){
                 continue
             }
             const mineral = Game.spawns[city].memory.ferryInfo.mineralRequest
             if(mineral){
                 const x = senders.length
-                for (var j = 0; j < senders.length; j++){
-                    if(!senders[j].terminal){
+                for (const sender of senders){
+                    if(!sender.terminal){
                         continue
                     }
-                    if(senders[j].terminal.store[mineral] >= 6000 && !senders[j].terminal.termUsed){
-                        senders[j].terminal.send(mineral, 3000, myCities[i].name)
-                        senders[j].terminal.termUsed = true
-                        senders = senders.splice(senders.indexOf(senders[j]), 1)
+                    if(sender.terminal.store[mineral] >= 6000 && !Memory[sender.name].termUsed){
+                        sender.terminal.send(mineral, 3000, myCity.name)
+                        Memory[sender.name].termUsed = true
+                        senders = senders.splice(senders.indexOf(sender), 1)
                         Game.spawns[city].memory.ferryInfo.mineralRequest = null
                         break
                     }
                     
                 }
-                if(x === senders.length && !myCities[i].terminal.termUsed){
+                if(x === senders.length && !Memory[myCity.name].termUsed){
                     //buy mineral
                     const sellOrders = markets.sortOrder(Game.market.getAllOrders(order => order.type == ORDER_SELL && order.resourceType == mineral && order.amount >= 3000 && order.price < 0.5))
                     if (sellOrders.length){
-                        Game.market.deal(sellOrders[0].id, 3000, myCities[i].name)
+                        Game.market.deal(sellOrders[0].id, 3000, myCity.name)
                         Game.spawns[city].memory.ferryInfo.mineralRequest = null
-                        myCities[i].terminal.termUsed = true
+                        Memory[myCity.name].termUsed = true
                     } else {
                         Game.notify("Problem at distributeMinerals with " + mineral, 20)
                     }
@@ -140,10 +140,10 @@ var markets = {
         var needPower = _.filter(myCities, city => city.controller.level > 7 && city.terminal && city.terminal.store.power < 1)
         if (needPower.length){
             receiver = needPower[0].name
-            for (var i = 0; i < myCities.length; i++){
-                if (myCities[i].terminal && myCities[i].terminal.store.power > 2000 && !myCities[i].terminal.termUsed){
-                    myCities[i].terminal.send(RESOURCE_POWER, 560, receiver)
-                    myCities[i].terminal.termUsed = true
+            for (const city of myCities){
+                if (city.terminal && city.terminal.store.power > 2000 && !Memory[city.name].termUsed){
+                    city.terminal.send(RESOURCE_POWER, 560, receiver)
+                    Memory[city.name].termUsed = true
                     Log.info("Sending power to " + receiver)
                 }
             }
@@ -155,10 +155,10 @@ var markets = {
         var needUpgrade = _.filter(myCities, city => city.controller.level > 5 && city.terminal && city.terminal.store["XGH2O"] < 1000)
         if (needUpgrade.length){
             receiver = needUpgrade[0].name
-            for (var i = 0; i < myCities.length; i++){
-                if (myCities[i].terminal && myCities[i].terminal.store["XGH2O"] > 7000 && !myCities[i].terminal.termUsed){
-                    myCities[i].terminal.send("XGH2O", 3000, receiver)
-                    myCities[i].terminal.termUsed = true
+            for (const city of myCities){
+                if (city.terminal && city.terminal.store["XGH2O"] > 7000 && !Memory[city.name].termUsed){
+                    city.terminal.send("XGH2O", 3000, receiver)
+                    Memory[city.name].termUsed = true
                     Log.info("Sending upgrade boost to " + receiver)
                     return
                 }
@@ -171,10 +171,10 @@ var markets = {
         var needRepair = _.filter(myCities, city => city.controller.level > 5 && city.terminal && city.terminal.store["XLH2O"] < 1000)
         if (needRepair.length){
             receiver = needRepair[0].name
-            for (var i = 0; i < myCities.length; i++){
-                if (myCities[i].terminal && myCities[i].terminal.store["XLH2O"] > 7000 && !myCities[i].terminal.termUsed){
-                    myCities[i].terminal.send("XLH2O", 3000, receiver)
-                    myCities[i].terminal.termUsed = true
+            for (const city of myCities){
+                if (city.terminal && city.terminal.store["XLH2O"] > 7000 && !Memory[city.name].termUsed){
+                    city.terminal.send("XLH2O", 3000, receiver)
+                    Memory[city.name].termUsed = true
                     Log.info("Sending repair boost to " + receiver)
                     return
                 }
@@ -187,10 +187,10 @@ var markets = {
         var needOps = _.filter(myCities, city => city.controller.level == 8 && city.terminal && city.terminal.store[RESOURCE_OPS] < 300)
         if (needOps.length){
             receiver = needOps[0].name
-            for (var i = 0; i < myCities.length; i++){
-                if (myCities[i].terminal && myCities[i].terminal.store[RESOURCE_OPS] > 7000 && !myCities[i].terminal.termUsed){
-                    myCities[i].terminal.send(RESOURCE_OPS, 5000, receiver)
-                    myCities[i].terminal.termUsed = true
+            for (const city of myCities){
+                if (city.terminal && city.terminal.store[RESOURCE_OPS] > 7000 && !Memory[city.name].termUsed){
+                    city.terminal.send(RESOURCE_OPS, 5000, receiver)
+                    Memory[city.name].termUsed = true
                     Log.info("Sending power to " + receiver)
                     return
                 }
