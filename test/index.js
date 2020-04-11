@@ -2,83 +2,21 @@
 // Import lodash
 var _ = require("lodash")
 global._ = _
-
-// Import constants
-var path = require("path")
-var common = require(path.resolve(path.dirname(require.resolve("@screeps/common"))))
-var constants = common["configManager"]["config"]["common"]["constants"]
-
-// Import globals
-for (const key in constants) {
-    global[key] = constants[key]
-}
-
+require("./lib.js")
 
 const rName = "E10N17"
 const city = `${rName}0`
-const room = {
-    controller: {
-        my: true
-    },
-    name: rName,
-    memory: {
-        city: city
-    }
-}
 
-const rooms = {
-    rName: room
-}
 
-const spawns = {
-    city: {
-        room: room
-    },
-    test: {}
-}
+const room = new Room(rName)
+new StructureController(room, 8)
+const creep = new Creep(room, "7")
+creep.memory.role = "remoteMiner"
+creep.memory.city = city
+new StructureSpawn(room, city)
+new StructureSpawn(room, "test")
+new StructureFactory(room, 1)
 
-var used = 0
-global.Game = {
-    shard: { name: "shard3" },
-    rooms: rooms,
-    spawns: spawns,
-    flags: {},
-    time: 0,
-    cpu: {
-        getUsed: function() {
-            used += 0.1
-            return used
-        }
-    },
-    creeps: {
-        7: {
-            memory: {
-                role: "remoteMiner"
-            },
-            city: city,
-            room: room,
-            notifyWhenAttacked: () => 0
-        }
-    },
-    getObjectById: function() {
-        const factory = {}
-        factory.level = 1
-        return factory
-    }
-}
-global.Room = {}
-global.Structure = {}
-global.Spawn = {}
-global.Creep = {}
-global.RoomPosition = {}
-global.Source = {}
-global.Flag = {}
-global.Memory = {}
-global.RawMemory = {
-    setActiveSegments: function() {
-        return
-    }
-}
 console.log("Loaded constants for test")
 
 // Load main

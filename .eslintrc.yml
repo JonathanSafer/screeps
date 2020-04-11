@@ -13,6 +13,8 @@ globals:
   describe: readonly
   it: readonly
   MemoryCache: writable
+  Shard: writable
+  StructureFactory: writable
 parserOptions:
   ecmaVersion: 2018
 rules:
