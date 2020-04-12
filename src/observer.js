@@ -134,3 +134,5 @@ const ob = {
         return walls >= 8
     }
 }
+
+module.exports = ob
