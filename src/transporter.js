@@ -69,8 +69,7 @@ var rT = {
         return creep.pos.findClosestByRange(FIND_MY_STRUCTURES, {
             filter: (structure) => {
                 return structure.id !== id && rT.needsEnergy(structure)
-            },
-            maxOps: 10
+            }
         })
     },
 
