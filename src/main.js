@@ -36,10 +36,6 @@ profiler.enable()
 module.exports.loop = function () {
     "use strict"
     profiler.wrap(function () {
-        delete global.Memory
-        global.Memory = MemoryCache
-        RawMemory._parsed = MemoryCache
-
         er.reset()
         if(Game.shard.name == "shard2"){
             return

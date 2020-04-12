@@ -29,5 +29,3 @@ global.DeployQuad = function(roomName) {
     const quad = require("./quad")
     quad.deployQuad(roomName)
 }
-
-global.MemoryCache = Memory

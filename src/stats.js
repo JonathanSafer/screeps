@@ -132,9 +132,7 @@ var statsLib = {
                 }
             }
             if(Cache.bucket){
-                stats["cpu.bucketfillRate"] = Cache.bucket.fillRate
-                stats["cpu.bucketfillRateLong"] = Cache.bucket.fillRateLong
-                stats["cpu.bucketfillRateMax"] = Cache.bucket.fillRateMax
+                stats["cpu.bucketfillRateMax"] = Cache.bucket.fillRate
                 stats["cpu.waste"] = Cache.bucket.waste
                 Cache.bucket.waste = 0
             }

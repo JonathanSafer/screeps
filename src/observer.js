@@ -11,6 +11,45 @@ const ob = {
         }
     },
 
+    scanRoom: function() {
+        const observers = ob.getUnusedObservers()
+        if (!observers.length) return
+
+        ob.scanNextRoom(observers[0])
+    },
+
+    getUnusedObservers: function() {
+        // TODO
+    },
+
+    scanNextRoom: function(observer) {
+        const target = ob.getScannerTarget(observer)
+        observer.observeRoom(target)
+    },
+
+    getScannerTarget: function(observer) {
+        const roomsCache = u.getsetd(Cache, "rooms", {})
+        const rcache = u.getsetd(roomsCache, observer.room.name, {})
+        if (!rcache.scannerTargets) {
+            ob.findRoomsForScan()
+        }
+        return rcache.scannerTargets.shift()
+    },
+
+    findRoomsForScan: function() {
+        const size = Game.map.getWorldSize()
+        ob.generateRoomList(-size/2, -size/2, size, size)
+        // TODO split rooms by city
+    },
+
+    generateRoomList: function(minX, minY, sizeX, sizeY) {
+        return _(Array(sizeX)).map((oldX, i) => {
+            return _(Array(sizeY)).map((oldY, j) => {
+                return u.roomPosToName([minX + i, minY + j])
+            }).value()
+        }).flatten().value()
+    },
+
     observeNewRoomForMining: function(city) {
         const obs = ob.getObsForMining(city)
         if (!obs) return false
@@ -111,13 +150,11 @@ const ob = {
 
     checkFlags: function(roomPos){
         const flags = Object.keys(Memory.flags)
-        for(let i = 0; i < flags.length; i++){
-            const flagPos = new RoomPosition(Memory.flags[flags[i]].x, Memory.flags[flags[i]].y, Memory.flags[flags[i]].roomName)
-            if(flagPos.isEqualTo(roomPos)){
-                return flags[i]
-            }
-        }
-        return false
+        return _(flags).find(flagName => {
+            const flag = Memory.flags[flagName]
+            const flagPos = new RoomPosition(flag.x, flag.y, flag.roomName)
+            return flagPos.isEqualTo(roomPos)
+        })
     },
 
     // True if a point is surrounded by terrain walls

@@ -253,16 +253,16 @@ var u = {
         const x = Number(coords[0])
         const y = Number(coords[1])
         return [
-            quad[0] === "W" ? 0 - x : 1 + x,
-            quad[1] === "S" ? 0 - y : 1 + y
+            quad[0] === "W" ? -1 - x : x,
+            quad[1] === "S" ? -1 - y : y
         ]
     },
 
     roomPosToName: function(roomPos) {
         const x = roomPos[0]
         const y = roomPos[1]
-        return (x <= 0 ? "W" + String(-x) : "E" + String(x - 1)) +
-            (y <= 0 ? "S" + String(-y) : "N" + String(y - 1))
+        return (x < 0 ? "W" + String(-x - 1) : "E" + String(x)) +
+            (y < 0 ? "S" + String(-y - 1) : "N" + String(y))
     },
 
     isFriendlyRoom: function(room){
