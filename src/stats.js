@@ -37,6 +37,10 @@ var statsLib = {
             stats["gpl.progressTotal"] = Game.gpl.progressTotal
             stats["gpl.level"] = Game.gpl.level
             stats["energy"] = u.getDropTotals()
+
+            const heapStats = Game.cpu.getHeapStatistics()
+            stats["heap.available"] = heapStats["total_available_size"]
+            
             var cities = []
             _.forEach(Object.keys(Game.rooms), function(roomName){
                 const room = Game.rooms[roomName]
