@@ -105,10 +105,11 @@ global.StructureTerminal = class extends Structure {
 }
 
 global.StructureController = class extends Structure {
-    constructor(room, level) {
+    constructor(room, level, my) {
         super(room, STRUCTURE_CONTROLLER)
         room.controller = this
         this.level = level
+        this.my = my
     }
 }
 

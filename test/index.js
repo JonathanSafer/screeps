@@ -9,7 +9,7 @@ const city = `${rName}0`
 
 
 const room = new Room(rName)
-new StructureController(room, 8)
+new StructureController(room, 8, true)
 const creep = new Creep(room, "7")
 creep.memory.role = "remoteMiner"
 creep.memory.city = city
