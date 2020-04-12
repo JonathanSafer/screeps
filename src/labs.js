@@ -82,7 +82,8 @@ var labs = {
                 }
             }
         }
-        if(oldMineral == spawn.memory.ferryInfo.labInfo.boost || !spawn.memory.ferryInfo.labInfo.boost){
+        if(oldMineral == spawn.memory.ferryInfo.labInfo.boost || !spawn.memory.ferryInfo.labInfo.boost
+            || spawn.memory.ferryInfo.labInfo.boost == "dormant"){
             labs.chooseBoost(oldMineral, spawn)
             if(spawn.memory.ferryInfo.labInfo.boost == "dormant"){
                 return
