@@ -23,6 +23,7 @@ var p = {
             "markets",
             "medic",
             "mineralMiner",
+            "observer",
             "powerCreep",
             "powerMiner",
             "remoteMiner",
