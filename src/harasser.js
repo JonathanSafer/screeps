@@ -20,7 +20,8 @@ var rH = {
                 }
             }
         }
-        if(creep.memory.respawnTime && creep.ticksToLive == creep.memory.respawnTime && Memory.flags[creep.memory.city + "harass"]){
+        if(creep.memory.respawnTime && creep.ticksToLive == creep.memory.respawnTime && Memory.flags[creep.memory.city + "harass"]
+            && Game.spawns[creep.memory.city].memory[rH.name] < 2){
             sq.respawn(creep)
         }
         if(rH.dormant(creep)){
