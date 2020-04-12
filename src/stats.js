@@ -62,6 +62,11 @@ var statsLib = {
                         _.reduce(sites, (sum, site) => sum + site.progress, 0)
                     stats[`cities.${city}.sites.progressTotal`] = 
                         _.reduce(sites, (sum, site) => sum + site.progressTotal, 0)
+
+                    // observer scans
+                    const rcache = u.getRoomCache(room.name)
+                    stats[`cities.${city}.scans`] = rcache.scans || 0
+                    rcache.scans = 0
                 }
 
                 stats[`rooms.${roomName}.attacks`] = u.getsetd(Cache, roomName, {}).attacks
