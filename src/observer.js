@@ -3,7 +3,7 @@ const u = require("./utils")
 
 const ob = {
     run: function(city){
-        const roomName = city.substring(city.length - 1)
+        const roomName = city.substring(0, city.length - 1)
         const rcache = u.getRoomCache(roomName)
         rcache.scanned = false
 
