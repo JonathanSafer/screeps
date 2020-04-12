@@ -31,6 +31,12 @@ var m = {
             }
         }
         //recalc needed
+        if(Cache[creep.name].pathFail > 2){
+            if(Game.time % 50 != 0){
+                return
+            }
+            Cache[creep.name].pathFail = 0 
+        }
         const pathCalc = m.pathCalc(creep, endPos, avoidEnemies, range)
 
         if(pathCalc){//if pathing successful, MBP
@@ -40,6 +46,11 @@ var m = {
             }
         } else {
             Log.info(`Pathing failure at ${creep.pos}`)
+            if(Cache[creep.name].pathFail){
+                Cache[creep.name].pathFail++
+                return
+            }
+            Cache[creep.name].pathFail = 1
         }
     },
 
