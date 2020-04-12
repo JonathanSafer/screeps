@@ -37,13 +37,13 @@ var markets = {
             const memory = Game.spawns[city.memory.city].memory
             if(memory.ferryInfo.factoryInfo && memory.ferryInfo.comSend.length){
                 const comSend = memory.ferryInfo.comSend[0]
-                if (Memory[city.name].termUsed) {
+                if (Memory.rooms[city.name].termUsed) {
                     return
                 }
 
                 if(city.terminal.store[comSend[0]] >= comSend[1]){
                     city.terminal.send(comSend[0], comSend[1], comSend[2])
-                    Memory[city.name].termUsed = true
+                    Memory.rooms[city.name].termUsed = true
                 }
                 
                 memory.ferryInfo.comSend = _.drop(memory.ferryInfo.comSend)
@@ -58,9 +58,9 @@ var markets = {
             var sortedCities = _.sortBy(needEnergy, city => city.storage.store.energy)
             receiver = sortedCities[0].name
             for (const city of myCities){
-                if (city.storage && city.storage.store.energy > settings.energy.processPower + 100000 && !Memory[city.name].termUsed){
+                if (city.storage && city.storage.store.energy > settings.energy.processPower + 100000 && !Memory.rooms[city.name].termUsed){
                     city.terminal.send(RESOURCE_ENERGY, 25000, receiver)
-                    Memory[city.name].termUsed = true
+                    Memory.rooms[city.name].termUsed = true
                 }
             }
         }
@@ -147,9 +147,9 @@ var markets = {
         if (needPower.length){
             receiver = needPower[0].name
             for (const city of myCities){
-                if (city.terminal && city.terminal.store.power > 2000 && !Memory[city.name].termUsed){
+                if (city.terminal && city.terminal.store.power > 2000 && !Memory.rooms[city.name].termUsed){
                     city.terminal.send(RESOURCE_POWER, 560, receiver)
-                    Memory[city.name].termUsed = true
+                    Memory.rooms[city.name].termUsed = true
                     Log.info("Sending power to " + receiver)
                 }
             }
@@ -162,9 +162,9 @@ var markets = {
         if (needUpgrade.length){
             receiver = needUpgrade[0].name
             for (const city of myCities){
-                if (city.terminal && city.terminal.store["XGH2O"] > 7000 && !Memory[city.name].termUsed){
+                if (city.terminal && city.terminal.store["XGH2O"] > 7000 && !Memory.rooms[city.name].termUsed){
                     city.terminal.send("XGH2O", 3000, receiver)
-                    Memory[city.name].termUsed = true
+                    Memory.rooms[city.name].termUsed = true
                     Log.info("Sending upgrade boost to " + receiver)
                     return
                 }
@@ -178,9 +178,9 @@ var markets = {
         if (needRepair.length){
             receiver = needRepair[0].name
             for (const city of myCities){
-                if (city.terminal && city.terminal.store["XLH2O"] > 7000 && !Memory[city.name].termUsed){
+                if (city.terminal && city.terminal.store["XLH2O"] > 7000 && !Memory.rooms[city.name].termUsed){
                     city.terminal.send("XLH2O", 3000, receiver)
-                    Memory[city.name].termUsed = true
+                    Memory.rooms[city.name].termUsed = true
                     Log.info("Sending repair boost to " + receiver)
                     return
                 }
@@ -194,9 +194,9 @@ var markets = {
         if (needOps.length){
             receiver = needOps[0].name
             for (const city of myCities){
-                if (city.terminal && city.terminal.store[RESOURCE_OPS] > 7000 && !Memory[city.name].termUsed){
+                if (city.terminal && city.terminal.store[RESOURCE_OPS] > 7000 && !Memory.rooms[city.name].termUsed){
                     city.terminal.send(RESOURCE_OPS, 5000, receiver)
-                    Memory[city.name].termUsed = true
+                    Memory.rooms[city.name].termUsed = true
                     Log.info("Sending power to " + receiver)
                     return
                 }
