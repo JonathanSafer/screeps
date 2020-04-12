@@ -40,7 +40,7 @@ const ob = {
         rcache.scanned = true // flag scanner as used
         rcache.scans = (rcache.scans || 0) + 1  // Record stats for scans
 
-        const lastScans = u.getsetd(Cache, lastScans, [])
+        const lastScans = u.getsetd(Cache, "lastScans", [])
         lastScans.push(target) // mark room so we collect data from it next tick
     },
 
