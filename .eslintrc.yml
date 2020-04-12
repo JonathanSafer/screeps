@@ -12,8 +12,9 @@ globals:
   T: writable
   describe: readonly
   it: readonly
+  beforeEach: readonly
+  afterEach: readonly
   MemoryCache: writable
-  Shard: writable
   StructureFactory: writable
 parserOptions:
   ecmaVersion: 2018

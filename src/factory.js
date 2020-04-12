@@ -193,8 +193,12 @@ var fact = {
 
     removeJunk: function(city, terminal){
         const coms = _.without(_.difference(Object.keys(COMMODITIES), Object.keys(REACTIONS)), RESOURCE_ENERGY)
-        const destination = _.find(Game.structures, struct => struct.structureType == STRUCTURE_FACTORY
-                 && struct.my && !struct.level && struct.room.terminal && struct.room.controller.level >= 7).room.name
+        const unleveledFactory = _.find(Game.structures, struct => struct.structureType == STRUCTURE_FACTORY
+                 && struct.my && !struct.level && struct.room.terminal && struct.room.controller.level >= 7)
+        if (!unleveledFactory) {
+            return
+        }
+        const destination = unleveledFactory.room.name
         for(var i = 0; i < Object.keys(terminal.store).length; i++){
             if(_.includes(coms, Object.keys(terminal.store)[i])){
                 //send com to a level 0 room

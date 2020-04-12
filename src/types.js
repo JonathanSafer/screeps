@@ -1,25 +1,26 @@
 var motion = require("./motion")
 
 function getRecipe(type, energyAvailable, room){
+    const energy = energyAvailable || 0
     const d = {}
     const rcl = room.controller.level
 
     // used at all rcls
-    d.quad = quadBody(energyAvailable, rcl, room)
-    d.runner = scalingBody([2, 1], [CARRY, MOVE], energyAvailable)
-    d.miner = minerBody(energyAvailable, rcl)
-    d.normal = upgraderBody(energyAvailable, rcl, room)
-    d.transporter = scalingBody([2, 1], [CARRY, MOVE], energyAvailable, 30)
-    d.builder = builderBody(energyAvailable, rcl)
-    d.defender = defenderBody(energyAvailable, rcl)
+    d.quad = quadBody(energy, rcl, room)
+    d.runner = scalingBody([2, 1], [CARRY, MOVE], energy)
+    d.miner = minerBody(energy, rcl)
+    d.normal = upgraderBody(energy, rcl, room)
+    d.transporter = scalingBody([2, 1], [CARRY, MOVE], energy, 30)
+    d.builder = builderBody(energy, rcl)
+    d.defender = defenderBody(energy, rcl)
 
     // used at rcl 4+
-    d.spawnBuilder = scalingBody([2, 3, 5], [WORK, CARRY, MOVE], energyAvailable)
-    d.trooper = scalingBody([1, 1], [RANGED_ATTACK, MOVE], energyAvailable)
+    d.spawnBuilder = scalingBody([2, 3, 5], [WORK, CARRY, MOVE], energy)
+    d.trooper = scalingBody([1, 1], [RANGED_ATTACK, MOVE], energy)
 
     // used at rcl 5+
-    d.ferry = scalingBody([2, 1], [CARRY, MOVE], energyAvailable, 30)
-    d.breaker = scalingBody([1, 1], [MOVE, WORK], energyAvailable)
+    d.ferry = scalingBody([2, 1], [CARRY, MOVE], energy, 30)
+    d.breaker = scalingBody([1, 1], [MOVE, WORK], energy)
 
     // rcl 8 only
     d.powerMiner = body([20, 20], [MOVE, ATTACK])
@@ -258,7 +259,8 @@ function defenderBody(energyAvailable, rcl) {
 function scalingBody(ratio, types, energyAvailable, maxOverride) {
     const baseCost = cost(body(ratio, types))
     const maxSize = maxOverride || MAX_CREEP_SIZE
-    const scale = Math.max(Math.floor(Math.min(energyAvailable / baseCost, maxSize / _.sum(ratio))), 1)
+    const energy = energyAvailable || 0
+    const scale = Math.max(Math.floor(Math.min(energy / baseCost, maxSize / _.sum(ratio))), 1)
     return body(ratio.map(x => x * scale), types)
 }
 

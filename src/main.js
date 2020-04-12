@@ -59,10 +59,7 @@ module.exports.loop = function () {
         var prevCpu = Game.cpu.getUsed()
         for (let i = 0; i < myCities.length; i += 1) {
             try {
-                var city = myCities[i].memory.city
-                if(!city){
-                    myCities[i].memory.city = myCities[i].name + "0"
-                }
+                var city = u.getsetd(myCities[i].memory, "city", myCities[i].name + "0")
                 const rcl = myCities[i].controller.level
                 const rclLimit =
                     settings.bucket.colony - rcl * settings.bucket.rclMultiplier

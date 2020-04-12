@@ -1,6 +1,6 @@
 var assert = require("assert")
 // const _ = require("lodash")
-require("./lib.js")
+require("./lib")
 
 function createBasicCity(name) {
     return createFactoryCity(name, {}, 1)
@@ -9,20 +9,19 @@ function createBasicCity(name) {
 function createFactoryCity(name, resourceMap, factoryLevel) {
     const city = new Room(name)
     new StructureFactory(city, factoryLevel)
-    new StructureController(city, 8)
+    new StructureController(city)
     new StructureTerminal(city, resourceMap)
     city.memory.city = name
     return city
 }
 
-// resource enum
-const cities = [
-    createFactoryCity("1", {energy: 20, power: 7}, 1),
-    createFactoryCity("2", {energy: 11, power: 8}, 2),
-    createFactoryCity("3", {power: 6}, 3)]
-
 
 describe("utils", function () {
+    beforeEach(function() {
+        Game.reset()
+        Memory.reset()
+        global.Cache = {}
+    })
     var cM = require("../src/utils.js")
     describe("#getFactory()", function () {
         it("should get the factory", function () {
@@ -33,9 +32,19 @@ describe("utils", function () {
 })
 
 describe("commodityManager", function () {
+    beforeEach(function() {
+        Game.reset()
+        Memory.reset()
+        global.Cache = {}
+    })
     var cM = require("../src/commodityManager.js")
     describe("#empireStore()", function () {
         it("should sum everything", function () {
+            const cities = [
+                createFactoryCity("1", {energy: 20, power: 7}, 1),
+                createFactoryCity("2", {energy: 11, power: 8}, 2),
+                createFactoryCity("3", {power: 6}, 3)]
+
             const store = cM.empireStore(cities)
             assert.equal(31, store.energy)
             assert.equal(21, store.power)

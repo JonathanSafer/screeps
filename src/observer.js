@@ -3,6 +3,10 @@ const u = require("./utils")
 
 const ob = {
     run: function(city){
+        const roomName = city.substring(city.length - 1)
+        const rcache = u.getRoomCache(roomName)
+        rcache.scanned = false
+
         const remainder = Game.time % settings.observerFrequency
         if(remainder == 0){
             ob.observeNewRoomForMining(city)
@@ -12,24 +16,36 @@ const ob = {
     },
 
     scanRoom: function() {
-        const observers = ob.getUnusedObservers()
-        if (!observers.length) return
+        const observer = ob.getUnusedObserver()
+        if (!observer) return
 
-        ob.scanNextRoom(observers[0])
+        ob.scanNextRoom(observer)
     },
 
-    getUnusedObservers: function() {
-        // TODO
+    getUnusedObserver: function() {
+        return _(u.getMyCities())
+            .filter(city => !u.getRoomCache(city.name).scanned)
+            .map(city => {
+                const buildings = city.find(FIND_MY_STRUCTURES)
+                return _(buildings).find({ structureType: STRUCTURE_OBSERVER })
+            })
+            .find(observer => observer) // first non-null observer
     },
 
     scanNextRoom: function(observer) {
         const target = ob.getScannerTarget(observer)
         observer.observeRoom(target)
+
+        const rcache = u.getRoomCache(observer.room.name)
+        rcache.scanned = true // flag scanner as used
+        rcache.scans = (rcache.scans || 0) + 1  // Record stats for scans
+
+        const lastScans = u.getsetd(Cache, lastScans, [])
+        lastScans.push(target) // mark room so we collect data from it next tick
     },
 
     getScannerTarget: function(observer) {
-        const roomsCache = u.getsetd(Cache, "rooms", {})
-        const rcache = u.getsetd(roomsCache, observer.room.name, {})
+        const rcache = u.getRoomCache(observer.room.name)
         if (!rcache.scannerTargets) {
             ob.findRoomsForScan()
         }
@@ -38,8 +54,17 @@ const ob = {
 
     findRoomsForScan: function() {
         const size = Game.map.getWorldSize()
-        ob.generateRoomList(-size/2, -size/2, size, size)
-        // TODO split rooms by city
+        const rooms = ob.generateRoomList(-size/2, -size/2, size, size)
+        for (const room of rooms) {
+            for (const city of u.getMyCities()) {
+                if (Game.map.getRoomLinearDistance(room, city.name) < 5) {
+                    const rcache = u.getRoomCache(city.name)
+                    const targets = u.getsetd(rcache, "scannerTargets", [])
+                    targets.push(room)
+                    break
+                }
+            }
+        }
     },
 
     generateRoomList: function(minX, minY, sizeX, sizeY) {
@@ -57,6 +82,8 @@ const ob = {
         const roomNum = ob.timeToRoomNum(Game.time, city)
         //scan next room
         obs.observeRoom(Game.spawns[city].memory.powerRooms[roomNum])
+        const rcache = u.getRoomCache(obs.room.name)
+        rcache.scanned = true
     },
 
     placeMiningFlags: function(city) {

@@ -1,8 +1,12 @@
 var assert = require("assert")
 const _ = require("lodash")
-require("./lib.js")
+require("./lib")
 
 describe("utils", function () {
+    beforeEach(function() {
+        Game.reset()
+        Memory.reset()
+    })
     var u = require("../src/utils.js")
     describe("#roomNameToPos()", function () {
         it("should be reverseable", function () {
@@ -16,6 +20,11 @@ describe("utils", function () {
 })
 
 describe("observer", function () {
+    beforeEach(function() {
+        Game.reset()
+        Memory.reset()
+    })
+
     var o = require("../src/observer.js")
     describe("#generateRoomList()", function () {
         const rooms = o.generateRoomList(-5, -5, 10, 10)
@@ -29,6 +38,16 @@ describe("observer", function () {
 
         it("should be the right size", function () {
             assert.equal(100, rooms.length)
+        })
+    })
+
+    describe("#findRoomsForScan()", function () {
+        it("should find 81 rooms", function () {
+            const rN = "E0N0"
+            const room = new Room(rN)
+            new StructureController(room)
+            o.findRoomsForScan()
+            assert.equal(81, Cache.rooms[rN].scannerTargets.length)
         })
     })
 })
