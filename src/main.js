@@ -90,7 +90,6 @@ module.exports.loop = function () {
             for (const name in Memory.creeps) {
                 if (!Game.creeps[name]) {
                     delete Memory.creeps[name]
-                    Log.info(`Clearing non-existing creep memory: ${name}`)
                 }
             }
         }
@@ -99,7 +98,6 @@ module.exports.loop = function () {
             for (const name in Memory.rooms) {
                 if (!Memory.rooms[name].city) {
                     delete Memory.rooms[name]
-                    Log.info(`Clearing room memory: ${name}`)
                 }
             }
         }
