@@ -1,4 +1,5 @@
 var settings = require("./settings")
+var u = require("./utils")
 
 var labs = {
     //new labs:
@@ -141,11 +142,11 @@ var labs = {
 
                         const labCache = u.getLabCache(receiverList[i])
                         if(labCache.amount != lab.store[lab.mineralType]){
-                           labCache.amount = lab.store[lab.mineralType]
-                           labCache.lastUpdate = Game.time
-                           continue
+                            labCache.amount = lab.store[lab.mineralType]
+                            labCache.lastUpdate = Game.time
+                            continue
                         }
-                        if(labCache.lastUpdate < Game.time + CREEP_LIFETIME){
+                        if(labCache.lastUpdate < Game.time + CREEP_LIFE_TIME){
                             receivers[receiverList[i]].boost = null
                             receivers[receiverList[i]].fill = -1
                         }
