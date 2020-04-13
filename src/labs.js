@@ -146,7 +146,7 @@ var labs = {
                             labCache.lastUpdate = Game.time
                             continue
                         }
-                        if(labCache.lastUpdate < Game.time + CREEP_LIFE_TIME){
+                        if(labCache.lastUpdate < Game.time + CREEP_LIFE_TIME && !receivers[receiverList[i]].fill){
                             receivers[receiverList[i]].boost = null
                             receivers[receiverList[i]].fill = -1
                         }
