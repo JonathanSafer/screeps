@@ -84,7 +84,7 @@ var markets = {
                     const amount = sender.terminal.store[baseMin] - 8000
                     const receiver = receivers[Math.floor(Math.random() * Math.floor(receivers.length))].name
                     sender.terminal.send(baseMin, amount, receiver)
-                    Memory[sender.name].termUsed = true
+                    Memory.rooms[sender.name].termUsed = true
                     go = false
                 }
             }
@@ -96,7 +96,7 @@ var markets = {
                     const amount = sender.terminal.store[baseCom]
                     const receiver = receivers[Math.floor(Math.random() * Math.floor(receivers.length))].name
                     sender.terminal.send(baseCom, amount, receiver)
-                    Memory[sender.name].termUsed = true
+                    Memory.rooms[sender.name].termUsed = true
                     go = false
                 }
             }
@@ -119,7 +119,7 @@ var markets = {
                     }
                     if(sender.terminal.store[mineral] >= 6000 && !Memory[sender.name].termUsed){
                         sender.terminal.send(mineral, 3000, myCity.name)
-                        Memory[sender.name].termUsed = true
+                        Memory.rooms[sender.name].termUsed = true
                         senders = senders.splice(senders.indexOf(sender), 1)
                         Game.spawns[city].memory.ferryInfo.mineralRequest = null
                         break
@@ -132,7 +132,7 @@ var markets = {
                     if (sellOrders.length){
                         Game.market.deal(sellOrders[0].id, 3000, myCity.name)
                         Game.spawns[city].memory.ferryInfo.mineralRequest = null
-                        Memory[myCity.name].termUsed = true
+                        Memory.rooms[myCity.name].termUsed = true
                     } else {
                         Game.notify("Problem at distributeMinerals with " + mineral, 20)
                     }
