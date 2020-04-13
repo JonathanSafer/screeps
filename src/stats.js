@@ -28,14 +28,18 @@ var statsLib = {
         if (Game.time % settings.statTime == 1){
             RawMemory.setActiveSegments([])
             const stats = {}
-            stats["cpu.getUsed"] = Game.cpu.getUsed()
-            stats["cpu.bucket"] = Game.cpu.bucket
-            stats["gcl.progress"] = Game.gcl.progress
-            stats["gcl.progressTotal"] = Game.gcl.progressTotal
-            stats["gcl.level"] = Game.gcl.level
-            stats["gpl.progress"] = Game.gpl.progress
-            stats["gpl.progressTotal"] = Game.gpl.progressTotal
-            stats["gpl.level"] = Game.gpl.level
+            stats.cpu.getUsed = Game.cpu.getUsed()
+            stats.cpu.bucket = Game.cpu.bucket
+            stats.gcl.progress = Game.gcl.progress
+            stats.gcl.progressTotal = Game.gcl.progressTotal
+            stats.gcl.level = Game.gcl.level
+            stats.gcl.total = 
+                GCL_MULTIPLY * Math.pow(Game.gcl.level, GCL_POW) + Game.gcl.progress
+            stats.gpl.progress = Game.gpl.progress
+            stats.gpl.progressTotal = Game.gpl.progressTotal
+            stats.gpl.level = Game.gpl.level
+            stats.gpl.total = 
+                POWER_LEVEL_MULTIPLY * Math.pow(Game.gpl.level, POWER_LEVEL_POW) + Game.gpl.progress
             stats["energy"] = u.getDropTotals()
 
             const heapStats = Game.cpu.getHeapStatistics()
