@@ -305,6 +305,9 @@ var rF = {
                     }
                     creep.memory.mineral = receiverInfo[i].mineral
                     return 9
+                } else if(receiverInfo[i].fill > 0 && creep.room.terminal.store[receiverInfo[i].mineral] < 1000
+                    && !Game.spawns[creep.memory.city].memory.ferryInfo.mineralRequest){
+                    Game.spawns[creep.memory.city].memory.ferryInfo.mineralRequest = receiverInfo[i].mineral
                 }
             }
         }
