@@ -25,8 +25,9 @@ const ob = {
 
     recordRoomData: function() {
         const lastScans = u.getsetd(Cache, "lastScans", [])
+        const scanRooms = u.getsetd(Cache, "scanRooms", {})
         for (const room of lastScans) {
-            Cache.scanRooms[room] = ob.recordData(room)
+            scanRooms[room] = ob.recordData(room)
         }
         // Clear lastscans after we process them all
         Cache.lastScans = []
