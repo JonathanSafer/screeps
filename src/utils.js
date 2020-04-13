@@ -336,6 +336,24 @@ var u = {
             }
         }
         return exits
+    },
+
+    requestBoosterFill: function(spawn, boosts){
+        if(!spawn.memory.ferryInfo || !spawn.memory.ferryInfo.labInfo){
+            return
+        }
+        const receivers = spawn.memory.ferryInfo.labInfo.receivers
+        for(const mineral of boosts){
+            let receiver = _.find(Object.keys(receivers), lab => receivers[lab].boost == mineral)
+            if(!receiver){
+                receiver = _.find(Object.keys(receivers), lab => !receivers[lab].boost)
+            }
+            if(receiver){
+                receivers[receiver].boost = mineral
+                const lab = Game.getObjectById(receiver)
+                receivers[receiver].fill = Math.ceil((LAB_MINERAL_CAPACITY - (lab.store[mineral] || 0))/1000)
+            }
+        }
     }
 }
 
