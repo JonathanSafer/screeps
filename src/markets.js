@@ -80,7 +80,7 @@ var markets = {
                 if(!go){
                     continue
                 }
-                if(sender.terminal.store[baseMin] > 8000 && !Memory[sender.name].termUsed){
+                if(sender.terminal.store[baseMin] > 8000 && !Memory.rooms[sender.name].termUsed){
                     const amount = sender.terminal.store[baseMin] - 8000
                     const receiver = receivers[Math.floor(Math.random() * Math.floor(receivers.length))].name
                     sender.terminal.send(baseMin, amount, receiver)
@@ -92,7 +92,7 @@ var markets = {
                 if(!go){
                     continue
                 }
-                if(sender.terminal.store[baseCom] > 0 && !Memory[sender.name].termUsed){
+                if(sender.terminal.store[baseCom] > 0 && !Memory.rooms[sender.name].termUsed){
                     const amount = sender.terminal.store[baseCom]
                     const receiver = receivers[Math.floor(Math.random() * Math.floor(receivers.length))].name
                     sender.terminal.send(baseCom, amount, receiver)
@@ -126,7 +126,7 @@ var markets = {
                     }
                     
                 }
-                if(x === senders.length && !Memory[myCity.name].termUsed){
+                if(x === senders.length && !Memory.rooms[myCity.name].termUsed){
                     //buy mineral
                     const sellOrders = markets.sortOrder(Game.market.getAllOrders(order => order.type == ORDER_SELL && order.resourceType == mineral && order.amount >= 3000 && order.price < 0.5))
                     if (sellOrders.length){
