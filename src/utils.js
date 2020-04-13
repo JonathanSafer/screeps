@@ -128,7 +128,7 @@ var u = {
     },
     
     enemyOwned: function(room) {
-        return room.controller.owner && !u.isFriendlyRoom(room)
+        return room.controller && room.controller.owner && !u.isFriendlyRoom(room)
     },
     
     getDropTotals: function() {

@@ -36,6 +36,7 @@ const ob = {
         if (!room) { // We don't have vision for some reason
             return
         }
+        return
         const roomDataCache = u.getsetd(Cache, "roomData", {})
         const data = {}
         data.enemy = u.enemyOwned(room)
