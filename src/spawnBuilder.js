@@ -84,7 +84,8 @@ var rSB = {
     },
     
     build: function(creep) {
-        if(creep.room.controller && creep.room.controller.level < 2){
+        if(creep.room.controller && creep.room.controller.level < 2 
+            || creep.room.controller.ticksToDowngrade < CONTROLLER_DOWNGRADE[creep.room.controller.level] - 1000){
             if(creep.upgradeController(creep.room.controller) == ERR_NOT_IN_RANGE) {
                 motion.newMove(creep, creep.room.controller.pos, 3)
             }
