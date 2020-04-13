@@ -22,6 +22,33 @@ const ob = {
         ob.scanNextRoom(observer)
     },
 
+    recordRoomData: function() {
+        const lastScans = u.getsetd(Cache, "lastScans", [])
+        for (const room of lastScans) {
+            Cache.scanRooms[room] = ob.recordData(room)
+        }
+        // Clear lastscans after we process them all
+        Cache.lastScans = []
+    },
+
+    recordData: function(roomName) {
+        const room = Game.rooms[roomName]
+        if (!room) { // We don't have vision for some reason
+            return
+        }
+        const roomDataCache = u.getsetd(Cache, "roomData", {})
+        const data = {}
+        data.enemy = u.enemyOwned(room)
+        data.rcl = (room.controller && room.controller.level) || 0
+        data.towers = _(room.find(FIND_HOSTILE_STRUCTURES))
+            .filter({ structureType: STRUCTURE_TOWER })
+            .value().length
+        // data.template = true
+        roomDataCache[roomName] = data
+    },
+
+
+
     getUnusedObserver: function() {
         return _(u.getMyCities())
             .filter(city => !u.getRoomCache(city.name).scanned)

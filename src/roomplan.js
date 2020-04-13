@@ -473,7 +473,7 @@ const p = {
 
     planRoom: function(roomName) {
         // TODO
-        // var room = Game.rooms[roomName]
+        var room = Game.rooms[roomName]
         var ter = Game.map.getRoomTerrain(roomName)
         var sqd = Array(50).fill().map(() => Array(50))
         var i, j
@@ -506,11 +506,12 @@ const p = {
         for (i = 0; i < 50; i++) {
             for (j = 0; j < 50; j++) {
                 if (sqd[i][j] > 6) {
+                    // return true
                     //Log.info(i, j)--- save i & j as "planned"
                     //return
                 }
-                //var hex = sqd[i][j].toString(16)
-                //room.visual.text(sqd[i][j], i, j, {color: "#" + "00" + hex + hex + hex + hex})
+                var hex = sqd[i][j].toString(16)
+                room.visual.text(sqd[i][j], i, j, {color: "#" + "00" + hex + hex + hex + hex})
             }
         }
     },

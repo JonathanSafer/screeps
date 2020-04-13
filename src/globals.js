@@ -29,3 +29,8 @@ global.DeployQuad = function(roomName) {
     const quad = require("./quad")
     quad.deployQuad(roomName)
 }
+
+global.RoomWeights = function(roomName) {
+    const rp = require("./roomplan")
+    rp.planRoom(roomName)
+}

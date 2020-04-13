@@ -128,8 +128,7 @@ var u = {
     },
     
     enemyOwned: function(room) {
-        var hasController = room.controller
-        return hasController && room.controller.owner && room.controller.owner.username != "Yoner"
+        return room.controller.owner && !u.isFriendlyRoom(room)
     },
     
     getDropTotals: function() {
@@ -220,7 +219,6 @@ var u = {
             u.highwayMoveSettings(5000, 8, creep.pos, pos),
             avoidEnemies)         
     },
-
 
     // E0,E10... W0, 10 ..., N0, N10 ...
     isHighway: function(roomName) {
