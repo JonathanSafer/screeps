@@ -294,20 +294,20 @@ var rF = {
                     creep.memory.reactor = false
                     return 10
                 }
-                if(receiverInfo[i].fill > 0 && creep.room.terminal.store[receiverInfo[i].mineral] >= 1000){
+                if(receiverInfo[i].fill > 0 && creep.room.terminal.store[receiverInfo[i].boost] >= 1000){
                     //fill receiver
                     const lab = Game.getObjectById(receivers[i])
                     creep.memory.lab = receivers[i]
                     creep.memory.reactor = false
-                    if(lab.mineralType && lab.mineralType != receiverInfo[i].mineral){
+                    if(lab.mineralType && lab.mineralType != receiverInfo[i].boost){
 
                         return 10
                     }
-                    creep.memory.mineral = receiverInfo[i].mineral
+                    creep.memory.mineral = receiverInfo[i].boost
                     return 9
-                } else if(receiverInfo[i].fill > 0 && creep.room.terminal.store[receiverInfo[i].mineral] < 1000
+                } else if(receiverInfo[i].fill > 0 && creep.room.terminal.store[receiverInfo[i].boost] < 1000
                     && !Game.spawns[creep.memory.city].memory.ferryInfo.mineralRequest){
-                    Game.spawns[creep.memory.city].memory.ferryInfo.mineralRequest = receiverInfo[i].mineral
+                    Game.spawns[creep.memory.city].memory.ferryInfo.mineralRequest = receiverInfo[i].boost
                 }
             }
         }
