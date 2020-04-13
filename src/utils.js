@@ -13,6 +13,11 @@ var u = {
         return u.getsetd(roomsCache, roomName, {})
     },
 
+    getCreepCache: function(creepName) {
+        const creepsCache = u.getsetd(Cache, "creeps", {})
+        return u.getsetd(creepsCache, creepName, {})
+    },
+
     getWithdrawLocations: function(creep) {
         var city = creep.memory.city
         var spawn = Game.spawns[city]
