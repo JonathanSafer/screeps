@@ -1,5 +1,6 @@
 const settings = require("./settings")
 const u = require("./utils")
+const rp = require("./roomplan")
 
 const ob = {
     run: function(city){
@@ -36,7 +37,6 @@ const ob = {
         if (!room) { // We don't have vision for some reason
             return
         }
-        return
         const roomDataCache = u.getsetd(Cache, "roomData", {})
         const data = {}
         data.enemy = u.enemyOwned(room)
@@ -44,7 +44,7 @@ const ob = {
         data.towers = _(room.find(FIND_HOSTILE_STRUCTURES))
             .filter({ structureType: STRUCTURE_TOWER })
             .value().length
-        // data.template = true
+        data.template = !!rp.planRoom(roomName)
         roomDataCache[roomName] = data
     },
 

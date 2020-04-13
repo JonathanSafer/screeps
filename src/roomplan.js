@@ -473,39 +473,45 @@ const p = {
 
     planRoom: function(roomName) {
         // TODO
-        var room = Game.rooms[roomName]
-        var ter = Game.map.getRoomTerrain(roomName)
-        var sqd = Array(50).fill().map(() => Array(50))
-        var i, j
-        for (i = 0; i < 50; i++) {
-            for (j = 0; j < 50; j++) {
-                sqd[i][j] = ter.get(i, j) == TERRAIN_MASK_WALL ? 0 : 
-                    i < 2 || i > 47 || j < 2 || j > 47 ? 0 : 
-                        Math.min(sqd[i - 1][j], sqd[i][j - 1], sqd[i - 1][j - 1]) + 1
+        const room = Game.rooms[roomName]
+        const ter = Game.map.getRoomTerrain(roomName)
+        const sqd = _(Array(50)).map((r, i) => { 
+            return _(Array(50))
+                .map((v, j) => ter.get(i, j) == TERRAIN_MASK_WALL ? 0 : Infinity)
+                .value()
+        }).value()
+        const b = 4 // buffer
+        const r = 50 // room size
+        const min = b 
+        const max = r - b - 1
+
+        for (let i = min; i <= max; i++) {
+            for (let j = min; j <= max; j++) {
+                sqd[i][j] = Math.min(sqd[i][j], sqd[i - 1][j] + 1, sqd[i - 1][j - 1] + 1)     
             }
         }
         
-        for (i = 47; i >= 2; i--) {
-            for (j = 2; j <= 47; j++) {
-                sqd[i][j] = Math.min(sqd[i][j], Math.min(sqd[i + 1][j], sqd[i + 1][j - 1]) + 1)
+        for (let i = max; i >= min; i--) {
+            for (let j = min; j <= max; j++) {
+                sqd[i][j] = Math.min(sqd[i][j], sqd[i][j - 1] + 1, sqd[i + 1][j - 1] + 1)
             }
         }
         
-        for (i = 47; i >= 2; i--) {
-            for (j = 47; j >= 2; j--) {
-                sqd[i][j] = Math.min(sqd[i][j], Math.min(sqd[i + 1][j + 1], sqd[i][j + 1]) + 1)
+        for (let i = max; i >= min; i--) {
+            for (let j = max; j >= min; j--) {
+                sqd[i][j] = Math.min(sqd[i][j], sqd[i + 1][j] + 1, sqd[i + 1][j + 1] + 1)
             }
         }
         
-        for (i = 2; i <= 47; i++) {
-            for (j = 47; j >= 2; j--) {
-                sqd[i][j] = Math.min(sqd[i][j], sqd[i - 1][j + 1] + 1)
+        for (let i = min; i <= max; i++) {
+            for (let j = max; j >= min; j--) {
+                sqd[i][j] = Math.min(sqd[i][j], sqd[i][j + 1] + 1, sqd[i - 1][j + 1] + 1)
             }
         }
-        
-        for (i = 0; i < 50; i++) {
-            for (j = 0; j < 50; j++) {
-                if (sqd[i][j] > 6) {
+
+        for (let i = 0; i < r; i++) {
+            for (let j = 0; j < r; j++) {
+                if (sqd[i][j] >= 7) {
                     // return true
                     //Log.info(i, j)--- save i & j as "planned"
                     //return
@@ -514,6 +520,8 @@ const p = {
                 room.visual.text(sqd[i][j], i, j, {color: "#" + "00" + hex + hex + hex + hex})
             }
         }
+
+        return _(sqd).find(row => _(row).find(score => score >= 7))
     },
 
     newRoomNeeded: function() {    
