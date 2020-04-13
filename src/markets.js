@@ -117,7 +117,7 @@ var markets = {
                     if(!sender.terminal){
                         continue
                     }
-                    if(sender.terminal.store[mineral] >= 6000 && !Memory[sender.name].termUsed){
+                    if(sender.terminal.store[mineral] >= 6000 && !Memory.rooms[sender.name].termUsed){
                         sender.terminal.send(mineral, 3000, myCity.name)
                         Memory.rooms[sender.name].termUsed = true
                         senders = senders.splice(senders.indexOf(sender), 1)
