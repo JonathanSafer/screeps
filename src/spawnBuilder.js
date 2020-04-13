@@ -84,6 +84,12 @@ var rSB = {
     },
     
     build: function(creep) {
+        if(creep.room.controller && creep.room.controller.level < 2){
+            if(creep.upgradeController(creep.room.controller) == ERR_NOT_IN_RANGE) {
+                motion.newMove(creep, creep.room.controller.pos, 3)
+            }
+            return
+        }
         var targets = creep.room.find(FIND_CONSTRUCTION_SITES)
         var spawns = _.find(targets, site => site.structureType == STRUCTURE_SPAWN)
         var extensions = _.find(targets, site => site.structureType == STRUCTURE_EXTENSION)
@@ -101,13 +107,9 @@ var rSB = {
                 target = spawns
             }
             if(creep.build(target) == ERR_NOT_IN_RANGE) {
-                creep.moveTo(target, {reusePath: 15})
+                motion.newMove(creep, target.pos, 3)
             }
-        } else {
-            if(creep.upgradeController(creep.room.controller) == ERR_NOT_IN_RANGE) {
-                creep.moveTo(creep.room.controller, {reusePath: 15})  
-            }
-        }   
+        }  
     },
     
     harvest: function(creep) {
@@ -121,13 +123,13 @@ var rSB = {
         if (sources.length == 1){
             const result = creep.harvest(sources[0])
             if(result == ERR_NOT_IN_RANGE) {
-                creep.moveTo(sources[0], {reusePath: 15})
+                motion.newMove(creep, sources[0].pos, 1)
             }
             return
         }
         const result = creep.harvest(sources[creep.memory.target])
         if(result == ERR_NOT_IN_RANGE) {
-            if(creep.moveTo(sources[creep.memory.target], {reusePath: 15}) == ERR_NO_PATH){
+            if(creep.moveTo(sources[creep.memory.target], {reusePath: 15, range: 1}) == ERR_NO_PATH){
                 creep.memory.target = (creep.memory.target + 1) % 2
             }
         } else if (result == ERR_NOT_ENOUGH_RESOURCES){
