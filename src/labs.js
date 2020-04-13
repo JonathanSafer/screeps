@@ -130,7 +130,25 @@ var labs = {
                 for(let i = 0; i < receiverList.length; i++){
                     const lab = Game.getObjectById(receiverList[i])
                     if(lab){
-                        lab.runReaction(reactor0, reactor1)
+                        if(!receivers[receiverList[i]].boost){
+                            lab.runReaction(reactor0, reactor1)
+                            continue
+                        }
+                        if(!lab.mineralType && !receivers[receiverList[i]].fill){
+                            receivers[receiverList[i]].boost = null
+                            continue
+                        }
+
+                        const labCache = u.getLabCache(receiverList[i])
+                        if(labCache.amount != lab.store[lab.mineralType]){
+                           labCache.amount = lab.store[lab.mineralType]
+                           labCache.lastUpdate = Game.time
+                           continue
+                        }
+                        if(labCache.lastUpdate < Game.time + CREEP_LIFETIME){
+                            receivers[receiverList[i]].boost = null
+                            receivers[receiverList[i]].fill = -1
+                        }
                     }
                 }
             }

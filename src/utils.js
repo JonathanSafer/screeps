@@ -18,6 +18,11 @@ var u = {
         return u.getsetd(creepsCache, creepName, {})
     },
 
+    getLabCache: function(labId){
+        const labsCache = u.getsetd(Cache, "labs", {})
+        return u.getsetd(labsCache, labId, {})
+    },
+
     getWithdrawLocations: function(creep) {
         var city = creep.memory.city
         var spawn = Game.spawns[city]
