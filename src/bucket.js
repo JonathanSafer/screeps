@@ -6,7 +6,7 @@ const b = {
 
     manage: function() {
         if (b.growingTooQuickly()) {
-            b.wasteCpu(settings.bucket.growthLimit)
+            b.wasteCpu(0)
         }
     },
 
