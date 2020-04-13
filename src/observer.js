@@ -41,6 +41,8 @@ const ob = {
         const roomDataCache = u.getsetd(Cache, "roomData", {})
         const data = {}
         data.enemy = !!u.enemyOwned(room)
+        data.owner = room.controller && room.controller.owner 
+            && room.controller.owner.username
         data.rcl = (room.controller && room.controller.level) || 0
         data.towers = _(room.find(FIND_HOSTILE_STRUCTURES))
             .filter({ structureType: STRUCTURE_TOWER })
