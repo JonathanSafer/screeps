@@ -1,5 +1,5 @@
 var a = require("./actions")
-var u = require("./utils")
+var motion = require("./motion")
 var rH = require("./harasser")
 var settings = require("./settings")
 var CreepState = {
@@ -45,7 +45,7 @@ var rD = {
                     if(hostiles.length && creep.pos.inRangeTo(Game.spawns[city], holdPoint)){
                         rH.aMove(creep, hostiles)
                     } else {
-                        creep.moveTo(Game.spawns[city])//move hom if too far from home
+                        motion.newMove(creep, Game.spawns[city], holdPoint)
                     }
                 }
                 break
@@ -58,7 +58,7 @@ var rD = {
             if(!hostiles.length && creep.hits == creep.hitsMax){
                 creep.say("sleep")
                 if(creep.saying == "sleep"){
-                    creep.moveTo(Game.spawns[creep.memory.city].room.controller, {range: 2})
+                    motion.newMove(creep, Game.spawns[creep.memory.city].room.controller, 2)
                 }
                 if(creep.pos.inRangeTo(Game.spawns[creep.memory.city].room.controller, 2)){
                     creep.memory.state = CS.DORMANT
