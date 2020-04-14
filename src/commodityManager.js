@@ -57,12 +57,12 @@ var cM = {
         const status = {}
         const compLvl = COMMODITIES[component].level || 0
 
-        const empireHasEnough = levelCache[compLvl][component] > quantity
+        const empireHasEnough = levelCache[compLvl][component] >= quantity
         const cityHasTooMuch = city.terminal.store[component] > 2000
 
         //if we don't have enough of the comp, we are no go for this product (move on to next product)
         status.clearedToShip = (empireHasEnough && !cityHasTooMuch)
-        status.highTier = status.clearedToShip && compLvl === COMMODITIES[product].level - 1
+        status.highTier = status.clearedToShip && compLvl == COMMODITIES[product].level - 1
         return status
     },
 
