@@ -47,7 +47,7 @@ var rD = {
             if(!rH.maybeRetreat(creep, hostiles)){
                 if(hostiles.length && creep.pos.inRangeTo(Game.spawns[city], holdPoint)){
                     rH.aMove(creep, hostiles)
-                } else {
+                } else if(creep.ticksToLive < CREEP_LIFE_TIME) {
                     motion.newMove(creep, Game.spawns[city], holdPoint)
                 }
             }
