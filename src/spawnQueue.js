@@ -14,7 +14,7 @@ var sq = {
         return _.countBy(spawn.memory.sq, creep => creep.role)
     },
 
-    respawn: function(creep) {
+    respawn: function(creep, boosted) {
         const spawn = Game.spawns[creep.memory.city]
         sq.initialize(spawn)
         sq.schedule(spawn, creep.memory.role, boosted)
