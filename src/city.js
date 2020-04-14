@@ -107,14 +107,8 @@ function runCity(city, creeps){
         }
     }
 
-    // Print out each role & number of workers doing it
-    // var printout = _.map(roles, role => role.name + ": " + counts[role.name]);
-    //Log.info(city + ': ' + printout.join(', ' ));
-
     // Run all the creeps in this city
     _.forEach(creeps, (creep) => {
-        Cache[room.name] = Cache[room.name] || {} // initialize if needed
-        Cache[room.name].enemy = u.enemyOwned(creep.room)
         nameToRole[creep.memory.role][0].run(creep)
     })
     
