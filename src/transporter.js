@@ -43,7 +43,7 @@ var rT = {
             if(result === 1){//successful deposit
                 const extra = creep.store[RESOURCE_ENERGY] - target.store.getFreeCapacity(RESOURCE_ENERGY)
                 
-                if (extra >= 0) {
+                if (extra >= 0 || target.store.getUsedCapacity(RESOURCE_ENERGY) >= 10000) {
                     //make sure to remove current target from search list
                     const newTarget = rT.findTarget(creep, target) 
                     //if creep still has energy, start moving to next target
