@@ -1,7 +1,6 @@
 var u = require("./utils")
 var settings = require("./settings")
 var rMe = require("./medic")
-var rBM = require("./bigMedic")
 var motion = require("./motion")
 var actions = require("./actions")
 
@@ -150,10 +149,7 @@ var rBr = {
     },
 
     findTarget: function(creep, medic){
-        let flag = creep.memory.city + "break"
-        if(creep.memory.boosted){
-            flag = creep.memory.city + "bigBreak"
-        }
+        const flag = creep.memory.city + "break"
         const structures = creep.room.find(FIND_STRUCTURES, {
             filter: structure => [STRUCTURE_WALL, STRUCTURE_RAMPART].includes(structure.structureType)
         })
