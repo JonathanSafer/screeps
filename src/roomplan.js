@@ -509,18 +509,6 @@ const p = {
             }
         }
 
-        for (let i = 0; i < r; i++) {
-            for (let j = 0; j < r; j++) {
-                if (sqd[i][j] >= 7) {
-                    // return true
-                    //Log.info(i, j)--- save i & j as "planned"
-                    //return
-                }
-                var hex = sqd[i][j].toString(16)
-                room.visual.text(sqd[i][j], i, j, {color: "#" + "00" + hex + hex + hex + hex})
-            }
-        }
-
         return _(sqd).find(row => _(row).find(score => score >= 7))
     },
 
