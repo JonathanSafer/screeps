@@ -47,7 +47,7 @@ const ob = {
         data.towers = _(room.find(FIND_HOSTILE_STRUCTURES))
             .filter({ structureType: STRUCTURE_TOWER })
             .value().length
-        data.template = !!rp.planRoom(roomName)
+        //data.template = !!rp.planRoom(roomName)
         roomDataCache[roomName] = data
     },
 
