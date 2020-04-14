@@ -3,15 +3,26 @@ var settings = require("./settings")
 var rMe = require("./medic")
 var rBM = require("./bigMedic")
 var motion = require("./motion")
+var actions = require("./actions")
 
 var rBr = {
     name: "breaker",
     type: "breaker",
-    target: () => 0,
+    target: function(spawn, boosted){
+        if(boosted){
+            const boosts = [RESOURCE_CATALYZED_GHODIUM_ALKALIDE, RESOURCE_CATALYZED_ZYNTHIUM_ALKALIDE,
+            RESOURCE_CATALYZED_ZYNTHIUM_ACID]
+            u.requestBoosterFill(spawn, boosts)
+        }
+        return 0
+    },
    
 
     /** @param {Creep} creep **/
     run: function(creep) {
+        if(creep.memory.needBoost && !creep.memory.boosted){
+            return actions.getBoosted(creep)
+        }
         u.updateCheckpoints(creep)
         rBr.init(creep)
         const medic = Game.getObjectById(creep.memory.medic)
@@ -57,9 +68,9 @@ var rBr = {
         const creeps = creep.room.find(FIND_MY_CREEPS)
         let medic
         if(creep.memory.boosted){
-            medic = _.find(creeps, c => c.memory.role == rBM.name && !c.memory.partner)
+            medic = _.find(creeps, c => c.memory.role == rMe.name && !c.memory.partner && c.memory.boosted)
         } else {
-            medic = _.find(creeps, c => c.memory.role == rMe.name && !c.memory.partner)
+            medic = _.find(creeps, c => c.memory.role == rMe.name && !c.memory.partner && !c.memory.needBoost)
         }
         if(medic){
             medic.memory.partner = creep.id
