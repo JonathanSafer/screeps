@@ -670,7 +670,7 @@ var rQ = {
         for(let i = 0; i < route.length; i++){
             if(!rQ.getRoomMatrix(route[i].room)){
                 const start = route[i-1] && route[i-1].room || leader.pos.roomName
-                const exits = u.findExitPos(route[i-1].room, route[i].exit)
+                const exits = u.findExitPos(start, route[i].exit)
                 const goals = _.map(exits, function(exit) {
                     return { pos: exit, range: 0 }
                 })
