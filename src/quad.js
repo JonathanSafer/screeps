@@ -667,30 +667,22 @@ var rQ = {
         if(!route.length){
             return null
         }
-        for(let i = route.length - 1; i >= 0; i--){
-            for(let j = 0; j < quad.length; j++){
-                if(quad[j].pos.roomName == route[i].room && i < route.length - 1){
-                    //we have gotten to this point, now path to the next room in the room path
-                    const exits = quad[j].room.find(route[i + 1].exit)
-                    const goals = _.map(exits, function(exit) {
-                        return { pos: exit, range: 0 }
-                    })
-                    return goals
-                }
+        for(let i = 0; i < route.length; i++){
+            if(!rQ.getRoomMatrix(route[i-1].room)){
+                const exits = u.findExitPos(route[i-1].room, route[i-1].exit)
+                const goals = _.map(exits, function(exit) {
+                    return { pos: exit, range: 0 }
+                })
+                return goals
             }
         }
+
         //if we don't have a creep in the required room, we need to move to route[0]
         for(let i = 0; i < quad.length; i++){
             if(quad[i].pos.roomName == target.roomName){//we are already in required room
                 return null
             }
         }
-        //quad is at beginning of path
-        const exits = leader.room.find(route[0].exit)
-        const goals = _.map(exits, function(exit) {
-            return { pos: exit, range: 0 }
-        })
-        return goals
     },
 
     move: function(quad, target, status, range, retreat){
