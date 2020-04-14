@@ -175,6 +175,14 @@ global.StructureFactory = class extends Structure {
     produce() {}
 }
 
+global.StructureExtension = class extends Structure {
+    constructor(room, store) {
+        super(room, STRUCTURE_EXTENSION)
+        this.store = new Store(store || {}, 
+            EXTENSION_ENERGY_CAPACITY[room.controller.level])
+    }
+}
+
 global.Store = class {
     constructor(store, capacity) {
         for (const resource in store) {
@@ -185,6 +193,15 @@ global.Store = class {
 
     getCapacity() {
         return this.capacity
+    }
+
+    getFreeCapacity() {
+        return this.capacity - this.getUsedCapacity()
+    }
+
+    getUsedCapacity() {
+        const cap =  _(RESOURCES_ALL).map(resource => this[resource] || 0).sum()
+        return cap
     }
 }
 

@@ -62,17 +62,42 @@ var rT = {
     },
  
     findTarget: function(creep, oldTarget){
-        let id = 0
-        if(oldTarget){
-            id = oldTarget.id
-        }
-        return creep.pos.findClosestByRange(FIND_MY_STRUCTURES, {
-            filter: (structure) => {
-                return structure.id !== id && rT.needsEnergy(structure)
-            }
-        })
+        const targets = _(rT.getTargets(creep, oldTarget))
+            .map(Game.getObjectById)
+            .value()
+
+        return creep.pos.findClosestByRange(targets)
     },
 
+    getTargets: function(creep, oldTarget) {
+        // 1. check if targets in cache
+        const rcache = u.getRoomCache(creep.room.name)
+        const refillTargets = u.getsetd(rcache, "refillTargets", [])
+        const unused = _(refillTargets)
+            .filter(id => !oldTarget || id != oldTarget.id)
+            .value()
+
+        if (unused.length && !rT.missingTargets(unused, creep.room)) {
+            rcache.refillTargets = unused
+        } else {
+            rcache.refillTargets = rT.emptyTargets(creep.room)
+        }
+        return rcache.refillTargets
+    },
+
+    missingTargets: function(cachedTargets, room) {
+        const rcl = room.controller.level
+        const missingEnergy = room.energyCapacityAvailable() - room.energyAvailable()
+        const cachedTargetsEnergy = cachedTargets.length * EXTENSION_ENERGY_CAPACITY[rcl]
+        return missingEnergy - cachedTargetsEnergy > 1000
+    },
+
+    emptyTargets: function(room) {
+        return _(room.find(FIND_MY_STRUCTURES))
+            .filter(rT.needsEnergy)
+            .map("id")
+            .value()
+    },
 
     needsEnergy: function(structure){
         if(!structure){

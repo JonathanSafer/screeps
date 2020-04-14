@@ -51,8 +51,6 @@ const ob = {
         roomDataCache[roomName] = data
     },
 
-
-
     getUnusedObserver: function() {
         return _(u.getMyCities())
             .filter(city => !u.getRoomCache(city.name).scanned)
