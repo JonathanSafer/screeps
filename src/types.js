@@ -22,45 +22,34 @@ function getRecipe(type, energyAvailable, room, boosted){
     d.ferry = scalingBody([2, 1], [CARRY, MOVE], energy, 30)
     d.breaker = breakerBody(energy, rcl, boosted)
     d.medic = medicBody(energy, rcl, boosted)
-    d.breaker = scalingBody([1, 1], [MOVE, WORK], energy)
 
     // rcl 8 only
     d.powerMiner = body([20, 20], [MOVE, ATTACK])
-    d.bigMedic = body([11, 10, 29], [TOUGH, MOVE, HEAL])
-    d.bigBreaker = body([10, 30, 10], [TOUGH, WORK, MOVE])
-    d.bigTrooper = body([16, 24, 10], [TOUGH, RANGED_ATTACK, MOVE])
-    d.depositMiner = body([20, 2, 22], [WORK, CARRY, MOVE])
 
     switch (rcl) {
     case 4:
         //lvl 4 recipes
-        d["medic"] = body([2, 2], [MOVE, HEAL])
         break
     case 5:
         //lvl 5 recipes
-        d["medic"] = body([5, 5], [MOVE, HEAL])
         d["robber"] = body([15, 15], [CARRY, MOVE]) 
         break
     case 6:
         // lvl 6 recipes
         d["mineralMiner"] = body([12, 6, 9], [WORK, CARRY, MOVE])
-        d["medic"] = body([7, 7], [MOVE, HEAL])
         d["robber"] = body([20, 20], [CARRY, MOVE])
         break
     case 7:
         // lvl 7 recipes
         d["mineralMiner"] = body([22, 10, 16], [WORK, CARRY, MOVE])
         d["harasser"] = body([9, 8, 1], [MOVE, RANGED_ATTACK, HEAL])
-        d["medic"] = body([5, 20, 15], [TOUGH, MOVE, HEAL])
         d["robber"] = body([25, 25], [CARRY, MOVE])
         break
     case 8:
         // lvl 8 recipes
         d["mineralMiner"] = body([22, 10, 16], [WORK, CARRY, MOVE])
         d["harasser"] = body([20, 25, 5], [RANGED_ATTACK, MOVE, HEAL])
-        d["medic"] = body([25, 25], [MOVE, HEAL])
         d["robber"] = body([25, 25], [CARRY, MOVE])
-        d["defender"] = body([3, 31, 6, 10], [TOUGH, RANGED_ATTACK, HEAL, MOVE])
         break
     default:
         break

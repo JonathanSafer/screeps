@@ -13,58 +13,58 @@ var CS = CreepState
 var rD = {
     name: "defender",
     type: "defender",
-    target: () => 0,
+    target: function(spawn, boosted){
+        if(boosted){
+            const boosts = [RESOURCE_CATALYZED_GHODIUM_ALKALIDE, RESOURCE_CATALYZED_ZYNTHIUM_ALKALIDE,
+                RESOURCE_CATALYZED_LEMERGIUM_ALKALIDE, RESOURCE_CATALYZED_KEANIUM_ALKALIDE]
+            u.requestBoosterFill(spawn, boosts)
+        }
+        return 0
+    },
    
 
 
     /** @param {Creep} creep **/
     run: function(creep) {//modified harasser
         const city = creep.memory.city
-        if(Game.spawns[city].room.controller.level > 1){
-            const holdPoint = 9
-            //rcl8 runs new experimental defender
-            //creep is mostly RA, with a tiny bit of heal.
-            //boosted variant has one tough part as well
-            //defenders only made during defcon 2, # of defenders made based on number of enemies
-            if (!creep.memory.state) {
-                creep.memory.state = CS.START
-            }
-            let hostiles = []
-            if(creep.memory.state != CS.DORMANT){
-                hostiles = _.filter(creep.room.find(FIND_HOSTILE_CREEPS), c => !settings.allies.includes(c.owner.username))
-            }
-            switch (creep.memory.state) {
-            case CS.START:
-                rD.init(creep)
-                break
-            case CS.BOOST:
-                rD.boost(creep)
-                break
-            case CS.ENGAGE:
-                if(!rH.maybeRetreat(creep, hostiles)){
-                    if(hostiles.length && creep.pos.inRangeTo(Game.spawns[city], holdPoint)){
-                        rH.aMove(creep, hostiles)
-                    } else {
-                        motion.newMove(creep, Game.spawns[city], holdPoint)
-                    }
-                }
-                break
-            case CS.DORMANT:
-                rD.dormant(creep)
-                return
-            }
-            rH.shoot(creep, hostiles)
-            rH.maybeHeal(creep, hostiles)
-            if(!hostiles.length && creep.hits == creep.hitsMax){
-                creep.say("sleep")
-                if(creep.saying == "sleep"){
-                    motion.newMove(creep, Game.spawns[creep.memory.city].room.controller, 2)
-                }
-                if(creep.pos.inRangeTo(Game.spawns[creep.memory.city].room.controller, 2)){
-                    creep.memory.state = CS.DORMANT
+        const holdPoint = 9
+        if (!creep.memory.state) {
+            creep.memory.state = CS.START
+        }
+        let hostiles = []
+        if(creep.memory.state != CS.DORMANT){
+            hostiles = _.filter(creep.room.find(FIND_HOSTILE_CREEPS), c => !settings.allies.includes(c.owner.username))
+        }
+        switch (creep.memory.state) {
+        case CS.START:
+            rD.init(creep)
+            break
+        case CS.BOOST:
+            rD.boost(creep)
+            break
+        case CS.ENGAGE:
+            if(!rH.maybeRetreat(creep, hostiles)){
+                if(hostiles.length && creep.pos.inRangeTo(Game.spawns[city], holdPoint)){
+                    rH.aMove(creep, hostiles)
+                } else {
+                    motion.newMove(creep, Game.spawns[city], holdPoint)
                 }
             }
+            break
+        case CS.DORMANT:
+            rD.dormant(creep)
             return
+        }
+        rH.shoot(creep, hostiles)
+        rH.maybeHeal(creep, hostiles)
+        if(!hostiles.length && creep.hits == creep.hitsMax){
+            creep.say("sleep")
+            if(creep.saying == "sleep"){
+                motion.newMove(creep, Game.spawns[creep.memory.city].room.controller, 2)
+            }
+            if(creep.pos.inRangeTo(Game.spawns[creep.memory.city].room.controller, 2)){
+                creep.memory.state = CS.DORMANT
+            }
         }
     },
 
