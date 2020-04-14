@@ -756,8 +756,7 @@ var rQ = {
                         quadNames.push(quad[i].name)
                     }
                     for (const creep of Game.rooms[roomName].find(FIND_CREEPS)) {
-                        if(creep.pos.roomName == status.leader.pos.roomName 
-                            && !creep.pos.inRangeTo(status.leader.pos, 5)) {
+                        if(!_(quad).find(member => member.pos.inRangeTo(creep.pos, 3))){
                             continue
                         }
                         if(!quadNames.includes(creep.name)){
