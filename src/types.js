@@ -1,18 +1,18 @@
 var motion = require("./motion")
 
-function getRecipe(type, energyAvailable, room){
+function getRecipe(type, energyAvailable, room, boosted){
     const energy = energyAvailable || 0
     const d = {}
     const rcl = room.controller.level
 
     // used at all rcls
-    d.quad = quadBody(energy, rcl, room)
+    d.quad = quadBody(energy, rcl, room, boosted)
     d.runner = scalingBody([2, 1], [CARRY, MOVE], energy)
     d.miner = minerBody(energy, rcl)
     d.normal = upgraderBody(energy, rcl, room)
     d.transporter = scalingBody([2, 1], [CARRY, MOVE], energy, 30)
     d.builder = builderBody(energy, rcl)
-    d.defender = defenderBody(energy, rcl)
+    d.defender = defenderBody(energy, rcl, boosted)
 
     // used at rcl 4+
     d.spawnBuilder = scalingBody([2, 3, 5], [WORK, CARRY, MOVE], energy)
@@ -20,6 +20,8 @@ function getRecipe(type, energyAvailable, room){
 
     // used at rcl 5+
     d.ferry = scalingBody([2, 1], [CARRY, MOVE], energy, 30)
+    d.breaker = breakerBody(energy, rcl, boosted)
+    d.medic = medicBody(energy, rcl, boosted)
     d.breaker = scalingBody([1, 1], [MOVE, WORK], energy)
 
     // rcl 8 only
@@ -200,45 +202,52 @@ function builderBody(energyAvailable, rcl) {
     return body(ratio, types)
 }
 
-function quadBody(energyAvailable, rcl, room){
-    if(Memory[room.name] && Memory[room.name].boosts 
-        && _.intersection(Memory[room.name].boosts, Object.keys(BOOSTS[TOUGH])).length 
-        && _.intersection(Memory[room.name].boosts, Object.keys(BOOSTS[RANGED_ATTACK])).length
-        && _.intersection(Memory[room.name].boosts, Object.keys(BOOSTS[HEAL])).length
-        && _.intersection(Memory[room.name].boosts, Object.keys(BOOSTS[MOVE])).length){
+function quadBody(energyAvailable, rcl, room, boosted){
+    if(boosted){
         //make boosted variant
-    } else {
-        //make unboosted variant
-        const types = [RANGED_ATTACK, MOVE, HEAL]
-        let ratio = [0, 1, 0]
-        switch(rcl){
-        case 2:
-            ratio = [1, 2, 1]
-            break
-        case 3:
-            ratio = [2, 3, 1]
-            break
-        case 4:
-            ratio = [5, 6, 1]
-            break
-        case 5:
-            ratio = [3, 4, 1]
-            break
-        case 6:
-            ratio = [7, 10, 3]
-            break
-        case 7:
-            ratio = [19, 25, 6]
-            break
-        case 8:
-            ratio = [15, 25, 10]
-            break
+        if(rcl == 8){
+            return body([2, 18, 9, 8, 1, 12], [TOUGH, RANGED_ATTACK, MOVE, TOUGH, MOVE, HEAL])
         }
+        const ratio = [1, 4, 1, 2, 2]
+        const types = [TOUGH, RANGED_ATTACK, TOUGH, MOVE, HEAL]
         return scalingBody(ratio, types, energyAvailable)
     }
+    //make unboosted variant
+    const types = [RANGED_ATTACK, MOVE, HEAL]
+    let ratio = [0, 1, 0]
+    switch(rcl){
+    case 2:
+        ratio = [1, 2, 1]
+        break
+    case 3:
+        ratio = [2, 3, 1]
+        break
+    case 4:
+        ratio = [5, 6, 1]
+        break
+    case 5:
+        ratio = [3, 4, 1]
+        break
+    case 6:
+        ratio = [7, 10, 3]
+        break
+    case 7:
+        ratio = [19, 25, 6]
+        break
+    case 8:
+        ratio = [15, 25, 10]
+        break
+    }
+    return scalingBody(ratio, types, energyAvailable)
 }
 
-function defenderBody(energyAvailable, rcl) {
+function defenderBody(energyAvailable, rcl, boosted) {
+    if(boosted){
+        if(rcl == 8){
+            return body([3, 31, 10, 6], [TOUGH, RANGED_ATTACK, MOVE, HEAL])
+        }
+        return scalingBody([2, 1, 1], [RANGED_ATTACK, MOVE, HEAL], energyAvailable)
+    }
     let ratio = [1,1,1] // ratio at rcl1
     const ratio4 = [2,4,6]
     const ratio6 = [2,6,10]
@@ -248,6 +257,20 @@ function defenderBody(energyAvailable, rcl) {
     if (rcl >= 4 && energyAvailable > cost(body(ratio4, types))) ratio = ratio4
     if (rcl >= 6 && energyAvailable > cost(body(ratio6, types))) ratio = ratio6
     return body(ratio, types)
+}
+
+function breakerBody(energyAvailable, rcl, boosted){
+    if(!boosted){
+        return scalingBody([1 , 1], [WORK, MOVE], energyAvailable)
+    }
+    return scalingBody([1, 3, 1], [TOUGH, WORK, MOVE], energyAvailable)
+}
+
+function medicBody(energyAvailable, rcl, boosted){
+    if(!boosted){
+        return scalingBody([1 , 1], [HEAL, MOVE], energyAvailable)
+    }
+    return scalingBody([1, 3, 1], [TOUGH, HEAL, MOVE], energyAvailable)
 }
 
 /** TODO support for fractional scaling

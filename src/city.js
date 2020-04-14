@@ -31,14 +31,14 @@ var e = require("./error")
 var template = require("./template")
 
 
-function makeCreeps(role, type, target, city, unhealthyStore) {
+function makeCreeps(role, type, target, city, unhealthyStore, boosted) {
     //Log.info(types.getRecipe('basic', 2));
     const room = Game.spawns[city].room
    
     var energyToSpend = unhealthyStore ? room.energyAvailable :
         room.energyCapacityAvailable
 
-    const recipe = types.getRecipe(type, energyToSpend, room)
+    const recipe = types.getRecipe(type, energyToSpend, room, boosted)
     //Log.info(role)
     const spawns = room.find(FIND_MY_SPAWNS)
     if(!Memory.counter){
@@ -59,7 +59,7 @@ function makeCreeps(role, type, target, city, unhealthyStore) {
     Game.creeps[name].memory.role = role
     Game.creeps[name].memory.target = target
     Game.creeps[name].memory.city = city
-    Game.creeps[name].memory.new = true
+    Game.creeps[name].memory.needBoost = boosted
     return true
 }
 
@@ -91,7 +91,8 @@ function runCity(city, creeps){
     
     
     let usedQueue = true
-    const spawnQueueRoleName = sq.getNextRole(spawn)
+    const nextRole = sq.getNextRole(spawn)
+    const spawnQueueRoleName = nextRole.role
     let nextRole = spawnQueueRoleName ? nameToRole[spawnQueueRoleName][0] : undefined
 
     if (!nextRole) {
@@ -102,7 +103,7 @@ function runCity(city, creeps){
     
     if (nextRole) {
         //Log.info(JSON.stringify(Object.entries(nextRole)))
-        if(makeCreeps(nextRole.name, nextRole.type, nextRole.target(), city, unhealthyStore) && usedQueue){
+        if(makeCreeps(nextRole.name, nextRole.type, nextRole.target(), city, unhealthyStore, nextRole.boosted) && usedQueue){
             spawn.memory.sq.shift()
         }
     }

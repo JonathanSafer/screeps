@@ -1,7 +1,7 @@
 var sq = {
-    schedule: function(spawn, role) {
+    schedule: function(spawn, role, boosted = false) {
         sq.initialize(spawn)
-        spawn.memory.sq.push(role)
+        spawn.memory.sq.push({role: role, boosted: boosted})
     },
 
     getNextRole: function(spawn) {
@@ -11,13 +11,13 @@ var sq = {
 
     getCounts: function(spawn) {
         sq.initialize(spawn)
-        return _.countBy(sq, name => name)
+        return _.countBy(spawn.memory.sq, creep => creep.role)
     },
 
     respawn: function(creep) {
         const spawn = Game.spawns[creep.memory.city]
         sq.initialize(spawn)
-        sq.schedule(spawn, creep.memory.role)
+        sq.schedule(spawn, creep.memory.role, boosted)
     },
 
     initialize: function(spawn) {
