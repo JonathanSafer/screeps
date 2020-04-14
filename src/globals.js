@@ -14,11 +14,11 @@ global.BuyToken = function(price) {
         roomName: "E11S22" 
     })
 }
-global.spawnQuad = function(city){
+global.SpawnQuad = function(city, boosted){
     const sq = require("./spawnQueue")
     sq.initialize(Game.spawns[city])
     for(let i = 0; i < 4; i++){
-        sq.schedule(Game.spawns[city], "quad")
+        sq.schedule(Game.spawns[city], "quad", boosted)
     }
 }
 global.PlaceFlag = function(flagName, x, y, roomName){
