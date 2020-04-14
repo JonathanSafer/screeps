@@ -131,7 +131,7 @@ function updateCountsCity(city, creeps, rooms, claimRoom, unclaimRoom) {
     const logisticsTime = rcl8 && !emergencyTime ? 500 : 50
 
     // Always update defender
-    updateDefender(rooms, memory, rcl8)
+    updateDefender(spawn, rcl)
 
     if(Game.time % 200 == 0){
         updateMilitary(city, memory, rooms)
@@ -356,82 +356,6 @@ function updateMilitary(city, memory, rooms) {
     }
 }
 
-function updateBigDefender(city, memory){
-    //if towers active and need help, get boosters ready for a defender
-    let danger = false
-    const room = Game.spawns[city].room
-    if(memory.towersActive){
-        const hostiles = room.find(FIND_HOSTILE_CREEPS)
-        if(hostiles.length){//if a hostile has tough and boosted parts, we are in danger aka need defenders
-            for (let i = 0; i < hostiles.length; i++) {
-                if(danger){
-                    continue
-                }
-                if(hostiles[i].getActiveBodyparts(TOUGH) > 0){
-                    for(var j = 0; j < hostiles[i].body.length; j++){
-                        if(hostiles[i].body[j].boost){
-                            danger = true
-                        }
-                    }
-                }
-            }
-        }
-    }
-    if(!danger){//if no defenders needed, early return 
-        memory[rD.name] = 0
-        return false
-    }
-    if(memory.ferryInfo.boosterInfo){
-        const resources = ["XZHO2", "XKHO2", "XLHO2", "XGHO2"]
-        let go = 1
-        for (let i = 0; i < resources.length; i++){
-            if(room.terminal.store[resources[i]] < 1000){
-                go = 0
-            }
-            if(room.terminal.store[resources[i]] < 2000){
-                memory.ferryInfo.mineralRequest = resources[i]
-            }
-        }
-        if(go){
-            for (let i = 0; i < resources.length; i++){
-                const lab = Game.getObjectById(memory.ferryInfo.boosterInfo[i][0])
-                if(lab.mineralType !=  resources[i] && lab.mineralAmount){
-                    memory.ferryInfo.boosterInfo[i][1] = 2
-                    go = 0
-                } else if (lab.mineralAmount < 1000){
-                    memory.ferryInfo.boosterInfo[i][1] = 1
-                    memory.ferryInfo.boosterInfo[i][2] = resources[i]
-                }
-            }
-            if(go){
-                memory[rD.name] = 1
-                //if a defender is not already spawning, queue another one up
-                if(_.filter(room.find(FIND_MY_CREEPS), c => c.memory.role == rD.name).length >= room.find(FIND_HOSTILE_CREEPS).length){
-                    return
-                }
-                const spawns = room.find(FIND_MY_SPAWNS)
-                let spawning = false
-                for(let i = 0; i < spawns.length; i++){
-                    if(spawns[i].spawning){
-                        if(Game.creeps[spawns[i].spawning.name].memory.role == rD.name){
-                            spawning = true
-                        }
-                    }
-                }
-                if(!spawning){
-                    sq.schedule(Game.spawns[city], rD.name)
-                }
-            } else {
-                memory[rD.name] = 0
-            }
-        } else {
-            memory[rD.name] = 0
-        }
-    }
-    return true
-
-}
-
 function chooseClosestRoom(myCities, flag){
     if(!flag){
         return 0
@@ -482,20 +406,34 @@ function updateColonizers(city, memory, claimRoom, unclaimRoom) {
 }
 
 // Automated defender count for defense
-function updateDefender(rooms, memory, rcl8) {
-    if (Game.time % 30 == 0) {
-        if(rcl8){
+function updateDefender(spawn, rcl) {
+    if (Game.time % 30 != 0) {
+        return
+    }
+    const room = spawn.room
+    if(spawn.memory.towersActive){
+        if(rcl < 6){
+            Game.spawns[city].memory[rD.name] = 1
             return
         }
-        var enemyCounts = _.map(rooms, room => {
-            var allBadCreeps = _.filter(room.find(FIND_HOSTILE_CREEPS), creep => creep.getActiveBodyparts(ATTACK) > 0
-                    || creep.getActiveBodyparts(RANGED_ATTACK) > 0 
-                    || creep.getActiveBodyparts(CLAIM) > 0
-                    || creep.getActiveBodyparts(HEAL) > 0)
-            var invaders = _.reject(allBadCreeps, creep => creep.owner.username == "Source Keeper")
-            return invaders.length
-        })
-        memory[rD.name] = _.sum(enemyCounts)
+        const hostiles = room.find(FIND_HOSTILE_CREEPS)
+        for(hostile of hostiles){
+            if(hostile.getActiveBodyparts(TOUGH) > 0){
+                for(part of hostile.body){
+                    if(part.boost){
+                        //add a defender to spawn queue if we don't have enough
+                        //make sure to count spawned defenders as well as queued
+                        const defendersNeeded = Math.ceil(hostiles.length/2)
+                        const liveCount = _.filter(room.find(FIND_MY_CREEPS), c => c.memory.role = rD.name).length
+                        const queued = sq.getCounts(spawn)[rD.name]
+                        if(liveCount + queued < defendersNeeded){
+                            sq.schedule(spawn, rD.name, true)
+                        }
+                        return
+                    }
+                }
+            }
+        }
     }
 }
 
