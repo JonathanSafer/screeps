@@ -10,7 +10,7 @@ var rBr = {
     target: function(spawn, boosted){
         if(boosted){
             const boosts = [RESOURCE_CATALYZED_GHODIUM_ALKALIDE, RESOURCE_CATALYZED_ZYNTHIUM_ALKALIDE,
-            RESOURCE_CATALYZED_ZYNTHIUM_ACID]
+                RESOURCE_CATALYZED_ZYNTHIUM_ACID]
             u.requestBoosterFill(spawn, boosts)
         }
         return 0

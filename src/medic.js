@@ -1,3 +1,6 @@
+const u = require("./utils")
+const actions = require("./actions")
+
 var rMe = {
     name: "medic",
     type: "medic",

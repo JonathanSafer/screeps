@@ -349,7 +349,6 @@ function checkLabs(city){
 function updateMilitary(city, memory, rooms) {
     const flags = ["harass", "break", "powerMine", "deposit"]
     const updateFns = [updateHarasser, updateBreaker, updatePowerMine, updateDepositMiner]
-    let big = 0
     for (var i = 0; i < flags.length; i++) {
         const flagName = city + flags[i]
         const updateFn = updateFns[i]
