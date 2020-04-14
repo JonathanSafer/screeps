@@ -68,7 +68,10 @@ var rT = {
     findTarget: function(creep, oldTarget){
         const ccache = u.getCreepCache(creep.name)
         if (ccache.target && !oldTarget) {
-            return Game.getObjectById(ccache.target)
+            const cachedTarget = Game.getObjectById(ccache.target)
+            if (rT.needsEnergy(cachedTarget)) {
+                return cachedTarget
+            }
         }
 
         const targets = _(rT.getTargets(creep, oldTarget))
