@@ -203,7 +203,7 @@ var actions = {
                 const boost = boosts[type]
                 const labs = Object.keys(Game.spawns[creep.memory.city].memory.ferryInfo.labInfo.receivers)
                 for(const labId of labs){
-                    lab = Game.getObjectById(labId)
+                    const lab = Game.getObjectById(labId)
                     if(lab.mineralType == boost){
                         //boost self
                         if (lab.boostCreep(creep) === ERR_NOT_IN_RANGE) {
