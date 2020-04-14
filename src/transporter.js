@@ -87,7 +87,7 @@ var rT = {
 
     missingTargets: function(cachedTargets, room) {
         const rcl = room.controller.level
-        const missingEnergy = room.energyCapacityAvailable() - room.energyAvailable()
+        const missingEnergy = room.energyCapacityAvailable - room.energyAvailable
         const cachedTargetsEnergy = cachedTargets.length * EXTENSION_ENERGY_CAPACITY[rcl]
         return missingEnergy - cachedTargetsEnergy > 1000
     },
