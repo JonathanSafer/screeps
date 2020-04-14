@@ -66,6 +66,7 @@ var rD = {
             }
             return
         }
+    },
 
 
     init: function(creep){//same init as harasser for now

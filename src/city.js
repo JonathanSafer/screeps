@@ -91,7 +91,7 @@ function runCity(city, creeps){
     
     
     let usedQueue = true
-    const nextRoleInfo = sq.getNextRole(spawn)
+    const nextRoleInfo = sq.getNextRole(spawn) || {}
     const spawnQueueRoleName = nextRoleInfo.role
     let nextRole = spawnQueueRoleName ? nameToRole[spawnQueueRoleName][0] : undefined
 

@@ -248,7 +248,7 @@ function defenderBody(energyAvailable, rcl, boosted) {
         }
         const ratio = [1, 9, 3, 2]
         const types = [TOUGH, RANGED_ATTACK, MOVE, HEAL]
-        return scalingBody([ratio, types, energyAvailable)
+        return scalingBody([ratio, types, energyAvailable])
     }
     const ratio = [2, 1, 1]
     const types = [RANGED_ATTACK, MOVE, HEAL]
@@ -256,7 +256,7 @@ function defenderBody(energyAvailable, rcl, boosted) {
     if(baseCost < energyAvailable){
         return body([1, 1], [RANGED_ATTACK, MOVE])
     }
-    return scalingBody([ratio, types, energyAvailable)
+    return scalingBody([ratio, types, energyAvailable])
 }
 
 function breakerBody(energyAvailable, rcl, boosted){
@@ -281,7 +281,6 @@ function medicBody(energyAvailable, rcl, boosted){
  */
 function scalingBody(ratio, types, energyAvailable, maxOverride) {
     const baseCost = cost(body(ratio, types))
-    if(baseCost > energyAvailable)
     const maxSize = maxOverride || MAX_CREEP_SIZE
     const energy = energyAvailable || 0
     const scale = Math.max(Math.floor(Math.min(energy / baseCost, maxSize / _.sum(ratio))), 1)
