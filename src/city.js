@@ -1,9 +1,5 @@
 var rMe = require("./medic")
 var rDM = require("./depositMiner")
-var rBM = require("./bigMedic")
-var rTr = require("./trooper")
-var rBT = require("./bigTrooper")
-var rBB = require("./bigBreaker")
 var rH = require("./harasser")
 var rSB = require("./spawnBuilder")
 var rC = require("./claimer")
@@ -351,30 +347,13 @@ function checkLabs(city){
 }
 
 function updateMilitary(city, memory, rooms) {
-    const flags = ["harass", "break", "powerMine", "bigShoot", "shoot", "bigBreak", "deposit"]
-    const updateFns = [updateHarasser, updateBreaker, updatePowerMine, updateBigTrooper, updateTrooper, updateBigBreaker, updateDepositMiner]
+    const flags = ["harass", "break", "powerMine", "deposit"]
+    const updateFns = [updateHarasser, updateBreaker, updatePowerMine, updateDepositMiner]
     let big = 0
     for (var i = 0; i < flags.length; i++) {
         const flagName = city + flags[i]
         const updateFn = updateFns[i]
         updateFn(Memory.flags[flagName], memory, city, rooms)
-        if(Memory.flags[flagName] && flagName.includes("big")){
-            big = 1
-        }
-    }
-    if(!big && !updateBigDefender(city, memory)){//no big military needed and no defenders needed
-        emptyBoosters(memory)
-    }
-}
-
-function emptyBoosters(memory){
-    if(memory.ferryInfo.boosterInfo){
-        for (let i = 0; i < 4; i++){
-            const lab = Game.getObjectById(memory.ferryInfo.boosterInfo[i][0])
-            if (lab && lab.mineralAmount){
-                memory.ferryInfo.boosterInfo[i][1] = 2
-            }
-        }
     }
 }
 
@@ -730,82 +709,6 @@ function updatePowerMine(flag, memory) {
 
 function updateDepositMiner(flag, memory) {
     memory[rDM.name] = flag ? 1 : 0
-}
-
-function updateTrooper(flag, memory) {
-    // add troopers for a shoot
-    memory[rTr.name] = flag ? 1 : 0
-    if (flag) memory[rMe.name]++
-}
-
-function updateBigBreaker(flag, memory, city) {
-    if (flag && !memory.towersActive){
-        const spawn = Game.spawns[city]
-        const resources = ["XZHO2", "XZH2O", "XLHO2", "XGHO2"]
-        let go = 1
-        for (let i = 0; i < resources.length; i++){
-            if(spawn.room.terminal.store[resources[i]] < 1000){
-                go = 0
-            }
-            if(spawn.room.terminal.store[resources[i]] < 2000){
-                spawn.memory.ferryInfo.mineralRequest = resources[i]
-            }
-        }
-        if(go){
-            for (let i = 0; i < resources.length; i++){
-                const lab = Game.getObjectById(memory.ferryInfo.boosterInfo[i][0])
-                if(lab.mineralType !=  resources[i] && lab.mineralAmount){
-                    memory.ferryInfo.boosterInfo[i][1] = 2
-                    go = 0
-                } else if (lab.mineralAmount < 1000){
-                    memory.ferryInfo.boosterInfo[i][1] = 1
-                    memory.ferryInfo.boosterInfo[i][2] = resources[i]
-                }
-            }
-            memory[rBB.name] = 1
-            memory[rBM.name]++
-        } else {
-            memory[rBB.name] = 0
-        }
-    }  else {
-        memory[rBB.name] = 0
-    } 
-}
-
-function updateBigTrooper(flag, memory, city) {
-    if (flag && !memory.towersActive){
-        const spawn = Game.spawns[city]
-        const resources = ["XZHO2", "XKHO2", "XLHO2", "XGHO2"]
-        let go = 1
-        for (let i = 0; i < resources.length; i++){
-            if(spawn.room.terminal.store[resources[i]] < 1000){
-                go = 0
-            }
-            if(spawn.room.terminal.store[resources[i]] < 2000){
-                spawn.memory.ferryInfo.mineralRequest = resources[i]
-            }
-        }
-        if(go){
-            for (let i = 0; i < resources.length; i++){
-                const lab = Game.getObjectById(memory.ferryInfo.boosterInfo[i][0])
-                if(lab.mineralType !=  resources[i] && lab.mineralAmount){
-                    memory.ferryInfo.boosterInfo[i][1] = 2
-                    go = 0
-                } else if (lab.mineralAmount < 1000){
-                    memory.ferryInfo.boosterInfo[i][1] = 1
-                    memory.ferryInfo.boosterInfo[i][2] = resources[i]
-                }
-            }
-            memory[rBT.name] = 1
-            memory[rBM.name] = 1
-        } else {
-            memory[rBT.name] = 0
-            memory[rBM.name] = 0
-        }
-    }  else {
-        memory[rBT.name] = 0
-        memory[rBM.name] = 0
-    } 
 }
 
 function runNuker(city){

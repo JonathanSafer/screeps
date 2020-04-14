@@ -1,9 +1,5 @@
 var rMe = require("./medic")
 var rDM = require("./depositMiner")
-var rBM = require("./bigMedic")
-var rTr = require("./trooper")
-var rBT = require("./bigTrooper")
-var rBB = require("./bigBreaker")
 var rH = require("./harasser")
 var rSB = require("./spawnBuilder")
 var rC = require("./claimer")
@@ -26,7 +22,7 @@ var rr = {
     // order roles for priority. TODO powercreep?
     getRoles: function() {
         return [rF, rD, rT, rM, rR, rU, rB, rQ, rMM, rC, rUC,
-            rSB, rH, rBM, rD, rBB, rBT, rMe, rTr, rBr, rPM,
+            rSB, rH,rMe, rBr, rPM,
             rRo, rDM]
     },
 
