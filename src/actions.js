@@ -201,7 +201,7 @@ var actions = {
             if(!creep.body[i].boost){
                 const type = creep.body[i].type
                 const boost = boosts[type]
-                const labs = Object.keys(Game.spawns[creep.memory.city].memory.ferryInfo.receivers)
+                const labs = Object.keys(Game.spawns[creep.memory.city].memory.ferryInfo.labInfo.receivers)
                 for(const labId of labs){
                     lab = Game.getObjectById(labId)
                     if(lab.mineralType == boost){
