@@ -48,7 +48,7 @@ var rD = {
                 if(hostiles.length && creep.pos.inRangeTo(Game.spawns[city], holdPoint)){
                     rH.aMove(creep, hostiles)
                 } else if(creep.ticksToLive < CREEP_LIFE_TIME) {
-                    motion.newMove(creep, Game.spawns[city], holdPoint)
+                    motion.newMove(creep, Game.spawns[city].pos, holdPoint)
                 }
             }
             break
@@ -61,7 +61,7 @@ var rD = {
         if(!hostiles.length && creep.hits == creep.hitsMax){
             creep.say("sleep")
             if(creep.saying == "sleep"){
-                motion.newMove(creep, Game.spawns[creep.memory.city].room.controller, 2)
+                motion.newMove(creep, Game.spawns[creep.memory.city].room.controller.pos, 2)
             }
             if(creep.pos.inRangeTo(Game.spawns[creep.memory.city].room.controller, 2)){
                 creep.memory.state = CS.DORMANT
