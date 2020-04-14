@@ -41,22 +41,26 @@ var rT = {
 
             const result = actions.charge(creep, target)
             if(result === 1){//successful deposit
-                //if creep still has energy, start moving to next target
-                if(creep.store[RESOURCE_ENERGY] > target.store.getFreeCapacity(RESOURCE_ENERGY)){
-                    //start moving to next target if target not already in range
-                    const newTarget = rT.findTarget(creep, target)//make sure to remove current target from search list
-                    if(!newTarget){
-                        creep.say(20)
-                        return
+                const extra = creep.store[RESOURCE_ENERGY] - target.store.getFreeCapacity(RESOURCE_ENERGY)
+                
+                if (extra >= 0) {
+                    //make sure to remove current target from search list
+                    const newTarget = rT.findTarget(creep, target) 
+                    //if creep still has energy, start moving to next target
+                    if (extra > 0) {
+                        if(!newTarget){
+                            creep.say(20)
+                            return
+                        }
+                        //start moving to next target if target not already in range
+                        if(!newTarget.pos.isNearTo(creep.pos)){
+                            motion.newMove(creep, newTarget.pos, 1)
+                        }
+                    } else {
+                        //start moving to storage already
+                        rT.refill(creep, city)
                     }
-                    if(!newTarget.pos.isNearTo(creep.pos)){
-                        motion.newMove(creep, newTarget.pos, 1)
-                    }
-                } else {
-                    //start moving to storage already
-                    rT.refill(creep, city)
                 }
-
             }
         }
     },
