@@ -1,5 +1,6 @@
 var rBr = require("./breaker")
 var rDM = require("./depositMiner")
+var motion = require("./motion")
 
 var rPM = {
     name: "powerMiner",
