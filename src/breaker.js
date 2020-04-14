@@ -188,7 +188,7 @@ var rBr = {
                 medic.heal(creep)
             } else if(medic.hits < medic.hitsMax){
                 medic.heal(medic)
-            } else if(medic.room.controller && medic.room.controller.owner){
+            } else if(medic.room.controller && medic.room.controller.owner && !medic.room.controller.my){
                 medic.heal(medic)
             }
         } else {
