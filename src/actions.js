@@ -201,9 +201,10 @@ var actions = {
             if(!creep.body[i].boost){
                 const type = creep.body[i].type
                 const boost = boosts[type]
-                for(let j = 0; j < 4; j++){
-                    if(Game.spawns[creep.memory.city].memory.ferryInfo.boosterInfo[j][2] == boost){
-                        const lab = Game.getObjectById(Game.spawns[creep.memory.city].memory.ferryInfo.boosterInfo[j][0])
+                const labs = Object.keys(Game.spawns[creep.memory.city].memory.ferryInfo.receivers)
+                for(const labId of labs){
+                    lab = Game.getObjectById(labId)
+                    if(lab.mineralType == boost){
                         //boost self
                         if (lab.boostCreep(creep) === ERR_NOT_IN_RANGE) {
                             motion.newMove(creep, lab.pos, 1)
