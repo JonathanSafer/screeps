@@ -256,7 +256,7 @@ function defenderBody(energyAvailable, rcl, boosted) {
     if(baseCost < energyAvailable){
         return body([1, 1], [RANGED_ATTACK, MOVE])
     }
-    return scalingBody([ratio, types, energyAvailable])
+    return scalingBody(ratio, types, energyAvailable)
 }
 
 function breakerBody(energyAvailable, rcl, boosted){
