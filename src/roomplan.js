@@ -472,8 +472,6 @@ const p = {
     },
 
     planRoom: function(roomName) {
-        // TODO
-        const room = Game.rooms[roomName]
         const ter = Game.map.getRoomTerrain(roomName)
         const sqd = _(Array(50)).map((r, i) => { 
             return _(Array(50))
