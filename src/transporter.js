@@ -66,11 +66,17 @@ var rT = {
     },
  
     findTarget: function(creep, oldTarget){
+        const ccache = u.getCreepCache(creep.name)
+        if (ccache.target && !oldTarget) {
+            return Game.getObjectById(ccache.target)
+        }
+
         const targets = _(rT.getTargets(creep, oldTarget))
             .map(Game.getObjectById)
             .value()
 
-        return creep.pos.findClosestByRange(targets)
+        ccache.target = creep.pos.findClosestByRange(targets)
+        return ccache.target
     },
 
     getTargets: function(creep, oldTarget) {
