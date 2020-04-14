@@ -91,8 +91,8 @@ function runCity(city, creeps){
     
     
     let usedQueue = true
-    const nextRole = sq.getNextRole(spawn)
-    const spawnQueueRoleName = nextRole.role
+    const nextRoleInfo = sq.getNextRole(spawn)
+    const spawnQueueRoleName = nextRoleInfo.role
     let nextRole = spawnQueueRoleName ? nameToRole[spawnQueueRoleName][0] : undefined
 
     if (!nextRole) {
@@ -103,7 +103,7 @@ function runCity(city, creeps){
     
     if (nextRole) {
         //Log.info(JSON.stringify(Object.entries(nextRole)))
-        if(makeCreeps(nextRole.name, nextRole.type, nextRole.target(), city, unhealthyStore, nextRole.boosted) && usedQueue){
+        if(makeCreeps(nextRole.name, nextRole.type, nextRole.target(Game.spawns[city], nextRoleInfo.boosted), city, unhealthyStore, nextRoleInfo.boosted) && usedQueue){
             spawn.memory.sq.shift()
         }
     }
