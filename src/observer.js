@@ -1,6 +1,5 @@
 const settings = require("./settings")
 const u = require("./utils")
-const rp = require("./roomplan")
 
 const ob = {
     run: function(city){
