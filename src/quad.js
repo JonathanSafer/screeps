@@ -755,7 +755,11 @@ var rQ = {
                     for(let i = 0; i < quad.length; i++){
                         quadNames.push(quad[i].name)
                     }
-                    Game.rooms[roomName].find(FIND_CREEPS).forEach(function(creep) {
+                    for (const creep of Game.rooms[roomName].find(FIND_CREEPS)) {
+                        if(creep.pos.roomName == status.leader.pos.roomName 
+                            && !creep.pos.inRangeTo(status.leader.pos, 5)) {
+                            continue
+                        }
                         if(!quadNames.includes(creep.name)){
                             //quad cannot move to any pos that another creep is capable of moving to
                             if(!creep.fatigue){
@@ -768,7 +772,7 @@ var rQ = {
                                 costs.set(creep.pos.x, creep.pos.y, 255)
                             }
                         }
-                    })
+                    }
                 }
 
                 //factor in tower damage
