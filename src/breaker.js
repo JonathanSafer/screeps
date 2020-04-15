@@ -42,6 +42,8 @@ var rBr = {
                 const structures = Game.rooms[targetFlag.roomName].lookForAt(LOOK_STRUCTURES, targetFlag.x, targetFlag.y)
                 if(structures.length){
                     target = structures[0]
+                } else{
+                    delete Memory.flags[creep.memory.city + "breakerTarget"]
                 }
             }
         }
