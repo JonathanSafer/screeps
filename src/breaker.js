@@ -36,14 +36,14 @@ var rBr = {
         //breaker has a medic
         const canMove = rBr.canMove(creep, medic)
         let target = Game.getObjectById(creep.memory.target)
-        const targetFlag = Memory.flags[creep.memory.city + "breakerTarget"]
+        const targetFlag = Memory.flags[creep.memory.city + "breakTarget"]
         if(targetFlag){
             if(Game.rooms[targetFlag.roomName]){
                 const structures = Game.rooms[targetFlag.roomName].lookForAt(LOOK_STRUCTURES, targetFlag.x, targetFlag.y)
                 if(structures.length){
                     target = structures[0]
                 } else{
-                    delete Memory.flags[creep.memory.city + "breakerTarget"]
+                    delete Memory.flags[creep.memory.city + "breakTarget"]
                 }
             }
         }
