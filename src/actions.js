@@ -196,6 +196,9 @@ var actions = {
     },
     
     getBoosted: function(creep){
+        if(creep.spawning){
+            return
+        }
         const boosts = {"move": "XZHO2", "tough": "XGHO2", "work": "XZH2O", "heal": "XLHO2", "ranged_attack": "XKHO2"}
         for(let i = creep.body.length - 1; i >= 0; i--){
             if(!creep.body[i].boost){
