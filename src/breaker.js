@@ -162,7 +162,7 @@ var rBr = {
         const structures = creep.room.find(FIND_STRUCTURES, {
             filter: structure => [STRUCTURE_WALL, STRUCTURE_RAMPART].includes(structure.structureType)
         })
-        if(creep.room.name == Memory.flags[flag].roomName && !structures.length){
+        if(Memory.flags[flag] && creep.room.name == Memory.flags[flag].roomName && !structures.length){
             delete Memory.flags[flag]
         }
         //if in a friendly room or my room, ignore structures and rally. Else, set nearest structure as target
