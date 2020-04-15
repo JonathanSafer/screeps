@@ -36,6 +36,15 @@ var rBr = {
         //breaker has a medic
         const canMove = rBr.canMove(creep, medic)
         const target = Game.getObjectById(creep.memory.target)
+        const targetFlag = Memory.flags[creep.memory.city + 'breakerTarget']
+        if(targetFlag){
+            if(Game.rooms[targetFlag.roomName]){
+                const structures = Game.rooms[targetFlag.roomName].lookForAt(LOOK_STRUCTURES, targetFlag.x, targetFlag.y)
+                if(structures.length){
+                    target = structures[0]
+                }
+            }
+        }
         //attempt to break target, 
         //if target is not in range and there is another valid target in range, break new valid target
         //if target cannot be pathed to, choose new target to be saved as target
