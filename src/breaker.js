@@ -119,8 +119,6 @@ var rBr = {
             Math.min(49, creep.pos.x + 1), true) //returns an array of structures
         if(structures.length){
             creep.dismantle(structures[0].structure)
-        } else if (reachedFlag) {
-            delete Memory.flags[flagName]
         }
     },
 
@@ -164,6 +162,9 @@ var rBr = {
         const structures = creep.room.find(FIND_STRUCTURES, {
             filter: structure => [STRUCTURE_WALL, STRUCTURE_RAMPART].includes(structure.structureType)
         })
+        if(creep.room.name == Memory.flags[flag].roomName && !structures.length){
+            delete Memory.flags[flag]
+        }
         //if in a friendly room or my room, ignore structures and rally. Else, set nearest structure as target
         if(creep.room.controller && creep.room.controller.owner 
                 && (settings.allies.includes(creep.room.controller.owner.username) 
