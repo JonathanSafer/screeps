@@ -4,9 +4,6 @@ var p = {
     prepProfile: function() {
         const fileNames = [
             "actions",
-            "bigBreaker",
-            "bigMedic",
-            "bigTrooper",
             "breaker",
             "builder",
             "city",
@@ -38,7 +35,6 @@ var p = {
             "template",
             "tower",
             "transporter",
-            "trooper",
             "types",
             "unclaimer",
             "upgrader",
