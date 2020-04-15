@@ -21,6 +21,12 @@ global.SpawnQuad = function(city, boosted){
         sq.schedule(Game.spawns[city], "quad", boosted)
     }
 }
+global.SpawnBreaker = function(city, boosted){
+    const sq = require("./spawnQueue")
+    sq.initialize(Game.spawns[city])
+    sq.schedule(Game.spawns[city], "medic", boosted)
+    sq.schedule(Game.spawns[city], "breaker", boosted)
+}
 global.PlaceFlag = function(flagName, x, y, roomName){
     Memory.flags[flagName] = new RoomPosition(x, y, roomName)
 }
