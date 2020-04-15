@@ -23,6 +23,7 @@ var p = {
             "observer",
             "powerCreep",
             "powerMiner",
+            "quad",
             "remoteMiner",
             "robber",
             "roles",
