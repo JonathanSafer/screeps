@@ -186,7 +186,7 @@ const p = {
                 }
             }
             for(const exitDirection of roomExits){
-                const exits = room.find(exitDirection)
+                const exits = room.find(parseInt(exitDirection))
                 const path = PathFinder.search(origin, exits, searchSettings)
                 //if path is complete, we need a wall
                 if(!path.incomplete){
@@ -355,7 +355,7 @@ const p = {
         const startPoint = template.buildings.storage.pos[0]
         const startPos = new RoomPosition(plan.x + startPoint.x - template.offset.x, plan.y + startPoint.y - template.offset.y, room.name)
         for(const exitDirection of roomExits){
-            const exitSpots = room.find(exitDirection)
+            const exitSpots = room.find(parseInt(exitDirection))
             const exitPath0 = PathFinder.search(startPos, exitSpots, {
                 plainCost: 4, swampCost: 4, maxRooms: 1, 
                 roomCallback: () => roadMatrix
