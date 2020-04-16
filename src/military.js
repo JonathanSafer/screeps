@@ -27,10 +27,10 @@ const m = {
 
     findTargets: function() {
         const roomData = u.getsetd(Cache, "roomData", {})
-        const cities = u.getMyCities()
+        const cities = _(u.getMyCities()).map("name").value()
         const allNeighbors = _(cities).map(city => u.getAllRoomsInRange(1, [city])).value()
 
-        return _(cities).map("name")
+        return _(cities)
             .zipObject(allNeighbors)
             .map((neighbors, city) => {
                 return _(neighbors).filter(neighbor => {
