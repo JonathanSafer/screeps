@@ -9,7 +9,6 @@ var rMM = require("./mineralMiner")
 var rU = require("./upgrader")
 var rB = require("./builder")
 var rR = require("./runner")
-var rBr = require("./breaker")
 var rT = require("./transporter")
 var rM = require("./remoteMiner")
 var rD = require("./defender")
@@ -347,8 +346,8 @@ function checkLabs(city){
 }
 
 function updateMilitary(city, memory, rooms) {
-    const flags = ["harass", "break", "powerMine", "deposit"]
-    const updateFns = [updateHarasser, updateBreaker, updatePowerMine, updateDepositMiner]
+    const flags = ["harass", "powerMine", "deposit"]
+    const updateFns = [updateHarasser, updatePowerMine, updateDepositMiner]
     for (var i = 0; i < flags.length; i++) {
         const flagName = city + flags[i]
         const updateFn = updateFns[i]
@@ -632,11 +631,6 @@ function updateStorageLink(spawn, memory, structures) {
 
 function updateHarasser(flag, memory) {
     memory[rH.name] = flag ? 1 : 0
-}
-
-function updateBreaker(flag, memory) {
-    memory[rBr.name] = flag ? 1 : 0
-    memory[rMe.name] = flag ? 1 : 0
 }
 
 function updatePowerMine(flag, memory) {
