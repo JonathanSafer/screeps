@@ -194,7 +194,7 @@ const p = {
                     break
                 }
             }
-            const spawnPath = PathFinder.search(origin, {pos: Game.spawns[room.name + "0"], range: 1}, searchSettings)
+            const spawnPath = PathFinder.search(origin, {pos: Game.spawns[room.name + "0"].pos, range: 1}, searchSettings)
             if(!wallNeeded || spawnPath.incomplete){
                 continue
             }
