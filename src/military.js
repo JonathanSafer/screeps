@@ -10,7 +10,7 @@ const m = {
         }
         const roomName = m.getNextRoomToAttack()
         if (roomName) {
-            quad.deployQuad(roomName)
+            m.deployQuad(roomName)
         }
     },
 
