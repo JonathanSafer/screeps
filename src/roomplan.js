@@ -29,17 +29,18 @@ const p = {
     },
 
     buildConstructionSites: function() {
-        const firstRoom = Object.keys(Game.rooms).length == 1
-
-        Object.keys(Game.rooms).forEach((roomName) => {
-            var room = Game.rooms[roomName]
-            if (firstRoom && !room.memory.plan) {
+        const noobMode = Game.gcl.level == 1
+        for(const roomName of Object.keys(Game.rooms)){
+            const room = Game.rooms[roomName]
+            if(!room.controller || !room.controller.my){
+                continue
+            }
+            if (!room.memory.plan && Game.spawns[roomName + "0"]) {
                 const spawnPos = Game.spawns[roomName + "0"].pos
                 room.memory.plan = {}
-                room.memory.plan.x = spawnPos.x - 5 // TODO get these values from the template
-                room.memory.plan.y = spawnPos.y - 3
+                room.memory.plan.x = spawnPos.x + template.offset.x - template.buildings.spawn.pos[0].x
+                room.memory.plan.y = spawnPos.y + template.offset.x - template.buildings.spawn.pos[0].x
             }
-
             const planFlag = Memory.flags.plan
             if(planFlag && planFlag.roomName == roomName && room.controller.owner && room.controller.owner.username == "Yoner"){
                 room.memory.plan = {}
@@ -60,20 +61,24 @@ const p = {
                         if (Game.cpu.getUsed() + 20 > Game.cpu.tickLimit) {
                             return
                         }
-                        p.buildConstructionSite(room, structureType, pos, name)
+                        if(!noobMode || room.controller.level >= 3 || structureType != STRUCTURE_ROAD){
+                            p.buildConstructionSite(room, structureType, pos, name)
+                        }
                     })
                 })
-                p.buildRoads(room, plan)
+                if(!noobMode || room.controller.level >= 3){
+                    p.buildRoads(room, plan)
+                }
                 if (room.controller.level >= 6) {
                     p.buildExtractor(room)
                 }
-                if (room.controller.level >= 7){
+                if (room.controller.level >= 7 || (noobMode && room.controller.level >= 4)){
                     p.buildWalls(room, plan)
                     p.buildSourceLinks(room)
                     p.buildControllerLink(room)
                 }
             }
-        })
+        }
     },
 
     buildConstructionSite: function(room, structureType, pos, name) {
@@ -142,7 +147,6 @@ const p = {
         })
         room.wallCosts = costs
 
-        const roomExits = p.getRoomExits(room.name)//list of list of room exits
         let counter = 0
         const csites = room.find(FIND_MY_CONSTRUCTION_SITES)
         if(csites.length){
@@ -170,27 +174,28 @@ const p = {
 
             //check by attempting to path to all exits
             let wallNeeded = false
-            for(let j = 0; j < roomExits.length; j++){
-                if(roomExits[j].length){
-                    //we only need to path to one of the exit points (it does not matter which one)
-                    const origin = new RoomPosition(wallSpots[i].x, wallSpots[i].y, room.name)
-                    const path = PathFinder.search(origin, roomExits[j][0], {
-                        plainCost: 1,
-                        swampCost: 1,
-                        maxOps: 1000,
-                        maxRooms: 1,
-                        roomCallback: function(roomName) {
-                            return Game.rooms[roomName].wallCosts
-                        }
-                    })
-                    //if path is complete, we need a wall
-                    if(!path.incomplete){
-                        wallNeeded = true
-                        break
-                    }
+            const roomExits = Object.keys(Game.map.describeExits(room.name))
+            const origin = new RoomPosition(wallSpots[i].x, wallSpots[i].y, room.name)
+            const searchSettings = {
+                plainCost: 1,
+                swampCost: 1,
+                maxOps: 1000,
+                maxRooms: 1,
+                roomCallback: function(roomName) {
+                    return Game.rooms[roomName].wallCosts
                 }
             }
-            if(!wallNeeded){//at this point we will not build a wall if a path cannot be achieved outside anyway
+            for(const exitDirection of roomExits){
+                const exits = room.find(exitDirection)
+                const path = PathFinder.search(origin, exits, searchSettings)
+                //if path is complete, we need a wall
+                if(!path.incomplete){
+                    wallNeeded = true
+                    break
+                }
+            }
+            const spawnPath = PathFinder.search(origin, {pos: Game.spawns[room.name + "0"], range: 1}, searchSettings)
+            if(!wallNeeded || spawnPath.incomplete){
                 continue
             }
 
@@ -344,28 +349,27 @@ const p = {
     },
 
     getExitPaths: function(room, exits, plan, roadMatrix){
-        const roomExits = p.getRoomExits(room.name)
+        const roomExits = Object.keys(Game.map.describeExits(room.name))
         const path = []
 
         const startPoint = template.buildings.storage.pos[0]
         const startPos = new RoomPosition(plan.x + startPoint.x - template.offset.x, plan.y + startPoint.y - template.offset.y, room.name)
-        for(var i = 0; i < 4; i++){//find closest Exit point for each side and then path to it
-            if(roomExits[i].length){
-                const exitPath0 = PathFinder.search(startPos, roomExits[i], {
-                    plainCost: 4, swampCost: 4, maxRooms: 1, 
-                    roomCallback: () => roadMatrix
-                })
-                const exitPoint = exitPath0.path[exitPath0.path.length - 1]
-                //now path from this point to template exits
-                const exitPath = PathFinder.search(exitPoint, exits, {
-                    plainCost: 4, swampCost: 4, maxRooms: 1, 
-                    roomCallback: () => roadMatrix
-                })
-                const exitPathPath = exitPath.path
-                exitPathPath.reverse()
-                for(var j = 0; j < Math.min(exitPath.path.length, 4); j++){
-                    path.push(exitPath.path[j])
-                }
+        for(const exitDirection of roomExits){
+            const exitSpots = room.find(exitDirection)
+            const exitPath0 = PathFinder.search(startPos, exitSpots, {
+                plainCost: 4, swampCost: 4, maxRooms: 1, 
+                roomCallback: () => roadMatrix
+            })
+            const exitPoint = exitPath0.path[exitPath0.path.length - 1]
+            //now path from this point to template exits
+            const exitPath = PathFinder.search(exitPoint, exits, {
+                plainCost: 4, swampCost: 4, maxRooms: 1, 
+                roomCallback: () => roadMatrix
+            })
+            const exitPathPath = exitPath.path
+            exitPathPath.reverse()
+            for(var j = 0; j < Math.min(exitPath.path.length, 4); j++){
+                path.push(exitPath.path[j])
             }
         }
         return path
@@ -436,39 +440,6 @@ const p = {
                 structure.destroy()
             }
         })
-    },
-
-    getRoomExits: function(roomName){
-        const terrain = Game.map.getRoomTerrain(roomName)
-        const nExits = []
-        const sExits = []
-        const eExits = []
-        const wExits = []
-        for(let i = 0; i < 50; i++){
-            if(terrain.get(0,i) !== TERRAIN_MASK_WALL){
-                const pos = new RoomPosition(0, i, roomName)
-                wExits.push(pos)
-            }
-        }
-        for(let i = 0; i < 50; i++){
-            if(terrain.get(i,0) !== TERRAIN_MASK_WALL){
-                const pos = new RoomPosition(i, 0, roomName)
-                nExits.push(pos)
-            }
-        }
-        for(let i = 0; i < 50; i++){
-            if(terrain.get(49,i) !== TERRAIN_MASK_WALL){
-                const pos = new RoomPosition(49, i, roomName)
-                eExits.push(pos)
-            }
-        }
-        for(let i = 0; i < 50; i++){
-            if(terrain.get(i,49) !== TERRAIN_MASK_WALL){
-                const pos = new RoomPosition(i, 49, roomName)
-                sExits.push(pos)
-            }
-        }
-        return [nExits, sExits, eExits, wExits]
     },
 
     planRoom: function(roomName) {
