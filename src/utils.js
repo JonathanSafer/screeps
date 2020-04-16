@@ -246,12 +246,12 @@ var u = {
     },
 
     getAllRoomsInRange: function(d, rooms) {
-        const pos = _.map(rooms, u.roomNameToPos)
-        const posXY = _.unzip(pos)
-        const ranges = _.map(posXY, coords => _.range(_.min(coords) - d, _.max(coords) + 1 + d))
-        const roomCoords = _.flatten(_.map(ranges[0], x => _.map(ranges[1], y => [x, y])))
-        const roomNames = _.map(roomCoords, u.roomPosToName)
-        return roomNames
+        const size = 2 * d + 1
+        return _(rooms)
+            .map(u.roomNameToPos)
+            .map(pos => u.generateRoomList(pos[0] - d, pos[1] - d, size, size))
+            .flatten()
+            .value()
     },
 
     roomInRange: function(range, roomName1, roomName2) {
@@ -299,6 +299,14 @@ var u = {
         if(!u.isFriendlyRoom(room)){
             return _.filter(room.find(FIND_STRUCTURES), s => s.hits)
         }
+    },
+
+    generateRoomList: function(minX, minY, sizeX, sizeY) {
+        return _(Array(sizeX)).map((oldX, i) => {
+            return _(Array(sizeY)).map((oldY, j) => {
+                return u.roomPosToName([minX + i, minY + j])
+            }).value()
+        }).flatten().value()
     },
 
     findExitPos: function(roomName, exit){

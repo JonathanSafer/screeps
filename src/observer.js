@@ -82,7 +82,7 @@ const ob = {
 
     findRoomsForScan: function() {
         const size = Game.map.getWorldSize()
-        const rooms = ob.generateRoomList(-size/2, -size/2, size, size)
+        const rooms = u.generateRoomList(-size/2, -size/2, size, size)
         for (const room of rooms) {
             for (const city of u.getMyCities()) {
                 if (Game.map.getRoomLinearDistance(room, city.name) < 5) {
@@ -94,15 +94,7 @@ const ob = {
             }
         }
     },
-
-    generateRoomList: function(minX, minY, sizeX, sizeY) {
-        return _(Array(sizeX)).map((oldX, i) => {
-            return _(Array(sizeY)).map((oldY, j) => {
-                return u.roomPosToName([minX + i, minY + j])
-            }).value()
-        }).flatten().value()
-    },
-
+    
     observeNewRoomForMining: function(city) {
         const obs = ob.getObsForMining(city)
         if (!obs) return false

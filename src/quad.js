@@ -3,7 +3,6 @@ const u = require("./utils")
 const a = require("./actions")
 const rH = require("./harasser")
 const T = require("./tower")
-const sq = require("./spawnQueue")
 
 var CreepState = {
     START: 1,
@@ -66,57 +65,6 @@ var rQ = {
         }
         
     },
-
-    deployQuad: function(roomName) {
-        const flagPos = rQ.nonWallRoomPos(roomName)
-
-        const closestRoomName = rQ.chooseClosestRoom(flagPos)
-        const flagName = `${closestRoomName}0quadRally`
-        if (flagName in Memory.flags) {
-            Log.error(`Quad already deployed from ${closestRoomName}`)
-            return
-        }
-
-        Memory.flags[flagName] = flagPos
-        rQ.spawnQuad(`${closestRoomName}0`)
-    },
-
-    nonWallRoomPos: function(roomName) {
-        const terrain = Game.map.getRoomTerrain(roomName)
-        for(let y = 0; y < 50; y++) {
-            for(let x = 0; x < 50; x++) {
-                if (terrain.get(x, y) != TERRAIN_MASK_WALL) {
-                    return new RoomPosition(x, y, roomName)
-                }
-            }
-        }
-    },
-
-    chooseClosestRoom: function(flagPos){
-        const cities = u.getMyCities()
-        const goodCities = _.filter(cities, rQ.canSpawnQuad)
-        const lengths = _.map(goodCities, city => {
-            const testRoomPos = city.getPositionAt(25, 25)
-            const testPath = u.findMultiRoomPath(testRoomPos, flagPos)
-            if (testPath.incomplete || city.name == flagPos.roomName) {
-                return Number.MAX_VALUE
-            }
-            return testPath.cost
-        })
-        const i = _.indexOf(lengths, _.min(lengths))
-        const nearestCity = goodCities[i]
-
-        if(lengths[i] > CREEP_LIFE_TIME) {
-            Log.info(`No valid rooms in range for ${rQ.name} in ${flagPos.roomName}`)
-        }
-        return nearestCity.name
-    },
-
-    canSpawnQuad: function(city) {
-        return city.controller.level == 8 &&
-            Game.spawns[city.memory.city] &&
-            city.storage
-    },
     
     init: function(creep){
         if(!creep.memory.state){
@@ -129,13 +77,6 @@ var rQ = {
             creep.memory.state = CS.BOOST
         } else {
             creep.memory.state = CS.FORM
-        }
-    },
-
-    spawnQuad: function(city){
-        sq.initialize(Game.spawns[city])
-        for(let i = 0; i < 4; i++){
-            sq.schedule(Game.spawns[city], rQ.name)
         }
     },
     

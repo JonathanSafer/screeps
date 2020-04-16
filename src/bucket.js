@@ -1,5 +1,6 @@
 const settings = require("./settings")
 const observer = require("./observer")
+const military = require("./military")
 
 const b = {
     SIZE: 10000, // 10K constant cpu bucket size
@@ -29,6 +30,7 @@ const b = {
     wasteCpu(amount) {
         Cache.bucket.waste += Math.max(Game.cpu.limit + amount - Game.cpu.getUsed(), 0)
         while (Game.cpu.getUsed() < Game.cpu.limit + amount) {
+            military.attack()
             observer.scanRoom()
         }
     }

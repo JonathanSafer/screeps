@@ -15,11 +15,8 @@ global.BuyToken = function(price) {
     })
 }
 global.SpawnQuad = function(city, boosted){
-    const sq = require("./spawnQueue")
-    sq.initialize(Game.spawns[city])
-    for(let i = 0; i < 4; i++){
-        sq.schedule(Game.spawns[city], "quad", boosted)
-    }
+    const military = require("./military")
+    military.spawnQuad(city, boosted)
 }
 global.SpawnBreaker = function(city, boosted){
     const sq = require("./spawnQueue")
@@ -31,9 +28,9 @@ global.PlaceFlag = function(flagName, x, y, roomName){
     Memory.flags[flagName] = new RoomPosition(x, y, roomName)
 }
 
-global.DeployQuad = function(roomName) {
-    const quad = require("./quad")
-    quad.deployQuad(roomName)
+global.DeployQuad = function(roomName, boosted) {
+    const military = require("./military")
+    military.deployQuad(roomName, boosted)
 }
 
 global.RoomWeights = function(roomName) {
