@@ -148,7 +148,7 @@ function updateCountsCity(city, creeps, rooms, claimRoom, unclaimRoom) {
             updateTransporter(extensions, memory, creeps)
             updateColonizers(city, memory, claimRoom, unclaimRoom)
             updateUpgrader(city, controller, memory, rcl8, creeps, rcl)
-            updateBuilder(rcl, memory, spawn, rooms, rcl8)
+            updateBuilder(rcl, memory, spawn)
             updateMineralMiner(rcl, structures, spawn, memory)
             updatePowerSpawn(city, memory)
             updateStorageLink(spawn, memory, structures)
@@ -547,20 +547,19 @@ function updateUpgrader(city, controller, memory, rcl8, creeps, rcl) {
     }
 }
 
-function updateBuilder(rcl, memory, spawn, rooms, rcl8) {
-    const buildRooms = rcl8 ? [spawn.room] : rooms
-    const constructionSites = _.flatten(_.map(buildRooms, room => room.find(FIND_MY_CONSTRUCTION_SITES)))
-    var totalSites
-    if (rcl < 7) {
-        const buildings = _.flatten(_.map(buildRooms, room => room.find(FIND_STRUCTURES)))
-        const repairSites = _.filter(buildings, structure => (structure.hits < (structure.hitsMax*0.3)) && (structure.structureType != STRUCTURE_WALL))
+function updateBuilder(rcl, memory, spawn) {
+    const room = spawn.room
+    const constructionSites = room.find(FIND_MY_CONSTRUCTION_SITES)
+    let totalSites
+    if (rcl < 4) {
+        const repairSites = _.filter(room.find(FIND_STRUCTURES), structure => (structure.hits < (structure.hitsMax*0.3)) 
+            && (structure.structureType != STRUCTURE_WALL))
         totalSites = (Math.floor((repairSites.length)/10) + constructionSites.length)
     } else {
         totalSites = constructionSites.length
     }
     if (totalSites > 0){
         // If room is full of energy and there is contruction, make a builder
-        const room = spawn.room
         if (room.energyAvailable == room.energyCapacityAvailable) {
             sq.schedule(spawn, "builder")
         }
@@ -568,13 +567,16 @@ function updateBuilder(rcl, memory, spawn, rooms, rcl8) {
     } else {
         memory[rB.name] = 0
     }
-    if(rcl >= 7 && Game.cpu.bucket > settings.bucket.repair && spawn.room.storage){
-        //make builder if lowest wall is below 5mil hits
+    if(rcl >= 4 && Game.cpu.bucket > settings.bucket.repair && spawn.room.storage){
         const walls = _.filter(spawn.room.find(FIND_STRUCTURES), struct => struct.structureType === STRUCTURE_RAMPART || struct.structureType === STRUCTURE_WALL)
         if(walls.length){//find lowest hits wall
-            const sortedWalls = _.sortBy(walls, wall => wall.hits)
-            if(sortedWalls[0].hits < settings.wallHeight){
-                memory[rB.name]++
+            const minHits = _.min(walls, wall => wall.hits)
+            if(minHits < settings.wallHeight){
+                if(rcl >= 7){
+                    sq.schedule(spawn, "builder", true)
+                } else {
+                    memory[rB.name]++
+                }
             }
         }
     }
@@ -635,7 +637,7 @@ function updateHarasser(flag, memory) {
 
 function updatePowerMine(flag, memory) {
     memory[rPM.name] = flag ? 2 : 0
-    if (flag) memory[rMe.name] += 2
+    memory[rMe.name] = flag ? 2 : 0
 }
 
 function updateDepositMiner(flag, memory) {

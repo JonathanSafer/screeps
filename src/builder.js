@@ -8,37 +8,34 @@ var motion = require("./motion")
 var rB = {
     name: "builder",
     type: "builder",
-    target: () => 0,
+    target: function(spawn, boosted){
+        if(boosted){
+            const boosts = [RESOURCE_CATALYZED_ZYNTHIUM_ACID]
+            u.requestBoosterFill(spawn, boosts)
+        }
+        return 0
+    },
 
     /** @param {Creep} creep **/
     run: function(creep) {
         //get boosted if needed
         const city = creep.memory.city
-        if(!creep.memory.state){
-            creep.memory.state = 0
-        }
-        const boost = "XLH2O"
-        rU.checkBoost(creep, city, boost)
-        rU.getBoosted(creep, city, boost)
-        if (creep.memory.state != 2){
+        if(creep.memory.needBoost && !creep.memory.boosted){
+            const boost = "XLH2O"
+            rU.getBoosted(creep, city, boost)
             return
         }
+
+        const rcl = Game.spawns[creep.memory.city].room.controller.level
         
-        if(Game.spawns[creep.memory.city].room.controller.level >= 7){//at RCL 8, only build, or repair ramparts and walls
-            rB.decideWhetherToBuild(creep)
-            if(creep.memory.building){
-                if(!rB.build(creep)){
-                    rB.repWalls(creep)
-                }
-            } else {
-                rB.getEnergy(creep)
-            }
-            return
-        }
         rB.decideWhetherToBuild(creep)
-        if (creep.memory.building) {
+        if(creep.memory.building){
             if(!rB.build(creep)){
-                rB.repair(creep)
+                if(rcl >= 4){
+                    rB.repWalls(creep)
+                } else {
+                    rB.repair(creep)
+                }
             }
         } else {
             rB.getEnergy(creep)
