@@ -39,7 +39,8 @@ const m = {
                         const route = Game.map.findRoute(city, neighbor)
                         return route == ERR_NO_PATH || route.length > 1
                     }
-                    return data.enemy && data.rcl <= 5 && !tooFar()
+                    return data.enemy && data.towers <= 2
+                            && data.rcl <= 6 && !tooFar()
                 }).value()
             })
             .flatten()
