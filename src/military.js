@@ -34,7 +34,7 @@ const m = {
             .zipObject(allNeighbors)
             .map((neighbors, city) => {
                 return _(neighbors).filter(neighbor => {
-                    const data = roomData[neighbor]
+                    const data = roomData[neighbor] || {}
                     const tooFar = () => {
                         const route = Game.map.findRoute(city, neighbor)
                         return route == ERR_NO_PATH || route.length > 1
