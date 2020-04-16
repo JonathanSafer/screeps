@@ -27,12 +27,22 @@ const m = {
 
     findTargets: function() {
         const roomData = u.getsetd(Cache, "roomData", {})
-        const options = u.getAllRoomsInRange(1, u.getMyCities())
-        return _(options)
-            .filter(roomName => {
-                const data = roomData[roomName]
-                return data.enemy && data.rcl <= 5
+        const cities = u.getMyCities()
+        const allNeighbors = _(cities).map(city => u.getAllRoomsInRange(1, [city])).value()
+
+        return _(cities).map("name")
+            .zipObject(allNeighbors)
+            .map((neighbors, city) => {
+                return _(neighbors).filter(neighbor => {
+                    const data = roomData[neighbor]
+                    const tooFar = () => {
+                        const route = Game.map.findRoute(city, neighbor)
+                        return route == ERR_NO_PATH || route.length > 1
+                    }
+                    return data.enemy && data.rcl <= 5 && !tooFar()
+                }).value()
             })
+            .flatten()
             .value()
     },
 
