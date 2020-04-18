@@ -440,7 +440,7 @@ var rQ = {
         for(let i = 0; i < Object.keys(everythingByRoom).length; i++){
             allTowers = allTowers.concat(_.filter(Object.values(everythingByRoom)[i].structures), s => s.structureType == STRUCTURE_TOWER)
         }
-        goals = goals.concat(_.map(allTowers, function(t) { return { pos: t.pos, range: 20 } }))
+        //goals = goals.concat(_.map(allTowers, function(t) { return { pos: t.pos, range: 20 } }))
         rQ.move(quad, goals, status, 0, true)
         return true
     },
@@ -631,10 +631,7 @@ var rQ = {
         }
     },
 
-    move: function(quad, target, status, range, retreat){
-        if(!retreat){
-            retreat = false
-        }
+    move: function(quad, target, status, range, retreat = false){
         if(!range){
             range = 0
         }

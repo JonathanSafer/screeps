@@ -13,6 +13,7 @@ function getRecipe(type, energyAvailable, room, boosted){
     d.transporter = scalingBody([2, 1], [CARRY, MOVE], energy, 30)
     d.builder = builderBody(energy, rcl)
     d.defender = defenderBody(energy, rcl, boosted)
+    d.unclaimer = scalingBody([5, 1], [MOVE, CLAIM], energy)
 
     // used at rcl 4+
     d.spawnBuilder = scalingBody([2, 3, 5], [WORK, CARRY, MOVE], energy)
