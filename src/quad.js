@@ -402,14 +402,15 @@ var rQ = {
         const flagName = quad[0].memory.city + "quadRally"
         const flag = Memory.flags[flagName]
         if(!target){
-            if(flag && Object.keys(everythingByRoom).includes(flag.roomName)){
-                const everythingInRoom = everythingByRoom[flag.roomName]
+            if(!flag || Object.keys(everythingByRoom).includes(flag.roomName)){
+                const lookRoom = flag && flag.roomName || creep.pos.roomName
+                const everythingInRoom = everythingByRoom[lookRoom]
                 //we are at destination
                 if(everythingInRoom.structures && everythingInRoom.structures.length){
                     target = everythingInRoom.creeps[0].pos.findClosestByPath(everythingInRoom.structures)
                 } else if(everythingInRoom.hostiles && everythingInRoom.hostiles.length) {
                     target = everythingInRoom.creeps[0].pos.findClosestByPath(everythingInRoom.hostiles)
-                } else {
+                } else if(flag){
                     delete Memory.flags[flagName]
                 }
                 creep.memory.target = target
@@ -433,7 +434,7 @@ var rQ = {
             allHostiles = allHostiles.concat(Object.values(everythingByRoom)[i].hostiles)
         }
         const dangerous = _.filter(allHostiles, c => c.getActiveBodyparts(ATTACK) || c.getActiveBodyparts(RANGED_ATTACK))
-        let goals = _.map(dangerous, function(c) {
+        const goals = _.map(dangerous, function(c) {
             return { pos: c.pos, range: 5 }
         })
         let allTowers = []
