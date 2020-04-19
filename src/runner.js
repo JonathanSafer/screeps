@@ -1,5 +1,6 @@
 var actions = require("./actions")
 var u = require("./utils")
+var motion = require("./motion")
 
 var rR = {
     name: "runner",
@@ -16,10 +17,8 @@ var rR = {
                     creep.memory.location = Game.spawns[creep.memory.city].room.storage.id
                 }
                 const target = Game.getObjectById(creep.memory.location)
-                if (target && target.pos.isNearTo(creep.pos)){
+                if (target){
                     actions.charge(creep, target)
-                } else {
-                    u.multiRoomMove(creep, target.pos, true)
                 }
                 return
             }
@@ -28,7 +27,7 @@ var rR = {
             const flag = Memory.flags[flagName]
             if (flag && flag.roomName !== creep.pos.roomName){
                 //move to flag range 5
-                u.multiRoomMove(creep, new RoomPosition(flag.x, flag.y, flag.roomName), true)
+                motion.newMove(creep, new RoomPosition(flag.x, flag.y, flag.roomName), 5)
                 return
             }
             if (flag) {
@@ -38,7 +37,7 @@ var rR = {
                 if (resource.length){
                     //pickup resource
                     if (creep.pickup(resource[0]) == ERR_NOT_IN_RANGE){
-                        creep.moveTo(flagPos, {reusePath: 2})
+                        motion.newMove(creep, flagPos, 1)
                     }
 
                     return
@@ -47,14 +46,14 @@ var rR = {
                 if (ruin.length){
                     //pickup resource
                     if (creep.withdraw(ruin[0], RESOURCE_POWER) == ERR_NOT_IN_RANGE){
-                        creep.moveTo(flagPos, {reusePath: 2})
+                        motion.newMove(creep, flagPos, 1)
                     }
 
                     return
                 }
                 //move to flag
                 if (!creep.pos.inRangeTo(flagPos, 4)){
-                    creep.moveTo(flagPos, {reusePath: 50}, {range: 4})
+                    motion.newMove(creep, flagPos, 4)
                 }
                 // every 50 ticks check for powerbank
                 if (Game.time % 50 == 0){
@@ -83,14 +82,6 @@ var rR = {
             actions.pickup(creep)
         } else {
             // check if we are walking on sidewalk/construction, and adjust as needed.
-            var myPos = creep.pos
-            if (!myPos.lookFor(LOOK_STRUCTURES).length && !myPos.lookFor(LOOK_CONSTRUCTION_SITES).length) {
-                // temp
-                if(creep.memory.new) {
-                    //Log.info("new road");
-                    // myPos.createConstructionSite(STRUCTURE_ROAD); // let's build more road
-                }
-            }
             if (creep.memory.location && Game.getObjectById(creep.memory.location)){
                 const target = Game.getObjectById(creep.memory.location)
                 if (actions.charge(creep, target) == ERR_FULL) {
