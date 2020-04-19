@@ -382,9 +382,9 @@ var rQ = {
         //return true if there is a melee creep adjacent to any of the quad members
         for(const roomName of Object.values(everythingByRoom)){
             const melee = _.filter(roomName.hostiles, c => c.getActiveBodyparts(ATTACK))
-            for(const quad of roomName.creeps){
+            for(const member of roomName.creeps){
                 for(const attacker of melee){
-                    if(quad.pos.isNearTo(attacker.pos) ||(quad.pos.inRangeTo(attacker.pos, 2) && !attacker.fatigue)){
+                    if(member.pos.isNearTo(attacker.pos) ||(member.pos.inRangeTo(attacker.pos, 2) && !attacker.fatigue)){
                         return true
                     }
                 }
