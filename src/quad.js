@@ -451,7 +451,7 @@ var rQ = {
         //ignore creeps that are under a ramp
         //and don't forget to RMA when at melee
         //maybe even RMA if total damage dealt will be greater than RA?
-        for(const roomName of everythingByRoom){
+        for(const roomName of Object.values(everythingByRoom)){
             const hostiles = _.filter(roomName.hostiles, hostile => !rQ.isUnderRampart(hostile))
             for(const creep of roomName.creeps){
                 if(_.find(hostiles, h => h.pos.isNearTo(creep.pos)) 
