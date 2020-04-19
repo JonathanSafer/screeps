@@ -451,77 +451,31 @@ var rQ = {
         //ignore creeps that are under a ramp
         //and don't forget to RMA when at melee
         //maybe even RMA if total damage dealt will be greater than RA?
-        if(!target){
-            for(let i = 0; i < Object.keys(everythingByRoom).length; i++){
-                const hostiles = _.filter(Object.values(everythingByRoom)[i].hostiles, hostile => !rQ.isUnderRampart(hostile))
-                const creeps = Object.values(everythingByRoom)[i].creeps
-                for(let j = 0; j < creeps.length; j++){
-                    if(_.find(hostiles, h => h.pos.isNearTo(creeps[j]))){
-                        creeps[j].rangedMassAttack()
-                    } else {
-                        const newTarget = _.find(hostiles, h => h.pos.inRangeTo(creeps[j].pos, 3))
-                        if(newTarget){
-                            creeps[j].rangedAttack(newTarget)
-                        } else {
-                            const structureTarget = _.find(Object.values(everythingByRoom)[i].structures, h => h.pos.inRangeTo(creeps[j].pos, 3))
-                            if(structureTarget){
-                                creeps[j].rangedAttack(structureTarget)
-                            }
-                        }
-                    }
+        for(const roomName of everythingByRoom){
+            const hostiles = _.filter(roomName.hostiles, hostile => !rQ.isUnderRampart(hostile))
+            for(const creep of roomName.creeps){
+                if(_.find(hostiles, h => h.pos.isNearTo(creep.pos)) 
+                    || _.find(roomName.structures, s => s.owner && s.hits && s.pos.isNearTo(creep.pos))){
+                    creep.rangedMassAttack()
+                    continue
                 }
-            }
-            return
-        }
-        if(!target.structureType){
-            //target is a creep
-            let rampart = false
-            if(rQ.isUnderRampart(target)){
-                rampart = true
-            }
-
-            for(let i = 0; i < Object.keys(everythingByRoom).length; i++){
-                const hostiles = _.filter(Object.values(everythingByRoom)[i].hostiles, hostile => !rQ.isUnderRampart(hostile))
-                const creeps = Object.values(everythingByRoom)[i].creeps
-                for(let j = 0; j < creeps.length; j++){
-                    if(_.find(hostiles, h => h.pos.isNearTo(creeps[j]))){
-                        creeps[j].rangedMassAttack()
-                    } else if(!rampart && target.pos.inRangeTo(creeps[j].pos, 3)){
-                        creeps[j].rangedAttack(target)
-                    } else {
-                        const newTarget = _.find(hostiles, h => h.pos.inRangeTo(creeps[j].pos, 3))
-                        if(newTarget){
-                            creeps[j].rangedAttack(newTarget)
-                        } else {
-                            const structureTarget = _.find(Object.values(everythingByRoom)[i].structures, h => h.pos.inRangeTo(creeps[j].pos, 3))
-                            if(structureTarget){
-                                creeps[j].rangedAttack(structureTarget)
-                            }
-                        }
-                    }
+                const targetInRange = target && target.pos.inRangeTo(creep.pos, 3)
+                if(targetInRange && !target.structureType && !rQ.isUnderRampart(target)){
+                    creep.rangedAttack(target)
+                    continue
                 }
-            }
-        } else {
-            //target is a structure
-            for(let i = 0; i < Object.keys(everythingByRoom).length; i++){
-                const hostiles = _.filter(Object.values(everythingByRoom)[i].hostiles, hostile => !rQ.isUnderRampart(hostile))
-                const creeps = Object.values(everythingByRoom)[i].creeps
-                for(let j = 0; j < creeps.length; j++){
-                    if(_.find(hostiles, h => h.pos.isNearTo(creeps[j]))){
-                        creeps[j].rangedMassAttack()
-                    } else {
-                        const newTarget = _.find(hostiles, h => h.pos.inRangeTo(creeps[j].pos, 3))
-                        if(newTarget){
-                            creeps[j].rangedAttack(newTarget)
-                        } else if(target.pos.inRangeTo(creeps[j].pos, 3)){
-                            creeps[j].rangedAttack(target)
-                        } else {
-                            const structureTarget = _.find(Object.values(everythingByRoom)[i].structures, h => h.pos.inRangeTo(creeps[j].pos, 3))
-                            if(structureTarget){
-                                creeps[j].rangedAttack(structureTarget)
-                            }
-                        }
-                    }
+                const newTarget = _.find(hostiles, h => h.pos.inRangeTo(creep.pos, 3))
+                if(newTarget){
+                    creep.rangedAttack(newTarget)
+                    continue
+                }
+                if(targetInRange && target.structureType){
+                    creep.rangedAttack(target)
+                    continue
+                }
+                const structureTarget = _.find(roomName.structures, h => h.pos.inRangeTo(creep.pos, 3))
+                if(structureTarget){
+                    creep.rangedAttack(structureTarget)
                 }
             }
         }
