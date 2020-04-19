@@ -208,6 +208,9 @@ var actions = {
                 for(const labId of labs){
                     const lab = Game.getObjectById(labId)
                     if(lab.mineralType == boost){
+                        if(!lab.store.energy){
+                            return
+                        }
                         //boost self
                         if (lab.boostCreep(creep) === ERR_NOT_IN_RANGE) {
                             motion.newMove(creep, lab.pos, 1)
