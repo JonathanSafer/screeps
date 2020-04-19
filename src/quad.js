@@ -411,7 +411,7 @@ var rQ = {
                 } else if(everythingInRoom.hostiles && everythingInRoom.hostiles.length) {
                     target = everythingInRoom.creeps[0].pos.findClosestByPath(everythingInRoom.hostiles)
                 } else if(flag){
-                    delete Memory.flags[flagName]
+                    //delete Memory.flags[flagName]
                 }
                 creep.memory.target = target
             } else {
@@ -421,7 +421,7 @@ var rQ = {
         }
         if(target){
             rQ.move(quad, target.pos, status, 1)
-        } else if(flag) {
+        } else if(flag && flag.roomName != creep.pos.roomName) {
             rQ.move(quad, new RoomPosition(flag.x, flag.y, flag.roomName), status, 5)
         }
     },
