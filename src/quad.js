@@ -380,11 +380,11 @@ var rQ = {
 
     checkMelee: function(quad, everythingByRoom){//bool
         //return true if there is a melee creep adjacent to any of the quad members
-        for(let i = 0; i < Object.keys(everythingByRoom).length; i++){
-            const melee = _.filter(Object.values(everythingByRoom)[i].hostiles, c => c.getActiveBodyparts(ATTACK))
-            for(let j = 0; j < Object.values(everythingByRoom)[i].creeps.length; j++){
-                for(let k = 0; k < melee.length; k++){
-                    if(Object.values(everythingByRoom)[i].creeps[j].pos.isNearTo(melee[k].pos)){
+        for(const roomName of Object.values(everythingByRoom)){
+            const melee = _.filter(roomName.hostiles, c => c.getActiveBodyparts(ATTACK))
+            for(const quad of roomName.creeps){
+                for(const attacker of melee){
+                    if(quad.pos.isNearTo(attacker.pos) ||(quad.pos.inRangeTo(attacker.pos, 2) && !attacker.fatigue)){
                         return true
                     }
                 }
@@ -700,9 +700,10 @@ var rQ = {
                         }
                         if(!quadNames.includes(creep.name)){
                             //quad cannot move to any pos that another creep is capable of moving to
-                            if(!creep.fatigue){
-                                for(let i = Math.max(0 , creep.pos.x - 2); i < Math.min(50, creep.pos.x + 2); i++){
-                                    for(let j = Math.max(0 , creep.pos.y - 2); j < Math.min(50, creep.pos.y + 2); j++){
+                            if(!creep.fatigue || creep.getActiveBodyparts(ATTACK)){
+                                const offset = (creep.getActiveBodyparts(ATTACK) && !creep.fatigue) ? 3 : 2
+                                for(let i = Math.max(0 , creep.pos.x - offset); i < Math.min(50, creep.pos.x + (offset - 1)); i++){
+                                    for(let j = Math.max(0 , creep.pos.y - offset); j < Math.min(50, creep.pos.y + (offset - 1)); j++){
                                         costs.set(i, j, 255)
                                     }
                                 }
