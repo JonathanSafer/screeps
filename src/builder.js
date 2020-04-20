@@ -102,12 +102,12 @@ var rB = {
     },
 
     repWalls: function(creep){
-        const lookTime = 1
+        const lookTime = 5
         if(creep.memory.repair){//check for target and repair
             const target = Game.getObjectById(creep.memory.repair)
             if(target){//if there is a target, repair it
                 if(creep.repair(target) === ERR_NOT_IN_RANGE){
-                    creep.moveTo(target, {reusePath: 15, range: 3, swampCost: 2, plainCost: 2})
+                    motion.newMove(creep, target.pos, 3)
                 }
             } else {
                 creep.memory.repair = null
@@ -115,14 +115,42 @@ var rB = {
         }
         if((creep.store.getFreeCapacity() == 0 && Game.time % lookTime == 0) || !creep.memory.repair){//occasionally scan for next target to repair
             const buildings = Game.spawns[creep.memory.city].room.find(FIND_STRUCTURES)
-            const walls = _.filter(buildings, struct => struct.structureType === STRUCTURE_RAMPART || struct.structureType === STRUCTURE_WALL).reverse()
+            const nukeRampart = rB.getNukeRampart(buildings, Game.spawns[creep.memory.city].room)
+            if(nukeRampart){
+                creep.memory.repair = nukeRampart.id
+                return
+            }
+            const walls = _.filter(buildings, struct => [STRUCTURE_RAMPART, STRUCTURE_WALL].includes(struct.structureType))
             if(walls.length){//find lowest hits wall
-                const sortedWalls = _.sortBy(walls, wall => wall.hits)
-                creep.memory.repair = sortedWalls[0].id
+                const minWall = _.min(walls, wall => wall.hits)
+                creep.memory.repair = minWall.id
                 return
             }
         }
         return
+    },
+
+    getNukeRampart: function(structures, room){
+        const nukes = room.find(FIND_NUKES)
+        if(!nukes.length){
+            return null
+        }
+        const ramparts = _.filter(structures, s => s.structureType == STRUCTURE_RAMPART && u.isNukeRampart(s.pos))
+        for(const rampart of ramparts){
+            let hitsNeeded = 0
+            for(const nuke of nukes){
+                if(rampart.pos.isEqualTo(nuke.pos)){
+                    hitsNeeded += 5000000
+                }
+                if(rampart.pos.inRangeTo(nuke.pos, 2)){
+                    hitsNeeded += 5000000
+                }
+            }
+            if(hitsNeeded > 0 && hitsNeeded + 50000 > rampart.hits){
+                return rampart
+            }
+        }
+        return null
     },
 
     decideWhetherToBuild: function(creep) {
