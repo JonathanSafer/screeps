@@ -10,7 +10,7 @@ var rB = {
     type: "builder",
     target: function(spawn, boosted){
         if(boosted){
-            const boosts = [RESOURCE_CATALYZED_ZYNTHIUM_ACID]
+            const boosts = [RESOURCE_CATALYZED_LEMERGIUM_ACID]
             u.requestBoosterFill(spawn, boosts)
         }
         return 0
@@ -22,7 +22,7 @@ var rB = {
         const city = creep.memory.city
         if(creep.memory.needBoost && !creep.memory.boosted){
             const boost = "XLH2O"
-            rU.getBoosted(creep, city, boost)
+            rU.getBoosted(creep, boost)
             return
         }
 

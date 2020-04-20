@@ -25,7 +25,7 @@ var rSB = {
         var city = creep.memory.city
         if(creep.memory.needBoost && !creep.memory.boosted){
             const boost = "XLH2O"
-            rU.getBoosted(creep, city, boost)
+            rU.getBoosted(creep, boost)
             return
         }
 
