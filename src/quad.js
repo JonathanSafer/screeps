@@ -268,7 +268,7 @@ var rQ = {
                         costs.set(struct.pos.x, struct.pos.y, 1)
                     }
                 })
-                Game.rooms[roomName].find(FIND_CONSTRUCTION_SITES).forEach(function(struct) {
+                Game.rooms[roomName].find(FIND_MY_CONSTRUCTION_SITES).forEach(function(struct) {
                     if (struct.structureType !== STRUCTURE_CONTAINER && struct.structureType !== STRUCTURE_ROAD &&
                              (struct.structureType !== STRUCTURE_RAMPART ||
                               !struct.my)) {
