@@ -561,7 +561,7 @@ function updateBuilder(rcl, memory, spawn) {
     if (totalSites > 0){
         // If room is full of energy and there is contruction, make a builder
         if (room.energyAvailable == room.energyCapacityAvailable) {
-            sq.schedule(spawn, "builder")
+            sq.schedule(spawn, rB.name)
         }
         memory[rB.name] = (totalSites > 10 && rcl > 2 && rcl < 6) ? settings.max.builders : 1
     } else {
@@ -575,7 +575,7 @@ function updateBuilder(rcl, memory, spawn) {
             const minHits = _.min(walls, wall => wall.hits).hits
             if(minHits < settings.wallHeight){
                 if(rcl >= 7){
-                    sq.schedule(spawn, "builder", true)
+                    sq.schedule(spawn, rB.name, true)
                 } else {
                     memory[rB.name]++
                 }
