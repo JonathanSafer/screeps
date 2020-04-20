@@ -398,8 +398,8 @@ function updateColonizers(city, memory, claimRoom, unclaimRoom) {
         memory[rSB.name] = 0
         memory[rC.name] = 0
     }
-    if (roomName == unclaimRoom) {
-        memory[rUC.name] = 1
+    if (roomName == unclaimRoom && Game.time % 1000 == 0) {
+        sq.schedule(spawn, rUC.name)
     }
     //memory[rRo.name] = 0;
 }
@@ -601,7 +601,7 @@ function updateBuilder(rcl, memory, spawn) {
                 if(!rampart){
                     structure.pos.createConstructionSite(STRUCTURE_RAMPART)
                 } else if(rampart.hits < rampartHeightNeeded + 30000){
-                    sq.schedule(spawn, "builder", rcl >= 7)
+                    sq.schedule(spawn, rB.name, rcl >= 7)
                     return
                 }
             }
