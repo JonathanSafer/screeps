@@ -413,13 +413,13 @@ var rQ = {
                 } else if(flag){
                     //delete Memory.flags[flagName]
                 }
-                creep.memory.target = target
             } else {
                 //we are not at destination
                 //only target something if it is in the way
             }
         }
         if(target){
+            creep.memory.target = target.id
             rQ.move(quad, target.pos, status, 1)
         } else if(flag && flag.roomName != creep.pos.roomName) {
             rQ.move(quad, new RoomPosition(flag.x, flag.y, flag.roomName), status, 5)
