@@ -399,7 +399,7 @@ function updateColonizers(city, memory, claimRoom, unclaimRoom) {
         memory[rC.name] = 0
     }
     if (roomName == unclaimRoom && Game.time % 1000 == 0) {
-        sq.schedule(spawn, rUC.name)
+        sq.schedule(Game.spawns[city], rUC.name)
     }
     //memory[rRo.name] = 0;
 }
