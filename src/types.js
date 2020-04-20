@@ -238,7 +238,7 @@ function defenderBody(energyAvailable, rcl, boosted) {
         }
         const ratio = [1, 9, 3, 2]
         const types = [TOUGH, RANGED_ATTACK, MOVE, HEAL]
-        return scalingBody([ratio, types, energyAvailable])
+        return scalingBody(ratio, types, energyAvailable)
     }
     const ratio = [2, 1, 1]
     const types = [RANGED_ATTACK, MOVE, HEAL]
