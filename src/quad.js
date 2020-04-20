@@ -229,7 +229,7 @@ var rQ = {
         if(!Cache[roomName]){
             Cache[roomName] = {}
         }
-        if(Cache[roomName].quadMatrix && (Game.time != 50 || !Game.rooms[roomName])){//if there is a matrix already, just copy and return
+        if(Cache[roomName].quadMatrix && (Game.time % 50 != 0 || !Game.rooms[roomName])){//if there is a matrix already, just copy and return
             return Cache[roomName].quadMatrix.clone()
         } else {//no matrix? make one if we have vision
             if(!Game.rooms[roomName]){
