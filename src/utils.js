@@ -367,6 +367,14 @@ var u = {
                 receivers[receiver].fill = Math.ceil((LAB_MINERAL_CAPACITY - (lab.store[mineral] || 0))/1000)
             }
         }
+    },
+
+    isNukeRampart: function(roomPos){
+        const structures = roomPos.lookFor(LOOK_STRUCTURES)
+        if(_.find(structures, struct => settings.nukeStructures.contains(struct))){
+            return true
+        }
+        return false
     }
 }
 

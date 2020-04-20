@@ -568,14 +568,41 @@ function updateBuilder(rcl, memory, spawn) {
         memory[rB.name] = 0
     }
     if(rcl >= 4 && Game.cpu.bucket > settings.bucket.repair && spawn.room.storage){
-        const walls = _.filter(spawn.room.find(FIND_STRUCTURES), struct => struct.structureType === STRUCTURE_RAMPART || struct.structureType === STRUCTURE_WALL)
+        const walls = _.filter(spawn.room.find(FIND_STRUCTURES), 
+            struct => [STRUCTURE_RAMPART, STRUCTURE_WALL].includes(struct.structureType) 
+            && !u.isNukeRampart(struct.pos))
         if(walls.length){//find lowest hits wall
-            const minHits = _.min(walls, wall => wall.hits)
+            const minHits = _.min(walls, wall => wall.hits).hits
             if(minHits < settings.wallHeight){
                 if(rcl >= 7){
                     sq.schedule(spawn, "builder", true)
                 } else {
                     memory[rB.name]++
+                }
+            }
+        }
+        const nukes = spawn.room.find(FIND_NUKES)
+        if(nukes.length){
+            const nukeStructures = spawn.room.find(FIND_MY_STRUCTURES, struct => settings.nukeStructures.includes(struct))
+            for(const structure of nukeStructures){
+                let rampartHeightNeeded = 0
+                for(const nuke of nukes){
+                    if(structure.pos.isEqualTo(nuke.pos)){
+                        rampartHeightNeeded += 5000000
+                    }
+                    if(structure.pos.inRangeTo(nuke.pos, 2)){
+                        rampartHeightNeeded += 5000000
+                    }
+                }
+                if(rampartHeightNeeded == 0){
+                    continue
+                }
+                const rampart = _.find(structure.pos.lookFor(LOOK_STRUCTURES), s => s.structureType == STRUCTURE_RAMPART)
+                if(!rampart){
+                    structure.pos.createConstructionSite(STRUCTURE_RAMPART)
+                } else if(rampart.hits < rampartHeightNeeded + 30000){
+                    sq.schedule(spawn, "builder", rcl >= 7)
+                    return
                 }
             }
         }

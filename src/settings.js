@@ -2,6 +2,8 @@
 
 var settings = {
     allies: ["Atanner"],
+    nukeStructures: [STRUCTURE_SPAWN, STRUCTURE_LAB, STRUCTURE_STORAGE, STRUCTURE_FACTORY,
+        STRUCTURE_TERMINAL, STRUCTURE_POWER_SPAWN, STRUCTURE_NUKER],
     boosts: ["XKHO2", "XGHO2", "XZHO2", "XLHO2", "XZH2O", "XLH2O", "XGH2O"],
     roomplanTime: 500,
     roomplanOffset: 155,
