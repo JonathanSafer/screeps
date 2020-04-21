@@ -189,7 +189,7 @@ var rQ = {
         //each creep shoots best target in room
         rQ.shoot(everythingByRoom, target)
 
-        let needRetreat = rQ.heal(quad)//if below certain health thresholds, we might need to retreat
+        let needRetreat = rQ.heal(quad, everythingByRoom)//if below certain health thresholds, we might need to retreat
         if(!needRetreat){
             needRetreat = rQ.checkMelee(quad, everythingByRoom)
         }
@@ -493,14 +493,18 @@ var rQ = {
         return false
     },
 
-    heal: function(quad, hostiles){//bool, TODO: preheal based on positioning/intelligence
+    heal: function(quad, everythingByRoom){//bool, TODO: preheal based on positioning/intelligence
         //return true if a retreat is needed
+        let hostiles = []
+        for(const roomName of Object.values(everythingByRoom)){
+            hostiles = hostiles.concat(roomName.hostiles)
+        }
         const damaged = _.min(quad, "hits")
         if(damaged.hits < damaged.hitsMax * 0.9){
             for(let i = 0; i < quad.length; i++){
                 quad[i].heal(damaged)
             }
-        } else if(hostiles || damaged.hits < damaged.hitsMax){
+        } else if(hostiles.length || damaged.hits < damaged.hitsMax){
             for(let i = 0; i < quad.length; i++){
                 quad[i].heal(quad[i])
             }

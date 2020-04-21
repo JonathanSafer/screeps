@@ -20,7 +20,7 @@ var rU = {
         var city = creep.memory.city
         if(creep.memory.needBoost && !creep.memory.boosted){
             const boost = "XGH2O"
-            rU.getBoosted(creep, city, boost)
+            rU.getBoosted(creep, boost)
             return
         }
         creep.store.energy > 0 ? actions.upgrade(creep) : rU.withdraw(creep, city)
