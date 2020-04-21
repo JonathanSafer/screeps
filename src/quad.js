@@ -656,8 +656,8 @@ var rQ = {
                             //quad cannot move to any pos that another creep is capable of moving to
                             if(!creep.fatigue || creep.getActiveBodyparts(ATTACK)){
                                 const offset = (creep.getActiveBodyparts(ATTACK) && !creep.fatigue) ? 3 : 2
-                                for(let i = Math.max(0 , creep.pos.x - offset); i < Math.min(50, creep.pos.x + (offset - 1)); i++){
-                                    for(let j = Math.max(0 , creep.pos.y - offset); j < Math.min(50, creep.pos.y + (offset - 1)); j++){
+                                for(let i = Math.max(0 , creep.pos.x - offset); i < Math.min(50, creep.pos.x + offset); i++){
+                                    for(let j = Math.max(0 , creep.pos.y - offset); j < Math.min(50, creep.pos.y + offset); j++){
                                         costs.set(i, j, 255)
                                     }
                                 }
