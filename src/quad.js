@@ -401,6 +401,9 @@ var rQ = {
         //if no viable target found, move to rally flag
         const flagName = quad[0].memory.city + "quadRally"
         const flag = Memory.flags[flagName]
+        if(target && u.isOnEdge(target.pos)){
+            target = null
+        }
         if(!target){
             if(!flag || Object.keys(everythingByRoom).includes(flag.roomName)){
                 const lookRoom = flag && flag.roomName || creep.pos.roomName
@@ -409,7 +412,8 @@ var rQ = {
                 if(everythingInRoom.structures && everythingInRoom.structures.length){
                     target = everythingInRoom.creeps[0].pos.findClosestByPath(everythingInRoom.structures)
                 } else if(everythingInRoom.hostiles && everythingInRoom.hostiles.length) {
-                    target = everythingInRoom.creeps[0].pos.findClosestByPath(everythingInRoom.hostiles)
+                    const inRoom = _.filter(everythingInRoom.hostiles, h => !u.isOnEdge(h.pos))
+                    target = everythingInRoom.creeps[0].pos.findClosestByPath(inRoom)
                 } else if(flag){
                     //delete Memory.flags[flagName]
                 }
@@ -421,7 +425,7 @@ var rQ = {
         if(target){
             creep.memory.target = target.id
             rQ.move(quad, target.pos, status, 1)
-        } else if(flag && flag.roomName != creep.pos.roomName) {
+        } else if(flag && !creep.pos.inRangeTo(new RoomPosition(flag.x, flag.y, flag.roomName), 8)) {
             rQ.move(quad, new RoomPosition(flag.x, flag.y, flag.roomName), status, 5)
         }
     },
