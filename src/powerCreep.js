@@ -228,12 +228,18 @@ var rPC = {
 
     canOperateExtension: function(creep) {
         return rPC.canOperate(creep, creep.room.storage, PWR_OPERATE_EXTENSION,
-            creep.room.energyAvailable < 0.5 * creep.room.energyCapacityAvailable)
+            creep.room.energyAvailable < 0.8 * creep.room.energyCapacityAvailable)
     },
 
     canOperateSpawn: function(creep) {
-        const spawn = Game.spawns[creep.memory.city + "0"]
-        return rPC.canOperate(creep, spawn, PWR_OPERATE_SPAWN, spawn && spawn.memory.boost)
+        const spawns = Game.spawns[creep.memory.city + "0"].room.find(FIND_MY_SPAWNS)
+        if(_.every(spawns, spawn => spawn.spawning)){
+            const spawn = _.find(spawns, spawn => !spawn.effects || spawn.effects.length == 0)
+            if(spawn){
+                return rPC.canOperate(creep, spawn, PWR_OPERATE_SPAWN)
+            }
+        }
+        return false
     },
 
     canOperateController: function(creep) {
