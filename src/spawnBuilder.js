@@ -35,7 +35,7 @@ var rSB = {
         }
         if (Memory.flags.claimRally && !creep.memory.rally){
             const flag = Memory.flag.claimRally
-            u.multiRoomMove(creep, new RoomPosition(flag.x, flag.y, flag.roomName))
+            motion.newMove(creep, new RoomPosition(flag.x, flag.y, flag.roomName))
             if (flag.x == creep.pos.x && flag.y == creep.pos.y && flag.roomName == creep.pos.roomName){
                 creep.memory.rally = true
             }

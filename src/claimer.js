@@ -1,4 +1,5 @@
 const u = require("./utils")
+const motion = require("./motion")
 
 var rC = {
     name: "claimer",
@@ -16,7 +17,7 @@ var rC = {
             return false
         }
 
-        u.multiRoomMove(creep, new RoomPosition(flag.x, flag.y, flag.roomName))
+        motion.newMove(creep, new RoomPosition(flag.x, flag.y, flag.roomName))
         if (flag.x == creep.pos.x && flag.y == creep.pos.y) {
             creep.memory.rally = true
         }
@@ -29,9 +30,9 @@ var rC = {
         }
 
         if (flag.roomName != creep.pos.roomName) {
-            u.multiRoomMove(creep, new RoomPosition(flag.x, flag.y, flag.roomName))
+            motion.newMove(creep, new RoomPosition(flag.x, flag.y, flag.roomName), 5)
         } else if (!creep.pos.isNearTo(creep.room.controller.pos)) {
-            u.multiRoomMove(creep, creep.room.controller.pos)
+            motion.newMove(creep, creep.room.controller.pos, 1)
         } else { 
             actionFn(creep)
         }
