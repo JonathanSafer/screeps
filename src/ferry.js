@@ -5,6 +5,8 @@ var rF = {
     name: "ferry",
     type: "ferry",
     target: () => 0,
+    TERMINAL_MAX_MINERAL_AMOUNT = 9000,
+    FERRY_CARRY_AMOUNT = 1000,
 
     /** @param {Creep} creep **/
     run: function(creep) {
@@ -40,11 +42,12 @@ var rF = {
                 actions.charge(creep, creep.room.terminal)
                 break
             }
-            if(Object.keys(creep.room.storage.store).length > 1 && _.sum(creep.room.terminal.store) < 295000){
-                const mineral =_.keys(creep.room.storage.store)[1]
-                actions.withdraw(creep, creep.room.storage, mineral)
+            if(creep.room.storage.store[creep.memory.mineral] > 0 
+                && creep.room.terminal.store[creep.memory.mineral] < TERMINAL_MAX_MINERAL_AMOUNT - FERRY_CARRY_AMOUNT
+                && _.sum(creep.room.terminal.store) < 295000)
+                actions.withdraw(creep, creep.room.storage, creep.memory.mineral)
             } else {
-                creep.memory.target = rF.getJob(creep)
+                creep.say("getJob")
             }
             break
         case 3:
@@ -81,45 +84,20 @@ var rF = {
             }
             break
         case 6:
-            //move mineral from terminal to lab
+            //move mineral from terminal to storage
             if (_.sum(creep.store) > 0){
-                const lab = Game.getObjectById(creep.memory.lab)
-                const result = actions.charge(creep, lab)
-                if(result == 1){
-                    const lab0 = Game.getObjectById(Game.spawns[creep.memory.city].memory.ferryInfo.labInfo[0][0])
-                    const lab1 = Game.getObjectById(Game.spawns[creep.memory.city].memory.ferryInfo.labInfo[1][0])
-                    const lab2 = Game.getObjectById(Game.spawns[creep.memory.city].memory.ferryInfo.labInfo[2][0])
-                    const lab3 = Game.getObjectById(Game.spawns[creep.memory.city].memory.ferryInfo.labInfo[3][0])
-                    const lab4 = Game.getObjectById(Game.spawns[creep.memory.city].memory.ferryInfo.labInfo[4][0])
-                    const lab5 = Game.getObjectById(Game.spawns[creep.memory.city].memory.ferryInfo.labInfo[5][0])
-                    const total = lab0.mineralAmount + lab1.mineralAmount + (2 * (lab2.mineralAmount + lab3.mineralAmount + lab4.mineralAmount + lab5.mineralAmount))
-                    if (total >= 5000 || lab.mineralAmount >= 2000){
-                        Game.spawns[creep.memory.city].memory.ferryInfo.labInfo[creep.memory.labNum][1] = 0
-                    }
-                    creep.say("getJob")
-                }
+                actions.charge(creep, creep.room.storage)
                 break
             }
-            if (creep.room.terminal.store[creep.memory.mineral] > 0){
+            if(creep.room.terminal.store[creep.memory.mineral] > TERMINAL_MAX_MINERAL_AMOUNT)
                 actions.withdraw(creep, creep.room.terminal, creep.memory.mineral)
             } else {
-                creep.say("getJob")
+                creep.memory.target = rF.getJob(creep)
             }
             break
         case 7: {
             //move mineral from lab to terminal
-            if (_.sum(creep.store) > 0){
-                const result = actions.charge(creep, creep.room.terminal)
-                if (result == 1){
-                    creep.say("getJob")
-                    break
-                }
-                break
-            }
-            const lab = Game.getObjectById(creep.memory.lab)
-            if(actions.withdraw(creep, lab, lab.mineralType) == 1){
-                Game.spawns[creep.memory.city].memory.ferryInfo.labInfo[creep.memory.labNum][1] = 0
-            }
+            
             break
         }  
         case 8:
@@ -250,11 +228,24 @@ var rF = {
         if (storage && storage.store.energy > 150000 && creep.room.terminal.store.energy < 50000 && _.sum(creep.room.terminal.store) < 295000){
             return 1
         }
-        if (creep.room.terminal && creep.room.terminal.store.energy > 51000){
+        if (creep.room.terminal && creep.room.terminal.store.energy > 51000 && _.sum(creep.room.terminal.store) < 295000){
             return 3
         }
-        if(storage && Object.keys(storage.store).length > 1 && _.sum(creep.room.terminal.store) < 295000){
-            return 2
+        if(storage && Object.keys(storage.store).length > 1){
+            for(const mineral of Object.keys(storage.store)){
+                if(creep.room.terminal.store[mineral] < TERMINAL_MAX_MINERAL_AMOUNT - FERRY_CARRY_AMOUNT){
+                    creep.memory.mineral = mineral
+                    return 2
+                }
+            }
+        }
+        if(storage){
+            for(const mineral of Object.keys(creep.room.terminal.store)){
+                if(creep.room.terminal.store[mineral] > TERMINAL_MAX_MINERAL_AMOUNT){
+                    creep.memory.mineral = mineral
+                    return 6 
+                }
+            }
         }
         if (Game.spawns[creep.memory.city].memory.ferryInfo.needPower === true && Game.spawns[creep.memory.city].room.terminal.store[RESOURCE_POWER] > 0){
             return 4
