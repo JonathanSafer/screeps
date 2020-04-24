@@ -52,6 +52,9 @@ var rB = {
 
     getEnergy: function(creep) {
         var location = rB.getLocation(creep)
+        if(location.store.energy < 300){
+            return
+        }
         if (a.withdraw(creep, location) == ERR_NOT_ENOUGH_RESOURCES) {
             var targets = u.getWithdrawLocations(creep)
             creep.memory.target = u.getNextLocation(creep.memory.target, targets)
