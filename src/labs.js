@@ -104,16 +104,16 @@ var labs = {
     },
 
     chooseBoost: function(currentBoost, spawn){
-        if(spawn.room.terminal.store[RESOURCE_GHODIUM] < settings.ghodiumAmount){
+        if(spawn.room.storage.store[RESOURCE_GHODIUM] < settings.ghodiumAmount){
             spawn.memory.ferryInfo.labInfo.boost = RESOURCE_GHODIUM
             return
         }
         const boostsList = settings.boosts
-        if (boostsList.includes(currentBoost) && spawn.room.terminal.store[currentBoost] > settings.boostAmount - 3000){
+        if (boostsList.includes(currentBoost) && spawn.room.storage.store[currentBoost] > settings.boostAmount - 3000){
             boostsList.splice(boostsList.indexOf(currentBoost), 1)
         }
         for(let i = 0; i < boostsList.length; i++){
-            if(spawn.room.terminal.store[boostsList[i]] < settings.boostAmount){
+            if(spawn.room.storage.store[boostsList[i]] < settings.boostAmount){
                 spawn.memory.ferryInfo.labInfo.boost = boostsList[i]
                 return
             }

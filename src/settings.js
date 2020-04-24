@@ -14,8 +14,8 @@ var settings = {
     powerBuyVolume: 5000, // amount of power we will buy at once
 
     miningDisabled: ["W2N240"], //cities that will attempt any highway mining
-    ghodiumAmount: 15000, //threshold to stop producing ghodium
-    boostAmount: 12000, //threshold to stop producing boosts
+    ghodiumAmount: 7000, //threshold to stop producing ghodium
+    boostAmount: 5000, //threshold to stop producing boosts (add ~8000 to this and ghodium amount since this does not include ready to go boosts in terminal)
     wallHeight: 10000000,
     bucket: {//minimum bucket thresholds
         resourceMining: 1000,

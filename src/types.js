@@ -141,6 +141,14 @@ function test(hpt, ticks, harvested) {
     return (harvested - start)
 }
 
+function test2(works, ticks, harvested){
+    if(ticks <= 0){
+        return harvested
+    } else {
+        return test2(works, ticks - calcCooldown(harvested + works), harvested + works)
+    }
+}
+
 function minerBody(energyAvailable, rcl) {
     // miners. at least 1 move. 5 works until we can afford 10
     let works = Math.floor((energyAvailable - BODYPART_COST[MOVE]) / BODYPART_COST[WORK])
