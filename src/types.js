@@ -126,19 +126,12 @@ function calcCooldown(harvested) {
     return Math.ceil(DEPOSIT_EXHAUST_MULTIPLY*Math.pow(harvested,DEPOSIT_EXHAUST_POW))
 }
 
-function test(hpt, ticks, harvested) {
-    const start = harvested
-    let cooldown = 0
-    for (let i = 0; i < ticks; i++) {
-        if (cooldown == 0) {
-            harvested += hpt
-            cooldown = calcCooldown(harvested)
-        }
-        else {
-            cooldown--
-        }
+function test(works, ticks, harvested){
+    if(ticks <= 0){
+        return harvested
+    } else {
+        return test(works, ticks - calcCooldown(harvested + works) - 1, harvested + works)
     }
-    return (harvested - start)
 }
 
 function minerBody(energyAvailable, rcl) {
