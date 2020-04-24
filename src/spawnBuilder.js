@@ -2,7 +2,6 @@ var a = require("./actions")
 var sq = require("./spawnQueue")
 var rU = require("./upgrader")
 var s = require("./settings")
-var u = require("./utils")
 var rBr = require("./breaker")
 var motion = require("./motion")
 

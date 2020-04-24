@@ -234,8 +234,8 @@ var rPC = {
     canOperateSpawn: function(creep) {
         const spawns = Game.spawns[creep.memory.city + "0"].room.find(FIND_MY_SPAWNS)
         if(_.every(spawns, spawn => spawn.spawning)){
-            const spawn = _.find(spawns, spawn => !spawn.effects || spawn.effects.length == 0)
-            if(spawn){
+            const slowSpawn = _.find(spawns, s => !s.effects || s.effects.length == 0)
+            if(slowSpawn){
                 return rPC.canOperate(creep, spawn, PWR_OPERATE_SPAWN, true)
             }
         }

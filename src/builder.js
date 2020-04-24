@@ -19,7 +19,6 @@ var rB = {
     /** @param {Creep} creep **/
     run: function(creep) {
         //get boosted if needed
-        const city = creep.memory.city
         if(creep.memory.needBoost && !creep.memory.boosted){
             const boost = "XLH2O"
             rU.getBoosted(creep, boost)

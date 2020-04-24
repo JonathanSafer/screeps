@@ -44,7 +44,7 @@ var rF = {
             }
             if(creep.room.storage.store[creep.memory.mineral] > 0 
                 && creep.room.terminal.store[creep.memory.mineral] < TERMINAL_MAX_MINERAL_AMOUNT - FERRY_CARRY_AMOUNT
-                && _.sum(creep.room.terminal.store) < 295000)
+                && _.sum(creep.room.terminal.store) < 295000){
                 actions.withdraw(creep, creep.room.storage, creep.memory.mineral)
             } else {
                 creep.say("getJob")
