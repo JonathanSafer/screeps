@@ -5,8 +5,8 @@ var rF = {
     name: "ferry",
     type: "ferry",
     target: () => 0,
-    TERMINAL_MAX_MINERAL_AMOUNT = 9000,
-    FERRY_CARRY_AMOUNT = 1000,
+    TERMINAL_MAX_MINERAL_AMOUNT: 9000,
+    FERRY_CARRY_AMOUNT: 1000,
 
     /** @param {Creep} creep **/
     run: function(creep) {
@@ -89,7 +89,7 @@ var rF = {
                 actions.charge(creep, creep.room.storage)
                 break
             }
-            if(creep.room.terminal.store[creep.memory.mineral] > TERMINAL_MAX_MINERAL_AMOUNT)
+            if(creep.room.terminal.store[creep.memory.mineral] > TERMINAL_MAX_MINERAL_AMOUNT){
                 actions.withdraw(creep, creep.room.terminal, creep.memory.mineral)
             } else {
                 creep.memory.target = rF.getJob(creep)
