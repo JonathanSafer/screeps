@@ -241,7 +241,7 @@ var rF = {
         }
         if(storage){
             for(const mineral of Object.keys(creep.room.terminal.store)){
-                if(creep.room.terminal.store[mineral] > rF.TERMINAL_MAX_MINERAL_AMOUNT){
+                if(creep.room.terminal.store[mineral] > rF.TERMINAL_MAX_MINERAL_AMOUNT && mineral != RESOURCE_ENERGY){
                     creep.memory.mineral = mineral
                     return 6 
                 }
