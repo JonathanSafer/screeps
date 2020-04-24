@@ -236,7 +236,7 @@ var rPC = {
         if(_.every(spawns, spawn => spawn.spawning)){
             const slowSpawn = _.find(spawns, s => !s.effects || s.effects.length == 0)
             if(slowSpawn){
-                return rPC.canOperate(creep, spawn, PWR_OPERATE_SPAWN, true)
+                return rPC.canOperate(creep, slowSpawn, PWR_OPERATE_SPAWN, true)
             }
         }
         return false
