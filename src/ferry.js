@@ -43,7 +43,7 @@ var rF = {
                 break
             }
             if(creep.room.storage.store[creep.memory.mineral] > 0 
-                && creep.room.terminal.store[creep.memory.mineral] < TERMINAL_MAX_MINERAL_AMOUNT - FERRY_CARRY_AMOUNT
+                && creep.room.terminal.store[creep.memory.mineral] < rF.TERMINAL_MAX_MINERAL_AMOUNT - rF.FERRY_CARRY_AMOUNT
                 && _.sum(creep.room.terminal.store) < 295000){
                 actions.withdraw(creep, creep.room.storage, creep.memory.mineral)
             } else {
@@ -89,7 +89,7 @@ var rF = {
                 actions.charge(creep, creep.room.storage)
                 break
             }
-            if(creep.room.terminal.store[creep.memory.mineral] > TERMINAL_MAX_MINERAL_AMOUNT){
+            if(creep.room.terminal.store[creep.memory.mineral] > rF.TERMINAL_MAX_MINERAL_AMOUNT){
                 actions.withdraw(creep, creep.room.terminal, creep.memory.mineral)
             } else {
                 creep.memory.target = rF.getJob(creep)
@@ -233,7 +233,7 @@ var rF = {
         }
         if(storage && Object.keys(storage.store).length > 1){
             for(const mineral of Object.keys(storage.store)){
-                if(creep.room.terminal.store[mineral] < TERMINAL_MAX_MINERAL_AMOUNT - FERRY_CARRY_AMOUNT){
+                if(creep.room.terminal.store[mineral] < rF.TERMINAL_MAX_MINERAL_AMOUNT - rF.FERRY_CARRY_AMOUNT){
                     creep.memory.mineral = mineral
                     return 2
                 }
@@ -241,7 +241,7 @@ var rF = {
         }
         if(storage){
             for(const mineral of Object.keys(creep.room.terminal.store)){
-                if(creep.room.terminal.store[mineral] > TERMINAL_MAX_MINERAL_AMOUNT){
+                if(creep.room.terminal.store[mineral] > rF.TERMINAL_MAX_MINERAL_AMOUNT){
                     creep.memory.mineral = mineral
                     return 6 
                 }
