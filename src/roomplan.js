@@ -39,7 +39,7 @@ const p = {
                 const spawnPos = Game.spawns[roomName + "0"].pos
                 room.memory.plan = {}
                 room.memory.plan.x = spawnPos.x + template.offset.x - template.buildings.spawn.pos[0].x
-                room.memory.plan.y = spawnPos.y + template.offset.x - template.buildings.spawn.pos[0].x
+                room.memory.plan.y = spawnPos.y + template.offset.y - template.buildings.spawn.pos[0].y
             }
             const planFlag = Memory.flags.plan
             if(planFlag && planFlag.roomName == roomName && room.controller.owner && room.controller.owner.username == "Yoner"){
