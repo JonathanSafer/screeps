@@ -38,8 +38,8 @@ var settings = {
         powerMine: 550000
     },
     max: {
-        upgraders: 3, // low rcl
-        runners: 4, // low rcl
+        upgraders: 6, // low rcl
+        runners: 6, // low rcl
         builders: 3,
         transporters: 2,
         miners: 1, // rcl8
