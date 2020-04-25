@@ -1,5 +1,4 @@
 const _ = require("lodash")
-const u = require("../src/utils.js")
 
 // Import constants
 var path = require("path")
@@ -11,6 +10,8 @@ for (const key in constants) {
     global[key] = constants[key]
 }
 
+
+const u = require("../src/utils.js")
 const GGame = class {
     constructor() {
         this.rooms = {}
