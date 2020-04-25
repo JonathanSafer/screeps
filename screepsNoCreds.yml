@@ -1,0 +1,16 @@
+servers:
+  main:
+    host: screeps.com
+    secure: true
+    token: ''
+  ptr:
+    host: screeps.com
+    secure: true
+    token: ''
+    ptr: true
+  botarena:
+    host: botarena.screepspl.us
+    secure: true
+    port: 443
+    username: ''
+    password: ''
