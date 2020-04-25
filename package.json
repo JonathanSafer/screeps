@@ -7,7 +7,8 @@
     "pretest": "eslint src",
     "test": "mocha",
     "postinstall": "cd ./node_modules/eslint-plugin-screeps && npm install",
-    "push": "screeps-api upload src/*.js --server main"
+    "push": "screeps-api upload src/*.js --server main",
+    "botarena": "screeps-api upload src/*.js --server botarena"
   },
   "author": "",
   "license": "MIT",
