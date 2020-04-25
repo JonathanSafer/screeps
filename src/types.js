@@ -236,7 +236,7 @@ function defenderBody(energyAvailable, rcl, boosted) {
     const ratio = [2, 1, 1]
     const types = [RANGED_ATTACK, MOVE, HEAL]
     const baseCost = cost(body(ratio, types))
-    if(baseCost < energyAvailable){
+    if(baseCost > energyAvailable){
         return body([1, 1], [RANGED_ATTACK, MOVE])
     }
     return scalingBody(ratio, types, energyAvailable)
