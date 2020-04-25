@@ -246,7 +246,8 @@ var m = {
                 })
                 // Avoid creeps in the room
                 room.find(FIND_CREEPS).forEach(function(c) {
-                    if(!Cache[c.name] || !Cache[c.name].lastMove || Cache[c.name].lastMove < (Game.time - 1)){
+                    const ccache = u.getCreepCache(c.name)
+                    if(ccache.lastMove || ccache.lastMove < (Game.time - 1)){
                         costs.set(c.pos.x, c.pos.y, 0xff)
                     }
                 })
