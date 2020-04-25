@@ -6,7 +6,8 @@
   "scripts": {
     "pretest": "eslint src",
     "test": "mocha",
-    "postinstall": "cd ./node_modules/eslint-plugin-screeps && npm install"
+    "postinstall": "cd ./node_modules/eslint-plugin-screeps && npm install",
+    "push": "screeps-api upload src/*.js --server main"
   },
   "author": "",
   "license": "MIT",
@@ -17,6 +18,7 @@
   },
   "dependencies": {
     "lodash": "^3.10.1",
-    "mocha": "^7.1.1"
+    "mocha": "^7.1.1",
+    "screeps-api": "^1.11.0"
   }
 }
