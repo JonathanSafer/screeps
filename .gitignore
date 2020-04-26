@@ -5,3 +5,4 @@ node_modules
 .screeps-multimeter.history
 screeps-multimeter.json
 screeps.log
+.screeps.yml

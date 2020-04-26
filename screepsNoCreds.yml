@@ -2,7 +2,7 @@ servers:
   main:
     host: screeps.com
     secure: true
-    token: ''
+    token: '$MMO_TOKEN'
   ptr:
     host: screeps.com
     secure: true
@@ -12,5 +12,5 @@ servers:
     host: botarena.screepspl.us
     secure: true
     port: 443
-    username: ''
-    password: ''
+    username: '$SCREEPS_USER'
+    password: '$BOTARENA_PASS'

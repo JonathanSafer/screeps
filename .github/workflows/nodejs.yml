@@ -10,13 +10,23 @@ jobs:
     strategy:
       matrix:
         node-version: [12.x]
-
+steps:
     steps:
     - uses: actions/checkout@v1
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v1
       with:
         node-version: ${{ matrix.node-version }}
+
+    - name: Set secret keys in YAML
+        uses: nowactions/envsubst@v1
+        with:
+          input: ./screepsNoCreds.yml
+          output: ./.screeps.yml
+        env:
+          MMO_TOKEN: ${{ secrets.MMO_TOKEN }}
+          BOTARENA_PASS: ${{ secrets.BOTARENA_PASS }}
+          SCREEPS_USER: ${{ secrets.SCREEPS_USER }}
     - name: npm install and test
       run: |
         npm ci
