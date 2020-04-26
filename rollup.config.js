@@ -1,4 +1,4 @@
-import commonjs from '@rollup/plugin-commonjs';
+import commonjs from 'rollup-plugin-commonjs-alternate';
 
 export default {
       input: 'src/main.js',
