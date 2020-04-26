@@ -39,6 +39,8 @@ var rPM = {
             if(target){//move to it
                 actions.attack(creep, target)
                 creep.heal(creep)
+            } else if (!Memory.flags[flagName]) {
+                return
             } else if(creep.room.name != Memory.flags[flagName].roomName){ //rally
                 motion.newMove(creep, new RoomPosition(Memory.flags[flagName].x, Memory.flags[flagName].y, Memory.flags[flagName].roomName), 1)
             } else {
