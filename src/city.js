@@ -1,4 +1,3 @@
-var rMe = require("./medic")
 var rDM = require("./depositMiner")
 var rH = require("./harasser")
 var rSB = require("./spawnBuilder")
@@ -347,11 +346,11 @@ function checkLabs(city){
 
 function updateMilitary(city, memory, rooms, spawn, creeps) {
     const flags = ["harass", "powerMine", "deposit"]
-    const updateFns = [updateHarasser, updatePowerMine, updateDepositMiner]
+    const roles = [rH.name, rPM.name, rDM.name]
     for (var i = 0; i < flags.length; i++) {
         const flagName = city + flags[i]
-        const updateFn = updateFns[i]
-        updateFn(Memory.flags[flagName], memory, city, rooms, spawn, creeps)
+        const role = roles[i]
+        updateHighwayCreep(Memory.flags[flagName], spawn, creeps, role)
     }
 }
 
@@ -658,23 +657,14 @@ function updateStorageLink(spawn, memory, structures) {
     }
 }
 
-function updateHarasser(flag, memory) {
-    memory[rH.name] = flag ? 1 : 0
-}
-
-function updatePowerMine(flag, memory) {
-    memory[rPM.name] = flag ? 2 : 0
-    memory[rMe.name] = flag ? 2 : 0
-}
-
-function updateDepositMiner(flag, memory, city, rooms, spawn, creeps) {
+function updateHighwayCreep(flag, spawn, creeps, role) {
     if (!flag) return
 
     // deposit miner already exists then return
-    const inField = findRole(creeps, rDM.name)
-    const queued = sq.getCounts(spawn)[rDM.name]
+    const inField = findRole(creeps, role)
+    const queued = sq.getCounts(spawn)[role]
     if (!inField && !queued) {
-        sq.schedule(spawn, rB.name, true)
+        sq.schedule(spawn, role, role != rH.name)
     }
 }
 
