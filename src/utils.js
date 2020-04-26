@@ -223,13 +223,6 @@ var u = {
             u.highwayMoveSettings(10000, 1, startPos, endPos))
     },
 
-    multiRoomMove: function(creep, pos, avoidEnemies) {
-        creep.moveTo(pos,
-            {reusePath: 50},
-            u.highwayMoveSettings(5000, 8, creep.pos, pos),
-            avoidEnemies)         
-    },
-
     // E0,E10... W0, 10 ..., N0, N10 ...
     isHighway: function(roomName) {
         const coords = roomName.match(/[0-9]+/g)
