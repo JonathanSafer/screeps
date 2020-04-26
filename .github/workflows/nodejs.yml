@@ -30,7 +30,6 @@ jobs:
         npm ci
         npm test
         npm run-script push
-#        npm run-script botarena
         npm run-script roll
         npm run-script season
       env:
