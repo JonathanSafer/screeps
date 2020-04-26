@@ -133,7 +133,7 @@ function updateCountsCity(city, creeps, rooms, claimRoom, unclaimRoom) {
     updateDefender(spawn, rcl)
 
     if(Game.time % 200 == 0){
-        updateMilitary(city, memory, rooms)
+        updateMilitary(city, memory, rooms, spawn, creeps)
     }
     if (Game.time % logisticsTime == 0) {
         const structures = spawn.room.find(FIND_STRUCTURES)
@@ -145,7 +145,7 @@ function updateCountsCity(city, creeps, rooms, claimRoom, unclaimRoom) {
         if (Game.time % 500 === 0) {
             runNuker(city)
             checkLabs(city)
-            updateTransporter(extensions, memory, creeps)
+            updateTransporter(extensions, memory)
             updateColonizers(city, memory, claimRoom, unclaimRoom)
             updateUpgrader(city, controller, memory, rcl8, creeps, rcl)
             updateBuilder(rcl, memory, spawn)
@@ -345,13 +345,13 @@ function checkLabs(city){
     }
 }
 
-function updateMilitary(city, memory, rooms) {
+function updateMilitary(city, memory, rooms, spawn, creeps) {
     const flags = ["harass", "powerMine", "deposit"]
     const updateFns = [updateHarasser, updatePowerMine, updateDepositMiner]
     for (var i = 0; i < flags.length; i++) {
         const flagName = city + flags[i]
         const updateFn = updateFns[i]
-        updateFn(Memory.flags[flagName], memory, city, rooms)
+        updateFn(Memory.flags[flagName], memory, city, rooms, spawn, creeps)
     }
 }
 
@@ -417,20 +417,18 @@ function updateDefender(spawn, rcl) {
         }
         const hostiles = room.find(FIND_HOSTILE_CREEPS)
         for(const hostile of hostiles){
-            if(hostile.getActiveBodyparts(TOUGH) > 0){
-                for(const part of hostile.body){
-                    if(part.boost){
-                        //add a defender to spawn queue if we don't have enough
-                        //make sure to count spawned defenders as well as queued
-                        const defendersNeeded = Math.ceil(hostiles.length/2)
-                        const liveCount = _.filter(room.find(FIND_MY_CREEPS), c => c.memory.role = rD.name).length
-                        const queued = sq.getCounts(spawn)[rD.name]
-                        if(liveCount + queued < defendersNeeded){
-                            sq.schedule(spawn, rD.name, true)
-                        }
-                        return
-                    }
+            const hasTough = hostile.getActiveBodyparts(TOUGH) > 0
+            const isBoosted = _(hostile.body).find(part => part.boost)
+            if (hasTough && isBoosted) {
+                //add a defender to spawn queue if we don't have enough
+                //make sure to count spawned defenders as well as queued
+                const defendersNeeded = Math.ceil(hostiles.length/2)
+                const liveCount = _.filter(room.find(FIND_MY_CREEPS), c => c.memory.role = rD.name).length
+                const queued = sq.getCounts(spawn)[rD.name]
+                if(liveCount + queued < defendersNeeded){
+                    sq.schedule(spawn, rD.name, true)
                 }
+                return
             }
         }
     } else {
@@ -498,7 +496,7 @@ function updateMineralMiner(rcl, buildings, spawn, memory) {
     }
 }
 
-function updateTransporter(extensions, memory, creeps) {
+function updateTransporter(extensions, memory) {
     if (extensions < 1){
         memory[rT.name] = 0
     } else if (extensions < 10){
@@ -669,8 +667,19 @@ function updatePowerMine(flag, memory) {
     memory[rMe.name] = flag ? 2 : 0
 }
 
-function updateDepositMiner(flag, memory) {
-    memory[rDM.name] = flag ? 1 : 0
+function updateDepositMiner(flag, memory, city, rooms, spawn, creeps) {
+    if (!flag) return
+
+    // deposit miner already exists then return
+    const inField = findRole(creeps, rDM.name)
+    const queued = sq.getCounts(spawn)[rDM.name]
+    if (!inField && !queued) {
+        sq.schedule(spawn, rB.name, true)
+    }
+}
+
+function findRole(creeps, role) {
+    return _(creeps).find(creep => creep.memory.role == role)
 }
 
 function runNuker(city){
