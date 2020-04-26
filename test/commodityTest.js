@@ -15,22 +15,6 @@ function createFactoryCity(name, resourceMap, factoryLevel) {
     return city
 }
 
-
-describe("utils", function () {
-    beforeEach(function() {
-        Game.reset()
-        Memory.reset()
-        global.Cache = {}
-    })
-    var cM = require("../src/utils.js")
-    describe("#getFactory()", function () {
-        it("should get the factory", function () {
-            const factory = cM.getFactory(createBasicCity("test"))
-            assert.equal(1, factory.level)
-        })
-    })
-})
-
 describe("commodityManager", function () {
     beforeEach(function() {
         Game.reset()
@@ -38,20 +22,6 @@ describe("commodityManager", function () {
         global.Cache = {}
     })
     var cM = require("../src/commodityManager.js")
-    describe("#empireStore()", function () {
-        it("should sum everything", function () {
-            const cities = [
-                createFactoryCity("1", {energy: 20, power: 7}, 1),
-                createFactoryCity("2", {energy: 11, power: 8}, 2),
-                createFactoryCity("3", {power: 6}, 3)]
-
-            const store = cM.empireStore(cities)
-            assert.equal(31, store.energy)
-            assert.equal(21, store.power)
-            assert.equal(0, store.H)
-        })
-    })
-
     describe("#groupByFactoryLevel", function () {
         it("should filter those without terminals", function () {  
             const cs = [{}, {}]
@@ -66,12 +36,4 @@ describe("commodityManager", function () {
             assert.equal(2, fMap[1].length)
         })
     })
-
-    // scheduleDeliveries: function(factCities, destination, components, terminalCache, quantities)
-    // describe("#scheduleDeliveries", function () {
-    //     it("should schedule components", function () {  
-    //         const fMap = cM.groupByFactoryLevel(cities)
-    //         cM.scheduleDeliveries(fMap, "test", ["phlegm"], {}, [7])
-    //     })
-    // })
 })

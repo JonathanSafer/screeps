@@ -3,6 +3,9 @@ const u = require("./utils")
 
 var cM = {
     runManager: function(cities){
+        // cache boosts
+        u.cacheBoostsAvailable(cities)
+
         //group cities by factory level
         const citiesByFactoryLevel = cM.groupByFactoryLevel(cities)
         const levelCache = _.mapValues(citiesByFactoryLevel, cM.empireStore)
@@ -106,19 +109,6 @@ var cM = {
         const citiesByFactoryLevel =
             _.groupBy(citiesWithFactory, city => u.getFactory(city).level || 0)
         return citiesByFactoryLevel
-    },
-
-    //combine store of all cities given
-    empireStore: function(cities){
-        const empireStore = {}
-        for (const resource of RESOURCES_ALL){
-            if(!cities.length){
-                empireStore[resource] = 0
-            } else {
-                empireStore[resource] = _.sum(cities, city => city.terminal.store[resource])
-            }
-        }
-        return empireStore
     }
 }
 module.exports = cM

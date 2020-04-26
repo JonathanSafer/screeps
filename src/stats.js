@@ -2,7 +2,6 @@ const rDM = require("./depositMiner")
 const rMM = require("./mineralMiner")
 const u = require("./utils")
 const rr = require("./roles")
-const cM = require("./commodityManager")
 const settings = require("./settings")
 const profiler = require("./screeps-profiler")
 
@@ -156,7 +155,7 @@ var statsLib = {
             // Resources
             if (Game.time % settings.resourceStatTime == 1) {
                 const citiesWithTerminals = _.filter(myCities, c => c.terminal)
-                const empireStore = cM.empireStore(citiesWithTerminals)
+                const empireStore = u.empireStore(citiesWithTerminals)
                 for (const resource of RESOURCES_ALL) {
                     stats[`resource.${resource}`] = empireStore[resource]
                 }

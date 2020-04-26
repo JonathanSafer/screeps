@@ -377,6 +377,29 @@ var u = {
             return true
         }
         return false
+    },
+
+    //combine store of all cities given
+    empireStore: function(cities){
+        const empireStore = {}
+        for (const resource of RESOURCES_ALL){
+            if(!cities.length){
+                empireStore[resource] = 0
+            } else {
+                empireStore[resource] = _.sum(cities, city => city.terminal.store[resource])
+            }
+        }
+        return empireStore
+    },
+
+    cacheBoostsAvailable: function(cities) {
+        const empireStore = u.empireStore(cities)
+        const boosts = settings.boosts
+        const boostQuantityRequired = settings.boostsNeeded * cities.length
+        const boostsAvailable = _(boosts)
+            .filter(boost => empireStore[boost] >= boostQuantityRequired)
+            .value()
+        Cache.boostsAvailable = boostsAvailable
     }
 }
 

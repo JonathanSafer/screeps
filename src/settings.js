@@ -15,6 +15,7 @@ var settings = {
 
     miningDisabled: ["W2N240"], //cities that will attempt any highway mining
     ghodiumAmount: 7000, //threshold to stop producing ghodium
+    boostsNeeded: 5000, // boosts needed per city of a kind for us to boost creeps
     boostAmount: 5000, //threshold to stop producing boosts (add ~8000 to this and ghodium amount since this does not include ready to go boosts in terminal)
     wallHeight: 10000000,
     bucket: {//minimum bucket thresholds

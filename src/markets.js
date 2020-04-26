@@ -1,4 +1,4 @@
-var cM = require("./commodityManager")
+var u = require("./utils")
 var settings = require("./settings")
 
 var markets = {
@@ -269,7 +269,7 @@ var markets = {
         if(!Memory.sellPoint){
             Memory.sellPoint = {}
         }
-        const empireStore = cM.empireStore(cities)
+        const empireStore = u.empireStore(cities)
         for(var i = 0; i < resources.length; i++){
             if(!Memory.sellPoint[resources[i]]){
                 Memory.sellPoint[resources[i]] === 0
