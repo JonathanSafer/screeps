@@ -5,7 +5,7 @@
   "main": "main.js",
   "scripts": {
     "pretest": "eslint src",
-    "test": "mocha",
+    "test": "nyc mocha",
     "postinstall": "cd ./node_modules/eslint-plugin-screeps && npm install",
     "push": "screeps-api upload dist/main.js --server main",
     "botarena": "screeps-api upload dist/main.js --server botarena",
@@ -21,6 +21,7 @@
     "eslint-plugin-screeps": "https://github.com/jordansafer/eslint-plugin-screeps.git",
     "lodash": "^3.10.1",
     "mocha": "^7.1.1",
+    "nyc": "^15.0.1",
     "rollup": "^2.7.2",
     "screeps-api": "^1.11.0"
   },

@@ -10,6 +10,7 @@ describe("#main", function () {
         Memory.reset()
     })
     it("should run without errors", function () {
+        this.timeout(10000)
         const rName = "E10N17"
         const city = `${rName}0`
 
