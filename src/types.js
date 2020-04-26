@@ -25,7 +25,7 @@ function getRecipe(type, energyAvailable, room, boosted){
     d.medic = medicBody(energy, rcl, boosted)
 
     // rcl 8 only
-    d.powerMiner = body([20, 20], [MOVE, ATTACK])
+    d.powerMiner = pMinerBody(boosted)
 
     switch (rcl) {
     case 4:
@@ -161,6 +161,13 @@ function getHarvestResults(works, ticks, harvested){
     } else {
         return getHarvestResults(works, ticks - calcCooldown(harvested + works) - 1, harvested + works)
     }
+}
+
+function pMinerBody(boosted){
+    if(boosted){
+        return body([20, 20], [MOVE, ATTACK])
+    }
+    return body([3, 16, 25, 6], [TOUGH, ATTACK, MOVE, HEAL])
 }
 
 function minerBody(energyAvailable, rcl) {
