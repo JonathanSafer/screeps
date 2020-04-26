@@ -9,12 +9,7 @@ const dmBoosts = [RESOURCE_CATALYZED_UTRIUM_ALKALIDE, RESOURCE_CATALYZED_KEANIUM
 var rDM = {
     name: "depositMiner",
     type: "depositMiner",
-    target: function(spawn, boosted){
-        if(boosted){
-            u.requestBoosterFill(spawn, dmBoosts)
-        }
-        return 0
-    },
+    target: u.boosterRequestFn(dmBoosts),
 
     // Keep track of how much is mined for stats. Stat object will clear this when it's recorded
     mined: 0,

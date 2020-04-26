@@ -8,13 +8,7 @@ var motion = require("./motion")
 var rB = {
     name: "builder",
     type: "builder",
-    target: function(spawn, boosted){
-        if(boosted){
-            const boosts = [RESOURCE_CATALYZED_LEMERGIUM_ACID]
-            u.requestBoosterFill(spawn, boosts)
-        }
-        return 0
-    },
+    target: u.boosterRequestFn([RESOURCE_CATALYZED_LEMERGIUM_ACID]),
 
     /** @param {Creep} creep **/
     run: function(creep) {

@@ -11,12 +11,7 @@ const pmBoosts = [RESOURCE_CATALYZED_GHODIUM_ALKALIDE, RESOURCE_CATALYZED_LEMERG
 var rPM = {
     name: "powerMiner",
     type: "powerMiner",
-    target: function(spawn, boosted){
-        if(boosted){
-            u.requestBoosterFill(spawn, pmBoosts)
-        }
-        return 0
-    },
+    target: u.boosterRequestFn(pmBoosts),
 
     /** @param {Creep} creep **/
     run: function(creep) {

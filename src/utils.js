@@ -351,6 +351,15 @@ var u = {
         return exits
     },
 
+    boosterRequestFn: function(boosts) {
+        return (spawn, boosted) => {
+            if (boosted) {
+                u.requestBoosterFill(spawn, boosts)
+            }
+            return 0
+        }
+    },
+
     requestBoosterFill: function(spawn, boosts){
         if(!spawn.memory.ferryInfo || !spawn.memory.ferryInfo.labInfo){
             return

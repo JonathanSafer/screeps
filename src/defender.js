@@ -14,17 +14,10 @@ var CS = CreepState
 var rD = {
     name: "defender",
     type: "defender",
-    target: function(spawn, boosted){
-        if(boosted){
-            const boosts = [RESOURCE_CATALYZED_GHODIUM_ALKALIDE, RESOURCE_CATALYZED_ZYNTHIUM_ALKALIDE,
-                RESOURCE_CATALYZED_LEMERGIUM_ALKALIDE, RESOURCE_CATALYZED_KEANIUM_ALKALIDE]
-            u.requestBoosterFill(spawn, boosts)
-        }
-        return 0
-    },
+    target: u.boosterRequestFn([RESOURCE_CATALYZED_GHODIUM_ALKALIDE,
+        RESOURCE_CATALYZED_ZYNTHIUM_ALKALIDE, RESOURCE_CATALYZED_LEMERGIUM_ALKALIDE, 
+        RESOURCE_CATALYZED_KEANIUM_ALKALIDE]),
    
-
-
     /** @param {Creep} creep **/
     run: function(creep) {//modified harasser
         const city = creep.memory.city

@@ -7,16 +7,9 @@ var actions = require("./actions")
 var rBr = {
     name: "breaker",
     type: "breaker",
-    target: function(spawn, boosted){
-        if(boosted){
-            const boosts = [RESOURCE_CATALYZED_GHODIUM_ALKALIDE, RESOURCE_CATALYZED_ZYNTHIUM_ALKALIDE,
-                RESOURCE_CATALYZED_ZYNTHIUM_ACID]
-            u.requestBoosterFill(spawn, boosts)
-        }
-        return 0
-    },
+    target: u.boosterRequestFn([RESOURCE_CATALYZED_GHODIUM_ALKALIDE, 
+        RESOURCE_CATALYZED_ZYNTHIUM_ALKALIDE, RESOURCE_CATALYZED_ZYNTHIUM_ACID]),
    
-
     /** @param {Creep} creep **/
     run: function(creep) {
         if(creep.memory.needBoost && !creep.memory.boosted){
