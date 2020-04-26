@@ -30,6 +30,6 @@ jobs:
         npm ci
         npm test
         npm run-script push
-        npm run-script botarena
+#        npm run-script botarena
       env:
         CI: true
