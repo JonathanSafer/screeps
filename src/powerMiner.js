@@ -5,32 +5,26 @@ var sq = require("./spawnQueue")
 var rR = require("./runner")
 var u = require("./utils")
 
+const pmBoosts = [RESOURCE_CATALYZED_GHODIUM_ALKALIDE, RESOURCE_CATALYZED_LEMERGIUM_ALKALIDE,
+    RESOURCE_CATALYZED_UTRIUM_ACID]
+
 var rPM = {
     name: "powerMiner",
     type: "powerMiner",
     target: function(spawn, boosted){
         if(boosted){
-            const boosts = [RESOURCE_CATALYZED_GHODIUM_ALKALIDE, RESOURCE_CATALYZED_LEMERGIUM_ALKALIDE,
-                RESOURCE_CATALYZED_UTRIUM_ACID]
-            u.requestBoosterFill(spawn, boosts)
+            u.requestBoosterFill(spawn, pmBoosts)
         }
         return 0
     },
-   
 
     /** @param {Creep} creep **/
     run: function(creep) {
         rDM.checkRoom(creep)//check if in hostile room
 
-        if(creep.memory.needBoost){
-            const boosts = [RESOURCE_CATALYZED_GHODIUM_ALKALIDE, RESOURCE_CATALYZED_LEMERGIUM_ALKALIDE,
-                RESOURCE_CATALYZED_UTRIUM_ACID]
-            if(creep.memory.boosted < boosts.length){
-                rPM.getBoosted(creep, boosts)
-                return
-            }
+        if (!rPM.getBoosted(creep, pmBoosts)){
+            return
         }
-
 
         const flagName = creep.memory.city + "powerMine"
         if(!Memory.flags[flagName]){
@@ -134,6 +128,11 @@ var rPM = {
     },
 
     getBoosted: function(creep, boosts){
+        const alreadyBoosted = creep.memory.boosted && creep.memory.boosted >= boosts.length
+        if (!creep.memory.needBoost || !alreadyBoosted) {
+            return true
+        }
+
         if(!creep.memory.boosted){
             creep.memory.boosted = 0
         }

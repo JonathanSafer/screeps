@@ -2,15 +2,16 @@ var actions = require("./actions")
 var settings = require("./settings")
 var motion = require("./motion")
 var u = require("./utils")
+const rPM = require("./powerMiner")
+
+const dmBoosts = [RESOURCE_CATALYZED_UTRIUM_ALKALIDE, RESOURCE_CATALYZED_KEANIUM_ACID]
 
 var rDM = {
     name: "depositMiner",
     type: "depositMiner",
     target: function(spawn, boosted){
         if(boosted){
-            const boosts = [RESOURCE_CATALYZED_UTRIUM_ALKALIDE,
-                RESOURCE_CATALYZED_KEANIUM_ACID]
-            u.requestBoosterFill(spawn, boosts)
+            u.requestBoosterFill(spawn, dmBoosts)
         }
         return 0
     },
@@ -25,6 +26,11 @@ var rDM = {
             creep.suicide()
             return
         }
+
+        if (!rPM.getBoosted(creep, dmBoosts)){
+            return
+        }
+
         if(creep.memory.target === 0){
             if(_.sum(creep.store) === creep.store.getCapacity()){
                 creep.memory.target = 1
