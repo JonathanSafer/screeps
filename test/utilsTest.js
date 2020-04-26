@@ -65,6 +65,8 @@ describe("utils", function () {
             createFactoryCity("1", {"XGH2O": 100000, "XLHO2": 10000}, 1)
             createFactoryCity("2", {"XLHO2": 10000, "XUHO2": 30000}, 2)
             createFactoryCity("3", {"XKH2O": 40000}, 3)
+            const noTermCity = new Room("4")
+            new StructureController(noTermCity)
 
             assert(u.boostsAvailable(require("../src/upgrader")))
             assert(!u.boostsAvailable(require("../src/builder")))
