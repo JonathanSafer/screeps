@@ -15,6 +15,7 @@ var error = {
     finishTick: function() {
         if (error.errorThisTick) {
             const e = error.exception
+            Log.error(`${e.message}: ${e.stack}`)
             Game.notify(`${e.message}: ${e.stack}`)
         }
     }

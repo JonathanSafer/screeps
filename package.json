@@ -24,6 +24,7 @@
   "dependencies": {
     "lodash": "^3.10.1",
     "mocha": "^7.1.1",
+    "rollup-plugin-commonjs-alternate": "^0.5.1",
     "screeps-api": "^1.11.0"
   }
 }
