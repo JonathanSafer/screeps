@@ -59,7 +59,7 @@ var rPM = {
         }
         if(!creep.memory.bankInfo){
             creep.memory.bankInfo = {}
-            let damage = creep.getActiveBodyParts(ATTACK) * ATTACK_POWER
+            let damage = creep.getActiveBodyparts(ATTACK) * ATTACK_POWER
             if(creep.memory.boosted){
                 damage = damage * BOOSTS[ATTACK][RESOURCE_CATALYZED_UTRIUM_ACID][ATTACK]
             }
