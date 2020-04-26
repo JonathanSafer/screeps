@@ -60,6 +60,19 @@ describe("utils", function () {
         })
     })
 
+    describe("#boostsAvailable", function () {
+        it("should return true if boosts are available", function () {
+            createFactoryCity("1", {"XGH2O": 100000, "XLHO2": 10000}, 1)
+            createFactoryCity("2", {"XLHO2": 10000, "XUHO2": 30000}, 2)
+            createFactoryCity("3", {"XKH2O": 40000}, 3)
+
+            assert(u.boostsAvailable(require("../src/upgrader")))
+            assert(!u.boostsAvailable(require("../src/builder")))
+            assert(u.boostsAvailable(require("../src/depositMiner")))
+            assert(!u.boostsAvailable(require("../src/powerMiner")))
+        })
+    })
+
     describe("#roomNameToPos()", function () {
         it("should be reverseable", function () {
             const rooms = ["E10N15", "E10S21", "W3S5", "W0N0", "E0S0"]

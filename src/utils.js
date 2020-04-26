@@ -400,6 +400,15 @@ var u = {
             .filter(boost => empireStore[boost] >= boostQuantityRequired)
             .value()
         Cache.boostsAvailable = boostsAvailable
+    },
+
+    boostsAvailable: function(role) {
+        if (!Cache.boostsAvailable) {
+            const cities = u.getMyCities()
+            u.cacheBoostsAvailable(cities)
+        }
+        const boostsAvailable = Cache.boostsAvailable || []
+        return _(role.boosts).every(boost => boostsAvailable.includes(boost))
     }
 }
 

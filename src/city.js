@@ -25,33 +25,34 @@ var e = require("./error")
 var template = require("./template")
 
 
-function makeCreeps(role, type, target, city, unhealthyStore, boosted) {
-    //Log.info(types.getRecipe('basic', 2));
+function makeCreeps(role, city, unhealthyStore, creepWantsBoosts) {
     const room = Game.spawns[city].room
    
     var energyToSpend = unhealthyStore ? room.energyAvailable :
         room.energyCapacityAvailable
 
-    const recipe = types.getRecipe(type, energyToSpend, room, boosted)
-    //Log.info(role)
+    const weHaveBoosts = u.boostsAvailable(role)
+    const boosted = creepWantsBoosts && weHaveBoosts
+
+    const recipe = types.getRecipe(role.type, energyToSpend, room, boosted)
     const spawns = room.find(FIND_MY_SPAWNS)
     if(!Memory.counter){
         Memory.counter = 0
     }
     const name = Memory.counter.toString()
     if (types.cost(recipe) > room.energyAvailable) return false
+
     const spawn = u.getAvailableSpawn(spawns)
-    //Log.info(spawn);
     if (!spawn) return false
 
     Memory.counter++
     const result = spawn.spawnCreep(recipe, name)
     if (result) { // don't spawn and throw an error at the end of the tick
-        e.reportError(new Error(`Error making ${role} in ${city}: ${result}`))
-        return
+        e.reportError(new Error(`Error making ${role.name} in ${city}: ${result}`))
+        return false
     }
-    Game.creeps[name].memory.role = role
-    Game.creeps[name].memory.target = target
+    Game.creeps[name].memory.role = role.name
+    Game.creeps[name].memory.target = role.target(Game.spawns[city], boosted)
     Game.creeps[name].memory.city = city
     Game.creeps[name].memory.needBoost = boosted
     return true
@@ -83,7 +84,6 @@ function runCity(city, creeps){
         counts[role.name] = liveCount + queueCount
     })
     
-    
     let usedQueue = true
     const nextRoleInfo = sq.getNextRole(spawn) || {}
     const spawnQueueRoleName = nextRoleInfo.role
@@ -96,8 +96,7 @@ function runCity(city, creeps){
     }
     
     if (nextRole) {
-        //Log.info(JSON.stringify(Object.entries(nextRole)))
-        if(makeCreeps(nextRole.name, nextRole.type, nextRole.target(Game.spawns[city], nextRoleInfo.boosted), city, unhealthyStore, nextRoleInfo.boosted) && usedQueue){
+        if(makeCreeps(nextRole, city, unhealthyStore, nextRoleInfo.boosted) && usedQueue){
             spawn.memory.sq.shift()
         }
     }
@@ -172,18 +171,18 @@ function makeEmergencyCreeps(extensions, creeps, city, rcl8, emergency) {
     if (emergency || Game.time % checkTime == 0 && extensions >= 5) {
         if (_.filter(creeps, creep => creep.memory.role == "remoteMiner") < 1 && memory[rM.role] > 0){
             Log.info("Making Emergency Miner")
-            makeCreeps("remoteMiner", "miner", 1, city, true)
+            makeCreeps(rM, city, true)
         }
 
         if (_.filter(creeps, creep => creep.memory.role == "transporter") < 1){
             Log.info("Making Emergency Transporter")
-            makeCreeps("transporter", "transporter", 0, city, true)
+            makeCreeps(rT, city, true)
         }
 
         // TODO disable if links are present (not rcl8!! links may be missing for rcl8)
         if ((emergency || !rcl8) && _.filter(creeps, creep => creep.memory.role == "runner" ) < 1 && memory.runner > 0) {
             Log.info("Making Emergency Runner")
-            makeCreeps("runner", "runner", 1, city, true)
+            makeCreeps(rR, city, true)
         }
     }
 }
