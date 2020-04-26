@@ -1,4 +1,4 @@
-var u = require("./utils")
+;var u = require("./utils")
 var cM = require("./commodityManager")
 var rPC = require("./powerCreep")
 var c = require("./city")
