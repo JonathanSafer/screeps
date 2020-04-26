@@ -8,14 +8,18 @@
     "test": "mocha",
     "postinstall": "cd ./node_modules/eslint-plugin-screeps && npm install",
     "push": "screeps-api upload src/*.js --server main",
-    "botarena": "screeps-api upload src/*.js --server botarena"
+    "botarena": "screeps-api upload src/*.js --server botarena",
+    "season": "screeps-api upload dist/main.js --server season",
+    "roll": "rollup -c"
   },
   "author": "",
   "license": "MIT",
   "devDependencies": {
+    "@rollup/plugin-commonjs": "^11.1.0",
     "@screeps/common": "2.12.1",
     "eslint": "^6.8.0",
-    "eslint-plugin-screeps": "https://github.com/jordansafer/eslint-plugin-screeps.git"
+    "eslint-plugin-screeps": "https://github.com/jordansafer/eslint-plugin-screeps.git",
+    "rollup": "^2.7.2"
   },
   "dependencies": {
     "lodash": "^3.10.1",

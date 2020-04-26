@@ -14,3 +14,9 @@ servers:
     port: 443
     username: '$SCREEPS_USER'
     password: '$BOTARENA_PASS'
+  season:
+    host: server2.screepspl.us
+    secure: true
+    port: 443
+    username: '$SCREEPS_USER'
+    password: '$BOTARENA_PASS'

@@ -41,8 +41,8 @@ var rQ = {
         case CS.FORM:
             //find a captain
             //if no captain, become one
-            //captain finds form up location, privates sign up for a private slot, then go brain dead
-            //captain checks roster and moves privates to necessary positions in formation
+            //captain finds form up location, jimmys sign up for a jimmy slot, then go brain dead
+            //captain checks roster and moves jimmys to necessary positions in formation
             rQ.formUp(creep)
             break
         case CS.ENGAGE:
@@ -80,7 +80,7 @@ var rQ = {
         //they would renew themselves (has to be done before boosting though)
         
         //form up organization:     C 0
-        //(byorder in private list) 1 2
+        //(byorder in jimmy list) 1 2
         if(creep.memory.captain){
             //find meeting position
             //choose an exit, and path as close to room center as possible from that exit. 2nd to last pos on path is rally point
@@ -110,27 +110,27 @@ var rQ = {
             } else {
                 inLine++
             }
-            for(let i = 0; i < creep.memory.privates.length; i++){
-                const privatePos = new RoomPosition(formPos.x, formPos.y, formPos.roomName)
+            for(let i = 0; i < creep.memory.jimmys.length; i++){
+                const jimmyPos = new RoomPosition(formPos.x, formPos.y, formPos.roomName)
                 switch(i){
                 case 0:
-                    privatePos.x++
+                    jimmyPos.x++
                     break
                 case 1:
-                    privatePos.y++
+                    jimmyPos.y++
                     break
                 case 2:
-                    privatePos.x++
-                    privatePos.y++
+                    jimmyPos.x++
+                    jimmyPos.y++
                     break
                 }
-                new RoomVisual(creep.room.name).text(i,privatePos)
-                const private = Game.getObjectById(creep.memory.privates[i])
-                if(!private){
+                new RoomVisual(creep.room.name).text(i,jimmyPos)
+                const jimmy = Game.getObjectById(creep.memory.jimmys[i])
+                if(!jimmy){
                     continue
                 }
-                if(!private.pos.isEqualTo(privatePos)){
-                    private.moveTo(privatePos)
+                if(!jimmy.pos.isEqualTo(jimmyPos)){
+                    jimmy.moveTo(jimmyPos)
                 } else{
                     inLine++
                 }
@@ -142,13 +142,13 @@ var rQ = {
         }
         //find captain
         if(creep.ticksToLive <= 1499){
-            const captain = _.find(creep.room.find(FIND_MY_CREEPS), c => c.memory.captain && c.memory.privates.length < 3)
-            if(captain){//sign up as a private and go brain dead
-                captain.memory.privates.push(creep.id)
+            const captain = _.find(creep.room.find(FIND_MY_CREEPS), c => c.memory.captain && c.memory.jimmys.length < 3)
+            if(captain){//sign up as a jimmy and go brain dead
+                captain.memory.jimmys.push(creep.id)
                 creep.memory.state = CS.PRIVATE
             } else {//if no captian, become captain
                 creep.memory.captain = true
-                creep.memory.privates = []
+                creep.memory.jimmys = []
             }
         }
     },
@@ -158,9 +158,9 @@ var rQ = {
         //if a member has died, go into YOLO mode
         //captain should preemptively send everybody in YOLO mode if it is at 1 ttl
 
-        const quad = [creep, Game.getObjectById(creep.memory.privates[0]),
-            Game.getObjectById(creep.memory.privates[1]),
-            Game.getObjectById(creep.memory.privates[2])]
+        const quad = [creep, Game.getObjectById(creep.memory.jimmys[0]),
+            Game.getObjectById(creep.memory.jimmys[1]),
+            Game.getObjectById(creep.memory.jimmys[2])]
 
         if(!rQ.allPresent(quad)){//if quad not fully formed, yolo mode
             rQ.yolo(quad)
