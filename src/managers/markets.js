@@ -393,23 +393,21 @@ var markets = {
         //can't sell if terminal has been used
         const terminal = city.terminal
         const storage = city.storage
-        let buyThreshold = 650000
-        if(terminal.store[RESOURCE_POWER] > 2000){
-            buyThreshold = 650000//if excess power, buy energy
-        }
+        let buyThreshold = 500000
+
         if(!storage){
             return termUsed
         }
-        if(storage.store[RESOURCE_ENERGY] < 400000 && (!highEnergyOrder || highEnergyOrder.price <= 0.002)){//buy energy if it's cheap
-            //buy energy
+        if(storage.store[RESOURCE_ENERGY] < buyThreshold && Game.market.credits > settings.creditMin){//buy energy with excess credits
             const orderId = _.find(Object.keys(Game.market.orders),
                 order => Game.market.orders[order].roomName === city.name && Game.market.orders[order].resourceType === RESOURCE_ENERGY)
             const order = Game.market.orders[orderId]
-            if(order && order.remainingAmount === 0){
-                //update order quantity
-                Game.market.extendOrder(orderId, 50000)
-            } else if(!order){
-                const buyPrice = 0.002
+            let highPrice = 0
+            if(highEnergyOrder){
+                highPrice = highEnergyOrder.price
+            }
+            if(!order){
+                const buyPrice = Math.max(Math.min(markets.getPrice(RESOURCE_ENERGY), highPrice), 0.001)
                 Game.market.createOrder({
                     type: ORDER_BUY,
                     resourceType: RESOURCE_ENERGY,
@@ -417,36 +415,14 @@ var markets = {
                     totalAmount: 50000,
                     roomName: city.name   
                 })
-            }
-        } else if(storage.store[RESOURCE_ENERGY] < buyThreshold){//buy energy with excess credits
-            if(Game.market.credits > settings.creditMin){//arbitrary
-                const orderId = _.find(Object.keys(Game.market.orders),
-                    order => Game.market.orders[order].roomName === city.name && Game.market.orders[order].resourceType === RESOURCE_ENERGY)
-                const order = Game.market.orders[orderId]
-                let highPrice = 0
-                if(highEnergyOrder){
-                    highPrice = highEnergyOrder.price
+            } else {//update order occasionally
+                if(order.price <= highPrice){
+                    Game.market.changeOrderPrice(orderId, (order.price + 0.001))
                 }
-                if(!order){
-                    const buyPrice = Math.max(Math.min(markets.getPrice(RESOURCE_ENERGY), highPrice), 0.001)
-                    Game.market.createOrder({
-                        type: ORDER_BUY,
-                        resourceType: RESOURCE_ENERGY,
-                        price: buyPrice,
-                        totalAmount: 50000,
-                        roomName: city.name   
-                    })
-                } else {//update order occasionally
-                    if(order.price <= highPrice){
-                        Game.market.changeOrderPrice(orderId, (order.price + 0.001))
-                    }
-                }
-
             }
-
         }
         if(!termUsed){//don't deal to rooms we have vision of
-            if(storage.store[RESOURCE_ENERGY] > 900000){
+            if(storage.store[RESOURCE_ENERGY] > 800000){
                 for(var i = 0; i < energyOrders.length; i++){
                     if(!Game.rooms[energyOrders[i].roomName]){
                         Game.market.deal(energyOrders[i].id, Math.min(energyOrders[i].remainingAmount, terminal.store.energy / 2), city.name)
