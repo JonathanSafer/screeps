@@ -344,11 +344,12 @@ var u = {
         return exits
     },
 
-    boosterRequestFn: function(role) {
-        return (spawn, boosted) => {
-            if (boosted) {
-                u.requestBoosterFill(spawn, role.boosts)
-            }
+    boosterRequestFn: function() { //function(role) {
+        // return (spawn, boosted) => {
+        //     if (boosted) {
+        //         u.requestBoosterFill(spawn, role.boosts)
+        //     }
+        return () => {
             return 0
         }
     },
