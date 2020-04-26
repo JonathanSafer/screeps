@@ -344,10 +344,10 @@ var u = {
         return exits
     },
 
-    boosterRequestFn: function(boosts) {
+    boosterRequestFn: function(role) {
         return (spawn, boosted) => {
             if (boosted) {
-                u.requestBoosterFill(spawn, boosts)
+                u.requestBoosterFill(spawn, role.boosts)
             }
             return 0
         }

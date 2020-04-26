@@ -4,12 +4,11 @@ var motion = require("./motion")
 var u = require("./utils")
 const rPM = require("./powerMiner")
 
-const dmBoosts = [RESOURCE_CATALYZED_UTRIUM_ALKALIDE, RESOURCE_CATALYZED_KEANIUM_ACID]
-
 var rDM = {
     name: "depositMiner",
     type: "depositMiner",
-    target: u.boosterRequestFn(dmBoosts),
+    target: u.boosterRequestFn(rDM),
+    boosts: [RESOURCE_CATALYZED_UTRIUM_ALKALIDE, RESOURCE_CATALYZED_KEANIUM_ACID],
 
     // Keep track of how much is mined for stats. Stat object will clear this when it's recorded
     mined: 0,
@@ -22,7 +21,7 @@ var rDM = {
             return
         }
 
-        if (!rPM.getBoosted(creep, dmBoosts)){
+        if (!rPM.getBoosted(creep, rDM.boosts)){
             return
         }
 

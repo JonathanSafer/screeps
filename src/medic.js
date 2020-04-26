@@ -4,8 +4,9 @@ const actions = require("./actions")
 var rMe = {
     name: "medic",
     type: "medic",
-    target: u.boosterRequestFn([RESOURCE_CATALYZED_GHODIUM_ALKALIDE, 
-        RESOURCE_CATALYZED_ZYNTHIUM_ALKALIDE, RESOURCE_CATALYZED_LEMERGIUM_ALKALIDE]),
+    target: u.boosterRequestFn(rMe),
+    boosts: [RESOURCE_CATALYZED_GHODIUM_ALKALIDE, 
+        RESOURCE_CATALYZED_ZYNTHIUM_ALKALIDE, RESOURCE_CATALYZED_LEMERGIUM_ALKALIDE],
 
     /** @param {Creep} creep **/
     run: function(creep) {

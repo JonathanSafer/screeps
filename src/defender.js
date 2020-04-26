@@ -14,9 +14,10 @@ var CS = CreepState
 var rD = {
     name: "defender",
     type: "defender",
-    target: u.boosterRequestFn([RESOURCE_CATALYZED_GHODIUM_ALKALIDE,
+    target: u.boosterRequestFn(rD),
+    boosts: [RESOURCE_CATALYZED_GHODIUM_ALKALIDE,
         RESOURCE_CATALYZED_ZYNTHIUM_ALKALIDE, RESOURCE_CATALYZED_LEMERGIUM_ALKALIDE, 
-        RESOURCE_CATALYZED_KEANIUM_ALKALIDE]),
+        RESOURCE_CATALYZED_KEANIUM_ALKALIDE],
    
     /** @param {Creep} creep **/
     run: function(creep) {//modified harasser

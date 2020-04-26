@@ -8,7 +8,8 @@ var motion = require("./motion")
 var rB = {
     name: "builder",
     type: "builder",
-    target: u.boosterRequestFn([RESOURCE_CATALYZED_LEMERGIUM_ACID]),
+    target: u.boosterRequestFn(rB),
+    boosts: [RESOURCE_CATALYZED_LEMERGIUM_ACID],
 
     /** @param {Creep} creep **/
     run: function(creep) {

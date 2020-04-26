@@ -5,19 +5,18 @@ var sq = require("./spawnQueue")
 var rR = require("./runner")
 var u = require("./utils")
 
-const pmBoosts = [RESOURCE_CATALYZED_GHODIUM_ALKALIDE, RESOURCE_CATALYZED_LEMERGIUM_ALKALIDE,
-    RESOURCE_CATALYZED_UTRIUM_ACID]
-
 var rPM = {
     name: "powerMiner",
     type: "powerMiner",
-    target: u.boosterRequestFn(pmBoosts),
+    target: u.boosterRequestFn(rPM),
+    boosts: [RESOURCE_CATALYZED_GHODIUM_ALKALIDE, RESOURCE_CATALYZED_LEMERGIUM_ALKALIDE,
+        RESOURCE_CATALYZED_UTRIUM_ACID],
 
     /** @param {Creep} creep **/
     run: function(creep) {
         rDM.checkRoom(creep)//check if in hostile room
 
-        if (!rPM.getBoosted(creep, pmBoosts)){
+        if (!rPM.getBoosted(creep, rPM.boosts)){
             return
         }
 

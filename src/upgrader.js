@@ -7,14 +7,14 @@ var motion = require("./motion")
 var rU = {
     name: "upgrader",
     type: "normal",
-    target: u.boosterRequestFn([RESOURCE_CATALYZED_GHODIUM_ACID]),
+    target: u.boosterRequestFn(rU),
+    boosts: [RESOURCE_CATALYZED_GHODIUM_ACID],
 
     /** @param {Creep} creep **/
     run: function(creep) {
         var city = creep.memory.city
         if(creep.memory.needBoost && !creep.memory.boosted){
-            const boost = "XGH2O"
-            rU.getBoosted(creep, boost)
+            rU.getBoosted(creep, rU.boosts[0])
             return
         }
         creep.store.energy > 0 ? actions.upgrade(creep) : rU.withdraw(creep, city)
