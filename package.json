@@ -9,7 +9,7 @@
     "postinstall": "cd ./node_modules/eslint-plugin-screeps && npm install",
     "push": "screeps-api upload src/*.js --server main",
     "botarena": "screeps-api upload src/*.js --server botarena",
-    "season": "screeps-api upload dist/main.js --server season",
+    "season": "screeps-api upload src/*.js --server season",
     "roll": "rollup -c"
   },
   "author": "",
