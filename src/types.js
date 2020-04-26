@@ -61,7 +61,7 @@ function getRecipe(type, energyAvailable, room, boosted){
     d.erunner = body([2, 1], [CARRY, MOVE])
     d.claimer = body([5, 1], [MOVE, CLAIM])
     if (type === "depositMiner"){
-        const dMinerCounts = dMinerCalc(room, false)
+        const dMinerCounts = dMinerCalc(room, boosted)
         d["depositMiner"] = body(dMinerCounts, [WORK, CARRY, MOVE])
     }
     if (d[type] == null) {
@@ -84,55 +84,82 @@ function store(recipe){
     return _.filter(recipe, part => part == CARRY).length * CARRY_CAPACITY
 }
 function dMinerCalc(room, boosted){
-    console.log(boosted) // TODO remove this later
     const city = room.memory.city
     const spawn = Game.spawns[city]
+    const baseBody = [1, 1, 1]
     const flagName = city + "deposit"
     const flag = Memory.flags[flagName]
     if(!flag){
-        return [1, 1, 1]//return 1,1, 1
+        return baseBody
     }
     let harvested = spawn.memory.deposit
     if(!harvested){
         harvested = 0
     }
     //distance calculated using method of travel for consistency
-    const distance = motion.getRoute(spawn.pos.roomName, flag.roomName, true).length * 50//PathFinder.search(spawn.pos, {pos: flag, range: 1}, {maxOps: 10000}).path.length
-    const workTime = 1500 - (distance * 3)//distance x 3 since it'll take 2x as long on return
-    let work = 20
-
-    let storeAmount = test(work, workTime, harvested) - harvested
-    let stores = Math.floor(storeAmount/100)*2 //store must be an even number for 20 works
-    if(stores < 8){// if we're getting less than 400 resource in a lifetime, drop the source
+    const distance = motion.getRoute(spawn.pos.roomName, flag.roomName, true).length * 50
+    const workTime = CREEP_LIFE_TIME - (distance * 3)//distance x 3 since it'll take 2x as long on return
+    
+    const result = depositMinerBody(workTime, harvested, boosted, baseBody)
+    if (_.isEqual(result, baseBody)) {
         delete Memory.flags[flagName]
-        return [1, 1, 1]
     }
-    if(stores > 10){
+    return result
+}
+
+function depositMinerBody(workTime, harvested, boosted, baseBody) {
+    let works = 20
+    let carries = getCarriesFromWorks(works, workTime, harvested, boosted)
+    if(carries < 8){// if we're getting less than 400 resource in a lifetime, drop the source
+        return baseBody
+    }
+    if(carries > 10){
         //body is impossible so we have to decrease works
         for(var i = 0; i < 2; i++){
-            work = work/2
-            storeAmount = test(work, workTime, harvested) - harvested
-            stores = Math.floor(storeAmount/50)
-            if(stores < (32 - work)){
-                return [work, stores, 16]
+            works = works/2
+            carries = getCarriesFromWorks(works, workTime, harvested, boosted)
+            const moves = Math.max(Math.ceil((works + carries)/2), works)
+            if(works + carries + moves <= MAX_CREEP_SIZE){
+                return [works, carries, moves]
             }
         }
-        //can't go under 5 works => make min body
-        return [work, 27, 16]
+        //can't go under 5 works => make max body
+        const moves = Math.floor(MAX_CREEP_SIZE / 3)
+        carries = 2 * moves - works
+        return [works, carries, moves]
     } else {
-        return [work, stores, 20]
+        const moves = works
+        return [works, carries, moves]
     }
-
 }
+
+function getCarriesFromWorks(works, workTime, alreadyHarvested, boosted) {
+    const workPower = getWorkPower(works, boosted)
+    const carryAmount = 
+        getHarvestResults(workPower, workTime, alreadyHarvested) - alreadyHarvested
+    return getCarriesNeeded(carryAmount, boosted)
+}
+
+function getWorkPower(work, boosted) {
+    if (boosted) return work * BOOSTS[WORK][RESOURCE_CATALYZED_UTRIUM_ALKALIDE].harvest
+    else return work
+}
+
+function getCarriesNeeded(resourceAmount, boosted) {
+    const boostMultiple = BOOSTS[CARRY][RESOURCE_CATALYZED_KEANIUM_ACID].capacity
+    const resourcesPerCarry = boosted ? CARRY_CAPACITY * boostMultiple : CARRY_CAPACITY
+    return Math.floor(resourceAmount/resourcesPerCarry)
+}
+
 function calcCooldown(harvested) {
     return Math.ceil(DEPOSIT_EXHAUST_MULTIPLY*Math.pow(harvested,DEPOSIT_EXHAUST_POW))
 }
 
-function test(works, ticks, harvested){
+function getHarvestResults(works, ticks, harvested){
     if(ticks <= 0){
         return harvested
     } else {
-        return test(works, ticks - calcCooldown(harvested + works) - 1, harvested + works)
+        return getHarvestResults(works, ticks - calcCooldown(harvested + works) - 1, harvested + works)
     }
 }
 
@@ -276,5 +303,6 @@ module.exports = {
     getRecipe: getRecipe,
     cost: cost,
     store: store,
-    body: body
+    body: body,
+    depositMinerBody: depositMinerBody,
 }
