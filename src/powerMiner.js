@@ -1,81 +1,94 @@
-var rBr = require("./breaker")
 var rDM = require("./depositMiner")
 var motion = require("./motion")
+var actions = require("./actions")
+var sq = require("./spawnQueue")
+var rR = require("./runner")
+var u = require("./utils")
 
 var rPM = {
     name: "powerMiner",
     type: "powerMiner",
-    target: () => 0,
+    target: function(spawn, boosted){
+        if(boosted){
+            const boosts = [RESOURCE_CATALYZED_GHODIUM_ALKALIDE, RESOURCE_CATALYZED_LEMERGIUM_ALKALIDE,
+                RESOURCE_CATALYZED_UTRIUM_ACID]
+            u.requestBoosterFill(spawn, boosts)
+        }
+        return 0
+    },
    
 
     /** @param {Creep} creep **/
     run: function(creep) {
-        rPM.init(creep)
         rDM.checkRoom(creep)//check if in hostile room
-        const medic = Game.getObjectById(creep.memory.medic)
-        if(!medic){
-            if(rBr.endLife(creep)){
-                return
-            } else {
-                rBr.medicSearch(creep)
+
+        if(creep.memory.needBoost){
+            const boosts = [RESOURCE_CATALYZED_GHODIUM_ALKALIDE, RESOURCE_CATALYZED_LEMERGIUM_ALKALIDE,
+                RESOURCE_CATALYZED_UTRIUM_ACID]
+            if(creep.memory.boosted < boosts.length){
+                rPM.getBoosted(creep, boosts)
                 return
             }
         }
+
+
         const flagName = creep.memory.city + "powerMine"
-        if(medic.hits < medic.hitsMax/2 || creep.hits < creep.hitsMax/2){//temp drop operation if under attack
-            if(Memory.flags[flagName]){
-                delete Memory.flags[flagName]
-            }
+        if(!Memory.flags[flagName]){
+            creep.suicide()
+            return
         }
-        const canMove = rBr.canMove(creep, medic)
+        if(creep.hits < creep.hitsMax/2){//temp drop operation if under attack
+            delete Memory.flags[flagName]
+        }
+
         let target = Game.getObjectById(creep.memory.target)//target is pBank
         if(target){
-            rPM.hitBank(creep, target)
-            rPM.summonRunners(creep, target)
-            if(!creep.pos.isNearTo(target) && canMove){//move to target
-                creep.moveTo(target, {range: 1, reusePath: 50})
-                rBr.medicMove(creep, medic)
-            } else if (!medic.pos.isNearTo(creep)){
-                medic.moveTo(creep, {range: 1})
-            } 
+            actions.attack(creep, target)
+            creep.heal(creep)
+            rPM.summonRunners(creep, target) 
         } else {
             target = rPM.findBank(creep, flagName)
-            if(canMove) {
-                if(target){//move to it
-                    creep.moveTo(target, {range: 1, reusePath: 50})
-                    rBr.medicMove(creep, medic)
-                } else if(Memory.flags[flagName]){ //rally
-                    if(creep.room.name != Memory.flags[flagName].roomName){
-                        rBr.rally(creep, medic, flagName)
-                    } else {
-                        //if there's a flag, but no bank under it, retreat
-                        rPM.retreat(creep, medic, flagName)
-                    }
-                }
-            } else if (!medic.pos.isNearTo(creep)){
-                medic.moveTo(creep, {range: 1})
+            if(target){//move to it
+                actions.attack(creep, target)
+                creep.heal(creep)
+            } else if(creep.room.name != Memory.flags[flagName].roomName){ //rally
+                motion.newMove(creep, new RoomPosition(Memory.flags[flagName].x, Memory.flags[flagName].y, Memory.flags[flagName].roomName), 1)
+            } else {
+                //if there's a flag, but no bank under it, retreat
+                rPM.retreat(creep, flagName)
             }
         }
-        rBr.heal(creep, medic)//breaker heal should work for now
     },
 
-    retreat: function(creep, medic, flagName){
+    retreat: function(creep, flagName){
         if(creep.pos.inRangeTo(new RoomPosition(Memory.flags[flagName].x, Memory.flags[flagName].y, Memory.flags[flagName].roomName, 4))){
-            motion.newMove(medic, new RoomPosition(25, 25, medic.pos.roomName), 5)
-            rBr.medicMove(medic, creep)
-        }
-    },
-
-    init: function(creep){
-        //initialize memory
-        if(!creep.memory.medic){
-            creep.memory.medic = null
+            motion.newMove(creep, new RoomPosition(25, 25, creep.pos.roomName), 5)
         }
     },
 
     summonRunners: function(creep, bank){
-        if(Game.time % 50 == 1 && bank && bank.hits < 600000){
-            Game.spawns[creep.memory.city].memory.runner = Math.ceil(bank.power/1600)
+        if(!bank){
+            return
+        }
+        if(!creep.memory.bankInfo){
+            creep.memory.bankInfo = {}
+            let damage = creep.getActiveBodyParts(ATTACK) * ATTACK_POWER
+            if(creep.memory.boosted){
+                damage = damage * BOOSTS[ATTACK][RESOURCE_CATALYZED_UTRIUM_ACID][ATTACK]
+            }
+            const runnersNeeded = Math.ceil(bank.power/1600)
+            const distance  = motion.getRoute(Game.spawns[creep.memory.city].pos.roomName, bank.pos.roomName, true).length * 50
+            const summonTime = distance + (Math.ceil(runnersNeeded/CONTROLLER_STRUCTURES[STRUCTURE_SPAWN][8]) * MAX_CREEP_SIZE * CREEP_SPAWN_TIME)
+            creep.memory.bankInfo.summonHits = summonTime * damage
+            creep.memory.bankInfo.runnersNeeded = runnersNeeded
+        }
+
+        if(Game.time % 5 == 1 && bank.hits < creep.memory.bankInfo.summonHits && !creep.memory.bankInfo.runnersSummoned){
+            creep.memory.bankInfo.runnersSummoned = true
+            sq.initialize(Game.spawns[creep.memory.city])
+            for(let i = 0; i < creep.memory.bankInfo.runnersNeeded; i++){
+                sq.schedule(Game.spawns[creep.memory.city], rR.name)
+            }
         }
     },
 
@@ -98,12 +111,6 @@ var rPM = {
         return null
     },
 
-    hitBank: function(creep, bank){
-        if(creep.pos.isNearTo(bank.pos)){
-            creep.attack(bank)
-        }
-    },
-
     roomScan: function(creep){//not in use. Will be used for self defense / harasser summon
         if(!creep.memory.onEdge && Game.time % 20 != 0){
             return []
@@ -124,8 +131,29 @@ var rPM = {
     attackHostiles: function(creep, bank, hostiles){ //not in use. Will be used for self defense / harasser summon
         if(creep && bank && hostiles)
             return
+    },
+
+    getBoosted: function(creep, boosts){
+        if(!creep.memory.boosted){
+            creep.memory.boosted = 0
+        }
+        const boost = boosts[creep.memory.boosted]
+        if(creep.spawning){
+            return
+        }
+        const labs = Object.keys(Game.spawns[creep.memory.city].memory.ferryInfo.labInfo.receivers)
+        for(const labId of labs){
+            const lab = Game.getObjectById(labId)
+            if(lab.mineralType == boost){
+                //boost self
+                if (lab.boostCreep(creep) === ERR_NOT_IN_RANGE) {
+                    motion.newMove(creep, lab.pos, 1)
+                } else {
+                    creep.memory.boosted++
+                }
+                return
+            }
+        }
     }
-
-
 }
 module.exports = rPM
