@@ -7,8 +7,8 @@
     "pretest": "eslint src",
     "test": "mocha",
     "postinstall": "cd ./node_modules/eslint-plugin-screeps && npm install",
-    "push": "screeps-api upload src/*.js --server main",
-    "botarena": "screeps-api upload src/*.js --server botarena",
+    "push": "screeps-api upload dist/main.js --server main",
+    "botarena": "screeps-api upload dist/main.js --server botarena",
     "season": "screeps-api upload dist/main.js --server season",
     "roll": "rollup -c"
   },

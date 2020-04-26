@@ -7,7 +7,7 @@ describe("observer", function () {
         Memory.reset()
     })
 
-    var o = require("../src/observer.js")
+    var o = require("../src/buildings/observer.js")
 
     describe("#findRoomsForScan()", function () {
         it("should find 81 rooms", function () {

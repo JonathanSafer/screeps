@@ -29,8 +29,8 @@ jobs:
       run: |
         npm ci
         npm test
-        npm run-script push
         npm run-script roll
+        npm run-script push
         npm run-script season
       env:
         CI: true

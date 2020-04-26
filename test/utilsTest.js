@@ -22,7 +22,7 @@ describe("utils", function () {
         Memory.reset()
         global.Cache = {}
     })
-    var u = require("../src/utils.js")
+    var u = require("../src/lib/utils.js")
     describe("#getFactory()", function () {
         it("should get the factory", function () {
             const factory = u.getFactory(createBasicCity("test"))
@@ -68,10 +68,10 @@ describe("utils", function () {
             const noTermCity = new Room("4")
             new StructureController(noTermCity)
 
-            assert(u.boostsAvailable(require("../src/upgrader")))
-            assert(!u.boostsAvailable(require("../src/builder")))
-            assert(u.boostsAvailable(require("../src/depositMiner")))
-            assert(!u.boostsAvailable(require("../src/powerMiner")))
+            assert(u.boostsAvailable(require("../src/roles/upgrader")))
+            assert(!u.boostsAvailable(require("../src/roles/builder")))
+            assert(u.boostsAvailable(require("../src/roles/depositMiner")))
+            assert(!u.boostsAvailable(require("../src/roles/powerMiner")))
         })
     })
 

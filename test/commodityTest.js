@@ -21,7 +21,7 @@ describe("commodityManager", function () {
         Memory.reset()
         global.Cache = {}
     })
-    var cM = require("../src/commodityManager.js")
+    var cM = require("../src/managers/commodityManager.js")
     describe("#groupByFactoryLevel", function () {
         it("should filter those without terminals", function () {  
             const cs = [{}, {}]
