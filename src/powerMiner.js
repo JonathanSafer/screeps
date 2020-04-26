@@ -26,6 +26,8 @@ var rPM = {
         }
         if(creep.hits < creep.hitsMax/2){//temp drop operation if under attack
             delete Memory.flags[flagName]
+            creep.suicide()
+            return
         }
 
         let target = Game.getObjectById(creep.memory.target)//target is pBank
