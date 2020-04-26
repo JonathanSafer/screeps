@@ -7,7 +7,6 @@ var u = require("./utils")
 var rPM = {
     name: "powerMiner",
     type: "powerMiner",
-    target: u.boosterRequestFn(rPM),
     boosts: [RESOURCE_CATALYZED_GHODIUM_ALKALIDE, RESOURCE_CATALYZED_LEMERGIUM_ALKALIDE,
         RESOURCE_CATALYZED_UTRIUM_ACID],
 

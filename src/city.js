@@ -51,8 +51,11 @@ function makeCreeps(role, city, unhealthyStore, creepWantsBoosts) {
         e.reportError(new Error(`Error making ${role.name} in ${city}: ${result}`))
         return false
     }
+    if (boosted) {
+        u.requestBoosterFill(Game.spawns[city], role.boosts)
+    }
     Game.creeps[name].memory.role = role.name
-    Game.creeps[name].memory.target = role.target(Game.spawns[city], boosted)
+    Game.creeps[name].memory.target = role.target
     Game.creeps[name].memory.city = city
     Game.creeps[name].memory.needBoost = boosted
     return true

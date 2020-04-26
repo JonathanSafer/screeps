@@ -5,7 +5,6 @@ const sq = require("./spawnQueue")
 var rH = {
     name: "harasser",
     type: "harasser",
-    target: () => 0,
    
 
     /** @param {Creep} creep **/

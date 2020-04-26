@@ -4,7 +4,6 @@ var u = require("./utils")
 var rMM = {
     name: "mineralMiner",
     type: "mineralMiner",
-    target: () => 0,
 
     /** @param {Creep} creep **/
     run: function(creep) {
@@ -18,8 +17,7 @@ var rMM = {
         if (rMM.needEnergy(creep)){
             rMM.harvestTarget(creep)
         } else {
-            var targets =  u.getTransferLocations(creep)
-            var bucket = targets[creep.memory.target]
+            var bucket = u.getStorage()
             a.charge(creep, bucket)
         }
     },

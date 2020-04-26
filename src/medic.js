@@ -1,10 +1,8 @@
-const u = require("./utils")
 const actions = require("./actions")
 
 var rMe = {
     name: "medic",
     type: "medic",
-    target: u.boosterRequestFn(rMe),
     boosts: [RESOURCE_CATALYZED_GHODIUM_ALKALIDE, 
         RESOURCE_CATALYZED_ZYNTHIUM_ALKALIDE, RESOURCE_CATALYZED_LEMERGIUM_ALKALIDE],
 

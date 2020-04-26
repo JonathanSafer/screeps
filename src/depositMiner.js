@@ -7,7 +7,7 @@ const rPM = require("./powerMiner")
 var rDM = {
     name: "depositMiner",
     type: "depositMiner",
-    target: u.boosterRequestFn(rDM),
+    target: 0,
     boosts: [RESOURCE_CATALYZED_UTRIUM_ALKALIDE, RESOURCE_CATALYZED_KEANIUM_ACID],
 
     // Keep track of how much is mined for stats. Stat object will clear this when it's recorded

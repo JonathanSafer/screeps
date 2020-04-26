@@ -3,7 +3,6 @@ const motion = require("./motion")
 var rC = {
     name: "claimer",
     type: "claimer",
-    target: () => 0,
 
     /** @param {Creep} creep **/
     run: function(creep) {

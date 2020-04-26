@@ -8,7 +8,7 @@ var motion = require("./motion")
 var rSB = {
     name: "spawnBuilder",
     type: "spawnBuilder",
-    target: () => 0,
+    target: 0,
 
     /** @param {Creep} creep **/
     run: function(creep) {

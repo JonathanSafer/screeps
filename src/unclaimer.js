@@ -3,7 +3,6 @@ const rC = require("./claimer")
 var rUC = {
     name: "unclaimer",
     type: "unclaimer",
-    target: () => 0,
 
     /** @param {Creep} creep **/
     run: function(creep) {

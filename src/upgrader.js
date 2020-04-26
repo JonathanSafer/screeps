@@ -7,7 +7,7 @@ var motion = require("./motion")
 var rU = {
     name: "upgrader",
     type: "normal",
-    target: u.boosterRequestFn(rU),
+    target: 0,
     boosts: [RESOURCE_CATALYZED_GHODIUM_ACID],
 
     /** @param {Creep} creep **/

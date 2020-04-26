@@ -4,7 +4,6 @@ var sq = require("./spawnQueue")
 var rM = {
     name: "remoteMiner",
     type: "miner",
-    target: () => 0,
 
     /** @param {Creep} creep **/
     run: function(creep) {

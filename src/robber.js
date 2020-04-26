@@ -4,7 +4,6 @@ var u = require("./utils")
 var rRo = {
     name: "robber",
     type: "robber",
-    target: () => 0,
 
     /** @param {Creep} creep **/
     run: function(creep) {

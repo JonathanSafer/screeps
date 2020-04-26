@@ -6,7 +6,6 @@ var motion = require("./motion")
 var rT = {
     name: "transporter",
     type: "transporter",
-    target: () => 0,
 
     /** @param {Creep} creep **/
     run: function(creep) {

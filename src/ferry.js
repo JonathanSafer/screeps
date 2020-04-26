@@ -4,7 +4,7 @@ var settings = require("./settings")
 var rF = {
     name: "ferry",
     type: "ferry",
-    target: () => 0,
+    target: 0,
     TERMINAL_MAX_MINERAL_AMOUNT: 9000,
     FERRY_CARRY_AMOUNT: 1000,
 

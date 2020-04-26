@@ -344,16 +344,6 @@ var u = {
         return exits
     },
 
-    boosterRequestFn: function() { //function(role) {
-        // return (spawn, boosted) => {
-        //     if (boosted) {
-        //         u.requestBoosterFill(spawn, role.boosts)
-        //     }
-        return () => {
-            return 0
-        }
-    },
-
     requestBoosterFill: function(spawn, boosts){
         if(!spawn.memory.ferryInfo || !spawn.memory.ferryInfo.labInfo){
             return

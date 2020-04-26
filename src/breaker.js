@@ -7,7 +7,6 @@ var actions = require("./actions")
 var rBr = {
     name: "breaker",
     type: "breaker",
-    target: u.boosterRequestFn(rBr),
     boosts: [RESOURCE_CATALYZED_GHODIUM_ALKALIDE, 
         RESOURCE_CATALYZED_ZYNTHIUM_ALKALIDE, RESOURCE_CATALYZED_ZYNTHIUM_ACID],
    
