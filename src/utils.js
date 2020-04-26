@@ -409,6 +409,19 @@ var u = {
         }
         const boostsAvailable = Cache.boostsAvailable || []
         return _(role.boosts).every(boost => boostsAvailable.includes(boost))
+    },
+
+    checkRoom: function(creep){
+        if(creep.hits < creep.hitsMax*0.8){
+            //search for hostile towers. if there are towers, room is enemy
+            const tower = _.find(u.findHostileStructures(creep.room), s => s.structureType == STRUCTURE_TOWER)
+            if(tower){
+                if(!Cache[creep.room.name]){
+                    Cache[creep.room.name] = {}
+                }
+                Cache[creep.room.name].enemy = true
+            }
+        }
     }
 }
 

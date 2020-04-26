@@ -15,7 +15,7 @@ var rDM = {
 
     /** @param {Creep} creep **/
     run: function(creep) {
-        rDM.checkRoom(creep)
+        u.checkRoom(creep)
         if (_.sum(creep.store) === 0 && creep.ticksToLive < 500){//if old and no store, suicide
             creep.suicide()
             return
@@ -111,19 +111,6 @@ var rDM = {
                 if(!Memory.flags[flagName]){
                     Memory.flags[flagName] = new RoomPosition(25, 25, creep.room.name)
                 }
-            }
-        }
-    },
-
-    checkRoom: function(creep){
-        if(creep.hits < creep.hitsMax*0.8){
-            //search for hostile towers. if there are towers, room is enemy
-            const tower = _.find(u.findHostileStructures(creep.room), s => s.structureType == STRUCTURE_TOWER)
-            if(tower){
-                if(!Cache[creep.room.name]){
-                    Cache[creep.room.name] = {}
-                }
-                Cache[creep.room.name].enemy = true
             }
         }
     },

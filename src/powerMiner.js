@@ -1,4 +1,3 @@
-var rDM = require("./depositMiner")
 var motion = require("./motion")
 var actions = require("./actions")
 var sq = require("./spawnQueue")
@@ -14,7 +13,7 @@ var rPM = {
 
     /** @param {Creep} creep **/
     run: function(creep) {
-        rDM.checkRoom(creep)//check if in hostile room
+        u.checkRoom(creep)//check if in hostile room
 
         if (!rPM.getBoosted(creep, rPM.boosts)){
             return
