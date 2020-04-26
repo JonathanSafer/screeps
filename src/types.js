@@ -61,7 +61,7 @@ function getRecipe(type, energyAvailable, room, boosted){
     d.erunner = body([2, 1], [CARRY, MOVE])
     d.claimer = body([5, 1], [MOVE, CLAIM])
     if (type === "depositMiner"){
-        const dMinerCounts = dMinerCalc(room)
+        const dMinerCounts = dMinerCalc(room, false)
         d["depositMiner"] = body(dMinerCounts, [WORK, CARRY, MOVE])
     }
     if (d[type] == null) {
@@ -83,7 +83,8 @@ function cost(recipe){
 function store(recipe){
     return _.filter(recipe, part => part == CARRY).length * CARRY_CAPACITY
 }
-function dMinerCalc(room){
+function dMinerCalc(room, boosted){
+    console.log(boosted) // TODO remove this later
     const city = room.memory.city
     const spawn = Game.spawns[city]
     const flagName = city + "deposit"
@@ -99,7 +100,8 @@ function dMinerCalc(room){
     const distance = motion.getRoute(spawn.pos.roomName, flag.roomName, true).length * 50//PathFinder.search(spawn.pos, {pos: flag, range: 1}, {maxOps: 10000}).path.length
     const workTime = 1500 - (distance * 3)//distance x 3 since it'll take 2x as long on return
     let work = 20
-    let storeAmount = test(work, workTime, harvested)
+
+    let storeAmount = test(work, workTime, harvested) - harvested
     let stores = Math.floor(storeAmount/100)*2 //store must be an even number for 20 works
     if(stores < 8){// if we're getting less than 400 resource in a lifetime, drop the source
         delete Memory.flags[flagName]
@@ -109,7 +111,7 @@ function dMinerCalc(room){
         //body is impossible so we have to decrease works
         for(var i = 0; i < 2; i++){
             work = work/2
-            storeAmount = test(work, workTime, harvested)
+            storeAmount = test(work, workTime, harvested) - harvested
             stores = Math.floor(storeAmount/50)
             if(stores < (32 - work)){
                 return [work, stores, 16]
