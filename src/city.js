@@ -412,7 +412,7 @@ function updateDefender(spawn, rcl) {
     const room = spawn.room
     if(spawn.memory.towersActive){
         if(rcl < 6){
-            spawn.memory[rD.name] = 1
+            spawn.memory[rD.name] = Math.ceil(room.find(FIND_HOSTILE_CREEPS).length/2)
             return
         }
         const hostiles = room.find(FIND_HOSTILE_CREEPS)
@@ -433,6 +433,8 @@ function updateDefender(spawn, rcl) {
                 }
             }
         }
+    } else {
+        spawn.memory[rD.name] = 0
     }
 }
 
