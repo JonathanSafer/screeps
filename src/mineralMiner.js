@@ -17,7 +17,7 @@ var rMM = {
         if (rMM.needEnergy(creep)){
             rMM.harvestTarget(creep)
         } else {
-            var bucket = u.getStorage()
+            var bucket = u.getStorage(creep.room)
             a.charge(creep, bucket)
         }
     },
