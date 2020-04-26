@@ -6,7 +6,14 @@ var u = require("./utils")
 var rDM = {
     name: "depositMiner",
     type: "depositMiner",
-    target: () => 0,
+    target: function(spawn, boosted){
+        if(boosted){
+            const boosts = [RESOURCE_CATALYZED_UTRIUM_ALKALIDE,
+                RESOURCE_CATALYZED_KEANIUM_ACID]
+            u.requestBoosterFill(spawn, boosts)
+        }
+        return 0
+    },
 
     // Keep track of how much is mined for stats. Stat object will clear this when it's recorded
     mined: 0,
