@@ -1,3 +1,7 @@
+const military = require("./military")
+const sq = require("./spawnQueue")
+const rp = require("./roomplan")
+
 global.T = function() { return `Time: ${Game.time}` }
 global.Cache = {}
 global.Log = {}
@@ -15,11 +19,9 @@ global.BuyToken = function(price) {
     })
 }
 global.SpawnQuad = function(city, boosted){
-    const military = require("./military")
     military.spawnQuad(city, boosted)
 }
 global.SpawnBreaker = function(city, boosted){
-    const sq = require("./spawnQueue")
     sq.initialize(Game.spawns[city])
     sq.schedule(Game.spawns[city], "medic", boosted)
     sq.schedule(Game.spawns[city], "breaker", boosted)
@@ -29,11 +31,9 @@ global.PlaceFlag = function(flagName, x, y, roomName){
 }
 
 global.DeployQuad = function(roomName, boosted) {
-    const military = require("./military")
     military.deployQuad(roomName, boosted)
 }
 
 global.RoomWeights = function(roomName) {
-    const rp = require("./roomplan")
     rp.planRoom(roomName)
 }

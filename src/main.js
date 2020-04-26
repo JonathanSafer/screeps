@@ -10,9 +10,8 @@ var settings = require("./settings")
 const profiler = require("./screeps-profiler")
 const b = require("./bucket")
 const observer = require("./observer")
-var pp = require("./profiler-prep")
+require("./profiler-prep")
 require("./globals")
-pp.prepProfile()
 
 //Code to manually profile:
 //Game.profiler.profile(1000);

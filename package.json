@@ -9,19 +9,19 @@
     "postinstall": "cd ./node_modules/eslint-plugin-screeps && npm install",
     "push": "screeps-api upload src/*.js --server main",
     "botarena": "screeps-api upload src/*.js --server botarena",
-    "season": "screeps-api upload src/*.js --server season",
+    "season": "screeps-api upload dist/main.js --server season",
     "roll": "rollup -c"
   },
   "author": "",
   "license": "MIT",
   "devDependencies": {
+    "@rollup/plugin-commonjs": "^11.1.0",
     "@screeps/common": "2.12.1",
     "eslint": "^6.8.0",
     "eslint-plugin-screeps": "https://github.com/jordansafer/eslint-plugin-screeps.git",
-    "rollup": "^2.7.2",
     "lodash": "^3.10.1",
     "mocha": "^7.1.1",
-    "rollup-plugin-commonjs-alternate": "^0.5.1",
+    "rollup": "^2.7.2",
     "screeps-api": "^1.11.0"
   },
   "dependencies": {}
