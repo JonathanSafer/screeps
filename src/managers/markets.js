@@ -393,7 +393,7 @@ var markets = {
         //can't sell if terminal has been used
         const terminal = city.terminal
         const storage = city.storage
-        let buyThreshold = 500000
+        const buyThreshold = 500000
 
         if(!storage){
             return termUsed
