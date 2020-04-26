@@ -8,5 +8,6 @@ export default {
             },
       plugins: [commonjs({
         ignoreGlobal: false,
+        ignore: ["conditional-runtime-dependency"] ,
       })]
 };
