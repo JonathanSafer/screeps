@@ -386,7 +386,10 @@ var u = {
             if(!cities.length){
                 empireStore[resource] = 0
             } else {
-                empireStore[resource] = _.sum(cities, city => city.terminal.store[resource])
+                empireStore[resource] = _.sum(cities, city => {
+                    const terminal = city.terminal || 0
+                    return terminal && city.terminal.store[resource]
+                })
             }
         }
         return empireStore
