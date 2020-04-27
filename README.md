@@ -1,4 +1,4 @@
-![Node CI](https://github.com/jordansafer/screeps/workflows/Node%20CI/badge.svg?branch=master)
+![Test & Deploy](https://github.com/jordansafer/screeps/workflows/Test%20&%20Deploy/badge.svg)
 # screeps
 Screeps AI
 
