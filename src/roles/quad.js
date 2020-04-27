@@ -403,25 +403,44 @@ var rQ = {
                 const lookRoom = flag && flag.roomName || creep.pos.roomName
                 const everythingInRoom = everythingByRoom[lookRoom]
                 //we are at destination
-                if(everythingInRoom.structures && everythingInRoom.structures.length){
-                    target = everythingInRoom.creeps[0].pos.findClosestByPath(everythingInRoom.structures)
-                } else if(everythingInRoom.hostiles && everythingInRoom.hostiles.length) {
-                    const inRoom = _.filter(everythingInRoom.hostiles, h => !u.isOnEdge(h.pos))
-                    target = everythingInRoom.creeps[0].pos.findClosestByPath(inRoom)
-                } else if(flag){
-                    //delete Memory.flags[flagName]
-                }
-            } else {
-                //we are not at destination
-                //only target something if it is in the way
+                target = rQ.chooseNextTarget(everythingInRoom)
             }
         }
+        
+        // TODO: Check for creeps in area and react to them. [#153]
         if(target){
             creep.memory.target = target.id
             rQ.move(quad, target.pos, status, 1)
         } else if(flag && !creep.pos.inRangeTo(new RoomPosition(flag.x, flag.y, flag.roomName), 8)) {
             rQ.move(quad, new RoomPosition(flag.x, flag.y, flag.roomName), status, 5)
         }
+    },
+
+    // Valuable buildings: everything except walls, ramparts, roads
+    // 1. If there are valuable buildings then we need to destroy them
+    // 2. Get the target based on the valuable buildings.
+    chooseNextTarget: function(everythingInRoom) {
+        const valuableStructures = rQ.getValuableStructures(everythingInRoom.structures)
+        if (valuableStructures.length) {
+            const creep = everythingInRoom.creeps[0]
+            return rQ.getTarget(creep, valuableStructures)
+        }
+        return false
+    },
+
+    getValuableStructures: function(structures) {
+        const ignoreStructures = [STRUCTURE_WALL, STRUCTURE_RAMPART, STRUCTURE_ROAD,
+            STRUCTURE_CONTAINER]
+        return _(structures)
+            .filter(structure => !ignoreStructures.includes(structure.structureType))
+            .value()
+    },
+
+    // 1. Sort buildings by attack vector. TODO [#151]
+    // 2. Find the first wall in our path and select it. TODO [#152]
+    getTarget: function(creep, structures) {
+        const highestPriority = creep.pos.findClosestByPath(structures)
+        return highestPriority
     },
 
     attemptRetreat: function(quad, everythingByRoom, status){//bool
