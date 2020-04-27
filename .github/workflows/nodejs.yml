@@ -25,12 +25,14 @@ jobs:
         MMO_TOKEN: ${{ secrets.MMO_TOKEN }}
         BOTARENA_PASS: ${{ secrets.BOTARENA_PASS }}
         SCREEPS_USER: ${{ secrets.SCREEPS_USER }}
+        PTR_TOKEN: ${{ secrets.PTR_TOKEN }}
     - name: npm install and test
       run: |
         npm ci
         npm test
-        npm run-script roll
-        npm run-script push
-        npm run-script season
+        npm run roll
+        npm run push
+        npm run season
+        npm run ptr
       env:
         CI: true

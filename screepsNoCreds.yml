@@ -6,7 +6,7 @@ servers:
   ptr:
     host: screeps.com
     secure: true
-    token: ''
+    token: '$PTR_TOKEN'
     ptr: true
   botarena:
     host: botarena.screepspl.us
