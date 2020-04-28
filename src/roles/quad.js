@@ -436,7 +436,7 @@ var rQ = {
             .value()
     },
 
-    // 1. Find an attack vector to a building based on the lowest hits required
+    // Find an attack vector to a building based on the lowest hits required
     getTarget: function(creep, structures) {
         const result = PathFinder.search(creep.pos, [structures], {
             plainCost: 1,
@@ -467,12 +467,35 @@ var rQ = {
         if (result.incomplete) return
         
         const path = result.path
-        // Find the first wall in our path and select it. TODO [#152]
+        
+        const wallInPath = rQ.getWallInQuadPath(creep.room, path)
+        if (wallInPath) {
+            return wallInPath
+        }
 
         // if nothing is in our path then return the target at the end of the path
         const targetPos = path.pop()
         const target = _(targetPos.lookFor(LOOK_STRUCTURES)).min("hits")
         return target
+    },
+
+    // Find the first wall in our path and select it
+    getWallInQuadPath: function(room, path) {
+        const blockingStructures = [STRUCTURE_WALL, STRUCTURE_RAMPART]
+        return _(path)
+            .map(pos => rQ.getOverlappingStructures(room, pos))
+            .flatten()
+            .find(structure => blockingStructures.includes(structure))
+    },
+
+    getOverlappingStructures: function(room, pos) {
+        const quadPoses = [[0, 0], [0, 1], [1, 0], [1, 1]]
+        return _(quadPoses)
+            .map(quadPos => room.lookForAt(LOOK_STRUCTURES, 
+                pos.x + quadPos[0], 
+                pos.y + quadPos[1]))
+            .flatten()
+            .value()
     },
 
     // get a score between 1 and 254. 255 is "blocked" & 0 is "free" so we don't want these
