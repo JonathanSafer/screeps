@@ -436,11 +436,49 @@ var rQ = {
             .value()
     },
 
-    // 1. Sort buildings by attack vector. TODO [#151]
-    // 2. Find the first wall in our path and select it. TODO [#152]
+    // 1. Find an attack vector to a building based on the lowest hits required
     getTarget: function(creep, structures) {
-        const highestPriority = creep.pos.findClosestByPath(structures)
-        return highestPriority
+        const result = PathFinder.search(creep.pos, [structures], {
+            plainCost: 1,
+            swampCost: 1,
+            roomCallback: (roomName) => {
+                const room = Game.rooms[roomName]
+                if (!room || roomName != creep.room.name) return
+
+                // 2 times largest building since quad is 2 wide
+                const maxHits = 2 * _(structures).max("hits").hits
+                const costs = new PathFinder.CostMatrix
+
+                // count structure 4 times since quad will hit it in 4 positions
+                // the path is relative to the top left creep, __ so a structure in the
+                // bottom right needs to be counted against a  _S path through the top left
+                for (const structure of structures) {
+                    for (const pos of [[0, 0], [0, -1], [-1, 0], [-1, -1]]) {
+                        const x = structure.pos.x + pos[0]
+                        const y = structure.pos.y + pos[1]
+                        const oldCost = costs.get(x, y)
+                        const cost = rQ.getCost(structure.hits, maxHits, oldCost)
+                        costs.set(x, y, cost)
+                    }
+                }
+                return costs
+            }
+        })
+        if (result.incomplete) return
+        
+        const path = result.path
+        // Find the first wall in our path and select it. TODO [#152]
+
+        // if nothing is in our path then return the target at the end of the path
+        const targetPos = path.pop()
+        const target = _(targetPos.lookFor(LOOK_STRUCTURES)).min("hits")
+        return target
+    },
+
+    // get a score between 1 and 254. 255 is "blocked" & 0 is "free" so we don't want these
+    getCost: function(hits, maxHits, oldCost) {
+        const ratio = Math.round(255 * hits / maxHits)
+        return Math.max(1, Math.min(oldCost + ratio, 254)) // 0 < ratio < 255
     },
 
     attemptRetreat: function(quad, everythingByRoom, status){//bool
