@@ -219,9 +219,9 @@ var rF = {
             const links = Cache[creep.room.name].links || {}
             upgradeLink = Game.getObjectById(links.upgrade)
         }
-        if (Game.cpu.bucket > settings.bucket.upgrade && link && !link.energy && upgradeLink && !upgradeLink.energy) {
+        if (link && !link.store.energy && upgradeLink && !upgradeLink.store.energy) {
             return 13
-        } else if (link && link.energy > 0) {
+        } else if (link && link.store.energy > 0) {
             return 5
         }
         const storage = creep.room.storage
