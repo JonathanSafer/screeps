@@ -44,7 +44,7 @@ var rB = {
     },
 
     getEnergy: function(creep) {
-        var location = rB.getLocation(creep)
+        var location = u.getStorage(creep.room)
         if(location.store.energy < 300){
             return
         }
@@ -52,15 +52,6 @@ var rB = {
             var targets = u.getWithdrawLocations(creep)
             creep.memory.target = u.getNextLocation(creep.memory.target, targets)
         }
-    },
-
-    getLocation: function(creep) {
-        var targets = u.getWithdrawLocations(creep)
-        var location = targets[creep.memory.target]
-        if (location == undefined) {
-            location = Game.spawns[creep.memory.city]
-        }
-        return location
     },
 
     build: function(creep){
