@@ -490,6 +490,9 @@ var markets = {
         const history = MarketHistory[resource] // TODO this may not be declared yet
         let totalVol = 0
         let totalPrice = 0
+        if(!history){
+            return .001//min price
+        }
         for(var i = 0; i < history.length; i++){
             totalVol = totalVol + history[i].volume
             totalPrice = totalPrice + (history[i].volume * history[i].avgPrice)
