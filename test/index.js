@@ -1,7 +1,5 @@
 
-// Import lodash
-var _ = require("lodash")
-global._ = _
+// Define globals and classes
 require("./lib")
 
 describe("#main", function () {

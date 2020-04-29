@@ -9,6 +9,7 @@ var constants = common["configManager"]["config"]["common"]["constants"]
 for (const key in constants) {
     global[key] = constants[key]
 }
+global._ = _
 
 const u = require("../src/lib/utils.js")
 const GGame = class {
@@ -136,7 +137,7 @@ global.StructureSpawn = class extends Structure {
         global.Game.spawns[name] = this
         this.name = name
         this.memory = {}
-        global.Memory.spawns[name] = this
+        global.Memory.spawns[name] = this.memory
     }
 }
 

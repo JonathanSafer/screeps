@@ -8,18 +8,19 @@ var cM = {
 
         //group cities by factory level
         const citiesByFactoryLevel = cM.groupByFactoryLevel(cities)
-        const levelCache = _.mapValues(citiesByFactoryLevel, cM.empireStore)
+        const levelCache = _.mapValues(citiesByFactoryLevel, u.empireStore)
         const terminalCache = cM.storeCacheByCity(cities)
-   
+
         //go through each city:
-        for(let i = Object.keys(citiesByFactoryLevel).length - 1; i > 0; i--){
-            const citiesAtLevel = citiesByFactoryLevel[i]
-            const products = _.filter(Object.keys(COMMODITIES), key => COMMODITIES[key].level === i)
-            
+        const levels = Object.keys(citiesByFactoryLevel).sort().reverse()
+        for(const level of levels){
+            const citiesAtLevel = citiesByFactoryLevel[level] || []
+            const products = _.filter(Object.keys(COMMODITIES), key => COMMODITIES[key].level == level)
+
             for (const city of citiesAtLevel) {
                 for (const product of products) {
                     cM.processProduct(city, product, levelCache, terminalCache, citiesByFactoryLevel)
-                }        
+                }
             }
         }
     },
@@ -42,9 +43,9 @@ var cM = {
         const rate = fact.findRateLimit(components, product) //find rate limit, and use that to find quantity of each resource needed 
         const quantities = _(compInfo).mapValues(amount => amount * rate).value()
 
-        const compStatuses = _.map(components, component => 
-            cM.getComponentStatus(component, levelCache, product, city, quantities[component]))
-
+        const compStatuses = _(components).map(component => {
+            return cM.getComponentStatus(component, levelCache, product, city, quantities[component])
+        }).value()
         if (_.every(compStatuses, "clearedToShip")) {
             cM.reserveComponents(components, levelCache, quantities)
             //create delivery orders in comSend
@@ -60,7 +61,8 @@ var cM = {
         const status = {}
         const compLvl = COMMODITIES[component].level || 0
 
-        const empireHasEnough = levelCache[compLvl][component] >= quantity
+        const cache = levelCache[compLvl]
+        const empireHasEnough = cache && cache[component] >= quantity
         const cityHasTooMuch = city.terminal.store[component] > 2000
 
         //if we don't have enough of the comp, we are no go for this product (move on to next product)
@@ -91,7 +93,9 @@ var cM = {
                 } else if (sourceAmount > 0) {
                     const amount = Math.min(quantity, sourceAmount)
                     // schedule terminal transfer
-                    memory.ferryInfo.comSend.push([component, amount, destination])
+                    const ferryInfo = u.getsetd(memory, "ferryInfo", {})
+                    const comSend = u.getsetd(ferryInfo, "comSend", [])
+                    comSend.push([component, amount, destination])
                     // update values to reflect move
                     terminalCache[source.name][component] -= amount
                     terminalCache[destination][component] += amount
