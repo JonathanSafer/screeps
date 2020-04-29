@@ -125,7 +125,7 @@ var rPM = {
 
     getBoosted: function(creep, boosts){
         const alreadyBoosted = creep.memory.boosted && creep.memory.boosted >= boosts.length
-        if (!creep.memory.needBoost || !alreadyBoosted) {
+        if (!creep.memory.needBoost || alreadyBoosted) {
             return true
         }
 
