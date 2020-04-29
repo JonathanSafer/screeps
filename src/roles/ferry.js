@@ -1,5 +1,4 @@
 var actions = require("../lib/actions")
-var settings = require("../config/settings")
 
 var rF = {
     name: "ferry",
