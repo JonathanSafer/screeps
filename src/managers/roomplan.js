@@ -71,11 +71,13 @@ const p = {
                 }
                 if (room.controller.level >= 6) {
                     p.buildExtractor(room)
+                    p.buildSourceLinks(room)
                 }
                 if (room.controller.level >= 7 || (noobMode && room.controller.level >= 4)){
                     p.buildWalls(room, plan)
-                    p.buildSourceLinks(room)
-                    p.buildControllerLink(room)
+                    if(room.controller.level >= 7){
+                        p.buildControllerLink(room)
+                    }
                 }
             }
         }

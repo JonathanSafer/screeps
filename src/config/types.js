@@ -188,7 +188,7 @@ function minerBody(energyAvailable, rcl) {
         .filter(c => loadsNeeded(c) < loadsNeeded(c - 1)) // more carries => fewer loads?
         .filter(c => c <= energyAfterMoves / BODYPART_COST[CARRY])  // how many can we afford?
         .filter(c => works + c + moves <= MAX_CREEP_SIZE)
-    const carries = rcl >= 7 ? Math.max(...storeChoices, 0) : 0
+    const carries = rcl >= 6 ? Math.max(...storeChoices, 0) : 0
     return body([works, carries, moves], [WORK, CARRY, MOVE])
 }
 
