@@ -511,25 +511,20 @@ function updateTransporter(extensions, memory, creeps) {
 
 function updateUpgrader(city, controller, memory, rcl8, creeps, rcl) {
     const room = Game.spawns[city].room
+    memory[rU.name] = 0//temp
     if (rcl8){
+        if(Game.time % 1500 != 0){
+            return
+        }
         const bucketThreshold = settings.bucket.upgrade + settings.bucket.range * cityFraction(room.name)
         const haveEnoughCpu = Game.cpu.bucket > bucketThreshold
         if (controller.ticksToDowngrade < 100000 
             || (controller.room.storage.store.energy > settings.energy.rcl8upgrade && haveEnoughCpu)){
-            memory[rU.name] = 1
-        } else if (controller.ticksToDowngrade > 180000){
-            memory[rU.name] = 0
+            sq.schedule(Game.spawns[city], rU.name, true)
         }
     } else {
-        if(rcl >= 6 && room.storage && room.storage.store[RESOURCE_ENERGY] < 250000
-                && room.terminal && room.terminal.store[RESOURCE_CATALYZED_GHODIUM_ACID] < 1000
+        if(room.storage && room.storage.store[RESOURCE_ENERGY] < 250000
                 && controller.ticksToDowngrade > CONTROLLER_DOWNGRADE[rcl.toString()]/2){
-            memory[rU.name] = 0
-            return
-        }
-        const constructionSites = room.find(FIND_MY_CONSTRUCTION_SITES)
-        if(constructionSites.length){
-            memory[rU.name] = 1
             return
         }
         var banks = u.getWithdrawLocations(creeps[0])
@@ -537,11 +532,10 @@ function updateUpgrader(city, controller, memory, rcl8, creeps, rcl) {
         var money = _.sum(_.map(banks, bank => bank.store[RESOURCE_ENERGY]))
         var capacity = _.sum(_.map(banks, bank => bank.store.getCapacity()))
         //Log.info('money: ' + money + ', ' + (100*money/capacity));
-        if(money < (capacity * .28)){
-            memory[rU.name] = Math.max(memory[rU.name] - 1, 1) 
-        }
-        else if (money > (capacity * .28)){
-            memory[rU.name] = Math.min(memory[rU.name] + 1, settings.max.upgraders)
+        if(money > (capacity * .28)){
+            for(let i = 0; i < Math.ceil(settings.max.upgraders/3); i++){
+                sq.schedule(Game.spawns[city], rU.name, rcl >= 6)
+            }
         } else {
             memory[rU.name] = 1
         }
@@ -611,7 +605,7 @@ function updateBuilder(rcl, memory, spawn) {
 }
 
 function updateRunner(creeps, spawn, extensions, memory, rcl, emergencyTime) {
-    if (rcl > 6 && !emergencyTime) {
+    if (rcl >= 6 && !emergencyTime) {
         memory[rR.name] = 0
         return
     }
