@@ -4,9 +4,14 @@ var sq = {
         spawn.memory.sq.push({role: role, boosted: boosted})
     },
 
-    getNextRole: function(spawn) {
+    peekNextRole: function(spawn) {
         sq.initialize(spawn)
         return spawn.memory.sq[0]
+    },
+
+    removeNextRole: function(spawn) {
+        sq.initialize(spawn)
+        return spawn.memory.sq.shift()
     },
 
     getCounts: function(spawn) {

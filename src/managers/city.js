@@ -88,7 +88,7 @@ function runCity(city, creeps){
     })
     
     let usedQueue = true
-    const nextRoleInfo = sq.getNextRole(spawn) || {}
+    const nextRoleInfo = sq.peekNextRole(spawn) || {}
     const spawnQueueRoleName = nextRoleInfo.role
     let nextRole = spawnQueueRoleName ? nameToRole[spawnQueueRoleName][0] : undefined
 
@@ -100,7 +100,7 @@ function runCity(city, creeps){
     
     if (nextRole) {
         if(makeCreeps(nextRole, city, unhealthyStore, nextRoleInfo.boosted) && usedQueue){
-            spawn.memory.sq.shift()
+            sq.removeNextRole()
         }
     }
 
@@ -655,17 +655,23 @@ function updateStorageLink(spawn, memory, structures) {
 
 function updateHighwayCreep(flag, spawn, creeps, role) {
     if (!flag) return
+    scheduleIfNeeded(role, 1, role != rH.name, spawn, creeps)
+}
 
-    // deposit miner already exists then return
-    const inField = findRole(creeps, role)
+function scheduleIfNeeded(role, count, boosted, spawn, currentCreeps) {
+    const creepsInField = getCreepsByRole(currentCreeps, role)
     const queued = sq.getCounts(spawn)[role]
-    if (!inField && !queued) {
-        sq.schedule(spawn, role, role != rH.name)
+    let creepsNeeded = count - queued - creepsInField.length
+    while (creepsNeeded > 0) {
+        sq.schedule(spawn, role, boosted)
+        creepsNeeded--
     }
 }
 
-function findRole(creeps, role) {
-    return _(creeps).find(creep => creep.memory.role == role)
+function getCreepsByRole(creeps, role) {
+    return _(creeps)
+        .filter(creep => creep.memory.role == role)
+        .value()
 }
 
 function runNuker(city){
@@ -683,5 +689,6 @@ module.exports = {
     runCity: runCity,
     updateCountsCity: updateCountsCity,
     runTowers: runTowers,
-    runPowerSpawn: runPowerSpawn
+    runPowerSpawn: runPowerSpawn,
+    scheduleIfNeeded: scheduleIfNeeded,
 }
