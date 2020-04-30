@@ -64,7 +64,10 @@ var rDM = {
             //move towards and mine deposit (actions.harvest)
             if(actions.harvest(creep, deposit[0]) === 1){
                 //record amount harvested
-                const works = _.filter(creep.body, part => part.type == WORK).length
+                let works = _.filter(creep.body, part => part.type == WORK).length
+                if(creep.memory.boosted){
+                    works = works * BOOSTS.work[RESOURCE_CATALYZED_UTRIUM_ALKALIDE].harvest
+                }
                 // record personal work for stats
                 if (!creep.memory.mined) {
                     creep.memory.mined = 0
