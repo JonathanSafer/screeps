@@ -469,7 +469,7 @@ var markets = {
         }
         const currentPrice = markets.getPrice(RESOURCE_POWER)
         const cheapest = orders[0]
-        if (cheapest.price > currentPrice * 1.1 || cheapest.price > settings.powerPrice) {
+        if (cheapest.price > currentPrice * 1.3 || cheapest.price > settings.powerPrice) {
             return false
         }
 
