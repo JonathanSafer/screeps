@@ -100,7 +100,7 @@ function runCity(city, creeps){
     
     if (nextRole) {
         if(makeCreeps(nextRole, city, unhealthyStore, nextRoleInfo.boosted) && usedQueue){
-            sq.removeNextRole()
+            sq.removeNextRole(spawn)
         }
     }
 
