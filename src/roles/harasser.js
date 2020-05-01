@@ -2,7 +2,6 @@ const settings = require("../config/settings")
 const motion = require("../lib/motion")
 const sq = require("../lib/spawnQueue")
 const a = require("../lib/actions")
-const sq = require("../lib/spawnQueue")
 
 var rH = {
     name: "harasser",
