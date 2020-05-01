@@ -58,8 +58,8 @@ var rT = {
         }
         //start moving to next target if target not already in range
         if(!target.pos.isNearTo(creep.pos)){
-            // const boundingBox = motion.getBoundingBox(creep.room)
-            motion.newMove(creep, target.pos, 1, true) //, boundingBox)
+            const boundingBox = motion.getBoundingBox(creep.room)
+            motion.newMove(creep, target.pos, 1, true, boundingBox)
         }
     },
  

@@ -277,14 +277,14 @@ var m = {
     },
 
     enforceBoundingBox: function(costs, boundingBox) {
-        const rawCosts = costs._bits
-        for (let i = 0; i < rawCosts.length; i++) {
-            const y = Math.floor(i/50)
-            const x = i % 50
-            const inBox = boundingBox.top <= y && y <= boundingBox.bottom
-                && boundingBox.left <= x && x <= boundingBox.right
-            if (!inBox) {
-                rawCosts[i] = 10
+        const d = 2 // thickness of barrier
+        for (let y = boundingBox.top - d; y < boundingBox.bottom + d; y++) {
+            for (let x = boundingBox.left - d; y < boundingBox.right + d; y++) {
+                const inBox = boundingBox.top <= y && y <= boundingBox.bottom
+                    && boundingBox.left <= x && x <= boundingBox.right
+                if (!inBox) {
+                    costs.set(x, y, 10)
+                }
             }
         }
     },
