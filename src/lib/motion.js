@@ -1,15 +1,10 @@
 var u = require("./utils")
 var settings = require("../config/settings")
 var template = require("../config/template")
-var assert = require("assert")
-
-
 
 var m = {
     BoundingBox: class {
         constructor(top, left, bottom, right) {
-            assert(0 <= top && top <= bottom && bottom <= 50)
-            assert(0 <= left && left <= right && right <= 50)
             this.top = top // minY
             this.left = left // minX
             this.bottom = bottom // maxY
