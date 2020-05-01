@@ -32,7 +32,7 @@ var rT = {
                 return
             }
 
-            const result = actions.charge(creep, target, true)
+            const result = actions.charge(creep, target, false)
             if(result === 1 || !rT.needsEnergy(target)){//successful deposit
                 const extra = creep.store[RESOURCE_ENERGY] - target.store.getFreeCapacity(RESOURCE_ENERGY)
                 
