@@ -660,7 +660,7 @@ function updateHighwayCreep(flag, spawn, creeps, role) {
 
 function scheduleIfNeeded(role, count, boosted, spawn, currentCreeps) {
     const creepsInField = getCreepsByRole(currentCreeps, role)
-    const queued = sq.getCounts(spawn)[role]
+    const queued = sq.getCounts(spawn)[role] || 0
     let creepsNeeded = count - queued - creepsInField.length
     while (creepsNeeded > 0) {
         sq.schedule(spawn, role, boosted)
