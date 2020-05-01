@@ -164,9 +164,9 @@ function getHarvestResults(works, ticks, harvested){
 
 function pMinerBody(boosted){
     if(boosted){
-        return body([20, 20], [MOVE, ATTACK])
+        return body([3, 16, 25, 6], [TOUGH, ATTACK, MOVE, HEAL])
     }
-    return body([3, 16, 25, 6], [TOUGH, ATTACK, MOVE, HEAL])
+    return body([20, 20], [MOVE, ATTACK])
 }
 
 function minerBody(energyAvailable, rcl) {
