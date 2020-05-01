@@ -11,6 +11,7 @@ function createFactoryCity(name, resourceMap, factoryLevel) {
     new StructureFactory(city, factoryLevel)
     new StructureController(city)
     new StructureTerminal(city, resourceMap)
+    new StructureStorage(city, {})
     city.memory.city = name
     return city
 }
