@@ -8,7 +8,7 @@ var actions = {
         switch (result) {
         case ERR_NOT_IN_RANGE: {
             const box = local ? motion.getBoundingBox(creep.room) : null
-            return motion.newMove(creep, location.pos, range, 0, true, box)
+            return motion.newMove(creep, location.pos, range, true, box)
         }
         case OK:
             if (logSuccess) {
