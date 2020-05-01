@@ -1,4 +1,5 @@
 var actions = require("../lib/actions")
+var sq = require("../lib/spawnQueue")
 
 var rF = {
     name: "ferry",
@@ -9,6 +10,13 @@ var rF = {
 
     /** @param {Creep} creep **/
     run: function(creep) {
+        if(creep.ticksToLive < 10 && creep.store.getUsedCapacity() == 0){
+            creep.suicide()
+            return
+        }
+        if(creep.ticksToLive == creep.body.length * CREEP_SPAWN_TIME){
+            sq.respawn(creep)
+        }
         if (creep.saying == "getJob"){
             creep.memory.target = rF.getJob(creep)
         }
@@ -61,7 +69,7 @@ var rF = {
             break
         case 4: {
             //move power from terminal to power spawn
-            const powerSpawn = _.find(Game.structures, (structure) => structure.structureType == STRUCTURE_POWER_SPAWN && structure.room.memory.city == creep.memory.city)
+            const powerSpawn = _.find(creep.room.find(FIND_MY_STRUCTURES), (structure) => structure.structureType == STRUCTURE_POWER_SPAWN)
             if ((creep.store.power) > 0){
                 actions.charge(creep, powerSpawn)
                 //creep.transfer(powerSpawn, 'power')
@@ -134,7 +142,7 @@ var rF = {
             if (creep.room.terminal.store[creep.memory.mineral] >= amountNeeded){
                 actions.withdraw(creep, creep.room.terminal, creep.memory.mineral, amountNeeded)
             } else {
-                creep.say("getJob")
+                creep.memory.target = rF.getJob(creep)
             }
             break
         }
@@ -158,7 +166,7 @@ var rF = {
                 }
             }
             if(!lab.mineralType){
-                creep.say("getJob")
+                creep.memory.target = rF.getJob(creep)
             }
             break
         }
