@@ -1,14 +1,25 @@
 const settings = require("../config/settings")
 const motion = require("../lib/motion")
 const sq = require("../lib/spawnQueue")
+const a = require("../lib/actions")
+const sq = require("../lib/spawnQueue")
 
 var rH = {
     name: "harasser",
     type: "harasser",
-   
+    boosts: [RESOURCE_CATALYZED_GHODIUM_ALKALIDE, RESOURCE_CATALYZED_ZYNTHIUM_ALKALIDE,
+        RESOURCE_CATALYZED_LEMERGIUM_ALKALIDE, RESOURCE_CATALYZED_KEANIUM_ALKALIDE],
 
     /** @param {Creep} creep **/
     run: function(creep) {
+        if(creep.memory.needBoost && !creep.memory.boosted){
+            a.getBoosted(creep)
+            return
+        }
+        if(creep.hits < creep.hitsMax * 0.2 && !creep.memory.reinforced){
+            creep.memory.reinforced = true
+            sq.respawn(creep, true)
+        }
         if(Game.time % 51 == 0){
             //check to remove flag and respawn
             rH.removeFlag(creep)

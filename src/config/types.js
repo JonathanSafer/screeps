@@ -14,6 +14,7 @@ function getRecipe(type, energyAvailable, room, boosted){
     d.builder = builderBody(energy, rcl)
     d.defender = defenderBody(energy, rcl, boosted)
     d.unclaimer = scalingBody([2, 1], [MOVE, CLAIM], energy)
+    d.harasser = harasserBody(energy, boosted)
 
     // used at rcl 4+
     d.spawnBuilder = scalingBody([2, 3, 5], [WORK, CARRY, MOVE], energy)
@@ -43,13 +44,11 @@ function getRecipe(type, energyAvailable, room, boosted){
     case 7:
         // lvl 7 recipes
         d["mineralMiner"] = body([22, 10, 16], [WORK, CARRY, MOVE])
-        d["harasser"] = body([9, 8, 1], [MOVE, RANGED_ATTACK, HEAL])
         d["robber"] = body([25, 25], [CARRY, MOVE])
         break
     case 8:
         // lvl 8 recipes
         d["mineralMiner"] = body([22, 10, 16], [WORK, CARRY, MOVE])
-        d["harasser"] = body([20, 25, 5], [RANGED_ATTACK, MOVE, HEAL])
         d["robber"] = body([25, 25], [CARRY, MOVE])
         break
     default:
@@ -276,6 +275,13 @@ function defenderBody(energyAvailable, rcl, boosted) {
         return body([1, 1], [RANGED_ATTACK, MOVE])
     }
     return scalingBody(ratio, types, energyAvailable)
+}
+
+function harasserBody(energyAvailable, boosted){
+    if(boosted){
+        return scalingBody([1, 9, 3, 2], [TOUGH, RANGED_ATTACK, MOVE, HEAL], energyAvailable)
+    }
+    return scalingBody([4, 5, 1], [RANGED_ATTACK, MOVE, HEAL], energyAvailable)
 }
 
 function breakerBody(energyAvailable, rcl, boosted){
