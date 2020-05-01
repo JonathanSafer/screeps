@@ -108,11 +108,26 @@ global.Room = class {
         this.memory = {}
         this.structures = []
         this.creeps = []
+        this.powerCreeps = []
         global.Memory.rooms[name] = this.memory
     }
 
     find(type, params) {
-        const elems = type == FIND_MY_CREEPS ? this.creeps : this.structures
+        let elems
+        switch(type){
+            case FIND_MY_CREEPS:
+                elems = this.creeps
+                break
+            case FIND_MY_STRUCTURES:
+            case FIND_STRUCTURES:
+                elems = this.structures
+                break
+            case FIND_MY_POWER_CREEPS:
+                elems = this.powerCreeps
+                break
+            default:
+                elems = []
+        }
 
         if (!params) {
             return elems
