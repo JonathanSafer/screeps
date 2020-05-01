@@ -8,7 +8,7 @@ var rM = {
     /** @param {Creep} creep **/
     run: function(creep) {
         // Use the spawn queue to set respawn at 20 ttl
-        if(creep.ticksToLive == 20 && Game.spawns[creep.memory.city].memory.remoteMiner > 0) {
+        if(creep.ticksToLive == creep.memory.spawnBuffer + (creep.body.length * CREEP_SPAWN_TIME) && Game.spawns[creep.memory.city].memory.remoteMiner > 0) {
             sq.respawn(creep)
         }
         if(creep.hits < creep.hitsMax){
@@ -55,14 +55,16 @@ var rM = {
     harvestTarget: function(creep) {
         var source = Game.getObjectById(creep.memory.source)
         if (!((Game.time % 2 == 0) && (creep.body.length == 15) && (creep.pos.isNearTo(source.pos)))){
-            a.harvest(creep, source)
+            if(a.harvest(creep, source) == 1 && !creep.memory.spawnBuffer){
+                creep.memory.spawnBuffer = Game.spawns[creep.memory.city].pos.getRangeTo(source)
+            }
         }
     },
 
     /** pick a target id for creep **/
     nextSource: function(creep) {
         var city = creep.memory.city
-        var miners = _.filter(Game.creeps, c => c.memory.role === "remoteMiner")
+        var miners = _.filter(Game.creeps, c => c.memory.role === "remoteMiner" && c.ticksToLive > 50)
         var occupied = []
         _.each(miners, function(minerInfo){
             occupied.push(minerInfo.memory.source)
