@@ -278,8 +278,8 @@ var m = {
 
     enforceBoundingBox: function(costs, boundingBox) {
         const d = 2 // thickness of barrier
-        for (let y = boundingBox.top - d; y < boundingBox.bottom + d; y++) {
-            for (let x = boundingBox.left - d; y < boundingBox.right + d; y++) {
+        for (let y = boundingBox.top - d; y <= boundingBox.bottom + d; y++) {
+            for (let x = boundingBox.left - d; x <= boundingBox.right + d; x++) {
                 const inBox = boundingBox.top <= y && y <= boundingBox.bottom
                     && boundingBox.left <= x && x <= boundingBox.right
                 if (!inBox) {
