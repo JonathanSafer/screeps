@@ -82,6 +82,21 @@ global.Spawn = {}
 global.RoomPosition = {}
 global.Source = {}
 global.Flag = {}
+global.PathFinder = {
+    CostMatrix: class {
+        constructor() {
+            this._bits = Array(2500).fill(0)
+        }
+
+        get(x, y) {
+            return this._bits[y * 50 + x]
+        }
+
+        set(x, y, val) {
+            this._bits[y * 50 + x] = 0xff & val
+        }
+    }
+}
 
 global.RawMemory = {
     setActiveSegments: function() {

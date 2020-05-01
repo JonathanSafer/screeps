@@ -3,11 +3,13 @@ const motion = require("./motion")
 
 
 var actions = {
-    interact: function(creep, location, fnToTry, range, logSuccess) {
+    interact: function(creep, location, fnToTry, range, logSuccess, local=false) {
         var result = fnToTry()
         switch (result) {
-        case ERR_NOT_IN_RANGE:
-            return motion.newMove(creep, location.pos, range)
+        case ERR_NOT_IN_RANGE: {
+            const box = local ? motion.getBoundingBox(creep.room) : null
+            return motion.newMove(creep, location.pos, range, 0, true, box)
+        }
         case OK:
             if (logSuccess) {
                 Log.info(creep.name+ " at " + creep.pos + ": " + fnToTry.toString())
@@ -110,13 +112,13 @@ var actions = {
         return actions.interact(creep, location, () => creep.upgradeController(location), 3)
     },
     
-    charge: function(creep, location) {
+    charge: function(creep, location, local=false) {
         const store = creep.store
         if (Object.keys(store).length > 1){
             const mineral = _.keys(store)[1]
-            return actions.interact(creep, location, () => creep.transfer(location, mineral), 1)
+            return actions.interact(creep, location, () => creep.transfer(location, mineral), 1, false, local)
         } else if (Object.keys(store).length > 0) {
-            return actions.interact(creep, location, () => creep.transfer(location, Object.keys(store)[0]), 1)
+            return actions.interact(creep, location, () => creep.transfer(location, Object.keys(store)[0]), 1, false, local)
         }
     },
 

@@ -1,9 +1,25 @@
 var u = require("./utils")
 var settings = require("../config/settings")
+var template = require("../config/template")
+var assert = require("assert")
+
+
 
 var m = {
+    BoundingBox: class {
+        constructor(top, left, bottom, right) {
+            assert(0 <= top && top <= bottom && bottom <= 50)
+            assert(0 <= left && left <= right && right <= 50)
+            this.top = top // minY
+            this.left = left // minX
+            this.bottom = bottom // maxY
+            this.right = right // maxX
+        }
+    },
+
     //newMove will override all long and short distance motion
-    newMove: function(creep, endPos,  range = 0, avoidEnemies = true){
+    // optional bounding box of form: [top, left, bottom, right]
+    newMove: function(creep, endPos,  range = 0, avoidEnemies = true, boundingBox = null){
         //check for cached path and cached route
         const ccache = u.getCreepCache(creep.name)
         const routeVerified = m.checkRoute(creep, endPos)
@@ -35,9 +51,10 @@ var m = {
             }
             ccache.pathFail = 0 
         }
-        const pathCalc = m.pathCalc(creep, endPos, avoidEnemies, range)
+        const routeFound = 
+            m.getRouteAndPath(creep, endPos, avoidEnemies, range, boundingBox)
 
-        if(pathCalc){//if pathing successful, MBP
+        if(routeFound){//if pathing successful, MBP
             if(creep.moveByPath(ccache.path) == OK){
                 ccache.lastMove = Game.time
                 ccache.lastPos = creep.pos
@@ -52,7 +69,8 @@ var m = {
         }
     },
 
-    pathCalc: function(creep, endPos, avoidEnemies, range){//bool, returns success of pathfinding ops
+    //bool, returns success of pathfinding ops
+    getRouteAndPath: function(creep, endPos, avoidEnemies, range, boundingBox){
         const ccache = u.getCreepCache(creep.name)
 
         //if creep is in same room as target, path to target. Otherwise, path to nearest exit in the right direction
@@ -60,7 +78,7 @@ var m = {
         if(sameRoom){
             const maxRooms = 1
             const goal = {pos: endPos, range: range}
-            const result = m.getPath(creep, goal, avoidEnemies, maxRooms)
+            const result = m.getPath(creep, goal, avoidEnemies, maxRooms, boundingBox)
             if(!result.incomplete){
                 ccache.route = null //no route since creep is in required room already
                 ccache.path = result.path
@@ -88,7 +106,7 @@ var m = {
                 })
             }
             const maxRooms = 16
-            const result = m.getPath(creep, goals, avoidEnemies, maxRooms)
+            const result = m.getPath(creep, goals, avoidEnemies, maxRooms, boundingBox)
             if(!result.incomplete){
                 ccache.route = route
                 ccache.path = result.path
@@ -197,7 +215,7 @@ var m = {
         return noviceWallRooms
     },
 
-    getPath: function(creep, goals, avoidEnemies, maxRooms){
+    getPath: function(creep, goals, avoidEnemies, maxRooms, boundingBox){
         const moveSpeed = m.moveSpeed(creep)//moveSpeed is inverse of fatigue ratio
         const noviceWallRooms = m.findNoviceWallRooms(creep.room)
         //if room is highway with novice walls, make an object with each of the neighboring rooms as keys
@@ -254,10 +272,26 @@ var m = {
                 room.find(FIND_POWER_CREEPS).forEach(function(c) {
                     costs.set(c.pos.x, c.pos.y, 0xff)
                 })
+                if (boundingBox) {
+                    m.enforceBoundingBox(costs, boundingBox)
+                }
                 return costs
             }
         })
         return result
+    },
+
+    enforceBoundingBox: function(costs, boundingBox) {
+        const rawCosts = costs._bits
+        for (let i = 0; i < rawCosts.length; i++) {
+            const y = Math.floor(i/50)
+            const x = i % 50
+            const inBox = boundingBox.top <= y && y <= boundingBox.bottom
+                && boundingBox.left <= x && x <= boundingBox.right
+            if (!inBox) {
+                rawCosts[i] = 0xff
+            }
+        }
     },
 
     getRoute: function(start, finish, avoidEnemies){
@@ -298,9 +332,18 @@ var m = {
         } else {
             return false
         }
+    },
+
+    getBoundingBox: function(room) {
+        if (!room.memory.plan) {
+            return
+        }
+        const top = room.memory.plan.y
+        const left = room.memory.plan.x
+        const bottom = top + template.dimensions.y - 1
+        const right = left + template.dimensions.x - 1
+        return new m.BoundingBox(top, left, bottom, right)
     }
-
-
 }
 
 module.exports = m

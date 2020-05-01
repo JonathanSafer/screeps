@@ -22,13 +22,7 @@ var rT = {
             if(rT.refill(creep, city) === 1){
                 //start moving to target
                 const target = rT.findTarget(creep, null)
-                if(!target){
-                    creep.say(20)
-                    return
-                }
-                if(!creep.pos.isNearTo(target.pos)){
-                    motion.newMove(creep, target.pos, 1)
-                }
+                rT.moveToTargetIfPresent(creep, target)
             }
         } else {
             const target = rT.findTarget(creep, null)
@@ -38,7 +32,7 @@ var rT = {
                 return
             }
 
-            const result = actions.charge(creep, target)
+            const result = actions.charge(creep, target, true)
             if(result === 1 || !rT.needsEnergy(target)){//successful deposit
                 const extra = creep.store[RESOURCE_ENERGY] - target.store.getFreeCapacity(RESOURCE_ENERGY)
                 
@@ -47,20 +41,25 @@ var rT = {
                     const newTarget = rT.findTarget(creep, target) 
                     //if creep still has energy, start moving to next target
                     if (extra > 0) {
-                        if(!newTarget){
-                            creep.say(20)
-                            return
-                        }
-                        //start moving to next target if target not already in range
-                        if(!newTarget.pos.isNearTo(creep.pos)){
-                            motion.newMove(creep, newTarget.pos, 1)
-                        }
+                        rT.moveToTargetIfPresent(creep, newTarget)
                     } else {
                         //start moving to storage already
                         rT.refill(creep, city)
                     }
                 }
             }
+        }
+    },
+
+    moveToTargetIfPresent: function(creep, target) {
+        if(!target){
+            creep.say(20)
+            return
+        }
+        //start moving to next target if target not already in range
+        if(!target.pos.isNearTo(creep.pos)){
+            const boundingBox = motion.getBoundingBox(creep.room)
+            motion.newMove(creep, target.pos, 1, 0, true, boundingBox)
         }
     },
  
@@ -82,7 +81,6 @@ var rT = {
     },
 
     getTargets: function(creep, oldTarget) {
-        // 1. check if targets in cache
         const rcache = u.getRoomCache(creep.room.name)
         const refillTargets = u.getsetd(rcache, "refillTargets", [])
         const unused = _(refillTargets)
