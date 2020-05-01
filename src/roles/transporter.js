@@ -32,7 +32,7 @@ var rT = {
                 return
             }
 
-            const result = actions.charge(creep, target, false)
+            const result = actions.charge(creep, target, true)
             if(result === 1 || !rT.needsEnergy(target)){//successful deposit
                 const extra = creep.store[RESOURCE_ENERGY] - target.store.getFreeCapacity(RESOURCE_ENERGY)
                 
@@ -58,8 +58,8 @@ var rT = {
         }
         //start moving to next target if target not already in range
         if(!target.pos.isNearTo(creep.pos)){
-            //const boundingBox = motion.getBoundingBox(creep.room)
-            motion.newMove(creep, target.pos, 1, true)// boundingBox)
+            const boundingBox = motion.getBoundingBox(creep.room)
+            motion.newMove(creep, target.pos, 1, true, boundingBox)
         }
     },
  

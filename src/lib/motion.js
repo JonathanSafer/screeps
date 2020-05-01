@@ -284,7 +284,7 @@ var m = {
             const inBox = boundingBox.top <= y && y <= boundingBox.bottom
                 && boundingBox.left <= x && x <= boundingBox.right
             if (!inBox) {
-                rawCosts[i] = 0xff
+                rawCosts[i] = 10
             }
         }
     },

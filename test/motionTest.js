@@ -25,7 +25,7 @@ describe("motion", function () {
             const box = new m.BoundingBox(21, 23, 31, 35)
             m.enforceBoundingBox(costMatrix, box)
             assert.equal(0, costMatrix.get(25, 25))
-            assert.equal(0xff, costMatrix.get(7, 7))
+            assert.equal(10, costMatrix.get(7, 7))
         })
     })
 })
