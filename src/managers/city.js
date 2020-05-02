@@ -23,6 +23,7 @@ var labsLib = require("../buildings/labs")
 var fact = require("../buildings/factory")
 var link = require("../buildings/link")
 var e = require("../operations/error")
+var rMe = require("../roles/medic")
 
 
 function makeCreeps(role, city, unhealthyStore, creepWantsBoosts) {
@@ -665,6 +666,9 @@ function scheduleIfNeeded(role, count, boosted, spawn, currentCreeps) {
     let creepsNeeded = count - queued - creepsInField.length
     while (creepsNeeded > 0) {
         sq.schedule(spawn, role, boosted)
+        if(role == rPM.name){
+            sq.schedule(spawn, rMe.name)
+        }
         creepsNeeded--
     }
 }
