@@ -3,12 +3,12 @@ var actions = require("../lib/actions")
 var sq = require("../lib/spawnQueue")
 var rR = require("./runner")
 var u = require("../lib/utils")
+var rBr = require("./breaker")
 
 var rPM = {
     name: "powerMiner",
     type: "powerMiner",
-    boosts: [RESOURCE_CATALYZED_GHODIUM_ALKALIDE, RESOURCE_CATALYZED_LEMERGIUM_ALKALIDE,
-        RESOURCE_CATALYZED_UTRIUM_ACID],
+    boosts: [RESOURCE_CATALYZED_GHODIUM_ALKALIDE, RESOURCE_CATALYZED_UTRIUM_ACID],
 
     /** @param {Creep} creep **/
     run: function(creep) {
@@ -18,41 +18,55 @@ var rPM = {
             return
         }
 
+        const medic = Game.getObjectById(creep.memory.medic)
+        if(!medic){
+            if(rBr.endLife(creep)){
+                return
+            } else {
+                rBr.medicSearch(creep)
+                return
+            }
+        }
+
         const flagName = creep.memory.city + "powerMine"
         if(!Memory.flags[flagName]){
             creep.suicide()
+            medic.suicide()
             return
         }
-        if(creep.hits < creep.hitsMax/2){//temp drop operation if under attack
+        if(creep.hits < creep.hitsMax/2 || medic.hits < medic.hitsMax/2){//temp drop operation if under attack
             delete Memory.flags[flagName]
             creep.suicide()
+            medic.suicide()
             return
         }
 
         let target = Game.getObjectById(creep.memory.target)//target is pBank
         if(target){
-            actions.attack(creep, target)
-            creep.heal(creep)
+            actions.attack(creep, target) == 0 ? rBr.medicMove(creep, medic) : 0
+            medic.heal(creep)
             rPM.summonRunners(creep, target) 
         } else {
             target = rPM.findBank(creep, flagName)
             if(target){//move to it
-                actions.attack(creep, target)
-                creep.heal(creep)
+                actions.attack(creep, target) == 0 ? rBr.medicMove(creep, medic) : 0
+                medic.heal(creep)
             } else if (!Memory.flags[flagName]) {
                 return
             } else if(creep.room.name != Memory.flags[flagName].roomName){ //rally
                 motion.newMove(creep, new RoomPosition(Memory.flags[flagName].x, Memory.flags[flagName].y, Memory.flags[flagName].roomName), 1)
+                rBr.medicMove(creep, medic)
             } else {
                 //if there's a flag, but no bank under it, retreat
-                rPM.retreat(creep, flagName)
+                rPM.retreat(creep, medic, flagName)
             }
         }
     },
 
-    retreat: function(creep, flagName){
+    retreat: function(creep, medic, flagName){
         if(creep.pos.inRangeTo(new RoomPosition(Memory.flags[flagName].x, Memory.flags[flagName].y, Memory.flags[flagName].roomName, 4))){
-            motion.newMove(creep, new RoomPosition(25, 25, creep.pos.roomName), 5)
+            rBr.medicMove(medic, creep)
+            motion.newMove(medic, new RoomPosition(25, 25, creep.pos.roomName), 5)
         }
     },
 

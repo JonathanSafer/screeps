@@ -186,7 +186,7 @@ var rBr = {
         if(medic.pos.isNearTo(creep.pos)){
             medic.move(medic.pos.getDirectionTo(creep))
         } else {
-            medic.moveTo(creep, {range: 1})
+            motion.newMove(medic, creep.pos, 1)
         }
     },
 
