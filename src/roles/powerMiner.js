@@ -66,6 +66,9 @@ var rPM = {
                 }
             }
         }
+        if(!canMove && !medic.pos.isNearTo(creep.pos)){
+            rBr.medicMove(creep, medic)
+        }
     },
 
     hitBank: function(creep, medic, bank, canMove){
