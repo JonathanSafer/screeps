@@ -70,7 +70,7 @@ var rBr = {
         //find single medics in your neighborhood
         const creeps = creep.room.find(FIND_MY_CREEPS)
         let medic
-        if(creep.memory.boosted){
+        if(creep.memory.boosted && creep.memory.role == rBr.name){
             medic = _.find(creeps, c => c.memory.role == rMe.name && !c.memory.partner && c.memory.boosted)
         } else {
             medic = _.find(creeps, c => c.memory.role == rMe.name && !c.memory.partner && !c.memory.needBoost)
