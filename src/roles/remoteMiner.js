@@ -8,6 +8,9 @@ var rM = {
     /** @param {Creep} creep **/
     run: function(creep) {
         // Use the spawn queue to set respawn at 20 ttl
+        if(creep.spawning){
+            return
+        }
         if(creep.ticksToLive == creep.memory.spawnBuffer + (creep.body.length * CREEP_SPAWN_TIME) && Game.spawns[creep.memory.city].memory.remoteMiner > 0) {
             sq.respawn(creep)
         }
@@ -16,9 +19,9 @@ var rM = {
             creep.moveTo(Game.spawns[creep.memory.city])
             return
         }
-        if(creep.memory.source == null) {
+        if(!creep.memory.source) {
             rM.nextSource(creep)
-        } else if (Game.getObjectById(creep.memory.source) == null){
+        } else if (!Game.getObjectById(creep.memory.source)){
             creep.moveTo(new RoomPosition(25, 25, creep.memory.sourceRoom), {reusePath: 50}) 
         } else {
             if (creep.saying != "*"){
@@ -64,7 +67,7 @@ var rM = {
     /** pick a target id for creep **/
     nextSource: function(creep) {
         var city = creep.memory.city
-        var miners = _.filter(Game.creeps, c => c.memory.role === "remoteMiner" && c.ticksToLive > 50)
+        var miners = _.filter(Game.spawns[city].room.find(FIND_MY_CREEPS), c => c.memory.role === rM.name && c.ticksToLive > 50)
         var occupied = []
         _.each(miners, function(minerInfo){
             occupied.push(minerInfo.memory.source)
