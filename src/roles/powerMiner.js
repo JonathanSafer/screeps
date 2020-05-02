@@ -41,26 +41,43 @@ var rPM = {
             return
         }
 
+        const canMove = rBr.canMove(creep, medic)
+
         let target = Game.getObjectById(creep.memory.target)//target is pBank
         if(target){
-            actions.attack(creep, target) == 0 ? rBr.medicMove(creep, medic) : 0
-            medic.heal(creep)
-            rPM.summonRunners(creep, target) 
+            rPM.hitBank(creep, medic, target, canMove) 
         } else {
             target = rPM.findBank(creep, flagName)
             if(target){//move to it
+                rPM.hitBank(creep, medic, target, canMove)
                 actions.attack(creep, target) == 0 ? rBr.medicMove(creep, medic) : 0
                 medic.heal(creep)
             } else if (!Memory.flags[flagName]) {
                 return
             } else if(creep.room.name != Memory.flags[flagName].roomName){ //rally
-                motion.newMove(creep, new RoomPosition(Memory.flags[flagName].x, Memory.flags[flagName].y, Memory.flags[flagName].roomName), 1)
-                rBr.medicMove(creep, medic)
+                if(canMove){
+                    motion.newMove(creep, new RoomPosition(Memory.flags[flagName].x, Memory.flags[flagName].y, Memory.flags[flagName].roomName), 1)
+                    rBr.medicMove(creep, medic)
+                }
             } else {
                 //if there's a flag, but no bank under it, retreat
-                rPM.retreat(creep, medic, flagName)
+                if(canMove){
+                    rPM.retreat(creep, medic, flagName)
+                }
             }
         }
+    },
+
+    hitBank: function(creep, medic, bank, canMove){
+        if(canMove && !bank.pos.isNearTo(creep.pos)){
+            motion.newMove(creep, bank.pos, 1)
+            rBr.medicMove(creep, medic)
+        }
+        if(bank.pos.isNearTo(creep.pos)){
+            creep.attack(bank)
+            medic.heal(creep)
+        }
+        rPM.summonRunners(creep, bank)
     },
 
     retreat: function(creep, medic, flagName){
