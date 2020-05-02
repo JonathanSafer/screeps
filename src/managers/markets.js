@@ -82,7 +82,7 @@ var markets = {
                 }
                 if(sender.terminal.store[baseMin] > 8000 && !Memory.rooms[sender.name].termUsed){
                     const amount = sender.terminal.store[baseMin] - 8000
-                    const receiver = receivers[Math.floor(Math.random() * Math.floor(receivers.length))].name
+                    const receiver = _.sample(receivers).name
                     sender.terminal.send(baseMin, amount, receiver)
                     Memory.rooms[sender.name].termUsed = true
                     go = false
