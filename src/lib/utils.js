@@ -379,11 +379,11 @@ var u = {
             } else {
                 empireStore[resource] = _.sum(cities, city => {
                     const terminal = city.terminal
-                    const terminalAmount = (terminal && terminal.store[resource]) || 0
+                    const terminalAmount = terminal && terminal.store[resource]
                     const storage = city.storage
-                    const storageAmount = (storage && storage.store[resource]) || 0
+                    const storageAmount = storage && storage.store[resource]
 
-                    return terminal && terminalAmount + storageAmount
+                    return (terminal && terminalAmount + storageAmount) || 0
                 })
             }
         }
