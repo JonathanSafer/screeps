@@ -279,7 +279,7 @@ function defenderBody(energyAvailable, rcl, boosted) {
 
 function harasserBody(energyAvailable, boosted){
     if(boosted){
-        return scalingBody([1, 9, 3, 2], [TOUGH, RANGED_ATTACK, MOVE, HEAL], energyAvailable)
+        return body([3, 31, 10, 6], [TOUGH, RANGED_ATTACK, MOVE, HEAL])
     }
     return scalingBody([4, 5, 1], [RANGED_ATTACK, MOVE, HEAL], energyAvailable)
 }
