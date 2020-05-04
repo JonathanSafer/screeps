@@ -128,13 +128,17 @@ var markets = {
                 }
                 if(x === senders.length && !Memory.rooms[myCity.name].termUsed){
                     //buy mineral
-                    const sellOrders = markets.sortOrder(Game.market.getAllOrders(order => order.type == ORDER_SELL && order.resourceType == mineral && order.amount >= 3000 && order.price < 0.5))
+                    const amount = 3000
+                    const sellOrders = markets.sortOrder(Game.market.getAllOrders(order => order.type == ORDER_SELL && order.resourceType == mineral && order.amount >= amount && order.price < 0.5))
                     if (sellOrders.length){
-                        Game.market.deal(sellOrders[0].id, 3000, myCity.name)
+                        Game.market.deal(sellOrders[0].id, amount, myCity.name)
                         Game.spawns[city].memory.ferryInfo.mineralRequest = null
                         Memory.rooms[myCity.name].termUsed = true
                     } else {
-                        Game.notify("Problem at distributeMinerals with " + mineral, 20)
+                        const error = `Problem at distributeMinerals with ${mineral}.
+                            No sell orders found with amount greater than ${amount}, price 0.5.
+                            City ${myCity.name}, tick ${Game.time}`
+                        Game.notify(error, 20)
                     }
                 }
             }
