@@ -4,9 +4,13 @@
   "description": "",
   "main": "main.js",
   "scripts": {
-    "pretest": "eslint src",
-    "test": "nyc mocha",
+    "lint": "eslint src",
+    "test": "mocha",
+    "coverage": "nyc mocha",
+
+    "pretest": "npm run lint",
     "postinstall": "cd ./node_modules/eslint-plugin-screeps && npm install",
+
     "push": "screeps-api upload dist/main.js --server main",
     "botarena": "screeps-api upload dist/main.js --server botarena",
     "season": "screeps-api upload dist/main.js --server season",

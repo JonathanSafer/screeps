@@ -79,7 +79,6 @@ global.Memory = new MMemory()
 global.Cache = new CCache()
 global.Structure = {}
 global.Spawn = {}
-global.RoomPosition = {}
 global.Source = {}
 global.Flag = {}
 global.PathFinder = {
@@ -104,60 +103,95 @@ global.RawMemory = {
     }
 }
 
-global.Creep = class {
-    constructor(room, name) {
-        global.Game.creeps[name] = this
-        this.name = name
-        this.room = room
-        room.creeps.push(this)
-        this.memory = {}
-        global.Memory.creeps[name] = this.memory
+const RoomPosition = class {
+    constructor(x, y, roomName) {
+        this.x = x
+        this.y = y
+        this.roomName = roomName
     }
-    notifyWhenAttacked() {}
+
+    getRangeTo(pos) {
+        const dX = Math.abs(this.x - pos.x)
+        const dY = Math.abs(this.y - pos.y)
+        return Math.min(dX, dY)
+    }
+
+    findInRange() {
+        return []
+    }
 }
+
+global.RoomPosition = RoomPosition
 
 global.Room = class {
     constructor(name) {
         global.Game.rooms[name] = this
         this.name = name
         this.memory = {}
-        this.structures = []
-        this.creeps = []
-        this.powerCreeps = []
+        this._objects = {}
         global.Memory.rooms[name] = this.memory
     }
 
     find(type, params) {
-        let elems
+        let group
         switch(type){
-            case FIND_MY_CREEPS:
-                elems = this.creeps
-                break
-            case FIND_MY_STRUCTURES:
-            case FIND_STRUCTURES:
-                elems = this.structures
-                break
-            case FIND_MY_POWER_CREEPS:
-                elems = this.powerCreeps
-                break
-            default:
-                elems = []
+        case FIND_MY_CREEPS:
+        case FIND_CREEPS:
+            group = FIND_CREEPS
+            break
+        case FIND_MY_STRUCTURES:
+        case FIND_STRUCTURES:
+            group = FIND_STRUCTURES
+            break
+        case FIND_SOURCES:
+            group = FIND_SOURCES
+            break
+        default:
+            group = -1
         }
+        const elems = this._objects[group] || []
 
         if (!params) {
             return elems
         }
         return _(elems).filter(params.filter).value()
     }
+
+    _addObject(group, object) {
+        if (!this._objects[group]) {
+            this._objects[group] = []
+        }
+        this._objects[group].push(object)
+    }
 }
 
-class Structure {
-    constructor(room, structureType) {
-        this.structureType = structureType
+class RoomObject {
+    constructor(room, findGroup, pos= new RoomPosition(25, 25, "sim")) {
         this.id = getID()
         global.Game._objects[this.id] = this
         this.room = room
-        room.structures.push(this)
+        room._addObject(findGroup, this)
+        this.pos = pos
+    }
+}
+
+global.Creep = class extends RoomObject {
+    constructor(room, name) {
+        super(room, FIND_CREEPS)
+        global.Game.creeps[name] = this
+        this.name = name
+        this.memory = {}
+        global.Memory.creeps[name] = this.memory
+    }
+    notifyWhenAttacked() {}
+
+    harvest() { return 0 }
+}
+
+class Structure extends RoomObject {
+    constructor(room, structureType) {
+        super(room, FIND_STRUCTURES)
+        this.structureType = structureType
     }
 }
 
@@ -211,6 +245,12 @@ global.StructureExtension = class extends Structure {
         super(room, STRUCTURE_EXTENSION)
         this.store = new Store(store || {}, 
             EXTENSION_ENERGY_CAPACITY[room.controller.level])
+    }
+}
+
+global.Source = class extends RoomObject {
+    constructor(room) {
+        super(room, FIND_SOURCES)
     }
 }
 
