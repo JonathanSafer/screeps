@@ -184,7 +184,7 @@ global.Creep = class extends RoomObject {
         global.Memory.creeps[name] = this.memory
     }
     notifyWhenAttacked() {}
-
+    getActiveBodyparts(type) {return}
     harvest() { return 0 }
 }
 
