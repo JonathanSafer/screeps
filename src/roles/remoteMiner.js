@@ -52,7 +52,7 @@ var rM = {
     },
 
     canCarry: function(creep) {
-        return t.store(creep.body) > 0
+        return creep.getActiveBodyparts(CARRY) > 0
     },
 
     harvestTarget: function(creep) {
