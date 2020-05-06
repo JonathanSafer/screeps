@@ -37,7 +37,7 @@ var rL = {
 
     run: function(room) {
         const rcl = room.controller && room.controller.level
-        if (rcl < 7) return
+        if (rcl < 6) return
 
         rL.fixCacheIfInvalid(room, rcl)
 
