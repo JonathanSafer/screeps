@@ -1,6 +1,5 @@
 var a = require("../lib/actions")
 var sq = require("../lib/spawnQueue")
-const t = require("../config/types")
 
 var rM = {
     name: "remoteMiner",
