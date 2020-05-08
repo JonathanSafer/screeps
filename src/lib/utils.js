@@ -398,10 +398,11 @@ var u = {
             .filter(boost => empireStore[boost] >= boostQuantityRequired)
             .value()
         Cache.boostsAvailable = boostsAvailable
+        Cache.boostCheckTime = Game.time
     },
 
     boostsAvailable: function(role) {
-        if (!Cache.boostsAvailable) {
+        if (!Cache.boostsAvailable || Game.time - Cache.boostCheckTime > 1000) {
             const cities = u.getMyCities()
             u.cacheBoostsAvailable(cities)
         }
