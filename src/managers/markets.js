@@ -369,7 +369,7 @@ var markets = {
                     })
                 } else if(amountNeeded === 8000 || Game.time % 400 === 30){//order already exists for max amount and has not been satisfied
                     //increment price if price is not above market value 
-                    const buyPrice = markets.getPrice(minerals[i]) * 1.2
+                    const buyPrice = markets.getPrice(minerals[i]) * 2
                     if(order.price < buyPrice){
                         Game.market.changeOrderPrice(orderId, (Math.max(order.price*1.04, order.price + .001)))
                     }
