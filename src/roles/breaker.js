@@ -177,7 +177,7 @@ var rBr = {
     rally: function(creep, medic, flagName){
         const flag = Memory.flags[flagName]
         if(flag && creep.room.name != flag.roomName){
-            motion.newMove(creep, new RoomPosition(flag.x, flag.y, flag.roomName), 1)
+            motion.newMove(creep, new RoomPosition(flag.x, flag.y, flag.roomName), 5)
             rBr.medicMove(creep, medic)
         }
     },
