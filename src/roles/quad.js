@@ -486,7 +486,7 @@ var rQ = {
         return _(path)
             .map(pos => rQ.getOverlappingStructures(room, pos))
             .flatten()
-            .find(structure => blockingStructures.includes(structure))
+            .find(structure => blockingStructures.includes(structure.structureType))
     },
 
     getOverlappingStructures: function(room, pos) {
