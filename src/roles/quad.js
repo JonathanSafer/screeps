@@ -439,7 +439,7 @@ var rQ = {
     // Find an attack vector to a building based on the lowest hits required
     getTarget: function(creep, structures) {
         const result = PathFinder.search(creep.pos, _.map(structures, function(e) {
-            return { pos: e, range: 0 }}), {
+            return { pos: e.pos, range: 0 }}), {
             plainCost: 1,
             swampCost: 1,
             roomCallback: (roomName) => {
