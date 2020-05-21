@@ -408,9 +408,15 @@ var rQ = {
         }
         
         // TODO: Check for creeps in area and react to them. [#153]
-        if(target){
+
+        if(!target && creep.memory.targetPos && creep.pos.roomName == creep.memory.targetPos.roomName){
+            creep.memory.targetPos = null
+        }
+        if(target || creep.memory.targetPos){
+            const pos = (target && target.pos) || new RoomPosition(creep.memory.targetPos.x, creep.memory.targetPos.y, creep.memory.targetPos.roomName,)
+            creep.memory.targetPos = target.pos
             creep.memory.target = target.id
-            rQ.move(quad, target.pos, status, 1)
+            rQ.move(quad, pos, status, 1)
         } else if(flag && !creep.pos.inRangeTo(new RoomPosition(flag.x, flag.y, flag.roomName), 8)) {
             rQ.move(quad, new RoomPosition(flag.x, flag.y, flag.roomName), status, 5)
         }
