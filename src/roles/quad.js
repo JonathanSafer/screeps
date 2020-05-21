@@ -414,8 +414,10 @@ var rQ = {
         }
         if(target || creep.memory.targetPos){
             const pos = (target && target.pos) || new RoomPosition(creep.memory.targetPos.x, creep.memory.targetPos.y, creep.memory.targetPos.roomName,)
-            creep.memory.targetPos = target.pos
-            creep.memory.target = target.id
+            if(target){
+                creep.memory.targetPos = target.pos
+                creep.memory.target = target.id
+            }
             rQ.move(quad, pos, status, 1)
         } else if(flag && !creep.pos.inRangeTo(new RoomPosition(flag.x, flag.y, flag.roomName), 8)) {
             rQ.move(quad, new RoomPosition(flag.x, flag.y, flag.roomName), status, 5)
