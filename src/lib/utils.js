@@ -421,6 +421,37 @@ var u = {
                 Cache[creep.room.name].enemy = true
             }
         }
+    },
+
+    logDamage: function(creep, targetPos, rma = false){
+        u.getsetd(Tmp, creep.room.name,{})
+        u.getsetd(Tmp[creep.room.name], "attacks",[])
+        const ranged = creep.getActiveBodyparts(RANGED_ATTACK)
+        const damageMultiplier = creep.memory.boosted ? (ranged * 4) : ranged
+        if(rma){
+            for(let i = creep.pos.x - 3; i <= creep.pos.x + 3; i++){
+                for(let j = creep.pos.y - 3; j <= creep.pos.y + 3; j++){
+                    if(i >= 0 && i <= 49 && j >= 0 && j <= 49){
+                        const distance = Math.max(Math.abs(creep.pos.x - i),Math.abs(creep.pos.y - j))
+                        switch(distance){
+                        case 0: 
+                        case 1:
+                            Tmp[creep.room.name].attacks.push({x: i, y: j, damage: damageMultiplier * 10})
+                            break
+                        case 2:
+                            Tmp[creep.room.name].attacks.push({x: i, y: j, damage: damageMultiplier * 4})
+                            break
+                        case 3:
+                            Tmp[creep.room.name].attacks.push({x: i, y: j, damage: damageMultiplier})
+                            break
+                        }
+                    }
+                }
+            }
+        } else {
+            Tmp[creep.room.name].attacks.push({x: targetPos.x, y: targetPos.y, damage: damageMultiplier * RANGED_ATTACK_POWER})
+        }
+
     }
 }
 
