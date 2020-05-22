@@ -53,12 +53,12 @@ var markets = {
     
     distributeEnergy: function(myCities){
         var receiver = null
-        var needEnergy = _.filter(myCities, city => city.storage && city.storage.store.energy < settings.energy.processPower - 200000 && city.terminal)
+        var needEnergy = _.filter(myCities, city => city.storage && city.storage.store.energy < settings.energy.processPower - 250000 && city.terminal)
         if (needEnergy.length){
             var sortedCities = _.sortBy(needEnergy, city => city.storage.store.energy)
             receiver = sortedCities[0].name
             for (const city of myCities){
-                if (city.storage && city.storage.store.energy > settings.energy.processPower - 100000 && !Memory.rooms[city.name].termUsed){
+                if (city.storage && city.storage.store.energy > settings.energy.processPower - 150000 && !Memory.rooms[city.name].termUsed){
                     city.terminal.send(RESOURCE_ENERGY, 25000, receiver)
                     Memory.rooms[city.name].termUsed = true
                 }
