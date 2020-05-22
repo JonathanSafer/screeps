@@ -460,7 +460,7 @@ function updateMiner(rooms, rcl8, memory, spawn){
         } else if(powerCreeps.length && powerCreeps[0].powers[PWR_REGEN_SOURCE]){
             memory[rM.name] = 2
         } else {
-            memory[rM.name] = 0
+            memory[rM.name] = 2
         }
         return
     }
