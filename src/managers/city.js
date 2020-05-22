@@ -193,30 +193,31 @@ function makeEmergencyCreeps(extensions, creeps, city, rcl8, emergency) {
 
 // Run the tower function
 function runTowers(city){
-    if (Game.spawns[city]){
-        if(Game.spawns[city].memory.towersActive == undefined){
-            Game.spawns[city].memory.towersActive = false
+    const spawn = Game.spawns[city]
+    if (spawn){
+        if(spawn.memory.towersActive == undefined){
+            spawn.memory.towersActive = false
         }
         const checkTime = 20
-        if(Game.spawns[city].memory.towersActive == false && Game.time % checkTime != 0){
+        if(spawn.memory.towersActive == false && Game.time % checkTime != 0){
             return
         }
         var towers = _.filter(Game.structures, (structure) => structure.structureType == STRUCTURE_TOWER && structure.room.memory.city == city)
-        var hostileCreep = Game.spawns[city].room.find(FIND_HOSTILE_CREEPS)
-        var injuredCreep = Game.spawns[city].room.find(FIND_MY_CREEPS, {filter: (injured) => { 
+        var hostileCreep = spawn.room.find(FIND_HOSTILE_CREEPS)
+        var injuredCreep = spawn.room.find(FIND_MY_CREEPS, {filter: (injured) => { 
             return (injured) && injured.hits < injured.hitsMax
         }})
-        var injuredPower = Game.spawns[city].room.find(FIND_MY_POWER_CREEPS, {filter: (injured) => { 
+        var injuredPower = spawn.room.find(FIND_MY_POWER_CREEPS, {filter: (injured) => { 
             return (injured) && injured.hits < injured.hitsMax
         }})
-        var hostilePower = Game.spawns[city].room.find(FIND_HOSTILE_POWER_CREEPS)
+        var hostilePower = spawn.room.find(FIND_HOSTILE_POWER_CREEPS)
         var hostiles = hostilePower.concat(hostileCreep)
         var injured = injuredPower.concat(injuredCreep)
         let damaged = null
         let repair = 0
         let target = null
         if (Game.time % checkTime === 0) {
-            const needRepair = _.filter(Game.spawns[city].room.find(FIND_STRUCTURES), s => s.structureType != STRUCTURE_WALL
+            const needRepair = _.filter(spawn.room.find(FIND_STRUCTURES), s => s.structureType != STRUCTURE_WALL
                 && s.structureType != STRUCTURE_RAMPART
                 && s.hitsMax - s.hits > TOWER_POWER_REPAIR)//structure must need at least as many hits missing as a minimum tower shot
             if(needRepair.length){
@@ -228,13 +229,15 @@ function runTowers(city){
                 repair = damaged.hitsMax - damaged.hits
             }
         }
-        if(hostiles.length > 0){
+
+        const lowEnergy = spawn.room.storage && spawn.room.storage.store.energy < 100000
+        if(hostiles.length > 0  && !lowEnergy){
             Log.info("Towers up in " + city)
-            Game.spawns[city].memory.towersActive = true
+            spawn.memory.towersActive = true
             //identify target 
             target = t.chooseTarget(towers, hostiles)
         } else {
-            Game.spawns[city].memory.towersActive = false
+            spawn.memory.towersActive = false
         }
         for (let i = 0; i < towers.length; i++){
             if(target){
