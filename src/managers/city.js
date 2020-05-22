@@ -580,7 +580,7 @@ function updateBuilder(rcl, memory, spawn) {
         }
         const nukes = spawn.room.find(FIND_NUKES)
         if(nukes.length){
-            const nukeStructures = spawn.room.find(FIND_MY_STRUCTURES, struct => settings.nukeStructures.includes(struct))
+            const nukeStructures = _.filter(spawn.room.find(FIND_MY_STRUCTURES), struct => settings.nukeStructures.includes(struct.structureType))
             for(const structure of nukeStructures){
                 let rampartHeightNeeded = 0
                 for(const nuke of nukes){
