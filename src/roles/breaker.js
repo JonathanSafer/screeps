@@ -116,13 +116,18 @@ var rBr = {
     },
 
     maybeRetreat: function(creep, medic, canMove){//always back out (medic leads retreat)
+        const checkpoint = creep.memory.checkpoints && new RoomPosition(creep.memory.checkpoints[0].x,
+            creep.memory.checkpoints[0].y,
+            creep.memory.checkpoints[0].roomName)
         //retreat if necessary
         //if retreating, determine when it is safe to resume attack
         //possibly use avoid towers
-        if(creep && medic && canMove){//placeholder
-            return false
+        const hostiles = _.filter(creep.room.find(FIND_HOSTILE_CREEPS), c => c.getActiveBodyparts(ATTACK))
+        const dangerous = _.find(hostiles, h => h.pos.inRangeTo(creep.pos, 2) || h.pos.inRangeTo(medic.pos, 2))
+        if((dangerous || creep.hits < creep.hitsMax * .9 || medic.hits < medic.hitsMax * .9) && checkpoint && canMove){
+            motion.newMove(medic, checkpoint, 1)
+            rBr.medicMove(medic, creep)
         }
-        //for now we never retreat
         return false
     },
 
