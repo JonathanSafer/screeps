@@ -161,7 +161,7 @@ var rPC = {
             target = Game.getObjectById(creep.memory.powerSpawn)
             break
         }
-        return creep.pos.inRangeTo(target, distance)
+        return target && creep.pos.inRangeTo(target, distance)
     },
 
     /*
@@ -217,8 +217,10 @@ var rPC = {
     canOperateFactory: function(creep) {
         const factory = _.find(creep.room.find(FIND_MY_STRUCTURES), struct => struct.structureType == STRUCTURE_FACTORY)
         const city = creep.memory.city + "0"
+        const spawn = Game.spawns[city]
+        const isRunning = spawn && spawn.memory.ferryInfo.factoryInfo.produce !== "dormant"
         return rPC.canOperate(creep, factory, PWR_OPERATE_FACTORY, 
-            factory && factory.cooldown < 30 && Game.spawns[city].memory.ferryInfo.factoryInfo.produce !== "dormant")
+            factory && factory.cooldown < 30 && isRunning)
     },
 
     canOperateObserver: function(creep) {
@@ -232,8 +234,9 @@ var rPC = {
     },
 
     canOperateSpawn: function(creep) {
-        const spawns = Game.spawns[creep.memory.city + "0"].room.find(FIND_MY_SPAWNS)
-        if(_.every(spawns, spawn => spawn.spawning)){
+        const spawn = Game.spawns[creep.memory.city + "0"]
+        const spawns = spawn && spawn.room.find(FIND_MY_SPAWNS) || [];
+        if(_.every(spawns, s => s.spawning)){
             const slowSpawn = _.find(spawns, s => !s.effects || s.effects.length == 0)
             if(slowSpawn){
                 return rPC.canOperate(creep, slowSpawn, PWR_OPERATE_SPAWN, true)
