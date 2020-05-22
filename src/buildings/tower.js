@@ -22,7 +22,7 @@ var T = {
             } else if(buffer){
                 damage = (damage - buffer) + (toughs * 50)
             }
-            if(damage > heal + 300){
+            if(damage > heal + 600){
                 return hostiles[i]
             }
         }
