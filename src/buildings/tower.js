@@ -22,7 +22,7 @@ var T = {
             } else if(buffer){
                 damage = (damage - buffer) + (toughs * 50)
             }
-            if(damage > heal + 600){
+            if(damage > heal + 100){
                 return hostiles[i]
             }
         }
@@ -73,13 +73,7 @@ var T = {
     },
 
     calcHeal: function(creep, healMap){
-        let heal = 0
-        for(var i = creep.pos.x - 1; i <= creep.pos.x + 1; i++){
-            for(var j = creep.pos.y - 1; j <= creep.pos.y + 1; j++){
-                heal = heal + healMap[i][j]
-            }
-        }
-        return heal
+        return healMap[creep.pos.x][creep.pos.y]
     },  
 
     generateHealMap: function(hostiles) {
