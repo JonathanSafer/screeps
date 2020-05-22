@@ -235,7 +235,7 @@ function runTowers(city){
             Log.info("Towers up in " + city)
             spawn.memory.towersActive = true
             //identify target 
-            target = t.chooseTarget(towers, hostiles)
+            target = t.chooseTarget(towers, hostiles, spawn.pos.roomName)
         } else {
             spawn.memory.towersActive = false
         }

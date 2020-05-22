@@ -55,6 +55,7 @@ module.exports.loop = function () {
             //em.expand() // grow the empire!
         }
         //run cities
+        global.Tmp = []
         var prevCpu = Game.cpu.getUsed()
         for (let i = 0; i < myCities.length; i += 1) {
             try {

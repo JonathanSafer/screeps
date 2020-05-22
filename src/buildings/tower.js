@@ -1,10 +1,10 @@
 var T = {
 
-    chooseTarget: function(towers, hostiles) {
+    chooseTarget: function(towers, hostiles, roomName) {
         if(!towers.length){
             return null
         }
-        const healMap = T.generateHealMap(hostiles)
+        const healMap = T.generateHealMap(hostiles, roomName)
         for(var i = 0; i < hostiles.length; i++){
             if(hostiles[i].pos.x == 49 || hostiles[i].pos.y == 49 || hostiles[i].pos.x == 0 || hostiles[i].pos.y == 49){
                 continue
@@ -113,7 +113,20 @@ var T = {
             if(boosted){
                 heal = heal * 4
             }
-            map[hostiles[i].pos.x][hostiles[i].pos.y] = heal
+            for(var j = hostiles[i].pos.x - 3; j <= hostiles[i].pos.x + 3; j++){
+                for(var k = hostiles[i].pos.y - 3; k <= hostiles[i].pos.y + 3; k++){
+                    const range = Math.abs(j - hostiles[i].pos.x) <= 1 && Math.abs(k - hostiles[i].pos.y) <= 1 ? 1 : 3
+                    if(j >= 0 && j <= 49 && k >= 0 && k <= 49){
+                        map[j][k] += (heal/range)
+                    }
+                }
+            }
+        }
+        if(Tmp.roomName && Tmp.roomName.attacks){
+            const attacks = Tmp.roomName.attacks
+            for(let i = 0; i < attacks.length; i++){
+                map[attacks[i].x][attacks[i].y] +=  attacks[i].damage
+            }
         }
         return map
     }
