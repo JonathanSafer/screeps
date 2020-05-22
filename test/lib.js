@@ -276,6 +276,8 @@ global.Store = class {
     }
 }
 
+global.Tmp = {}
+
 var id = 0
 function getID() {
     return id++

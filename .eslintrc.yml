@@ -16,6 +16,7 @@ globals:
   afterEach: readonly
   MemoryCache: writable
   StructureFactory: writable
+  Tmp: writable
 parserOptions:
   ecmaVersion: 2018
 rules:
