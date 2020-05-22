@@ -642,6 +642,9 @@ var rQ = {
     longRangeToLocal: function(quad, leader, target){
         const route = Game.map.findRoute(leader.pos.roomName, target.roomName, {
             routeCallback(roomName) {
+                if(Game.map.getRoomStatus(roomName).status != "normal") {
+                    return Infinity
+                }
                 const parsed = /^[WE]([0-9]+)[NS]([0-9]+)$/.exec(roomName)
                 const isHighway = (parsed[1] % 10 === 0) || 
                                 (parsed[2] % 10 === 0)
