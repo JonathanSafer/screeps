@@ -320,11 +320,13 @@ function checkLabs(city){
     for(let i = 0; i < receivers.length; i++){
         if(!Game.getObjectById(receivers[i])){
             rescan = true
+            delete(spawn.memory.ferryInfo.labInfo.receivers[receivers[i]])
         }
     }
     for(let i = 0; i < reactors.length; i++){
         if(!Game.getObjectById(reactors[i])){
             rescan = true
+            delete(spawn.memory.ferryInfo.labInfo.reactors[reactors[i]])
         }
     }
     if(labs.length > receivers.length + reactors.length){
