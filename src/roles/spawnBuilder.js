@@ -90,6 +90,7 @@ var rSB = {
         var extensions = _.find(targets, site => site.structureType == STRUCTURE_EXTENSION)
         var storage = _.find(targets, site => site.structureType == STRUCTURE_STORAGE)
         var terminal = _.find(targets, site => site.structureType == STRUCTURE_TERMINAL)
+        var tower = _.find(targets, site => site.structureType == STRUCTURE_TOWER)
         if(targets.length) {
             var target = targets[0]
             if (terminal){
@@ -100,6 +101,8 @@ var rSB = {
                 target = extensions
             } else if (spawns){
                 target = spawns
+            } else if(tower){
+                target = tower
             }
             if(creep.build(target) == ERR_NOT_IN_RANGE) {
                 motion.newMove(creep, target.pos, 3)
