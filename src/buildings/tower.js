@@ -10,13 +10,21 @@ var T = {
                 continue
             }
             let damage = T.calcTowerDamage(towers, hostiles[i])
+            if(Tmp[roomName] && Tmp[roomName].attacks){
+                const attacks = Tmp[roomName].attacks
+                for(let j = 0; j < attacks.length;j++){
+                    if(attacks[j].x == hostiles[i].x && attacks[j].y == hostiles[i].y){
+                        damage +=  attacks[j].damage
+                    }
+                }
+            }
             const heal = T.calcHeal(hostiles[i], healMap)
             if(heal > damage){
                 continue
             }
             //check creep for boosted tough
             const toughs = T.findToughs(hostiles[i])
-            const buffer = toughs * 166.66
+            const buffer = toughs * 333.33
             if(damage < buffer){
                 damage = damage * 0.3
             } else if(buffer){
@@ -114,12 +122,6 @@ var T = {
                         map[j][k] += (heal/range)
                     }
                 }
-            }
-        }
-        if(Tmp.roomName && Tmp.roomName.attacks){
-            const attacks = Tmp.roomName.attacks
-            for(let i = 0; i < attacks.length; i++){
-                map[attacks[i].x][attacks[i].y] +=  attacks[i].damage
             }
         }
         return map
