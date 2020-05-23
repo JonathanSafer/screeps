@@ -235,7 +235,7 @@ var rF = {
         if (storage && storage.store.energy > 150000 && creep.room.terminal.store.energy < 50000 && _.sum(creep.room.terminal.store) < 295000){
             return 1
         }
-        if (creep.room.terminal && creep.room.terminal.store.energy > 51000 && _.sum(creep.room.terminal.store) < 295000){
+        if (creep.room.terminal && creep.room.terminal.store.energy > 51000){
             return 3
         }
         if(storage && Object.keys(storage.store).length > 1){
