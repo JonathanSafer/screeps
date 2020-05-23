@@ -53,6 +53,9 @@ var rU = {
         const labs = Object.keys(Game.spawns[creep.memory.city].memory.ferryInfo.labInfo.receivers)
         for(const labId of labs){
             const lab = Game.getObjectById(labId)
+            if(!lab){
+                continue
+            }
             if(lab.mineralType == boost){
                 //boost self
                 if (lab.boostCreep(creep) === ERR_NOT_IN_RANGE) {

@@ -357,7 +357,9 @@ var u = {
             if(receiver){
                 receivers[receiver].boost = mineral
                 const lab = Game.getObjectById(receiver)
-                receivers[receiver].fill = Math.ceil((LAB_MINERAL_CAPACITY - (lab.store[mineral] || 0))/1000)
+                if(lab){
+                    receivers[receiver].fill = Math.ceil((LAB_MINERAL_CAPACITY - (lab.store[mineral] || 0))/1000)
+                }
             }
         }
     },
