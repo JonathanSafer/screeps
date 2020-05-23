@@ -576,6 +576,7 @@ function updateBuilder(rcl, memory, spawn) {
             if(minHits < settings.wallHeight){
                 if(rcl >= 7){
                     sq.schedule(spawn, rB.name, true)
+                    return
                 } else {
                     memory[rB.name]++
                 }

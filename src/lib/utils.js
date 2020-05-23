@@ -364,7 +364,7 @@ var u = {
 
     isNukeRampart: function(roomPos){
         const structures = roomPos.lookFor(LOOK_STRUCTURES)
-        if(_.find(structures, struct => settings.nukeStructures.includes(struct))){
+        if(_.find(structures, struct => settings.nukeStructures.includes(struct.structureType))){
             return true
         }
         return false
