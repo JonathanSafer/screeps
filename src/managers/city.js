@@ -427,10 +427,12 @@ function updateDefender(spawn, rcl) {
             if (hasTough && isBoosted) {
                 //add a defender to spawn queue if we don't have enough
                 //make sure to count spawned defenders as well as queued
+                const spawns = room.find(FIND_MY_SPAWNS)
+                const spawning = _.filter(spawns, s => s.spawning && Game.creeps[s.spawning.name].memory.role == rD.name).length
                 const defendersNeeded = Math.ceil(hostiles.length/2)
                 const liveCount = _.filter(room.find(FIND_MY_CREEPS), c => c.memory.role == rD.name).length
-                const queued = sq.getCounts(spawn)[rD.name]
-                if(liveCount + queued < defendersNeeded){
+                const queued = sq.getCounts(spawn)[rD.name] || 0
+                if(spawning + liveCount + queued < defendersNeeded){
                     sq.schedule(spawn, rD.name, true)
                 }
                 return
