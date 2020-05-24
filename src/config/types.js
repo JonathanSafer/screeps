@@ -262,7 +262,7 @@ function quadBody(energyAvailable, rcl, room, boosted){
 function defenderBody(energyAvailable, rcl, boosted) {
     if(boosted){
         if(rcl == 8){
-            return body([3, 31, 10, 6], [TOUGH, RANGED_ATTACK, MOVE, HEAL])
+            return body([6, 22, 10, 12], [TOUGH, RANGED_ATTACK, MOVE, HEAL])
         }
         const ratio = [1, 9, 3, 2]
         const types = [TOUGH, RANGED_ATTACK, MOVE, HEAL]
