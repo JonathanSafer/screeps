@@ -219,8 +219,9 @@ var rPC = {
         const city = creep.memory.city + "0"
         const spawn = Game.spawns[city]
         const isRunning = spawn && spawn.memory.ferryInfo.factoryInfo.produce !== "dormant"
-        return rPC.canOperate(creep, factory, PWR_OPERATE_FACTORY, 
-            factory && factory.cooldown < 30 && isRunning)
+        const isNew = factory && !factory.level
+        const needsBoost = (factory && factory.cooldown < 30 && isRunning) || isNew
+        return rPC.canOperate(creep, factory, PWR_OPERATE_FACTORY, needsBoost)
     },
 
     canOperateObserver: function(creep) {
