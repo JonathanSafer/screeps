@@ -429,9 +429,12 @@ var rQ = {
     // 2. Get the target based on the valuable buildings.
     chooseNextTarget: function(everythingInRoom) {
         const valuableStructures = rQ.getValuableStructures(everythingInRoom.structures)
+        const creep = everythingInRoom.creeps[0]
         if (valuableStructures.length) {
-            const creep = everythingInRoom.creeps[0]
-            return rQ.getTarget(creep, valuableStructures)
+            return rQ.getTarget(creep, valuableStructures, everythingInRoom.structures)
+        }
+        if(everythingInRoom.hostiles.length){
+            return rQ.getTarget(creep, everythingInRoom.hostiles, everythingInRoom.structures)
         }
         return false
     },
@@ -445,8 +448,8 @@ var rQ = {
     },
 
     // Find an attack vector to a building based on the lowest hits required
-    getTarget: function(creep, structures) {
-        const result = PathFinder.search(creep.pos, _.map(structures, function(e) {
+    getTarget: function(creep, valuableStructures, structures) {
+        const result = PathFinder.search(creep.pos, _.map(valuableStructures, function(e) {
             return { pos: e.pos, range: 0 }}), {
             plainCost: 1,
             swampCost: 1,
