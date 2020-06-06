@@ -8,6 +8,12 @@ servers:
     secure: true
     token: '$PTR_TOKEN'
     ptr: true
+  swc:
+    host: swc.screepspl.us
+    secure: true
+    port: 443
+    username: '$SCREEPS_USER'
+    password: '$BOTARENA_PASS'
   botarena:
     host: botarena.screepspl.us
     secure: true
