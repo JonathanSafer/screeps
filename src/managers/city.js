@@ -211,7 +211,7 @@ function runTowers(city){
             return (injured) && injured.hits < injured.hitsMax
         }})
         var hostilePower = spawn.room.find(FIND_HOSTILE_POWER_CREEPS)
-        var hostiles = hostilePower.concat(hostileCreep)
+        var hostiles = _.filter(hostilePower.concat(hostileCreep), c => !settings.allies.includes(c.owner.username))
         var injured = injuredPower.concat(injuredCreep)
         let damaged = null
         let repair = 0

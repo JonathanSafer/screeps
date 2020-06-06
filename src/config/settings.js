@@ -62,4 +62,9 @@ var settings = {
     resourceStatTime: 19 * 50,
 }
 
+if(Game.shard.name == "swc" || Game.shard.name == "botarena"){
+    //botarena and swc custom settings
+    settings.allies = ["Saruss","QzarSTB","Robalian","RayderBlitz","Sergey","dubu","Builder","qnz","Snowgoose","Shibdib","Szpadel","duckymirror","thraxxaldor","nyoom"]
+}
+
 module.exports = settings
