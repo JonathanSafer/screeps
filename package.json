@@ -13,6 +13,7 @@
 
     "push": "screeps-api upload dist/main.js --server main",
     "botarena": "screeps-api upload dist/main.js --server botarena",
+    "swc": "screeps-api upload dist/main.js --server swc",
     "season": "screeps-api upload dist/main.js --server season",
     "ptr": "screeps-api upload dist/main.js --server ptr",
     "roll": "rollup -c"
