@@ -17,7 +17,7 @@ var settings = {
     ghodiumAmount: 7000, //threshold to stop producing ghodium
     boostsNeeded: 3000, // boosts needed per city of a kind for us to boost creeps
     boostAmount: 5000, //threshold to stop producing boosts (add ~8000 to this and ghodium amount since this does not include ready to go boosts in terminal)
-    wallHeight: 10000000,
+    wallHeight: [0, 0, 0, 30000, 100000, 500000, 2000000, 10000000],
     bucket: {//minimum bucket thresholds
         resourceMining: 1000,
         repair: 2000, //repairing walls in a room

@@ -577,7 +577,7 @@ function updateBuilder(rcl, memory, spawn) {
             && !u.isNukeRampart(struct.pos))
         if(walls.length){//find lowest hits wall
             const minHits = _.min(walls, wall => wall.hits).hits
-            if(minHits < settings.wallHeight){
+            if(minHits < settings.wallHeight[rcl - 1]){
                 if(rcl >= 7){
                     sq.schedule(spawn, rB.name, true)
                     return
