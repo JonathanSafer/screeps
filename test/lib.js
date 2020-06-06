@@ -11,7 +11,7 @@ for (const key in constants) {
 }
 global._ = _
 
-const u = require("../src/lib/utils.js")
+const u = require("./testUtils.js")
 const GGame = class {
     constructor() {
         this.rooms = {}

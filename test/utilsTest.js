@@ -23,7 +23,7 @@ describe("utils", function () {
         Memory.reset()
         global.Cache = {}
     })
-    var u = require("../src/lib/utils.js")
+    var u = require("./testUtils.js")
     describe("#getFactory()", function () {
         it("should get the factory", function () {
             const factory = u.getFactory(createBasicCity("test"))
