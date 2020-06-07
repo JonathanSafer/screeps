@@ -338,11 +338,7 @@ var rQ = {
         const rooms = Object.keys(everythingByRoom)
         for(let i = 0; i < rooms.length; i++){
             everythingByRoom[rooms[i]].hostiles = u.findHostileCreeps(Game.rooms[rooms[i]])
-            const allStructures = u.findHostileStructures(Game.rooms[rooms[i]])
-            everythingByRoom[rooms[i]].structures = _(allStructures)
-                .reject(structure => [STRUCTURE_ROAD, STRUCTURE_CONTAINER]
-                    .includes(structure.structureType))
-                .value()
+            everythingByRoom[rooms[i]].structures = u.findHostileStructures(Game.rooms[rooms[i]])
 
             rQ.updateMatrices(rooms[i])//update matrices while we're at it
         }
@@ -413,7 +409,7 @@ var rQ = {
             creep.memory.targetPos = null
         }
         if(target || creep.memory.targetPos){
-            const pos = (target && target.pos) || new RoomPosition(creep.memory.targetPos.x, creep.memory.targetPos.y, creep.memory.targetPos.roomName,)
+            const pos = (target && target.pos) || new RoomPosition(creep.memory.targetPos.x, creep.memory.targetPos.y, creep.memory.targetPos.roomName)
             if(target){
                 creep.memory.targetPos = target.pos
                 creep.memory.target = target.id
