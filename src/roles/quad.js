@@ -436,6 +436,9 @@ var rQ = {
         if(everythingInRoom.hostiles.length){
             return rQ.getTarget(creep, everythingInRoom.hostiles, everythingInRoom.structures)
         }
+        if(everythingInRoom.structures.length){
+            return everythingInRoom.structures[0]
+        }
         return false
     },
 
