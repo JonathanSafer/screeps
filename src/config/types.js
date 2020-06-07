@@ -171,9 +171,10 @@ function pMinerBody(boosted){
 
 function minerBody(energyAvailable, rcl) {
     // miners. at least 1 move. 5 works until we can afford 10
+    const botarena = ["botarena, swc"].includes(Game.shard.name)
     let works = Math.floor((energyAvailable - BODYPART_COST[MOVE]) / BODYPART_COST[WORK])
-    if (works >= 25 && rcl > 7) works = 25
-    else if (works >= 10) works = 10
+    if (works >= 25 && rcl > 7 && !botarena) works = 25
+    else if (works >= 10 && (!botarena || rcl >= 6)) works = 10
     else if (works >= 5) works = 5
     else works = Math.max(1, works)
     const energyAfterWorks = energyAvailable - works * BODYPART_COST[WORK]
