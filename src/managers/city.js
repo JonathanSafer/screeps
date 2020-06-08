@@ -542,7 +542,8 @@ function updateUpgrader(city, controller, memory, rcl8, creeps, rcl) {
         var capacity = _.sum(_.map(banks, bank => bank.store.getCapacity()))
         //Log.info('money: ' + money + ', ' + (100*money/capacity));
         if(money > (capacity * .28)){
-            for(let i = 0; i < Math.ceil(settings.max.upgraders/3); i++){
+            const needed = Math.floor((money/capacity) * 5)
+            for(let i = 0; i < needed; i++){
                 sq.schedule(Game.spawns[city], rU.name, rcl >= 6)
             }
         } else {
