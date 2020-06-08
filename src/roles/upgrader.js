@@ -1,7 +1,7 @@
 var actions = require("../lib/actions")
-var u = require("../lib/utils")
 var linkLib = require("../buildings/link")
 var motion = require("../lib/motion")
+var rB = require("./builder")
 
 
 var rU = {
@@ -12,27 +12,13 @@ var rU = {
 
     /** @param {Creep} creep **/
     run: function(creep) {
-        var city = creep.memory.city
         if(creep.memory.needBoost && !creep.memory.boosted){
             rU.getBoosted(creep, rU.boosts[0])
             return
         }
-        creep.store.energy > 0 ? actions.upgrade(creep) : rU.withdraw(creep, city)
+        creep.store.energy > 0 ? actions.upgrade(creep) : rB.getEnergy(creep)
     },
 
-    withdraw: function(creep, city) {
-        let location = rU.getUpgradeLink(creep)
-
-        const targets = u.getWithdrawLocations(creep)
-        location = location || targets[creep.memory.target]
-        location = location || Game.spawns[city]
-        if(location.structureType != STRUCTURE_LINK && location.store.energy < 300){
-            return
-        }
-        if (actions.withdraw(creep, location) == ERR_NOT_ENOUGH_RESOURCES) {
-            creep.memory.target = u.getNextLocation(creep.memory.target, targets)
-        }
-    },
 
     // Get the upgrade link. Check creep memory, then lib. May return null
     getUpgradeLink: function(creep) {
