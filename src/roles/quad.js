@@ -645,20 +645,26 @@ var rQ = {
     longRangeToLocal: function(quad, leader, target){
         const route = Game.map.findRoute(leader.pos.roomName, target.roomName, {
             routeCallback(roomName) {
+                let returnValue = 2
                 if(Game.map.getRoomStatus(roomName).status != "normal") {
-                    return Infinity
-                }
-                const parsed = /^[WE]([0-9]+)[NS]([0-9]+)$/.exec(roomName)
-                const isHighway = (parsed[1] % 10 === 0) || 
-                                (parsed[2] % 10 === 0)
-                const isMyRoom = Game.rooms[roomName] &&
-                    Game.rooms[roomName].controller &&
-                    Game.rooms[roomName].controller.my
-                if (isHighway || isMyRoom) {
-                    return 1
+                    returnValue = Infinity
                 } else {
-                    return 2//favor highways
+                    const parsed = /^[WE]([0-9]+)[NS]([0-9]+)$/.exec(roomName)
+                    const isHighway = (parsed[1] % 10 === 0) || 
+                                    (parsed[2] % 10 === 0)
+                    const isMyRoom = Game.rooms[roomName] &&
+                        Game.rooms[roomName].controller &&
+                        Game.rooms[roomName].controller.my
+                    if (isHighway || isMyRoom) {
+                        returnValue = 1
+                    } else {
+                        returnValue = 2
+                    }
                 }
+                if(rQ.getRoomMatrix(roomName)){
+                    returnValue = returnValue * 0.8
+                }
+                return returnValue
             }
         })
         if(!route.length){
