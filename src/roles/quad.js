@@ -548,25 +548,30 @@ var rQ = {
                 if(_.find(hostiles, h => h.pos.isNearTo(creep.pos)) 
                     || _.find(roomName.structures, s => s.owner && s.hits && s.pos.isNearTo(creep.pos))){
                     creep.rangedMassAttack()
+                    u.logDamage(creep, creep.pos, true)
                     continue
                 }
                 const targetInRange = target && target.pos.inRangeTo(creep.pos, 3)
                 if(targetInRange && !target.structureType && !rQ.isUnderRampart(target)){
                     creep.rangedAttack(target)
+                    u.logDamage(creep, target.pos)
                     continue
                 }
                 const newTarget = _.find(hostiles, h => h.pos.inRangeTo(creep.pos, 3))
                 if(newTarget){
                     creep.rangedAttack(newTarget)
+                    u.logDamage(creep, newTarget.pos)
                     continue
                 }
                 if(targetInRange && target.structureType){
                     creep.rangedAttack(target)
+                    u.logDamage(creep, target.pos)
                     continue
                 }
                 const structureTarget = _.find(roomName.structures, h => h.pos.inRangeTo(creep.pos, 3))
                 if(structureTarget){
                     creep.rangedAttack(structureTarget)
+                    u.logDamage(creep, structureTarget.pos)
                 }
             }
         }
