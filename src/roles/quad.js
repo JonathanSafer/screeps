@@ -311,6 +311,7 @@ var rQ = {
     yolo: function(quad){//disband quad into harassers
         for(let i = 0; i < quad.length; i++){
             if(quad[i]){
+                quad[i].memory.reinforced = true//keeps quad members from trying to call in a boosted harasser
                 quad[i].memory.role = rH.name
             }
         }
