@@ -486,7 +486,8 @@ var rQ = {
 
         // if nothing is in our path then return the target at the end of the path
         const targetPos = path.pop()
-        const target = _(targetPos.lookFor(LOOK_STRUCTURES)).min("hits")
+        const targets = targetPos.lookFor(LOOK_CREEPS).concat(targetPos.lookFor(LOOK_STRUCTURES))
+        const target = _(targets).min("hits")
         return target
     },
 
