@@ -42,13 +42,13 @@ describe("remoteMiner", function () {
             assert.notEqual(source.id, source2.id)
         })
 
-        it("should move to the source", function () {
-            const room = normalRoom(3)
-            const miner = roleCreep(room, "1", rM.name)
-            // run once to get a source
-            rM.run(miner)
-            // run again to try harvest
-            rM.run(miner)
-        })
+        // it("should move to the source", function () {
+        //     const room = normalRoom(3)
+        //     const miner = roleCreep(room, "1", rM.name)
+        //     // run once to get a source
+        //     rM.run(miner)
+        //     // run again to try harvest
+        //     rM.run(miner)
+        // })
     })
 })

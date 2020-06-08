@@ -1,5 +1,6 @@
 var a = require("../lib/actions")
 var sq = require("../lib/spawnQueue")
+var motion = require("../lib/motion")
 
 var rM = {
     name: "remoteMiner",
@@ -15,12 +16,13 @@ var rM = {
         }
         if(creep.hits < creep.hitsMax){
             Game.spawns[creep.memory.city].memory.towersActive = true
-            creep.moveTo(Game.spawns[creep.memory.city])
+            motion.newMove(creep, Game.spawns[creep.memory.city].pos, 7)
             return
         }
         if(!creep.memory.source) {
             rM.nextSource(creep)
         } else if (!Game.getObjectById(creep.memory.source)){
+            motion.newMove(creep, new RoomPosition(25, 25, creep.memory.sourceRoom), 10)
             creep.moveTo(new RoomPosition(25, 25, creep.memory.sourceRoom), {reusePath: 50}) 
         } else {
             if (creep.saying != "*"){
@@ -56,6 +58,10 @@ var rM = {
 
     harvestTarget: function(creep) {
         var source = Game.getObjectById(creep.memory.source)
+        if(!creep.pos.inRangeTo(source, 2)){
+            motion.newMove(creep, source.pos, 2)
+            return
+        }
         if (creep.body.length === 15 && creep.pos.isNearTo(source) && Game.time % 2 === 0) {
             return
         }
