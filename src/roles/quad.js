@@ -505,8 +505,8 @@ var rQ = {
         const quadPoses = [[0, 0], [0, 1], [1, 0], [1, 1]]
         return _(quadPoses)
             .map(quadPos => room.lookForAt(LOOK_STRUCTURES, 
-                pos.x + quadPos[0], 
-                pos.y + quadPos[1]))
+                Math.max(pos.x + quadPos[0], 49), 
+                Math.max(pos.y + quadPos[1]), 49))
             .flatten()
             .value()
     },
