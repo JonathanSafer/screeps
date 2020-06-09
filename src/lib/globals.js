@@ -1,6 +1,7 @@
 const military = require("../managers/military")
 const sq = require("./spawnQueue")
 const rp = require("../managers/roomplan")
+const trading = require("../managers/swcTrading")
 
 global.T = function() { return `Time: ${Game.time}` }
 global.Cache = {}
@@ -39,3 +40,9 @@ global.RoomWeights = function(roomName) {
 }
 
 global.Botarena = ["botarena", "swc"].includes(Game.shard.name)
+
+global.RequestResource = function(roomName, resourceType, maxAmount, priority) {
+    trading.startOfTick()
+    trading.requestResource(roomName, resourceType, maxAmount, priority)
+    trading.endOfTick()
+}
