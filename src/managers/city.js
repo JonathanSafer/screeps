@@ -634,22 +634,11 @@ function updateRunner(creeps, spawn, extensions, memory, rcl, emergencyTime) {
 }
 
 function updateFerry(spawn, memory, rcl) {
-    if (rcl >= 7) {
+    if (rcl >= 6) {
         memory[rF.name] = 1
         return
     }
-    //check if we have a terminal
-    var terminal = spawn.room.terminal
-    var storage = spawn.room.storage
-    if (terminal && storage) {
-        if (terminal.store.energy < 50000 || Object.keys(storage.store).length > 1 || terminal.store.energy > 51000){
-            memory[rF.name] = 1
-        } else {
-            memory[rF.name] = 0
-        }
-    } else {
-        memory[rF.name] = 0
-    }
+    memory[rF.name] = 0
 }
 
 function updateStorageLink(spawn, memory, structures) {
