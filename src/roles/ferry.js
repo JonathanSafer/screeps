@@ -231,11 +231,14 @@ var rF = {
         } else if (link && link.store.energy > 0) {
             return 5
         }
+        if(!creep.room.terminal){
+            return 0
+        }
         const storage = creep.room.storage
         if (storage && storage.store.energy > 150000 && creep.room.terminal.store.energy < 50000 && _.sum(creep.room.terminal.store) < 295000){
             return 1
         }
-        if (creep.room.terminal && creep.room.terminal.store.energy > 51000){
+        if (creep.room.terminal.store.energy > 51000){
             return 3
         }
         if(storage && Object.keys(storage.store).length > 1){
