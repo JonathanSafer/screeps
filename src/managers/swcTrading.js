@@ -35,26 +35,26 @@ var simpleAllies = {
             const requests = u.getsetd(Cache, "requests", {})
             requests[currentAllyName] = []
             for (var request of allyRequests) {
-                const priority = Math.max(0, Math.min(1, request.priority))
+                //const priority = Math.max(0, Math.min(1, request.priority))
                 switch (request.requestType) {
                 case requestTypes.ATTACK:
-                    console.log("Attack help requested!", request.roomName, priority)
+                    //console.log("Attack help requested!", request.roomName, priority)
                     break
                 case requestTypes.DEFENSE:
-                    console.log("Defense help requested!", request.roomName, priority)
+                    //console.log("Defense help requested!", request.roomName, priority)
                     break
                 case requestTypes.RESOURCE:
                     requests[currentAllyName].push(request)
                     // const resourceType = request.resourceType
                     // const maxAmount = request.maxAmount
-                    console.log("Resource requested!", request.roomName, request.resourceType, request.maxAmount, priority)
+                    //console.log("Resource requested!", request.roomName, request.resourceType, request.maxAmount, priority)
                     // const lowerELimit = 350000 - priority * 200000
                     // const lowerRLimit = 24000 - priority * 12000
                     break
                 }
             }
         } else {
-            console.log("Simple allies either has no segment or has the wrong name?", currentAllyName)
+            //console.log("Simple allies either has no segment or has the wrong name?", currentAllyName)
         }
 
         const nextAllyName = allyList[(Game.time + 1) % allyList.length]
