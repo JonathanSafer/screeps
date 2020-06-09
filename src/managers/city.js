@@ -541,6 +541,10 @@ function updateUpgrader(city, controller, memory, rcl8, creeps, rcl) {
         var money = _.sum(_.map(banks, bank => bank.store[RESOURCE_ENERGY]))
         var capacity = _.sum(_.map(banks, bank => bank.store.getCapacity()))
         //Log.info('money: ' + money + ', ' + (100*money/capacity));
+        if(!room.storage && money/capacity < 0.5){
+            memory[rU.name] = 0
+            return
+        }
         if(money > (capacity * .28)){
             const needed = Math.floor((money/capacity) * 4)
             for(let i = 0; i < needed; i++){
