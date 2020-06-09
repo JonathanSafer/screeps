@@ -260,7 +260,11 @@ var markets = {
                 markets.buyMins(city, baseMins)
             }
             if(!level && !termUsed){
-                termUsed = markets.sellBars(city, bars, buyOrders)
+                termUsed = markets.sellResources(city, bars, 3000/*TODO make this a setting*/, city.terminal, buyOrders)
+                markets.sellBars(city, bars, buyOrders)
+            }
+            if(!termUsed){
+                termUsed = markets.sellResources(city, baseMins, 10000/*TODO make this a setting*/, city.storage, buyOrders)
             }
             //buy/sell energy
             termUsed = markets.processEnergy(city, termUsed, highEnergyOrder, energyOrders)
@@ -381,19 +385,17 @@ var markets = {
         }
     },
 
-    sellBars: function(city, bars, buyOrders){//if # of bars is above threshold, sell extras
-        const terminal = city.terminal
-        for(var i = 0; i < bars.length; i++){
-            if(terminal.store[bars[i]] > 3000){
-                const sellAmount = terminal.store[bars[i]] - 3000
-                const goodOrders = markets.sortOrder(buyOrders[bars[i]]).reverse()
-                if(goodOrders.length && goodOrders[0].price > (0.7 * markets.getPrice(bars[i]))){
+    sellResources: function(city, resources, threshold, container, buyOrders){
+        for(const resource of resources){
+            if(container.store[resource] > threshold){
+                const sellAmount = container.store[resource] - threshold
+                const goodOrders = markets.sortOrder(buyOrders[resource]).reverse()
+                if(goodOrders.length && goodOrders[0].price > (0.7 * markets.getPrice(resource))){
                     Game.market.deal(goodOrders[0].id, Math.min(goodOrders[0].remainingAmount,  sellAmount), city.name)
                     return true
                 }
             }
         }
-        return false
     },
 
     processEnergy: function(city, termUsed, highEnergyOrder, energyOrders){
