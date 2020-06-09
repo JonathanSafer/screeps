@@ -3,7 +3,7 @@ var rL = {
     // range needed to use these
     UPGRADE: 3,
     SOURCE: 1,
-    TERMINAL: 1,
+    STORAGE: 1,
     LINK: 1,
 
     fixCacheIfInvalid: function(room, rcl) {
@@ -23,7 +23,7 @@ var rL = {
                     sourceLinks.push(link)
                 } else if (rL.isNearStructure(link.pos, STRUCTURE_CONTROLLER, rL.UPGRADE + rL.LINK)) {
                     upgradeLink = link
-                } else if (rL.isNearStructure(link.pos, STRUCTURE_TERMINAL, rL.TERMINAL + rL.LINK)) {
+                } else if (rL.isNearStructure(link.pos, STRUCTURE_STORAGE, rL.STORAGE + rL.LINK)) {
                     storageLink = link
                 }
             }
