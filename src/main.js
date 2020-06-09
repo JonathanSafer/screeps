@@ -112,7 +112,7 @@ module.exports.loop = function () {
         }// TODO: this could go in run city?
 
         observer.recordRoomData()
-        if(Game.time % 400 == 39){//run commodity manager every 400 (lower than lowest batched reaction time, on the 39 so it'll be before dormant period ends)
+        if(Game.time % 400 == 39 && !["botarena", "swc"].includes(Game.shard.name)){//run commodity manager every 400 (lower than lowest batched reaction time, on the 39 so it'll be before dormant period ends)
             cM.runManager(myCities)
         }
 
