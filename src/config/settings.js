@@ -26,6 +26,7 @@ var settings = {
         upgrade: 8000,
         energyMining: 4000,
         powerMining: 6000,
+        mineralMining: 8000,
         // other constants we use with these
         range: 1000,
         powerRange: 3000, //this keeps all power mining from shutting off at once. 
