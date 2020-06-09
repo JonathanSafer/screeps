@@ -525,14 +525,14 @@ var rQ = {
             allHostiles = allHostiles.concat(Object.values(everythingByRoom)[i].hostiles)
         }
         const dangerous = _.filter(allHostiles, c => c.getActiveBodyparts(ATTACK) || c.getActiveBodyparts(RANGED_ATTACK))
-        const goals = _.map(dangerous, function(c) {
+        let goals = _.map(dangerous, function(c) {
             return { pos: c.pos, range: 5 }
         })
         let allTowers = []
-        for(let i = 0; i < Object.keys(everythingByRoom).length; i++){
-            allTowers = allTowers.concat(_.filter(Object.values(everythingByRoom)[i].structures), s => s.structureType == STRUCTURE_TOWER)
+        for(const everythingInRoom of Object.values(everythingByRoom)){
+            allTowers = allTowers.concat(_.filter(everythingInRoom.structures, s => s.structureType == STRUCTURE_TOWER))
         }
-        //goals = goals.concat(_.map(allTowers, function(t) { return { pos: t.pos, range: 20 } }))
+        goals = goals.concat(_.map(allTowers, function(t) { return { pos: t.pos, range: 20 } }))
         rQ.move(quad, goals, status, 0, true)
         return true
     },
@@ -791,6 +791,15 @@ var rQ = {
                     }
                 }
                 matrix[roomName] = costs
+                //if retreating, block off exits
+                if(retreat){
+                    for(let i = 0; i < 50; i++){
+                        costs.set(i, 0, 255)
+                        costs.set(i, 48, 255)
+                        costs.set(0, i, 255)
+                        costs.set(48, i, 255)
+                    }
+                }
                 return costs
             }
         })
