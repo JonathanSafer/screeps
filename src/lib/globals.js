@@ -37,3 +37,5 @@ global.DeployQuad = function(roomName, boosted) {
 global.RoomWeights = function(roomName) {
     rp.planRoom(roomName)
 }
+
+global.Botarena = ["botarena", "swc"].includes(Game.shard.name)
