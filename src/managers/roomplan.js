@@ -85,6 +85,9 @@ const p = {
 
     buildConstructionSite: function(room, structureType, pos, name) {
         //Log.info(room.lookAt(pos.x, pos.y)[0].type)
+        if(structureType == STRUCTURE_FACTORY && ["botarena", "swc"].includes(Game.shard.name)){
+            return
+        }
         const look = room.lookAt(pos.x, pos.y)
         if(room.controller.level < 5 && structureType == STRUCTURE_TERMINAL){
             structureType = STRUCTURE_CONTAINER
