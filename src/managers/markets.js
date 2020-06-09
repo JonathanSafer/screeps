@@ -261,7 +261,6 @@ var markets = {
             }
             if(!level && !termUsed){
                 termUsed = markets.sellResources(city, bars, 3000/*TODO make this a setting*/, city.terminal, buyOrders)
-                markets.sellBars(city, bars, buyOrders)
             }
             if(!termUsed){
                 termUsed = markets.sellResources(city, baseMins, 10000/*TODO make this a setting*/, city.storage, buyOrders)
