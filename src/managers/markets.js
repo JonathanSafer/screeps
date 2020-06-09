@@ -129,8 +129,9 @@ var markets = {
                 if(x === senders.length && !Memory.rooms[myCity.name].termUsed){
                     //buy mineral
                     const amount = 3000
-                    const sellOrders = markets.sortOrder(Game.market.getAllOrders(order => order.type == ORDER_SELL && order.resourceType == mineral && order.amount >= amount && order.price < 0.5))
-                    if (sellOrders.length){
+                    const goodPrice = markets.getPrice(mineral) * 1.2
+                    const sellOrders = markets.sortOrder(Game.market.getAllOrders(order => order.type == ORDER_SELL && order.resourceType == mineral && order.amount >= amount && order.price < goodPrice))
+                    if (sellOrders.length && sellOrders[0].price * amount <= Game.market.credits){
                         Game.market.deal(sellOrders[0].id, amount, myCity.name)
                         Game.spawns[city].memory.ferryInfo.mineralRequest = null
                         Memory.rooms[myCity.name].termUsed = true
