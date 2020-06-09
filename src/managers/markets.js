@@ -1,8 +1,13 @@
 var u = require("../lib/utils")
 var settings = require("../config/settings")
+const trading = require("./swcTrading")
 
 var markets = {
     manageMarket: function(myCities){//this function is now in charge of all terminal acitivity
+        const botarena = ["botarena", "swc"].includes(Game.shard.name)
+        if(botarena){
+            trading.checkAllies()
+        }
         if(Game.time % 10 != 0){
             return
         }
