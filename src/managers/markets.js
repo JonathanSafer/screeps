@@ -255,7 +255,9 @@ var markets = {
             //if any base mineral (besides ghodium) is low, an order for it will be placed on the market. If an order already exists, update quantity
             //if an order already exists and is above threshold (arbitrary?), increase price
             //buy minerals as needed
-            markets.buyMins(city, baseMins)
+            if(!["botarena", "swc"].includes(Game.shard.name)){
+                markets.buyMins(city, baseMins)
+            }
             if(!level && !termUsed){
                 termUsed = markets.sellBars(city, bars, buyOrders)
             }
@@ -463,7 +465,7 @@ var markets = {
         const store = city.terminal.store
 
         // if terminal doesn't have power then buy 5000
-        if (store[RESOURCE_POWER]) {
+        if (store[RESOURCE_POWER] || Game.market.credits < settings.creditMin) {
             return false
         }
 
