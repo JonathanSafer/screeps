@@ -34,6 +34,9 @@ var simpleAllies = {
             console.log(currentAllyName, RawMemory.foreignSegment.data)
             const requests = u.getsetd(Cache, "requests", {})
             requests[currentAllyName] = []
+            if(!allyRequests){
+                return
+            }
             for (var request of allyRequests) {
                 //const priority = Math.max(0, Math.min(1, request.priority))
                 switch (request.requestType) {
