@@ -244,7 +244,9 @@ var m = {
                 room.find(FIND_STRUCTURES).forEach(function(struct) {
                     if (struct.structureType === STRUCTURE_ROAD) {
                         // Favor roads over plain tiles
-                        costs.set(struct.pos.x, struct.pos.y, Math.ceil(moveSpeed/2))
+                        if(costs.get(struct.pos.x, struct.pos.y) != 0xff){
+                            costs.set(struct.pos.x, struct.pos.y, Math.ceil(moveSpeed/2))
+                        }
                     } else if (struct.structureType !== STRUCTURE_CONTAINER &&
                              (struct.structureType !== STRUCTURE_RAMPART ||
                               !struct.my)) {

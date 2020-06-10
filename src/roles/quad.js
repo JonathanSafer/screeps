@@ -258,7 +258,7 @@ var rQ = {
                         // Can't walk through non-walkable buildings
                         costs.set(struct.pos.x, struct.pos.y, 255)
                     }
-                    if(struct.structureType == STRUCTURE_ROAD){
+                    if(struct.structureType == STRUCTURE_ROAD && costs.get(struct.pos.x, struct.pos.y) != 255){
                         costs.set(struct.pos.x, struct.pos.y, 1)
                     }
                 })
