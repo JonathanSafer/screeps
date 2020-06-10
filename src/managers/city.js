@@ -548,7 +548,7 @@ function updateUpgrader(city, controller, memory, rcl8, creeps, rcl) {
         if(money > (capacity * .28)){
             let needed = Math.floor((money/capacity) * 4)
             if(room.storage){
-                needed = needed * needed
+                needed = Math.floor(Math.pow((money/capacity) * 4, 2))
             }
             for(let i = 0; i < needed; i++){
                 sq.schedule(Game.spawns[city], rU.name, rcl >= 6)
