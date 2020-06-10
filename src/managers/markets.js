@@ -109,6 +109,10 @@ var markets = {
     },
     
     distributeMinerals: function(myCities){
+        const botarena = ["botarena", "swc"].includes(Game.shard.name)
+        if(botarena){
+            trading.startOfTick()
+        }
         let senders = myCities
         for (const myCity of myCities){
             const city = myCity.memory.city
@@ -132,6 +136,11 @@ var markets = {
                     
                 }
                 if(x === senders.length && !Memory.rooms[myCity.name].termUsed){
+                    if(["botarena", "swc"].includes(Game.shard.name) && Game.time % 1000 != 0){
+                        //request mineral instead of buying
+                        trading.requestResource(myCity.name, mineral, 3000, 0.8)
+                        continue
+                    }
                     //buy mineral
                     const amount = 3000
                     const goodPrice = markets.getPrice(mineral) * 1.2
@@ -149,6 +158,10 @@ var markets = {
                 }
             }
         }
+        if(botarena && Cache.specialRequest){
+            trading.requestResource(Cache.specialRequest[0], Cache.specialRequest[1], Cache.specialRequest[2], Cache.specialRequest[3])
+        }
+        trading.endOfTick()
     },
 
     distributePower: function(myCities){

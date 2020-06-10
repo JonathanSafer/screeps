@@ -100,6 +100,12 @@ global.PathFinder = {
 global.RawMemory = {
     setActiveSegments: function() {
         return
+    },
+
+    segments: [],
+
+    setPublicSegments: function(){
+        return
     }
 }
 
