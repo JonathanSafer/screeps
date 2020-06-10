@@ -409,10 +409,12 @@ var markets = {
                 if(["botarena", "swc"].includes(Game.shard.name)){
                     //check if anybody wants this resource and send if they do
                     if(Cache.requests){
-                        for(const request of Cache.requests){
-                            if(request.resourceType == resource){
-                                city.terminal.send(resource, Math.min(sellAmount, request.maxAmount), request.roomName)
-                                return true
+                        for(const playerRequests of Object.values(Cache.requests)){
+                            for(const request of playerRequests){
+                                if(request.resourceType == resource){
+                                    city.terminal.send(resource, Math.min(sellAmount, request.maxAmount), request.roomName)
+                                    return true
+                                }
                             }
                         }
                     }
