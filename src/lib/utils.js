@@ -292,6 +292,7 @@ var u = {
         if(!u.isFriendlyRoom(room)){
             return _.filter(room.find(FIND_STRUCTURES), s => s.hits)
         }
+        return []
     },
 
     generateRoomList: function(minX, minY, sizeX, sizeY) {
