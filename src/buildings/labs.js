@@ -104,17 +104,22 @@ var labs = {
     },
 
     chooseBoost: function(currentBoost, spawn){
-        if(spawn.room.storage.store[RESOURCE_GHODIUM] < settings.ghodiumAmount){
-            spawn.memory.ferryInfo.labInfo.boost = RESOURCE_GHODIUM
+        const militaryBoosts = settings.militaryBoosts
+        const minBoost = _.min(militaryBoosts, function(boost) {
+            return spawn.room.storage.store[boost] || 0 + spawn.room.terminal.store[boost] || 0
+        })
+
+        if(spawn.room.storage.store[minBoost] < settings.boostAmount){
+            spawn.memory.ferryInfo.labInfo.boost = minBoost
             return
         }
-        const boostsList = settings.boosts
-        if (boostsList.includes(currentBoost) && spawn.room.storage.store[currentBoost] > settings.boostAmount - 3000){
-            boostsList.splice(boostsList.indexOf(currentBoost), 1)
+        const civBoosts = settings.civBoosts
+        if (civBoosts.includes(currentBoost) && spawn.room.storage.store[currentBoost] > settings.boostAmount - 3000){
+            civBoosts.splice(civBoosts.indexOf(currentBoost), 1)
         }
-        for(let i = 0; i < boostsList.length; i++){
-            if(spawn.room.storage.store[boostsList[i]] < settings.boostAmount){
-                spawn.memory.ferryInfo.labInfo.boost = boostsList[i]
+        for(let i = 0; i < civBoosts.length; i++){
+            if(spawn.room.storage.store[civBoosts[i]] < settings.boostAmount){
+                spawn.memory.ferryInfo.labInfo.boost = civBoosts[i]
                 return
             }
         }
