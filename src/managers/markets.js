@@ -281,7 +281,7 @@ var markets = {
                 termUsed = markets.sellResources(city, bars, 3000/*TODO make this a setting*/, city.terminal, buyOrders)
             }
             if(!termUsed){
-                termUsed = markets.sellResources(city, baseMins, 10000/*TODO make this a setting*/, city.storage, buyOrders)
+                termUsed = markets.sellResources(city, baseMins, 20000/*TODO make this a setting*/, city.storage, buyOrders)
             }
             //buy/sell energy
             termUsed = markets.processEnergy(city, termUsed, highEnergyOrder, energyOrders)
@@ -406,6 +406,17 @@ var markets = {
         for(const resource of resources){
             if(container.store[resource] > threshold){
                 const sellAmount = container.store[resource] - threshold
+                if(["botarena", "swc"].includes(Game.shard.name)){
+                    //check if anybody wants this resource and send if they do
+                    if(Cache.requests){
+                        for(const request of Cache.requests){
+                            if(request.resourceType == resource){
+                                city.terminal.send(resource, Math.min(sellAmount, request.maxAmount), request.roomName)
+                                return true
+                            }
+                        }
+                    }
+                }
                 const goodOrders = markets.sortOrder(buyOrders[resource]).reverse()
                 if(goodOrders.length && goodOrders[0].price > (0.7 * markets.getPrice(resource))){
                     Game.market.deal(goodOrders[0].id, Math.min(goodOrders[0].remainingAmount,  sellAmount), city.name)

@@ -31,7 +31,7 @@ var simpleAllies = {
         const currentAllyName = allyList[Game.time % allyList.length]
         if (RawMemory.foreignSegment && RawMemory.foreignSegment.username == currentAllyName) {
             const allyRequests = JSON.parse(RawMemory.foreignSegment.data)
-            console.log(currentAllyName, RawMemory.foreignSegment.data)
+            //console.log(currentAllyName, RawMemory.foreignSegment.data)
             const requests = u.getsetd(Cache, "requests", {})
             requests[currentAllyName] = []
             if(!allyRequests){
