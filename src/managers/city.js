@@ -579,7 +579,7 @@ function updateBuilder(rcl, memory, spawn) {
     } else {
         memory[rB.name] = 0
     }
-    if(rcl >= 4 && Game.cpu.bucket > settings.bucket.repair && spawn.room.storage){
+    if(rcl >= 4 && Game.cpu.bucket > settings.bucket.repair && spawn.room.storage && spawn.room.storage.store[RESOURCE_ENERGY] > settings.energy.repair){
         const walls = _.filter(spawn.room.find(FIND_STRUCTURES), 
             struct => [STRUCTURE_RAMPART, STRUCTURE_WALL].includes(struct.structureType) 
             && !u.isNukeRampart(struct.pos))
