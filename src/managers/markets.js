@@ -63,7 +63,7 @@ var markets = {
             var sortedCities = _.sortBy(needEnergy, city => city.storage.store.energy)
             receiver = sortedCities[0].name
             for (const city of myCities){
-                if (city.storage && city.storage.store.energy > settings.energy.processPower - 150000 && !Memory.rooms[city.name].termUsed){
+                if (city.storage && city.storage.store.energy > Game.rooms[receiver].storage.store.energy + 150000 && !Memory.rooms[city.name].termUsed){
                     city.terminal.send(RESOURCE_ENERGY, 25000, receiver)
                     Memory.rooms[city.name].termUsed = true
                 }
