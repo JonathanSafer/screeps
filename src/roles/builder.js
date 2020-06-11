@@ -45,7 +45,7 @@ var rB = {
 
     getEnergy: function(creep) {
         var location = u.getStorage(creep.room)
-        if(location.store.energy < 300){
+        if(location.store.energy < 300 || (location.structureType != STRUCTURE_SPAWN && location.store.energy < 800)){
             return
         }
         if (a.withdraw(creep, location) == ERR_NOT_ENOUGH_RESOURCES) {
