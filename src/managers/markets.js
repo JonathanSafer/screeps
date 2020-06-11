@@ -136,15 +136,18 @@ var markets = {
                     
                 }
                 if(x === senders.length && !Memory.rooms[myCity.name].termUsed){
-                    if(["botarena", "swc"].includes(Game.shard.name) && Game.time % 1000 != 0){
+                    const amount = 3000
+                    if(botarena && Game.time % 1000 != 0){
                         //request mineral instead of buying
-                        trading.requestResource(myCity.name, mineral, 3000, 0.8)
+                        trading.requestResource(myCity.name, mineral, amount, 0.8)
                         continue
                     }
                     //buy mineral
-                    const amount = 3000
-                    const goodPrice = markets.getPrice(mineral) * 1.2
-                    const sellOrders = markets.sortOrder(Game.market.getAllOrders(order => order.type == ORDER_SELL && order.resourceType == mineral && order.amount >= amount && order.price < goodPrice))
+                    const goodPrice = botarena ? markets.getPrice(mineral) * 2 : markets.getPrice(mineral) * 1.2
+                    const sellOrders = markets.sortOrder(Game.market.getAllOrders(order => order.type == ORDER_SELL 
+                        && order.resourceType == mineral 
+                        && order.amount >= amount 
+                        && (order.price < goodPrice || goodPrice == 0.002)))
                     if (sellOrders.length && sellOrders[0].price * amount <= Game.market.credits){
                         Game.market.deal(sellOrders[0].id, amount, myCity.name)
                         Game.spawns[city].memory.ferryInfo.mineralRequest = null
