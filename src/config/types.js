@@ -227,8 +227,8 @@ function quadBody(energyAvailable, rcl, room, boosted){
         if(rcl == 8){
             return body([2, 18, 9, 8, 1, 12], [TOUGH, RANGED_ATTACK, MOVE, TOUGH, MOVE, HEAL])
         }
-        const ratio = [1, 4, 1, 2, 2]
-        const types = [TOUGH, RANGED_ATTACK, TOUGH, MOVE, HEAL]
+        const ratio = [1, 4, 1, 1, 1, 2]
+        const types = [TOUGH, RANGED_ATTACK, MOVE, TOUGH, MOVE, HEAL]
         return scalingBody(ratio, types, energyAvailable)
     }
     //make unboosted variant
