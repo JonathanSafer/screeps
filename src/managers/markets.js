@@ -161,10 +161,12 @@ var markets = {
                 }
             }
         }
-        if(botarena && Cache.specialRequest){
-            trading.requestResource(Cache.specialRequest[0], Cache.specialRequest[1], Cache.specialRequest[2], Cache.specialRequest[3])
+        if(botarena){
+            if(Cache.specialRequest){
+                trading.requestResource(Cache.specialRequest[0], Cache.specialRequest[1], Cache.specialRequest[2], Cache.specialRequest[3])
+            }
+            trading.endOfTick()
         }
-        trading.endOfTick()
     },
 
     distributePower: function(myCities){
