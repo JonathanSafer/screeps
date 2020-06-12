@@ -414,7 +414,7 @@ var markets = {
                     if(Cache.requests){
                         for(const playerRequests of Object.values(Cache.requests)){
                             for(const request of playerRequests){
-                                if(request.resourceType == resource){
+                                if(request.resourceType == resource && request.priority > 0.7 && Game.market.credits > 10000){
                                     city.terminal.send(resource, Math.min(sellAmount, request.maxAmount), request.roomName)
                                     return true
                                 }
