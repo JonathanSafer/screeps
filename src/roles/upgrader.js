@@ -16,10 +16,18 @@ var rU = {
             rU.getBoosted(creep, rU.boosts[0])
             return
         }
-        creep.store.energy > 0 ? actions.upgrade(creep) : rB.getEnergy(creep)
+        creep.store.energy > 0 ? actions.upgrade(creep) : rU.getEnergy(creep)
     },
 
 
+    getEnergy: function(creep){
+        const link = rU.getUpgradeLink(creep)
+        if(link){
+            actions.withdraw(creep, link)
+            return
+        }
+        rB.getEnergy(creep)
+    },
     // Get the upgrade link. Check creep memory, then lib. May return null
     getUpgradeLink: function(creep) {
         var link = Game.getObjectById(creep.memory.upgradeLink)
