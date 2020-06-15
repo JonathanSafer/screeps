@@ -129,10 +129,15 @@ var rDM = {
         })
         if (ally) {
             //remove flag
-            const flagName = creep.memory.city + "deposit"
-            delete Memory.flags[flagName]
-            creep.memory.target = 1
-            return true
+            const allies = _.filter(creep.room.find(FIND_HOSTILE_CREEPS), c => settings.allies.includes(c.owner.username))
+            for(const friendly of allies){
+                if(friendly.getActiveBodyparts(WORK) > 0){
+                    const flagName = creep.memory.city + "deposit"
+                    delete Memory.flags[flagName]
+                    creep.memory.target = 1
+                    return true
+                }
+            }
         }
         return false
     }
