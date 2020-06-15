@@ -425,7 +425,7 @@ var markets = {
                     }
                 }
                 const goodOrders = markets.sortOrder(buyOrders[resource]).reverse()
-                if(goodOrders.length && goodOrders[0].price > (0.7 * markets.getPrice(resource))){
+                if(goodOrders.length && goodOrders[0].price > (0.75 * markets.getPrice(resource))){
                     Game.market.deal(goodOrders[0].id, Math.min(Math.min(goodOrders[0].remainingAmount,  sellAmount), city.terminal.store[resource]), city.name)
                     return true
                 }
