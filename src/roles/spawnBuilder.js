@@ -41,6 +41,14 @@ var rSB = {
             return
         }
         if(!Memory.flags.claim){
+            if(creep.store[RESOURCE_ENERGY] > 0){
+                const containers = _.filter(creep.room.find(FIND_STRUCTURES), struct => struct.structureType == STRUCTURE_CONTAINER)
+                if (containers.length){
+                    a.charge(creep, containers[0])
+                } else {
+                    creep.drop(RESOURCE_ENERGY)
+                }
+            }
             return
         }
         if(creep.pos.roomName === Memory.flags.claim.roomName){
