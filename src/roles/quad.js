@@ -394,7 +394,7 @@ var rQ = {
                 }
                 for(const ranger of ranged){
                     if(member.pos.inRangeTo(ranger.pos, 3) ||(member.pos.inRangeTo(ranger.pos, 4) && !ranger.fatigue)){
-                        damage += u.getCreepDamage(RANGED_ATTACK)
+                        damage += u.getCreepDamage(ranger, RANGED_ATTACK)
                     }
                 }
             }
