@@ -372,8 +372,8 @@ var rQ = {
     getDamageTolerance: function(quad){
         if(!quad[0].memory.tolerance){
             const heals = quad[0].getActiveBodyparts(HEAL)
-            const boostedPart = _.find(quad[0].body, part => part.boost)
-            const multiplier = boostedPart ? BOOSTS[HEAL][boostedPart.boost] : 1
+            const boostedPart = _.find(quad[0].body, part => part.type == HEAL && part.boost)
+            const multiplier = boostedPart ? BOOSTS[HEAL][boostedPart.boost][HEAL] : 1
             quad[0].memory.tolerance = HEAL_POWER * multiplier * heals * 4
         }
         return quad[0].memory.tolerance

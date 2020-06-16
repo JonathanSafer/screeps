@@ -460,8 +460,8 @@ var u = {
 
     getCreepDamage: function(creep, type){
         const damageParts = creep.getActiveBodyparts(type)
-        const boostedPart = _.find(creep.body, part => part.boost)
-        const multiplier = boostedPart ? BOOSTS[type][boostedPart.boost] : 1
+        const boostedPart = _.find(creep.body, part => part.type == type && part.boost)
+        const multiplier = boostedPart ? BOOSTS[type][boostedPart.boost][type] : 1
         const powerConstant = type == RANGED_ATTACK ? RANGED_ATTACK_POWER : ATTACK_POWER
         return powerConstant * multiplier * damageParts
     },
