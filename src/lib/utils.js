@@ -456,7 +456,15 @@ var u = {
             Tmp[creep.room.name].attacks.push({x: targetPos.x, y: targetPos.y, damage: damageMultiplier * RANGED_ATTACK_POWER})
         }
 
-    }
+    },
+
+    getCreepDamage: function(creep, type){
+        const damageParts = creep.getActiveBodyparts(type)
+        const boostedPart = _.find(creep.body, part => part.boost)
+        const multiplier = boostedPart ? BOOSTS[type][boostedPart.boost] : 1
+        const powerConstant = type == RANGED_ATTACK ? RANGED_ATTACK_POWER : ATTACK_POWER
+        return powerConstant * multiplier * damageParts
+    },
 }
 
 module.exports = u

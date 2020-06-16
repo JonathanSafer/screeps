@@ -185,7 +185,7 @@ var rQ = {
 
         let needRetreat = rQ.heal(quad, everythingByRoom)//if below certain health thresholds, we might need to retreat
         if(!needRetreat){
-            needRetreat = rQ.checkMelee(quad, everythingByRoom)
+            needRetreat = rQ.checkDamage(quad, everythingByRoom)
         }
 
         let retreated = false
@@ -369,17 +369,38 @@ var rQ = {
         }
     },
 
-    checkMelee: function(quad, everythingByRoom){//bool
+    getDamageTolerance: function(quad){
+        if(!quad[0].memory.tolerance){
+            const heals = quad[0].getActiveBodyparts(HEAL)
+            const boostedPart = _.find(quad[0].body, part => part.boost)
+            const multiplier = boostedPart ? BOOSTS[HEAL][boostedPart.boost] : 1
+            quad[0].memory.tolerance = HEAL_POWER * multiplier * heals * 4
+        }
+        return quad[0].memory.tolerance
+    },
+
+    checkDamage: function(quad, everythingByRoom){//bool
         //return true if there is a melee creep adjacent to any of the quad members
+        let damage = 0
+        const tolerance = rQ.getDamageTolerance(quad)
         for(const roomName of Object.values(everythingByRoom)){
             const melee = _.filter(roomName.hostiles, c => c.getActiveBodyparts(ATTACK))
+            const ranged = _.filter(roomName.hostiles, c => c.getActiveBodyparts(RANGED_ATTACK))
             for(const member of roomName.creeps){
                 for(const attacker of melee){
                     if(member.pos.isNearTo(attacker.pos) ||(member.pos.inRangeTo(attacker.pos, 2) && !attacker.fatigue)){
-                        return true
+                        damage += u.getCreepDamage(attacker, ATTACK)
+                    }
+                }
+                for(const ranger of ranged){
+                    if(member.pos.inRangeTo(ranger.pos, 3) ||(member.pos.inRangeTo(ranger.pos, 4) && !ranger.fatigue)){
+                        damage += u.getCreepDamage(RANGED_ATTACK)
                     }
                 }
             }
+        }
+        if(damage > tolerance + 100){
+            return true
         }
         return false
     },
@@ -515,6 +536,16 @@ var rQ = {
     getCost: function(hits, maxHits, oldCost) {
         const ratio = Math.round(255 * hits / maxHits)
         return Math.max(1, Math.min(oldCost + ratio, 254)) // 0 < ratio < 255
+    },
+
+    getTowerDamage: function(quad){
+        const matrix = rQ.getDamageMatrix(quad[0].room.name)
+        if(matrix){
+            matrix[quad[0].pos.x][quad[0].pos.y]
+            return Math.max(Math.max(matrix[quad[0].pos.x][quad[0].pos.y],matrix[quad[1].pos.x][quad[1].pos.y]),
+                Math.max(matrix[quad[2].pos.x][quad[2].pos.y],matrix[quad[3].pos.x][quad[3].pos.y]))
+        }
+        return 0
     },
 
     attemptRetreat: function(quad, everythingByRoom, status){//bool
