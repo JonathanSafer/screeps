@@ -506,7 +506,7 @@ var rQ = {
         return _(quadPoses)
             .map(quadPos => room.lookForAt(LOOK_STRUCTURES, 
                 Math.min(pos.x + quadPos[0], 49), 
-                Math.min(pos.y + quadPos[1]), 49))
+                Math.min(pos.y + quadPos[1], 49)))
             .flatten()
             .value()
     },
