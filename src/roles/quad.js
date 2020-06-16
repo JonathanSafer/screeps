@@ -381,7 +381,7 @@ var rQ = {
 
     checkDamage: function(quad, everythingByRoom){//bool
         //return true if there is a melee creep adjacent to any of the quad members
-        let damage = 0
+        let damage = rQ.getTowerDamage(quad)
         const tolerance = rQ.getDamageTolerance(quad)
         for(const roomName of Object.values(everythingByRoom)){
             const melee = _.filter(roomName.hostiles, c => c.getActiveBodyparts(ATTACK))
@@ -541,9 +541,8 @@ var rQ = {
     getTowerDamage: function(quad){
         const matrix = rQ.getDamageMatrix(quad[0].room.name)
         if(matrix){
-            matrix[quad[0].pos.x][quad[0].pos.y]
-            return Math.max(Math.max(matrix[quad[0].pos.x][quad[0].pos.y],matrix[quad[1].pos.x][quad[1].pos.y]),
-                Math.max(matrix[quad[2].pos.x][quad[2].pos.y],matrix[quad[3].pos.x][quad[3].pos.y]))
+            return Math.max(Math.max(matrix.get(quad[0].pos.x,quad[0].pos.y),matrix.get(quad[1].pos.x,quad[1].pos.y)),
+                Math.max(matrix.get(quad[2].pos.x,quad[2].pos.y),matrix.get(quad[3].pos.x,quad[3].pos.y)))
         }
         return 0
     },
