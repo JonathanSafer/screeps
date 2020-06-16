@@ -743,6 +743,13 @@ var rQ = {
         } else {
             destination = target
         }
+        if(range == 1){
+            range = 2
+            if(status.leader.pos.inRangeTo(target, 2)
+            && _.every(quad, member => !member.pos.isNearTo(target))){
+                range = 1
+            }
+        }
         const matrix = {}
 
         const search = PathFinder.search(status.leader.pos, destination, {
