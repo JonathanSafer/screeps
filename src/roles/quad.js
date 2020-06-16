@@ -694,6 +694,8 @@ var rQ = {
                         Game.rooms[roomName].controller.my
                     if (isHighway || isMyRoom) {
                         returnValue = 1
+                    } else if(Cache[roomName] && Cache[roomName].enemy){
+                        returnValue = 20
                     } else {
                         returnValue = 2
                     }
