@@ -494,6 +494,35 @@ var rQ = {
                         costs.set(x, y, cost)
                     }
                 }
+
+                const terrain = new Room.Terrain(roomName)
+                //fill matrix with default terrain values
+                for(let i = 0; i < 50; i++){
+                    for(let j = 0; j < 50; j++){
+                        switch(terrain.get(i,j)) {
+                        case TERRAIN_MASK_WALL:
+                            costs.set(i, j, 255)
+                            break
+                        case TERRAIN_MASK_SWAMP:
+                            costs.set(i, j, 5)
+                            break
+                        case 0:
+                            costs.set(i, j, 1)
+                            break
+                        }
+                    }
+                }
+
+                for(let i = 0; i < 50; i++){
+                    for(let j = 0; j < 50; j++){
+                        if(terrain.get(i,j) == TERRAIN_MASK_WALL){
+                            costs.set(i, j, 255)
+                            costs.set(Math.max(0, i - 1), Math.max(0, j - 1), 255)//TOP_LEFT
+                            costs.set(i, Math.max(0, j - 1), 255)//TOP
+                            costs.set(Math.max(0, i - 1), j, 255)//LEFT
+                        }
+                    }
+                }
                 return costs
             }
         })
