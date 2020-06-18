@@ -465,6 +465,34 @@ var u = {
         const powerConstant = type == RANGED_ATTACK ? RANGED_ATTACK_POWER : ATTACK_POWER
         return powerConstant * multiplier * damageParts
     },
+
+    convertFromHex: function(hex) {
+        hex = hex.toString()
+        let str = ""
+        for (let i = 0; i < hex.length; i += 2){
+            str += String.fromCharCode(parseInt(hex.substr(i, 2), 16))
+        }
+        return str
+    },
+
+    convertToHex: function(str) {
+        let hex = ""
+        for(var i = 0; i < str.length; i++) {
+            hex += ""+str.charCodeAt(i).toString(16)
+        }
+        return hex
+    },
+
+    generateCreepName: function(counter, role){
+        //add counter and role to make one string
+        const hex = u.convertToHex(role + counter)
+        //convert string to hex
+        //multiply by 3
+        const name = u.convertFromHex(hex * 3)
+        //convert back to string
+        console.log(name, role)
+        return counter
+    }
 }
 
 module.exports = u
