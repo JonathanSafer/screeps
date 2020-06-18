@@ -488,7 +488,7 @@ var u = {
         const hex = u.convertToHex(role + counter)
         //convert string to hex
         //multiply by 3
-        const name = u.convertFromHex(hex * 3)
+        const name = u.convertFromHex(parseInt(hex, 16) * 3)
         //convert back to string
         console.log(name, role)
         return counter
