@@ -40,7 +40,7 @@ function makeCreeps(role, city, unhealthyStore, creepWantsBoosts) {
     if(!Memory.counter){
         Memory.counter = 0
     }
-    const name = u.generateCreepName(Memory.counter.toString(), role)
+    const name = u.generateCreepName(Memory.counter.toString(), role.type)
     if (types.cost(recipe) > room.energyAvailable) return false
 
     const spawn = u.getAvailableSpawn(spawns)
