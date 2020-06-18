@@ -293,7 +293,7 @@ var markets = {
             //sell products
             termUsed = markets.sellProducts(city, termUsed, buyOrders, highTier)
 
-            termUsed = markets.buyPower(city, termUsed, sellOrders)
+            //termUsed = markets.buyPower(city, termUsed, sellOrders)
         }
     },
 
