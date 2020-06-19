@@ -244,7 +244,7 @@ var markets = {
         const orders = Game.market.getAllOrders()
         global.MarketHistory = _.groupBy(Game.market.getHistory(), history => history.resourceType)
         const buyOrders = _.groupBy(_.filter(orders, order => order.type == ORDER_BUY), order => order.resourceType)
-        const sellOrders = _.groupBy(_.filter(orders, order => order.type == ORDER_SELL), order => order.resourceType)
+        //const sellOrders = _.groupBy(_.filter(orders, order => order.type == ORDER_SELL), order => order.resourceType)
         const energyOrders = markets.sortOrder(buyOrders[RESOURCE_ENERGY]).reverse()
         const highEnergyOrder = energyOrders[0]
         
