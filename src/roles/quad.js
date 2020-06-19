@@ -3,6 +3,7 @@ const u = require("../lib/utils")
 const a = require("../lib/actions")
 const rH = require("./harasser")
 const T = require("../buildings/tower")
+const settings = require("../config/settings")
 
 var CreepState = {
     START: 1,
@@ -826,7 +827,8 @@ var rQ = {
                         quadNames.push(quad[i].name)
                     }
                     for (const creep of Game.rooms[roomName].find(FIND_CREEPS)) {
-                        if(!_(quad).find(member => member.pos.inRangeTo(creep.pos, 3))){
+                        if(!_(quad).find(member => member.pos.inRangeTo(creep.pos, 8))
+                            || (!settings.allies.includes(creep.owner.username) && !_(quad).find(member => member.pos.inRangeTo(creep.pos, 3)))){
                             continue
                         }
                         if(!quadNames.includes(creep.name)){
