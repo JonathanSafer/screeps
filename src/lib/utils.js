@@ -466,32 +466,8 @@ var u = {
         return powerConstant * multiplier * damageParts
     },
 
-    convertFromHex: function(hex) {
-        hex = hex.toString()
-        let str = ""
-        for (let i = 0; i < hex.length; i += 2){
-            str += String.fromCharCode(parseInt(hex.substr(i, 2), 16))
-        }
-        return str
-    },
-
-    convertToHex: function(str) {
-        let hex = ""
-        for(var i = 0; i < str.length; i++) {
-            hex += ""+str.charCodeAt(i).toString(16)
-        }
-        return hex
-    },
-
     generateCreepName: function(counter, role){
-        //add counter and role to make one string
-        const hex = u.convertToHex(role + counter)
-        //convert string to hex
-        //multiply by 3
-        const name = u.convertFromHex(parseInt(hex, 16) * 3)
-        //convert back to string
-        console.log(name, role)
-        return counter
+        return role + counter
     }
 }
 
