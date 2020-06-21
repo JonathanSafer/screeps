@@ -27,6 +27,10 @@ global.SpawnBreaker = function(city, boosted){
     sq.schedule(Game.spawns[city], "medic", boosted)
     sq.schedule(Game.spawns[city], "breaker", boosted)
 }
+global.SpawnRole = function(role, city, boosted){
+    sq.initialize(Game.spawns[city])
+    sq.schedule(Game.spawns[city], role, boosted)
+}
 global.PlaceFlag = function(flagName, x, y, roomName){
     Memory.flags[flagName] = new RoomPosition(x, y, roomName)
 }
