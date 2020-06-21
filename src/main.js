@@ -37,6 +37,10 @@ module.exports.loop = function () {
     "use strict"
     profiler.wrap(function () {
         er.reset()
+
+        if(Game.shard.name == "shard2" && Game.cpu.bucket > 9500){
+            Game.cpu.generatePixel()
+        }
         var localRooms = u.splitRoomsByCity() // only used for remote mining?
         var localCreeps = u.splitCreepsByCity()
         var myCities = u.getMyCities()
@@ -87,7 +91,7 @@ module.exports.loop = function () {
         if(Game.time % 50 == 1){
             _.forEach(Game.creeps, function(creep) {
                 if(!creep.memory.role){
-                    creep.memory.role = creep.name.split("-")
+                    creep.memory.role = creep.name.split("-")[0]
                 }
                 if(!creep.memory.city){
                     creep.memory.city = "homeless"
@@ -97,9 +101,9 @@ module.exports.loop = function () {
 
         //run homeless creeps (1 tick delay)
         if(localCreeps["homeless"]){
+            const allRoles = rr.getRoles()
+            const nameToRole = _.groupBy(allRoles, role => role.name)
             _.forEach(localCreeps["homeless"], (creep) => {
-                const allRoles = rr.getRoles()
-                const nameToRole = _.groupBy(allRoles, role => role.name)
                 nameToRole[creep.memory.role][0].run(creep)
             })
         }
