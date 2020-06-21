@@ -1,7 +1,7 @@
 
 
 var settings = {
-    allies: ["Atanner"],
+    allies: ["Atanner", "slowmotionghost", "Timendainum", "FeTiD"],
     nukeStructures: [STRUCTURE_SPAWN, STRUCTURE_LAB, STRUCTURE_STORAGE, STRUCTURE_FACTORY,
         STRUCTURE_TERMINAL, STRUCTURE_POWER_SPAWN, STRUCTURE_NUKER],
     militaryBoosts:["XKHO2", "XGHO2", "XZHO2", "XLHO2", "XZH2O"],
