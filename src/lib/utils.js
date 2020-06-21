@@ -467,7 +467,7 @@ var u = {
     },
 
     generateCreepName: function(counter, role){
-        return role + counter
+        return role + "-" + counter
     }
 }
 

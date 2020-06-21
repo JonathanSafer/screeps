@@ -242,7 +242,7 @@ var m = {
                 const costs = new PathFinder.CostMatrix
 
                 room.find(FIND_STRUCTURES).forEach(function(struct) {
-                    if (struct.structureType === STRUCTURE_ROAD) {
+                    if (struct.structureType === STRUCTURE_ROAD || (struct.structureType == STRUCTURE_PORTAL && struct.pos.isEqualTo(goals))) {
                         // Favor roads over plain tiles
                         if(costs.get(struct.pos.x, struct.pos.y) != 0xff){
                             costs.set(struct.pos.x, struct.pos.y, Math.ceil(moveSpeed/2))

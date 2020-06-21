@@ -36,9 +36,6 @@ module.exports.loop = function () {
     "use strict"
     profiler.wrap(function () {
         er.reset()
-        if(Game.shard.name == "shard2"){
-            return
-        }
         var localRooms = u.splitRoomsByCity() // only used for remote mining?
         var localCreeps = u.splitCreepsByCity()
         var myCities = u.getMyCities()
@@ -84,6 +81,18 @@ module.exports.loop = function () {
         _.forEach(Game.powerCreeps, function(powerCreep) {
             rPC.run(powerCreep)
         })
+
+        //gather homeless creeps
+        if(Game.time % 50 == 1){
+            _.forEach(Game.creeps, function(creep) {
+                if(!creep.memory.role){
+                    creep.memory.role = creep.name.split("-")
+                }
+                if(!creep.memory.city){
+                    creep.memory.city = "homeless"
+                }
+            })
+        }
 
         //clear old creeps
         if (Game.time % 100 === 0) {
