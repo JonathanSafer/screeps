@@ -12,6 +12,7 @@ const b = require("./operations/bucket")
 const observer = require("./buildings/observer")
 require("./operations/profiler-prep")
 require("./lib/globals")
+var rr = require("./roles/roles")
 
 //Code to manually profile:
 //Game.profiler.profile(1000);
@@ -91,6 +92,15 @@ module.exports.loop = function () {
                 if(!creep.memory.city){
                     creep.memory.city = "homeless"
                 }
+            })
+        }
+
+        //run homeless creeps (1 tick delay)
+        if(localCreeps["homeless"]){
+            _.forEach(localCreeps["homeless"], (creep) => {
+                const allRoles = rr.getRoles()
+                const nameToRole = _.groupBy(allRoles, role => role.name)
+                nameToRole[creep.memory.role][0].run(creep)
             })
         }
 
