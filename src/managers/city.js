@@ -461,10 +461,10 @@ function updateMiner(rooms, rcl8, memory, spawn){
         const powerCreeps = spawn.room.find(FIND_MY_POWER_CREEPS)
         if(_.find(spawn.room.find(FIND_MY_CREEPS), c => c.memory.role == rD.name)){
             memory[rM.name] = 0
-        } else if(powerCreeps.length && powerCreeps[0].powers[PWR_REGEN_SOURCE]){
+        } else if((powerCreeps.length && powerCreeps[0].powers[PWR_REGEN_SOURCE])  || spawn.room.storage.store[RESOURCE_ENERGY] < settings.energy.processPower){
             memory[rM.name] = 2
         } else {
-            memory[rM.name] = 2
+            memory[rM.name] = 0
         }
         return
     }
