@@ -95,6 +95,7 @@ module.exports.loop = function () {
                 }
                 if(!creep.memory.city){
                     creep.memory.city = "homeless"
+                    creep.memory.target = 0
                 }
             })
         }
