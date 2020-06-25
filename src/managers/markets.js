@@ -532,7 +532,7 @@ var markets = {
     getPrice: function(resource){
         //determine price using history
         if(!MarketHistory){
-            return .001
+            global.MarketHistory = _.groupBy(Game.market.getHistory(), history => history.resourceType)
         }
         const history = MarketHistory[resource] // TODO this may not be declared yet
         let totalVol = 0
