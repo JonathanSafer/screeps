@@ -276,7 +276,10 @@ global.Store = class {
         return this.capacity - this.getUsedCapacity()
     }
 
-    getUsedCapacity() {
+    getUsedCapacity(mineral) {
+        if(mineral){
+            return this[mineral] || 0
+        }
         const cap =  _(RESOURCES_ALL).map(resource => this[resource] || 0).sum()
         return cap
     }
