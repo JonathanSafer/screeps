@@ -127,6 +127,7 @@ var rBr = {
         if((dangerous || creep.hits < creep.hitsMax * .9 || medic.hits < medic.hitsMax * .9) && checkpoint && canMove){
             motion.newMove(medic, checkpoint, 1)
             rBr.medicMove(medic, creep)
+            return true
         }
         return false
     },
