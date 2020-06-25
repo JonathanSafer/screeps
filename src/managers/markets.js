@@ -242,7 +242,7 @@ var markets = {
 
         // load order info
         const orders = Game.market.getAllOrders()
-        global.MarketHistory = _.groupBy(Game.market.getHistory(), history => history.resourceType)
+        Cache.marketHistory = _.groupBy(Game.market.getHistory(), history => history.resourceType)
         const buyOrders = _.groupBy(_.filter(orders, order => order.type == ORDER_BUY), order => order.resourceType)
         //const sellOrders = _.groupBy(_.filter(orders, order => order.type == ORDER_SELL), order => order.resourceType)
         const energyOrders = markets.sortOrder(buyOrders[RESOURCE_ENERGY]).reverse()
@@ -531,10 +531,10 @@ var markets = {
 
     getPrice: function(resource){
         //determine price using history
-        if(!MarketHistory){
-            global.MarketHistory = _.groupBy(Game.market.getHistory(), history => history.resourceType)
+        if(!Cache.marketHistory){
+            Cache.marketHistory = _.groupBy(Game.market.getHistory(), history => history.resourceType)
         }
-        const history = MarketHistory[resource]
+        const history = Cache.marketHistory[resource]
         let totalVol = 0
         let totalPrice = 0
         if(!history){
