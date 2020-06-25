@@ -534,7 +534,7 @@ var markets = {
         if(!MarketHistory){
             global.MarketHistory = _.groupBy(Game.market.getHistory(), history => history.resourceType)
         }
-        const history = MarketHistory[resource] // TODO this may not be declared yet
+        const history = MarketHistory[resource]
         let totalVol = 0
         let totalPrice = 0
         if(!history){
