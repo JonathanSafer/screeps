@@ -531,6 +531,9 @@ var markets = {
 
     getPrice: function(resource){
         //determine price using history
+        if(!MarketHistory){
+            return .001
+        }
         const history = MarketHistory[resource] // TODO this may not be declared yet
         let totalVol = 0
         let totalPrice = 0
