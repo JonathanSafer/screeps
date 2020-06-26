@@ -5,6 +5,7 @@ var cM = {
     runManager: function(cities){
         // cache boosts
         u.cacheBoostsAvailable(cities)
+        console.log("called in cM")
 
         //group cities by factory level
         const citiesByFactoryLevel = cM.groupByFactoryLevel(cities)
