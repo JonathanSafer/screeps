@@ -60,6 +60,7 @@ var rU = {
                 return
             }
         }
+        creep.memory.boosted = true
     }
 }
 module.exports = rU
