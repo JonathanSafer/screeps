@@ -216,7 +216,7 @@ var rBr = {
     getWallInPath: function(room, path) {
         const blockingStructures = [STRUCTURE_WALL, STRUCTURE_RAMPART]
         return _(path)
-            .map(pos => rQ.getOverlappingStructures(room, pos))
+            .map(pos => pos.lookFor(LOOK_STRUCTURES))
             .flatten()
             .find(structure => blockingStructures.includes(structure.structureType))
     },
@@ -230,10 +230,12 @@ var rBr = {
             //we are in destination room, target "valuable" structures
             const valuableStructures = rQ.getValuableStructures(structures)
             if (valuableStructures.length) {
-                return rBr.getTarget(creep, valuableStructures, structures)
+                creep.memory.target = rBr.getTarget(creep, valuableStructures, structures).id
+                return
             }
             if (structures.length) {
-                return rBr.getTarget(creep, structures, structures)
+                creep.memory.target = rBr.getTarget(creep, structures, structures).id
+                return
             }
         }
         if(Memory.flags[flag] && creep.room.name == Memory.flags[flag].roomName && !structures.length){
