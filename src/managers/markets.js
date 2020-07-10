@@ -156,7 +156,8 @@ var markets = {
                         const error = `Problem at distributeMinerals with ${mineral}.
                             No sell orders found with amount greater than ${amount}, price 0.5.
                             City ${myCity.name}, tick ${Game.time}`
-                        Game.notify(error, 20)
+                        //Game.notify(error, 20)
+                        console.log(error)
                     }
                 }
             }
