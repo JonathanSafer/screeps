@@ -3,6 +3,7 @@ var settings = require("../config/settings")
 var rMe = require("./medic")
 var motion = require("../lib/motion")
 var actions = require("../lib/actions")
+var rQ = require("./quad")
 
 var rBr = {
     name: "breaker",
@@ -156,11 +157,85 @@ var rBr = {
         // clear a path to every exit before continuing the rally
     },
 
+    getTarget: function(creep, valuableStructures, structures){
+        const result = PathFinder.search(creep.pos, _.map(valuableStructures, function(e) {
+            return { pos: e.pos, range: 0 }}), {
+            plainCost: 1,
+            swampCost: 1,
+            maxRooms: 1,
+            roomCallback: (roomName) => {
+
+                const maxHits = _(structures).max("hits").hits
+                const costs = new PathFinder.CostMatrix
+
+                // count structure 4 times since quad will hit it in 4 positions
+                // the path is relative to the top left creep, __ so a structure in the
+                // bottom right needs to be counted against a  _S path through the top left
+                for (const structure of structures) {
+                    const oldCost = costs.get(structure.pos.x, structure.pos.y)
+                    const cost = rQ.getCost(structure.hits, maxHits, oldCost)
+                    costs.set(structure.pos.x, structure.pos.y, cost)
+                }
+
+                const terrain = new Room.Terrain(roomName)
+                //fill matrix with default terrain values
+                for(let i = 0; i < 50; i++){
+                    for(let j = 0; j < 50; j++){
+                        switch(terrain.get(i,j)) {
+                        case TERRAIN_MASK_WALL:
+                            costs.set(i, j, 255)
+                            break
+                        case TERRAIN_MASK_SWAMP:
+                            costs.set(i, j, 5)
+                            break
+                        case 0:
+                            costs.set(i, j, 1)
+                            break
+                        }
+                    }
+                }
+                return costs
+            }
+        })
+        if (result.incomplete) return false
+        
+        const path = result.path
+        
+        const wallInPath = rBr.getWallInPath(creep.room, path)
+        if (wallInPath) {
+            return wallInPath
+        }
+
+        // if nothing is in our path then return the target at the end of the path
+        const targetPos = path.pop()
+        const targets = targetPos.lookFor(LOOK_STRUCTURES)
+        const target = _(targets).min("hits")
+        return target
+    },
+
+    getWallInPath: function(room, path) {
+        const blockingStructures = [STRUCTURE_WALL, STRUCTURE_RAMPART]
+        return _(path)
+            .map(pos => rQ.getOverlappingStructures(room, pos))
+            .flatten()
+            .find(structure => blockingStructures.includes(structure.structureType))
+    },
+
     findTarget: function(creep, medic){
         const flag = creep.memory.city + "break"
         const structures = creep.room.find(FIND_STRUCTURES, {
-            filter: structure => [STRUCTURE_WALL, STRUCTURE_RAMPART].includes(structure.structureType) && structure.hits
+            filter: structure => structure.hits
         })
+        if(!Memory.flags[flag] || creep.pos.roomName == Memory.flags[flag].roomName){
+            //we are in destination room, target "valuable" structures
+            const valuableStructures = rQ.getValuableStructures(structures)
+            if (valuableStructures.length) {
+                return rBr.getTarget(creep, valuableStructures, structures)
+            }
+            if (structures.length) {
+                return rBr.getTarget(creep, structures, structures)
+            }
+        }
         if(Memory.flags[flag] && creep.room.name == Memory.flags[flag].roomName && !structures.length){
             delete Memory.flags[flag]
         }
@@ -170,13 +245,7 @@ var rBr = {
                 || creep.room.controller.my)){
             rBr.rally(creep, medic, flag)
         } else {
-            const target = creep.pos.findClosestByPath(structures, {range: 1})
-            if(target){
-                creep.moveTo(target, {range: 1})
-                rBr.medicMove(creep, medic)
-            } else {
-                rBr.rally(creep, medic, flag)//no valid targets, attempt to continue rally
-            }
+            rBr.rally(creep, medic, flag)//no valid targets, attempt to continue rally
         }
     },
 
