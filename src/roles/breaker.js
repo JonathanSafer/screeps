@@ -120,12 +120,35 @@ var rBr = {
         const checkpoint = creep.memory.checkpoints && new RoomPosition(creep.memory.checkpoints[0].x,
             creep.memory.checkpoints[0].y,
             creep.memory.checkpoints[0].roomName)
+        if(!creep.memory.tolerance){
+            const heals = medic.getActiveBodyparts(HEAL)
+            creep.memory.tolerance = creep.memory.boosted ? heals * BOOSTS[HEAL][RESOURCE_CATALYZED_LEMERGIUM_ALKALIDE][HEAL]: heals
+        }
         //retreat if necessary
         //if retreating, determine when it is safe to resume attack
         //possibly use avoid towers
-        const hostiles = _.filter(creep.room.find(FIND_HOSTILE_CREEPS), c => c.getActiveBodyparts(ATTACK))
-        const dangerous = _.find(hostiles, h => h.pos.inRangeTo(creep.pos, 2) || h.pos.inRangeTo(medic.pos, 2))
-        if((dangerous || creep.hits < creep.hitsMax * .9 || medic.hits < medic.hitsMax * .9) && checkpoint && canMove){
+        const hostiles = creep.room.find(FIND_HOSTILE_CREEPS)
+        let damage = 0
+        const duo = [creep, medic]
+
+
+        const melee = _.filter(hostiles, c => c.getActiveBodyparts(ATTACK))
+        const ranged = _.filter(hostiles, c => c.getActiveBodyparts(RANGED_ATTACK))
+        for(const member of duo){
+            for(const attacker of melee){
+                if(member.pos.isNearTo(attacker.pos) ||(member.pos.inRangeTo(attacker.pos, 2) && !attacker.fatigue)){
+                    damage += u.getCreepDamage(attacker, ATTACK)
+                }
+            }
+            for(const ranger of ranged){
+                if(member.pos.inRangeTo(ranger.pos, 3) ||(member.pos.inRangeTo(ranger.pos, 4) && !ranger.fatigue)){
+                    damage += u.getCreepDamage(ranger, RANGED_ATTACK)
+                }
+            }
+        }
+
+
+        if((damage > creep.memory.tolerance || creep.hits < creep.hitsMax * .9 || medic.hits < medic.hitsMax * .9) && checkpoint && canMove){
             motion.newMove(medic, checkpoint, 1)
             rBr.medicMove(medic, creep)
             return true
