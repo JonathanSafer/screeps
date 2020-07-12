@@ -121,26 +121,26 @@ const p = {
     buildWalls: function(room, plan){
         //first identify all locations to be walled, if there is a road there,
         //place a rampart instead. if there is a terrain wall don't make anything
-        const startX = plan.x - 3
-        const startY = plan.y - 3
+        const startX = plan.x - template.wallDistance 
+        const startY = plan.y - template.wallDistance
         const wallSpots = []
-        for(let i = startX; i < startX + 19; i++){//walls are 19 by 17
+        for(let i = startX; i < startX + template.dimensions.x + (template.wallDistance * 2); i++){
             if(i > 0 && i < 49){
                 if(startY > 0 && startY < 49){
                     wallSpots.push(new RoomPosition(i, startY, room.name))
                 }
-                if(startY + 16 > 0 && startY + 16 < 49){
-                    wallSpots.push(new RoomPosition(i, startY + 16, room.name))
+                if(startY + template.dimensions.y + (template.wallDistance * 2) - 1 > 0 && startY + template.dimensions.y + (template.wallDistance * 2) - 1 < 49){
+                    wallSpots.push(new RoomPosition(i, startY + template.dimensions.y + (template.wallDistance * 2) - 1, room.name))
                 }
             }
         }
-        for(let i = startY; i < startY + 17; i++){//walls are 19 by 17
+        for(let i = startY; i < startY + template.dimensions.y + (template.wallDistance * 2); i++){
             if(i > 0 && i < 49){
                 if(startX > 0 && startX < 49){
                     wallSpots.push(new RoomPosition(startX, i, room.name))
                 }
-                if(startX + 18 > 0 && startX + 18 < 49){
-                    wallSpots.push(new RoomPosition(startX + 18, i, room.name))
+                if(startX + template.dimensions.x + (template.wallDistance * 2) - 1 > 0 && startX + template.dimensions.x + (template.wallDistance * 2) - 1 < 49){
+                    wallSpots.push(new RoomPosition(startX + template.dimensions.x + (template.wallDistance * 2) - 1, i, room.name))
                 }
             }  
         }
@@ -374,8 +374,18 @@ const p = {
             })
             const exitPathPath = exitPath.path
             exitPathPath.reverse()
-            for(var j = 0; j < Math.min(exitPath.path.length, 4); j++){
-                path.push(exitPath.path[j])
+            const safeZoneDimensions = {
+                "x": [plan.x - template.wallDistance, plan.x + template.dimensions.x + template.wallDistance - 1],
+                "y": [plan.y - template.wallDistance, plan.y + template.dimensions.y + template.wallDistance - 1]
+            }
+            for(const pathPoint of exitPath){
+                if(pathPoint.x < safeZoneDimensions.x[0] 
+                    || pathPoint.x > safeZoneDimensions.x[1]
+                    || pathPoint.y < safeZoneDimensions.y[0]
+                    || pathPoint.y > safeZoneDimensions.y[1]){
+                    break
+                }
+                path.push(pathPoint)
             }
         }
         return path
