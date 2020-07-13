@@ -378,7 +378,7 @@ const p = {
                 "x": [plan.x - template.wallDistance, plan.x + template.dimensions.x + template.wallDistance - 1],
                 "y": [plan.y - template.wallDistance, plan.y + template.dimensions.y + template.wallDistance - 1]
             }
-            for(const pathPoint of exitPath){
+            for(const pathPoint of exitPathPath){
                 if(pathPoint.x < safeZoneDimensions.x[0] 
                     || pathPoint.x > safeZoneDimensions.x[1]
                     || pathPoint.y < safeZoneDimensions.y[0]
