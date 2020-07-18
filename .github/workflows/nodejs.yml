@@ -47,3 +47,4 @@ jobs:
         npm run season
         npm run ptr
         npm run swc
+        npm run botarena
