@@ -127,7 +127,7 @@ function updateCountsCity(city, creeps, rooms, claimRoom, unclaimRoom) {
     const controller = spawn.room.controller
     const rcl = controller.level
     const rcl8 = rcl > 7
-    const emergencyTime = spawn.room.storage && spawn.room.storage.store.energy < 5000 || 
+    const emergencyTime = spawn.room.storage && spawn.room.storage.store.energy < 5000 && rcl > 4 || 
                 (rcl > 6 && !spawn.room.storage)
     const logisticsTime = rcl8 && !emergencyTime ? 500 : 50
 
@@ -172,19 +172,19 @@ function makeEmergencyCreeps(extensions, creeps, city, rcl8, emergency) {
     const checkTime = rcl8 ? 200 : 50
     const memory = Game.spawns[city].memory
 
-    if (emergency || Game.time % checkTime == 0 && extensions >= 5) {
-        if (_.filter(creeps, creep => creep.memory.role == "remoteMiner") < 1 && memory[rM.role] > 0){
+    if (emergency || Game.time % checkTime == 0 && extensions >= 1) {
+        if (_.filter(creeps, creep => creep.memory.role == rM.role).length < 1 && memory[rM.role] > 0){
             Log.info("Making Emergency Miner")
             makeCreeps(rM, city, true)
         }
 
-        if (_.filter(creeps, creep => creep.memory.role == "transporter") < 1){
+        if (_.filter(creeps, creep => creep.memory.role == rT.role).length < 1){
             Log.info("Making Emergency Transporter")
             makeCreeps(rT, city, true)
         }
 
         // TODO disable if links are present (not rcl8!! links may be missing for rcl8)
-        if ((emergency || !rcl8) && _.filter(creeps, creep => creep.memory.role == "runner" ) < 1 && memory.runner > 0) {
+        if ((emergency || !rcl8) && _.filter(creeps, creep => creep.memory.role == rR.role ).length < 1 && memory.runner > 0) {
             Log.info("Making Emergency Runner")
             makeCreeps(rR, city, true)
         }
