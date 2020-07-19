@@ -10,6 +10,7 @@ globals:
   Cache: writable
   Log: writable
   T: writable
+  PIXEL: readonly
   describe: readonly
   it: readonly
   beforeEach: readonly
