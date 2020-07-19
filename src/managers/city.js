@@ -174,18 +174,18 @@ function makeEmergencyCreeps(extensions, creeps, city, rcl8, emergency) {
 
     if (emergency || Game.time % checkTime == 0 && extensions >= 1) {
         if (_.filter(creeps, creep => creep.memory.role == rM.role).length < 1 && memory[rM.role] > 0){
-            Log.info("Making Emergency Miner")
+            Log.info(`Making Emergency Miner in ${city}`)
             makeCreeps(rM, city, true)
         }
 
         if (_.filter(creeps, creep => creep.memory.role == rT.role).length < 1){
-            Log.info("Making Emergency Transporter")
+            Log.info(`Making Emergency Transporter in ${city}`)
             makeCreeps(rT, city, true)
         }
 
         // TODO disable if links are present (not rcl8!! links may be missing for rcl8)
         if ((emergency || !rcl8) && _.filter(creeps, creep => creep.memory.role == rR.role ).length < 1 && memory.runner > 0) {
-            Log.info("Making Emergency Runner")
+            Log.info(`Making Emergency Runner in ${city}`)
             makeCreeps(rR, city, true)
         }
     }
