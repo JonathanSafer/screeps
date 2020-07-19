@@ -256,6 +256,7 @@ var markets = {
         const highTier = [RESOURCE_ORGANISM, RESOURCE_MACHINE, RESOURCE_DEVICE, RESOURCE_ESSENCE, PIXEL]
         
         markets.updateSellPoint(highTier, termCities, buyOrders)
+        markets.sellPixels(buyOrders)
         
         for (const city of termCities) {
             //if no terminal continue or no spawn
@@ -496,6 +497,14 @@ var markets = {
             }
         }
         return false
+    },
+
+    sellPixels: function(buyOrders){
+        const orders = markets.sortOrder(buyOrders[PIXEL]).reverse()
+        if(orders.length && orders[0].price > Memory.sellPoint[PIXEL]){
+            Game.market.deal(orders[0].id, Math.min(orders[0].remainingAmount, Game.resources[PIXEL]))
+            Log.info("Sold pixels for: " + orders[0].price)
+        }
     },
 
     buyPower: function(city, termUsed, sellOrders) {
