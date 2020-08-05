@@ -133,7 +133,7 @@ var rH = {
             if(creep.memory.anger > rand){
                 //give chase
                 creep.say("attack")
-                creep.moveTo(attacker)
+                motion.newMove(creep, attacker.pos, 2)
             } else {
                 //hold position
                 creep.say("hold")
@@ -142,12 +142,12 @@ var rH = {
             if(creep.memory.target){
                 const target = Game.getObjectById(creep.memory.target)
                 if(target){
-                    creep.moveTo(target, { range: 2 })
+                    motion.newMove(creep, target.pos, 2)
                     return
                 }
             }
             const target = creep.pos.findClosestByRange(hostiles)
-            creep.moveTo(target, { range: 2 })
+            motion.newMove(creep, target.pos, 2)
             creep.memory.target = target.id
         }
         //move toward an enemy
@@ -186,29 +186,20 @@ var rH = {
     },
 
     rally: function(creep){
-        const rallyFlagName = creep.memory.city + "harasserRally"
-        const flag = Memory.flags[rallyFlagName]
-        if (flag && !creep.memory.rally){
-            creep.moveTo(new RoomPosition(flag.x, flag.y, flag.roomName), {reusePath: 50})
-            if (flag.x == creep.pos.x && flag.y == creep.pos.y && flag.roomName == creep.pos.roomName){
-                creep.memory.rally = true
-            }
-        } else {
-            const destFlagName = creep.memory.city + "harass"
-            const dFlag = Memory.flags[destFlagName]
-            if (dFlag){
-                if(creep.pos.roomName === dFlag.roomName){
-                    //move to center of room
-                    if(!creep.pos.inRangeTo(25, 25, 8)){
-                        creep.moveTo(25, 25, {range: 5})
-                    } else {
-                        creep.memory.dormant = true
-                        return true
-                    }
+        const destFlagName = creep.memory.city + "harass"
+        const dFlag = Memory.flags[destFlagName]
+        if (dFlag){
+            if(creep.pos.roomName === dFlag.roomName){
+                //move to center of room
+                if(!creep.pos.inRangeTo(25, 25, 8)){
+                    motion.newMove(creep, new RoomPosition(25, 25, creep.pos.roomName), 5)
                 } else {
-                    //move to flag
-                    motion.newMove(creep, new RoomPosition(dFlag.x, dFlag.y, dFlag.roomName), 5)
+                    creep.memory.dormant = true
+                    return true
                 }
+            } else {
+                //move to flag
+                motion.newMove(creep, new RoomPosition(dFlag.x, dFlag.y, dFlag.roomName), 5)
             }
         }
         return false
