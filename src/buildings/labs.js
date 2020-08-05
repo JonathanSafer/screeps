@@ -104,8 +104,7 @@ var labs = {
     },
 
     chooseBoost: function(currentBoost, spawn){
-        const militaryBoosts = settings.militaryBoosts
-        const minBoost = _.min(militaryBoosts, function(boost) {
+        const minBoost = _.min(settings.militaryBoosts, function(boost) {
             return spawn.room.storage.store[boost] || 0 + spawn.room.terminal.store[boost] || 0
         })
 
@@ -113,13 +112,12 @@ var labs = {
             spawn.memory.ferryInfo.labInfo.boost = minBoost
             return
         }
-        const civBoosts = settings.civBoosts
-        if (civBoosts.includes(currentBoost) && spawn.room.storage.store[currentBoost] > settings.boostAmount - 3000){
-            civBoosts.splice(civBoosts.indexOf(currentBoost), 1)
-        }
-        for(let i = 0; i < civBoosts.length; i++){
-            if(spawn.room.storage.store[civBoosts[i]] < settings.boostAmount){
-                spawn.memory.ferryInfo.labInfo.boost = civBoosts[i]
+        for(const boost of settings.civBoosts){
+            if (boost == currentBoost && spawn.room.storage.store[currentBoost] > settings.boostAmount - 3000){
+                continue
+            }
+            if(spawn.room.storage.store[boost] < settings.boostAmount){
+                spawn.memory.ferryInfo.labInfo.boost = boost
                 return
             }
         }
