@@ -209,7 +209,7 @@ var actions = {
                 const labs = Object.keys(Game.spawns[creep.memory.city].memory.ferryInfo.labInfo.receivers)
                 for(const labId of labs){
                     const lab = Game.getObjectById(labId)
-                    if(lab.mineralType == boost){
+                    if(lab.store[boost] >= LAB_BOOST_MINERAL){
                         if(!lab.store.energy){
                             return
                         }
