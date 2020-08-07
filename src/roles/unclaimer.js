@@ -14,6 +14,9 @@ var rUC = {
         const result = creep.attackController(creep.room.controller)
         if(result === OK){
             Game.spawns[creep.memory.city].memory[rUC.name] = 0
+            if(!creep.room.controller.level || creep.room.controller.level == 1){
+                delete Memory.flags.unclaim
+            }
             creep.suicide()
         }
     }    
