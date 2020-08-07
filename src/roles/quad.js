@@ -500,27 +500,20 @@ var rQ = {
                 //fill matrix with default terrain values
                 for(let i = 0; i < 50; i++){
                     for(let j = 0; j < 50; j++){
-                        switch(terrain.get(i,j)) {
-                        case TERRAIN_MASK_WALL:
-                            costs.set(i, j, 255)
-                            break
-                        case TERRAIN_MASK_SWAMP:
-                            costs.set(i, j, 5)
-                            break
-                        case 0:
-                            costs.set(i, j, 1)
-                            break
+                        const tile = terrain.get(i, j)
+                        const weight = tile & TERRAIN_MASK_WALL  ? 255 : // wall  => unwalkable
+                            tile & TERRAIN_MASK_SWAMP ?   5 : 1
+                        if(!_.find(valuableStructures, structure => structure.pos.isEqualTo(i,j))/*pos is not a destination*/){
+                            costs.set(i, j, Math.max(costs.get(i,j), weight))//destinations and high hp points should never be overridden by terrain
                         }
-                    }
-                }
-
-                for(let i = 0; i < 50; i++){
-                    for(let j = 0; j < 50; j++){
-                        if(terrain.get(i,j) == TERRAIN_MASK_WALL){
-                            costs.set(i, j, 255)
-                            costs.set(Math.max(0, i - 1), Math.max(0, j - 1), 255)//TOP_LEFT
-                            costs.set(i, Math.max(0, j - 1), 255)//TOP
-                            costs.set(Math.max(0, i - 1), j, 255)//LEFT
+                        if(i > 0 && !_.find(valuableStructures, structure => structure.pos.isEqualTo(i - 1,j))){
+                            costs.set(i - 1, j, Math.max(costs.get(i - 1,j), weight))
+                        }
+                        if(i > 0 && j > 0 && !_.find(valuableStructures, structure => structure.pos.isEqualTo(i - 1,j - 1))){
+                            costs.set(i - 1, j - 1, Math.max(costs.get(i - 1,j - 1), weight))
+                        }
+                        if(j > 0 && !_.find(valuableStructures, structure => structure.pos.isEqualTo(i,j - 0))){
+                            costs.set(i, j - 1, Math.max(costs.get(i,j - 1), weight))
                         }
                     }
                 }
