@@ -826,15 +826,12 @@ var rQ = {
                         }
                         if(!quadNames.includes(creep.name)){
                             //quad cannot move to any pos that another creep is capable of moving to
-                            if(!creep.fatigue || creep.getActiveBodyparts(ATTACK)){
-                                const offset = (creep.getActiveBodyparts(ATTACK) && !creep.fatigue) ? 3 : 2
-                                for(let i = Math.max(0 , creep.pos.x - offset); i < Math.min(50, creep.pos.x + offset); i++){
-                                    for(let j = Math.max(0 , creep.pos.y - offset); j < Math.min(50, creep.pos.y + offset); j++){
-                                        costs.set(i, j, 255)
-                                    }
+                            const offset = creep.getActiveBodyparts(ATTACK) && !creep.fatigue ? 3 :
+                                !creep.fatigue || creep.getActiveBodyparts(ATTACK) ? 2 : 1
+                            for(let i = Math.max(0 , creep.pos.x - offset); i < Math.min(50, creep.pos.x + offset); i++){
+                                for(let j = Math.max(0 , creep.pos.y - offset); j < Math.min(50, creep.pos.y + offset); j++){
+                                    costs.set(i, j, 255)
                                 }
-                            } else {
-                                costs.set(creep.pos.x, creep.pos.y, 255)
                             }
                         }
                     }
