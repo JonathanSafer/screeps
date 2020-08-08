@@ -503,19 +503,19 @@ var rQ = {
                         const tile = terrain.get(i, j)
                         const weight = tile & TERRAIN_MASK_WALL  ? 255 : // wall  => unwalkable
                             tile & TERRAIN_MASK_SWAMP ?   5 : 1
-                        if(!_.find(valuableStructures, structure => structure.pos.isEqualTo(i,j))/*pos is not a destination*/){
-                            costs.set(i, j, Math.max(costs.get(i,j), weight))//destinations and high hp points should never be overridden by terrain
-                        }
-                        if(i > 0 && !_.find(valuableStructures, structure => structure.pos.isEqualTo(i - 1,j))){
-                            costs.set(i - 1, j, Math.max(costs.get(i - 1,j), weight))
-                        }
-                        if(i > 0 && j > 0 && !_.find(valuableStructures, structure => structure.pos.isEqualTo(i - 1,j - 1))){
-                            costs.set(i - 1, j - 1, Math.max(costs.get(i - 1,j - 1), weight))
-                        }
-                        if(j > 0 && !_.find(valuableStructures, structure => structure.pos.isEqualTo(i,j - 0))){
-                            costs.set(i, j - 1, Math.max(costs.get(i,j - 1), weight))
-                        }
+                        costs.set(i, j, Math.max(costs.get(i,j), weight))//destinations and high hp points should never be overridden by terrain
+                        costs.set(Math.max(i - 1, 0), j, Math.max(costs.get(Math.max(i - 1, 0),j), weight))
+                        costs.set(Math.max(i - 1, 0), Math.max(j - 1, 0), Math.max(costs.get(Math.max(i - 1, 0), Math.max(j - 1, 0)), weight))
+                        costs.set(i, Math.max(j - 1, 0), Math.max(costs.get(i, Math.max(j - 1, 0)), weight))
                     }
+                }
+                for(const struct of valuableStructures){
+                    const obstacles = struct.pos.lookFor(LOOK_STRUCTURES)
+                    let totalHits = 0
+                    for(const obstacle of obstacles){
+                        totalHits += obstacle.hits
+                    }
+                    costs.set(struct.pos.x, struct.pos.y, rQ.getCost(totalHits, maxHits, 1))
                 }
                 return costs
             }
