@@ -20,7 +20,7 @@ var rD = {
     /** @param {Creep} creep **/
     run: function(creep) {//modified harasser
         const city = creep.memory.city
-        const holdPoint = 15
+        const holdPoint = 30
         if (!creep.memory.state) {
             creep.memory.state = CS.START
         }
