@@ -241,22 +241,6 @@ var rF = {
         if (creep.room.terminal.store.energy > 51000){
             return 3
         }
-        if(storage && Object.keys(storage.store).length > 1){
-            for(const mineral of Object.keys(storage.store)){
-                if(creep.room.terminal.store[mineral] < rF.TERMINAL_MAX_MINERAL_AMOUNT - rF.FERRY_CARRY_AMOUNT){
-                    creep.memory.mineral = mineral
-                    return 2
-                }
-            }
-        }
-        if(storage){
-            for(const mineral of Object.keys(creep.room.terminal.store)){
-                if(creep.room.terminal.store[mineral] > rF.TERMINAL_MAX_MINERAL_AMOUNT && mineral != RESOURCE_ENERGY){
-                    creep.memory.mineral = mineral
-                    return 6 
-                }
-            }
-        }
         if (Game.spawns[creep.memory.city].memory.ferryInfo.needPower === true && Game.spawns[creep.memory.city].room.terminal.store[RESOURCE_POWER] > 0){
             return 4
         }
@@ -309,6 +293,22 @@ var rF = {
                 } else if(receiverInfo[i].fill > 0 && creep.room.terminal.store[receiverInfo[i].boost] < 1000
                     && !Game.spawns[creep.memory.city].memory.ferryInfo.mineralRequest){
                     Game.spawns[creep.memory.city].memory.ferryInfo.mineralRequest = receiverInfo[i].boost
+                }
+            }
+        }
+        if(storage && Object.keys(storage.store).length > 1){
+            for(const mineral of Object.keys(storage.store)){
+                if(creep.room.terminal.store[mineral] < rF.TERMINAL_MAX_MINERAL_AMOUNT - rF.FERRY_CARRY_AMOUNT){
+                    creep.memory.mineral = mineral
+                    return 2
+                }
+            }
+        }
+        if(storage){
+            for(const mineral of Object.keys(creep.room.terminal.store)){
+                if(creep.room.terminal.store[mineral] > rF.TERMINAL_MAX_MINERAL_AMOUNT && mineral != RESOURCE_ENERGY){
+                    creep.memory.mineral = mineral
+                    return 6 
                 }
             }
         }
