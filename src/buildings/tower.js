@@ -12,7 +12,7 @@ var T = {
             let damage = T.calcTowerDamage(towers, hostiles[i])
             if(Tmp[roomName] && Tmp[roomName].attacks){
                 for(const attack of Tmp[roomName].attacks){
-                    if(attack.x == hostiles[i].pos.x && attack.y == hostiles[i].pos.y){
+                    if(hostiles[i].pos.isEqualTo(attack.x, attack.y)){
                         damage +=  attack.damage
                     }
                 }
