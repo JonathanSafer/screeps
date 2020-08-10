@@ -4,11 +4,12 @@ var template = require("../config/template")
 
 var m = {
     BoundingBox: class {
-        constructor(top, left, bottom, right) {
+        constructor(top, left, bottom, right, thickness = 2) {
             this.top = top // minY
             this.left = left // minX
             this.bottom = bottom // maxY
             this.right = right // maxX
+            this.thickness = thickness
         }
     },
 
@@ -279,7 +280,7 @@ var m = {
     },
 
     enforceBoundingBox: function(costs, boundingBox) {
-        const d = 2 // thickness of barrier
+        const d = boundingBox.thickness // thickness of barrier
         for (let y = boundingBox.top - d; y <= boundingBox.bottom + d; y++) {
             for (let x = boundingBox.left - d; x <= boundingBox.right + d; x++) {
                 const inBox = boundingBox.top <= y && y <= boundingBox.bottom
