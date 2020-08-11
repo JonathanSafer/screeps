@@ -122,7 +122,7 @@ var rBr = {
             creep.memory.checkpoints[0].roomName)
         if(!creep.memory.tolerance){
             const heals = medic.getActiveBodyparts(HEAL)
-            creep.memory.tolerance = creep.memory.boosted ? heals * BOOSTS[HEAL][RESOURCE_CATALYZED_LEMERGIUM_ALKALIDE][HEAL]: heals
+            creep.memory.tolerance = HEAL_POWER * (creep.memory.boosted ? heals * BOOSTS[HEAL][RESOURCE_CATALYZED_LEMERGIUM_ALKALIDE][HEAL]: heals)
         }
         //retreat if necessary
         //if retreating, determine when it is safe to resume attack

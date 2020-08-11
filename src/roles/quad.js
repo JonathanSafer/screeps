@@ -497,19 +497,17 @@ var rQ = {
                 }
 
                 const terrain = new Room.Terrain(roomName)
-                //fill matrix with default terrain values
                 for(let i = 0; i < 50; i++){
                     for(let j = 0; j < 50; j++){
                         const tile = terrain.get(i, j)
-                        const weight = tile & TERRAIN_MASK_WALL  ? 255 : // wall  => unwalkable
-                            tile & TERRAIN_MASK_SWAMP ?   5 : 1
-                        costs.set(i, j, Math.max(costs.get(i,j), weight))//destinations and high hp points should never be overridden by terrain
+                        const weight = tile & TERRAIN_MASK_WALL  ? 255 : 1
+                        costs.set(i, j, Math.max(costs.get(i,j), weight))//high hp should never be overridden by terrain
                         costs.set(Math.max(i - 1, 0), j, Math.max(costs.get(Math.max(i - 1, 0),j), weight))
                         costs.set(Math.max(i - 1, 0), Math.max(j - 1, 0), Math.max(costs.get(Math.max(i - 1, 0), Math.max(j - 1, 0)), weight))
                         costs.set(i, Math.max(j - 1, 0), Math.max(costs.get(i, Math.max(j - 1, 0)), weight))
                     }
                 }
-                for(const struct of valuableStructures){
+                for(const struct of valuableStructures){//destinations reset to walkable in case they got labelled as a terrain wall
                     const obstacles = struct.pos.lookFor(LOOK_STRUCTURES)
                     let totalHits = 0
                     for(const obstacle of obstacles){
