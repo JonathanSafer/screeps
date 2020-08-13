@@ -93,7 +93,7 @@ var rSB = {
             }
             return
         }
-        var targets = creep.room.find(FIND_CONSTRUCTION_SITES)
+        var targets = creep.room.find(FIND_MY_CONSTRUCTION_SITES)
         var spawns = _.find(targets, site => site.structureType == STRUCTURE_SPAWN)
         var extensions = _.find(targets, site => site.structureType == STRUCTURE_EXTENSION)
         var storage = _.find(targets, site => site.structureType == STRUCTURE_STORAGE)
@@ -114,6 +114,10 @@ var rSB = {
             }
             if(creep.build(target) == ERR_NOT_IN_RANGE) {
                 motion.newMove(creep, target.pos, 3)
+            }
+        } else {
+            if(creep.upgradeController(creep.room.controller) == ERR_NOT_IN_RANGE) {
+                motion.newMove(creep, creep.room.controller.pos, 3)
             }
         }  
     },
