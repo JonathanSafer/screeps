@@ -27,7 +27,7 @@ var rRo = {
             //pick up more stuff
             const flagPos = new RoomPosition(flag.x, flag.y, flag.roomName)
             if(!creep.memory.flagDistance){
-                creep.memory.flagDistance = motion.getRoute(Game.spawns[creep.memory.city].pos.roomName, flag.roomName, true) * 50
+                creep.memory.flagDistance = motion.getRoute(Game.spawns[creep.memory.city].pos.roomName, flag.roomName, true).length * 50
             }
             if(Game.rooms[flag.roomName]){
                 if(creep.memory.target){
