@@ -47,11 +47,11 @@ var rRo = {
                             break
                         }
                     }
-                    if(!creep.memory.target){
-                        delete Memory.flags[flagName]
-                    } else {
-                        actions.withdraw(creep, Game.getObjectById(creep.memory.target), creep.memory.resource)
-                    }
+                }
+                if(!creep.memory.target){
+                    delete Memory.flags[flagName]
+                } else {
+                    actions.withdraw(creep, Game.getObjectById(creep.memory.target), creep.memory.resource)
                 }
             } else {
                 motion.newMove(creep, flagPos, 1)
