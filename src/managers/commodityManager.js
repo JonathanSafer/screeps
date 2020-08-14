@@ -5,25 +5,94 @@ var cM = {
     runManager: function(cities){
         // cache boosts
         u.cacheBoostsAvailable(cities)
-        console.log("called in cM")
 
         //group cities by factory level
         const citiesByFactoryLevel = cM.groupByFactoryLevel(cities)
         const levelCache = _.mapValues(citiesByFactoryLevel, u.empireStore)
         const terminalCache = cM.storeCacheByCity(cities)
 
-        //go through each city:
-        const levels = Object.keys(citiesByFactoryLevel).sort().reverse()
-        for(const level of levels){
-            const citiesAtLevel = citiesByFactoryLevel[level] || []
-            const products = _.filter(Object.keys(COMMODITIES), key => COMMODITIES[key].level == level)
+        let requestQueue = cM.getTopTier(citiesByFactoryLevel)
+        //push all top tier resources into queue
 
-            for (const city of citiesAtLevel) {
-                for (const product of products) {
-                    cM.processProduct(city, product, levelCache, terminalCache, citiesByFactoryLevel)
+        while(requestQueue.length){
+            console.log(requestQueue)
+            const requestedProduct = requestQueue.shift()
+            const quantities = cM.getOrderQuantities(requestedProduct)
+            const clearedToShip = cM.getOrderStatus(quantities, levelCache)
+
+            if(clearedToShip){
+                //attempt to find a receiver
+                const destination = cM.getDestination(requestedProduct, citiesByFactoryLevel)
+                if(destination){
+                    //schedule deliveries
+                    cM.scheduleDeliveries(citiesByFactoryLevel, destination, terminalCache, quantities)
                 }
+            } else {
+                //request whatever we're missing
+                requestQueue = requestQueue.concat(cM.getMissingComponents(quantities, levelCache))
             }
         }
+    },
+
+    getTopTier: function(citiesByFactoryLevel){
+        const levels = Object.keys(citiesByFactoryLevel)
+        const topTier = _.max(levels)
+        console.log(topTier)
+        return _.filter(Object.keys(COMMODITIES), c => COMMODITIES[c].level == topTier && cM.isCommodity(c))
+    },
+
+    isCommodity: function(commodity){
+        return _.find(Object.keys(COMMODITIES[commodity].components), comp => comp != RESOURCE_ENERGY
+            && COMMODITIES[comp]
+            && !REACTIONS[comp]
+            && _.find(Object.keys(COMMODITIES[comp].components), compComp => compComp != RESOURCE_ENERGY
+                && !REACTIONS[compComp]))
+    },
+
+    getOrderQuantities: function(product) {
+        const compInfo = _.omit(COMMODITIES[product].components, RESOURCE_ENERGY)
+        const components = Object.keys(compInfo)
+        const rate = fact.findRateLimit(components, product) //find rate limit, and use that to find quantity of each resource needed 
+        return _(compInfo).mapValues(amount => amount * rate).value()
+    },
+
+    getOrderStatus: function(quantities, levelCache){
+        //bool, check if we have enough of all components to ship
+        for(const component of Object.keys(quantities)){
+            const compLvl = COMMODITIES[component].level || 0
+            const cache = levelCache[compLvl]
+            const empireHasEnough = cache && cache[component] >= quantities[component]
+            if(!empireHasEnough){
+                return false
+            }
+
+        }
+        return true
+    },
+
+    getDestination: function(product, citiesByFactoryLevel){
+        //return roomName. destination must have less than 2k of all commodities and correct factoryLevel.
+        console.log(product)
+        const prodLvl = COMMODITIES[product].level
+        const components = _.without(Object.keys(COMMODITIES[product].components), RESOURCE_ENERGY)
+        const destinations = _.filter(citiesByFactoryLevel[prodLvl], city => 
+            _.every(components, comp => !city.terminal.store[comp] || city.terminal.store[comp] < 2000))
+        const destination = _.sample(destinations).name
+        return destination
+    },
+
+    getMissingComponents: function(quantities, levelCache){
+        //return array of components that we don't have enough of and are isCommodity
+        const missingComponents = []
+        for(const component of Object.keys(quantities)){
+            const compLvl = COMMODITIES[component].level || 0
+            const cache = levelCache[compLvl]
+            const empireHasEnough = cache && cache[component] >= quantities[component]
+            if(!empireHasEnough && cM.isCommodity(component)){
+                missingComponents.push(component)
+            }
+        }
+        return missingComponents
     },
 
     storeCacheByCity: function(cities) {
@@ -35,53 +104,8 @@ var cM = {
             .value()
     },
 
-    processProduct: function(city, product, levelCache, terminalCache, citiesByFactoryLevel) {
-        //if city's store of produce is above 2k, don't produce any more
-        if (terminalCache[city.name][product] > 2000) return
-
-        const compInfo = COMMODITIES[product].components
-        const components = _.without(Object.keys(compInfo), RESOURCE_ENERGY)
-        const rate = fact.findRateLimit(components, product) //find rate limit, and use that to find quantity of each resource needed 
-        const quantities = _(compInfo).mapValues(amount => amount * rate).value()
-
-        const compStatuses = _(components).map(component => {
-            return cM.getComponentStatus(component, levelCache, product, city, quantities[component])
-        }).value()
-        if (_.every(compStatuses, "clearedToShip")) {
-            cM.reserveComponents(components, levelCache, quantities)
-            //create delivery orders in comSend
-            cM.scheduleDeliveries(citiesByFactoryLevel, city.name, components, terminalCache, quantities)
-        } else if (_.find(compStatuses, "highTier")) {
-            //we have enough of the highest tier commodity to do the reaction, but not enough of something else
-            //remove needed resources from empire store like we are using it, so that no other city will use it
-            cM.reserveComponents(components, levelCache, quantities)
-        }
-    },
-
-    getComponentStatus: function(component, levelCache, product, city, quantity) {
-        const status = {}
-        const compLvl = COMMODITIES[component].level || 0
-
-        const cache = levelCache[compLvl]
-        const empireHasEnough = cache && cache[component] >= quantity
-        const cityHasTooMuch = city.terminal.store[component] > 2000
-
-        //if we don't have enough of the comp, we are no go for this product (move on to next product)
-        status.clearedToShip = (empireHasEnough && !cityHasTooMuch)
-        status.highTier = status.clearedToShip && compLvl == COMMODITIES[product].level - 1
-        return status
-    },
-
-    reserveComponents: function(components, levelCache, quantities) {
-        for(const component of components){
-            const compLvl = COMMODITIES[component].level || 0
-            //remove quantity from total store
-            levelCache[compLvl][component] -= quantities[component]
-        }
-    },
-
-    scheduleDeliveries: function(factCities, destination, components, terminalCache, quantities){
-        for(const component of components){
+    scheduleDeliveries: function(factCities, destination, terminalCache, quantities){
+        for(const component of Object.keys(quantities)){
             const compLvl = COMMODITIES[component].level || 0
             const sourceCities = factCities[compLvl]
             let quantity = quantities[component]

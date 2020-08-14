@@ -398,9 +398,6 @@ var u = {
         const cityCount = _.filter(cities, city => city.controller.level >= 7).length
         const boosts = settings.civBoosts.concat(settings.militaryBoosts)
         const boostQuantityRequired = settings.boostsNeeded * cityCount
-        for(const boost of boosts){
-            console.log(`${boost}: ${empireStore[boost]}`)
-        }
         const boostsAvailable = _(boosts)
             .filter(boost => empireStore[boost] >= boostQuantityRequired)
             .value()

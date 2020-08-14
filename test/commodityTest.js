@@ -63,37 +63,23 @@ describe("commodityManager", function () {
         })
     })
 
-    describe("#getComponentStatus()", function () {
+    describe("#getOrderStatus()", function () {
         const component = "tissue" // level 2 resource
-        const product = "muscle" // level 3 resource
         const cs = [createFactoryCity("E3N3", { "tissue": 120 }, 2),
             createFactoryCity("E5N5", { "tissue": 550 }, 2)]
         const levelCache = { 2: u.empireStore(cs) }
         it("not enough => not cleared to ship", function () {
-            const quantity = 1000
-            const city = createFactoryCity("E7N7", {}, 3)
+            const quantities = {[component]: 1000}
             const status =
-                cM.getComponentStatus(component, levelCache, product, city, quantity)
-            assert(!status.clearedToShip)
-            assert(!status.highTier)
+                cM.getOrderStatus(quantities, levelCache)
+            assert(!status)
         })
 
         it("enough => cleared to ship", function () {
-            const quantity = 500
-            const city = createFactoryCity("E7N7", {}, 3)
+            const quantities = {[component]: 500}
             const status = 
-                cM.getComponentStatus(component, levelCache, product, city, quantity)
-            assert(status.clearedToShip)
-            assert(status.highTier)
-        })
-
-        it("full city => not cleared to ship", function () {
-            const quantity = 500
-            const city = createFactoryCity("E7N7", { "tissue": 3000 }, 3)
-            const status = 
-                cM.getComponentStatus(component, levelCache, product, city, quantity)
-            assert(!status.clearedToShip)
-            assert(!status.highTier)
+                cM.getOrderStatus(quantities, levelCache)
+            assert(status)
         })
     })
 
@@ -108,16 +94,16 @@ describe("commodityManager", function () {
             assert.deepEqual(["phlegm", 90, "E9N9"], plans[0])
         })
 
-        it("send deliveries to 2 receivers if we have enough resources", function () {
-            const cs = [createFactoryCity("E3N3", { "phlegm": 180 }, 1),
-                createFactoryCity("E5N5", { "cell": 180, "reductant": 2000 }),
-                createFactoryCity("E9N9", {}, 2), createFactoryCity("E7N7", {}, 2)]
-            cM.runManager(cs)
-            const plans = Game.spawns["E3N30"].memory.ferryInfo.comSend
-            assert.equal(2, plans.length)
-            assert.deepEqual(["phlegm", 90, "E7N7"], plans.find(plan => plan[2] == "E7N7"))
-            assert.deepEqual(["phlegm", 90, "E9N9"], plans.find(plan => plan[2] == "E9N9"))
-        })
+        // it("send deliveries to 2 receivers if we have enough resources", function () {
+        //     const cs = [createFactoryCity("E3N3", { "phlegm": 180 }, 1),
+        //         createFactoryCity("E5N5", { "cell": 180, "reductant": 2000 }),
+        //         createFactoryCity("E9N9", {}, 2), createFactoryCity("E7N7", {}, 2)]
+        //     cM.runManager(cs)
+        //     const plans = Game.spawns["E3N30"].memory.ferryInfo.comSend
+        //     assert.equal(2, plans.length)
+        //     assert.deepEqual(["phlegm", 90, "E7N7"], plans.find(plan => plan[2] == "E7N7"))
+        //     assert.deepEqual(["phlegm", 90, "E9N9"], plans.find(plan => plan[2] == "E9N9"))
+        // })
 
         it("don't schedule deliveries if we are saving for higher tier products", function () {
             const cs = [createFactoryCity("E3N3", { "phlegm": 90 }, 1),
