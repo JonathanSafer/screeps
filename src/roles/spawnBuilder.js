@@ -123,8 +123,7 @@ var rSB = {
     },
     
     harvest: function(creep) {
-        const terminal = _.find(creep.room.find(FIND_STRUCTURES), 
-            struct => struct.structureType == STRUCTURE_TERMINAL)
+        const terminal = creep.room.terminal
         if(terminal && terminal.store[RESOURCE_ENERGY] >= creep.store.getCapacity()){
             a.withdraw(creep, terminal, RESOURCE_ENERGY)
             return
