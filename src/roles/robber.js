@@ -23,7 +23,7 @@ var rRo = {
             }
             //if creep can't complete round trip suicide and respawn
         }
-        if(creep.store.getFreeCapacity() && flag){
+        if(!creep.store.getUsedCapacity() || ((creep.pos.roomName != Game.spawns[creep.memory.city].pos.roomName && creep.store.getFreeCapacity()) && flag)){
             //pick up more stuff
             const flagPos = new RoomPosition(flag.x, flag.y, flag.roomName)
             if(!creep.memory.flagDistance){
