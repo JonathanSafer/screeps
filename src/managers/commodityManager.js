@@ -25,7 +25,7 @@ var cM = {
                 const destination = cM.getDestination(requestedProduct, citiesByFactoryLevel)
                 if(destination){
                     //schedule deliveries
-                    cM.scheduleDeliveries(citiesByFactoryLevel, destination, terminalCache, quantities)
+                    cM.scheduleDeliveries(citiesByFactoryLevel, destination, terminalCache, quantities, levelCache)
                 }
             } else {
                 //request whatever we're missing
@@ -104,7 +104,7 @@ var cM = {
             .value()
     },
 
-    scheduleDeliveries: function(factCities, destination, terminalCache, quantities){
+    scheduleDeliveries: function(factCities, destination, terminalCache, quantities, levelCache){
         for(const component of Object.keys(quantities)){
             const compLvl = COMMODITIES[component].level || 0
             const sourceCities = factCities[compLvl]
@@ -123,6 +123,7 @@ var cM = {
                     comSend.push([component, amount, destination])
                     // update values to reflect move
                     terminalCache[source.name][component] -= amount
+                    levelCache[compLvl][component] -= amount
                     terminalCache[destination][component] += amount
                     quantity -= amount
                 }
