@@ -256,7 +256,7 @@ var markets = {
         const highTier = [RESOURCE_ORGANISM, RESOURCE_MACHINE, RESOURCE_DEVICE, RESOURCE_ESSENCE, PIXEL]
         
         markets.updateSellPoint(highTier, termCities, buyOrders)
-        markets.sellPixels(buyOrders)
+        //markets.sellPixels(buyOrders)
         
         for (const city of termCities) {
             //if no terminal continue or no spawn
