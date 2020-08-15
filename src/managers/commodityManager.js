@@ -77,7 +77,7 @@ var cM = {
         const components = _.without(Object.keys(COMMODITIES[product].components), RESOURCE_ENERGY)
         const destinations = _.filter(citiesByFactoryLevel[prodLvl], city => 
             _.every(components, comp => !city.terminal.store[comp] || city.terminal.store[comp] < 2000))
-        const destination = _.sample(destinations).name
+        const destination = destinations.length ? _.sample(destinations).name : null
         return destination
     },
 
