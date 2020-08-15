@@ -139,6 +139,42 @@ var cM = {
         const citiesByFactoryLevel =
             _.groupBy(citiesWithFactory, city => u.getFactory(city).level || 0)
         return citiesByFactoryLevel
+    },
+
+    cleanCities: function(cities){
+        const citiesByFactoryLevel = cM.groupByFactoryLevel(cities)
+        for(const level of citiesByFactoryLevel){
+            for(const city of level){
+                const factory = u.getFactory(city)
+                const memory = Game.spawns[city.memory.city].memory
+                if(memory.ferryInfo.factoryInfo.produce == "dormant"){
+                    //empty factory (except for energy)
+                    for(const resource of Object.keys(factory.store)){
+                        if(resource != RESOURCE_ENERGY){
+                            memory.ferryInfo.factoryInfo.transfer.push([resource, 0, factory.store[resource]])
+                        }
+                    }
+                    if(level){//only leveled factories need to send back components
+                        for(const resource of Object.keys(city.terminal.store)){
+                            //send back components
+                            if(COMMODITIES[resource] 
+                                && !REACTIONS[resource] 
+                                && resource != RESOURCE_ENERGY 
+                                && COMMODITIES[resource].level != level){
+                                const comLevel = COMMODITIES[resource].level || 0
+                                const receiver = citiesByFactoryLevel[comLevel][0].name
+
+                                const amount = city.terminal.store[resource]
+                                const ferryInfo = u.getsetd(memory, "ferryInfo", {})
+                                const comSend = u.getsetd(ferryInfo, "comSend", [])
+                                comSend.push([resource, amount, receiver])
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
     }
 }
 module.exports = cM

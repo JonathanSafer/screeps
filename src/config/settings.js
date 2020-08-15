@@ -8,6 +8,8 @@ var settings = {
     civBoosts: ["XLH2O", "XUHO2", "XKH2O", "XUH2O", "XGH2O"],
     roomplanTime: 500,
     roomplanOffset: 155,
+    cMTime: 400,
+    cMOffset: 39,
 
     // market
     creditMin: 1000000, //min credits needed to start buying energy
