@@ -23,7 +23,7 @@ var settings = {
     wallHeight: [0, 0, 0, 30000, 100000, 500000, 2000000, 10000000],
     bucket: {//minimum bucket thresholds
         resourceMining: 1000,
-        repair: 6000, //repairing walls in a room
+        repair: 3000, //repairing walls in a room
         processPower: 2200,
         colony: 4000, // building new rooms
         upgrade: 6000,
@@ -31,9 +31,8 @@ var settings = {
         powerMining: 8000,
         mineralMining: 8000,
         // other constants we use with these
-        range: 1000,
-        powerRange: 3000, //this keeps all power mining from shutting off at once. 
-        //If powerMining + powerRange/2 > 10000, there may be times where a mining flag is not placed even though the bucket is full
+        range: 3000, //this keeps all power mining from shutting off at once.
+        //If range + range/2 > 10000, there may be times where a mining flag is not placed even though the bucket is full
         rclMultiplier: 200, // scale: rcl0 = 5k, 1 => 4.8k etc
         growthLimit: 5, // average bucket growth limit over 100+ ticks
     },
