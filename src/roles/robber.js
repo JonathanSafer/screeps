@@ -38,7 +38,7 @@ var rRo = {
                     }
                 }
                 if(!creep.memory.target){
-                    const structs = _.filter(flagPos.lookFor(LOOK_STRUCTURES), s => s.store)
+                    const structs = _.filter(flagPos.lookFor(LOOK_STRUCTURES).concat(flagPos.lookFor(LOOK_RUINS)), s => s.store)
                     for(const struct of structs){
                         const valuables = _.filter(Object.keys(struct.store), k => k != RESOURCE_ENERGY)
                         if (valuables.length){
