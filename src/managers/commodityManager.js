@@ -143,7 +143,7 @@ var cM = {
 
     cleanCities: function(cities){
         const citiesByFactoryLevel = cM.groupByFactoryLevel(cities)
-        for(const level of citiesByFactoryLevel){
+        for(const level of Object.values(citiesByFactoryLevel)){
             for(const city of level){
                 const factory = u.getFactory(city)
                 const memory = Game.spawns[city.memory.city].memory
@@ -154,13 +154,13 @@ var cM = {
                             memory.ferryInfo.factoryInfo.transfer.push([resource, 0, factory.store[resource]])
                         }
                     }
-                    if(level){//only leveled factories need to send back components
+                    if(factory.level){//only leveled factories need to send back components
                         for(const resource of Object.keys(city.terminal.store)){
                             //send back components
                             if(COMMODITIES[resource] 
                                 && !REACTIONS[resource] 
                                 && resource != RESOURCE_ENERGY 
-                                && COMMODITIES[resource].level != level){
+                                && COMMODITIES[resource].level != factory.level){
                                 const comLevel = COMMODITIES[resource].level || 0
                                 const receiver = citiesByFactoryLevel[comLevel][0].name
 
