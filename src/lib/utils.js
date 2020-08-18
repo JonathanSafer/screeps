@@ -409,7 +409,6 @@ var u = {
         if (!Cache.boostsAvailable || Game.time - Cache.boostCheckTime > 1000) {
             const cities = u.getMyCities()
             u.cacheBoostsAvailable(cities)
-            console.log("called in utils")
         }
         const boostsAvailable = Cache.boostsAvailable || []
         return _(role.boosts).every(boost => boostsAvailable.includes(boost))
