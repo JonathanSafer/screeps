@@ -109,16 +109,17 @@ var rPC = {
     },
 
     initializePowerCreep: function(creep) {
+        if(Game.shard.name != "shard3") return
         if (!creep.memory.city) {
             const cities = u.getMyCities()
             const usedRooms = _(Game.powerCreeps)
                 .map(pc => pc.memory.city)
                 .value()
             const citiesWithoutAnyPC = _.filter(cities, city => city.controller.level == 8
-                && u.getFactory(city) && u.getFactory(city).level
+                && u.getFactory(city) && !u.getFactory(city).level
                 && !usedRooms.includes(city.name))
             const city = _.sample(citiesWithoutAnyPC) // pick a random city
-            creep.memory.city = city.name
+            if(city) creep.memory.city = city.name
         }
     },
 
