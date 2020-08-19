@@ -88,7 +88,7 @@ var cM = {
             const compLvl = COMMODITIES[component].level || 0
             const cache = levelCache[compLvl]
             const empireHasEnough = cache && cache[component] >= quantities[component]
-            if(!empireHasEnough && cM.isCommodity(component)){
+            if(!empireHasEnough && compLvl > 0){
                 missingComponents.push(component)
             }
         }
