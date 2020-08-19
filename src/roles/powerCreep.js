@@ -112,15 +112,11 @@ var rPC = {
         if (!creep.memory.city) {
             const cities = u.getMyCities()
             const usedRooms = _(Game.powerCreeps)
-                .map(pc => pc.room.name)
+                .map(pc => pc.memory.city)
                 .value()
-            const citiesWithoutAnyPC = _(cities)
-                .filter(city => city.controller.level == 8) // is rcl 8
-                .filter(city => { // has an unleveled factory
-                    const factory = u.getFactory(city)
-                    return factory && !factory.level
-                })
-                .filter(city => !usedRooms.includes(city)) // doesn't have a PC already
+            const citiesWithoutAnyPC = _.filter(cities, city => city.controller.level == 8
+                && u.getFactory(city) && u.getFactory(city).level
+                && !usedRooms.includes(city.name))
             const city = _.sample(citiesWithoutAnyPC) // pick a random city
             creep.memory.city = city.name
         }
