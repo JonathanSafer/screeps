@@ -88,7 +88,7 @@ const p = {
         if(structureType == STRUCTURE_FACTORY && ["botarena", "swc"].includes(Game.shard.name)){
             return
         }
-        if(structureType == STRUCTURE_TOWER && room.controller.level.safeMode > 2000){
+        if(structureType == STRUCTURE_TOWER && room.controller.safeMode > 2000){
             return
         }
         const look = room.lookAt(pos.x, pos.y)
