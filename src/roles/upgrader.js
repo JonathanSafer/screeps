@@ -17,8 +17,19 @@ var rU = {
             return
         }
         creep.store.energy > 0 ? actions.upgrade(creep) : rU.getEnergy(creep)
+        if(Game.time % 50 == 0){
+            rU.checkConstruction(creep)
+        }
     },
 
+    checkConstruction: function(creep){
+        if(!creep.memory.boosted){
+            if(creep.room.find(FIND_MY_CONSTRUCTION_SITES).length 
+                && creep.room.controller.ticksToDowngrade > 3000){
+                creep.memory.role = rB.name
+            }
+        }
+    },
 
     getEnergy: function(creep){
         const link = rU.getUpgradeLink(creep)

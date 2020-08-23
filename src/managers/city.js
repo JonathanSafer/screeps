@@ -553,8 +553,8 @@ function updateUpgrader(city, controller, memory, rcl8, creeps, rcl) {
             for(let i = 0; i < needed; i++){
                 sq.schedule(Game.spawns[city], rU.name, rcl >= 6)
             }
-        } else {
-            memory[rU.name] = 1
+        } else if (controller.ticksToDowngrade < 1000){
+            sq.schedule(Game.spawns[city], rU.name, rcl >= 6)
         }
     }
 }
