@@ -40,6 +40,9 @@ var rB = {
         if (needRepair) {
             creep.memory.repair = needRepair.id
             return a.repair(creep, needRepair)
+        } else if(Game.time % 100 == 0 
+            && !Game.spawns[creep.memory.city].room.find(FIND_MY_CONSTRUCTION_SITES).length ){
+            creep.memory.role = rU.name
         }
     },
 
