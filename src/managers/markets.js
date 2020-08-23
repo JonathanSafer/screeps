@@ -234,6 +234,7 @@ var markets = {
     },
 
     buyAndSell: function(termCities) {
+        global.PIXEL = "pixel"//for p-servs
         // cancel active orders
         for(let i = 0; i < Object.keys(Game.market.orders).length; i++){
             if(!Game.market.orders[Object.keys(Game.market.orders)[i]].active){
