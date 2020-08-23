@@ -88,6 +88,9 @@ const p = {
         if(structureType == STRUCTURE_FACTORY && ["botarena", "swc"].includes(Game.shard.name)){
             return
         }
+        if(structureType == STRUCTURE_TOWER && room.controller.level.safeMode > 2000){
+            return
+        }
         const look = room.lookAt(pos.x, pos.y)
         if(room.controller.level < 5 && structureType == STRUCTURE_TERMINAL){
             structureType = STRUCTURE_CONTAINER
