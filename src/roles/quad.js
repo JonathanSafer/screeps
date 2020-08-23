@@ -4,6 +4,7 @@ const a = require("../lib/actions")
 const rH = require("./harasser")
 const T = require("../buildings/tower")
 const settings = require("../config/settings")
+const motion = require("../lib/motion")
 
 var CreepState = {
     START: 1,
@@ -130,7 +131,7 @@ var rQ = {
                     continue
                 }
                 if(!jimmy.pos.isEqualTo(jimmyPos)){
-                    jimmy.moveTo(jimmyPos)
+                    motion.newMove(jimmy, jimmyPos)
                 } else{
                     inLine++
                 }
