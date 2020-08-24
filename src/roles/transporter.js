@@ -27,9 +27,8 @@ var rT = {
         } else {
             const target = rT.findTarget(creep, null)
 
-            if(!target){
-                if(creep.saying == 0) creep.say(30)
-                else creep.say(0)
+            if(!target && creep.saying == 0){
+                creep.say(30)
                 return
             }
 
@@ -54,7 +53,7 @@ var rT = {
 
     moveToTargetIfPresent: function(creep, target) {
         if(!target){
-            creep.say(20)
+            creep.say(0)
             return
         }
         //start moving to next target if target not already in range
