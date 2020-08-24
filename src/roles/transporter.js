@@ -27,7 +27,7 @@ var rT = {
         } else {
             const target = rT.findTarget(creep, null)
 
-            if(!target && creep.saying == 0){
+            if(!target){
                 creep.say(30)
                 return
             }

@@ -216,6 +216,7 @@ function runTowers(city){
         let damaged = null
         let repair = 0
         let target = null
+        maybeSafeMode(city, hostiles)
         if (Game.time % checkTime === 0) {
             const needRepair = _.filter(spawn.room.find(FIND_STRUCTURES), s => s.structureType != STRUCTURE_WALL
                 && s.structureType != STRUCTURE_RAMPART
@@ -259,6 +260,23 @@ function runTowers(city){
                 }
             }
         }
+    }
+}
+
+function maybeSafeMode(city, hostiles){
+    const room = Game.spawns[city].room
+    const plan = Memory.rooms[room.name].plan
+    const minX = plan.x - template.wallDistance
+    const minY = plan.y - template.wallDistance
+    const maxX = plan.x + template.dimensions.x + template.wallDistance - 1
+    const maxY = plan.y + template.dimensions.y + template.wallDistance - 1
+    if(_.find(hostiles, h => h.pos.x > minX 
+            || h.pos.x < maxX 
+            || h.pos.y > minY
+            || h.pos.y < maxY)
+        && room.controller.safeModeAvailable
+        && !room.controller.safeModeCooldown){
+        room.controller.activateSafeMode()
     }
 }
 
