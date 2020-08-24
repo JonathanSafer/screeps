@@ -13,6 +13,7 @@ describe("#main", function () {
         const city = `${rName}0`
 
         const room = new Room(rName)
+        room.memory.plan = {"x": 25, "y": 25}
         new StructureController(room)
         new StructureTerminal(room)
         new StructureStorage(room)
