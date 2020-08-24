@@ -91,12 +91,11 @@ var rQ = {
             } else {
                 const matrix = rQ.getRoomMatrix(creep.pos.roomName)
                 let startPos = null
-                for(let i  = 0; i < 50; i++){
-                    for(let j = 0; j < 50; j++){
-                        if((i == 0 || j == 0 || i == 49 || j == 49) && matrix.get(i,j) == 2){
-                            startPos = new RoomPosition(i, j, creep.pos.roomName)
-                        }
-                    }
+                if(Memory.flags[creep.memory.city + "quadRally"]){
+                    const rallyExit = Game.map.findExit(creep.pos.roomName, Memory.flags[creep.memory.city + "quadRally"].roomName)
+                    startPos = _.find(creep.room.find(rallyExit), pos => matrix.get(pos.x,pos.y) == 2)
+                } else {
+                    startPos = _.find(creep.room.find(FIND_EXIT), pos => matrix.get(pos.x,pos.y) == 2)
                 }
                 const path = PathFinder.search(startPos, {pos: new RoomPosition(25, 25, creep.pos.roomName), range: 1},
                     {maxRooms: 1, roomCallback: function() { return matrix }}).path
