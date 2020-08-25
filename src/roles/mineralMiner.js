@@ -7,7 +7,15 @@ var rMM = {
 
     /** @param {Creep} creep **/
     run: function(creep) {
-        if (_.sum(creep.store) == 0 && creep.ticksToLive < 130){
+        if(!creep.memory.suicideTime && creep.memory.source){
+            const works = creep.getActiveBodyparts(WORK) * HARVEST_MINERAL_POWER
+            const carry = creep.getActiveBodyparts(CARRY) * CARRY_CAPACITY
+            const ticksToFill = Math.ceil(carry/works * EXTRACTOR_COOLDOWN)
+            const mineral = Game.getObjectById(creep.memory.source)
+            const distance = Game.spawns[creep.memory.city].pos.getRangeTo(mineral.pos)
+            creep.memory.suicideTime = distance + ticksToFill
+        }
+        if (_.sum(creep.store) == 0 && creep.ticksToLive < creep.memory.suicideTime){
             creep.suicide()
         }
         if (!creep.memory.source){
