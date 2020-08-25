@@ -154,9 +154,7 @@ module.exports.loop = function () {
         }
 
         // burn extra cpu if the bucket is filling too quickly
-        if(Game.shard.name == "shard3"){
-            b.manage()
-        }
+        b.manage()
 
         // This will always be last. Throw an exception if any city failed.
         er.finishTick()

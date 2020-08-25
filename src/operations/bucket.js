@@ -1,6 +1,5 @@
 const settings = require("../config/settings")
 const observer = require("../buildings/observer")
-const military = require("../managers/military")
 
 const b = {
     SIZE: 10000, // 10K constant cpu bucket size
