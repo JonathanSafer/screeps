@@ -30,8 +30,8 @@ const b = {
     wasteCpu(amount) {
         Cache.bucket.waste += Math.max(Game.cpu.limit + amount - Game.cpu.getUsed(), 0)
         while (Game.cpu.getUsed() < Game.cpu.limit + amount) {
-            military.attack()
-            observer.scanRoom()
+            //military.attack()
+            if(!observer.scanRoom()) break
         }
     }
 }

@@ -52,6 +52,11 @@ var settings = {
     motion: {
         backRoadPenalty: 1.5
     },
+    scouting: {
+        controllerRoom: [20000, 5000, 5000, 10000, 15000, 20000, 40000, 60000, 100000],//scout time based on rcl
+        sk: 100000,
+        highway: 10000000
+    },
     powerMiningRange: 2,
     miningRange: 7,
     observerFrequency: 20, // how often each city scans a room
