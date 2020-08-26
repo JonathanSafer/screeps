@@ -99,16 +99,13 @@ const ob = {
         }
         console.log(roomList)
         const roomsToScan = new Set(roomList)
-        console.log(roomsToScan)
         const roomDataCache = u.getsetd(Cache, "roomData", {})
         for(const roomName of roomsToScan){
-            console.log(Game.map.getRoomStatus(roomName).status)
             const roomData = u.getsetd(roomDataCache, roomName, {})
             if(Game.map.getRoomStatus(roomName).status == "closed" || roomData.scoutTime && roomData.scoutTime > Game.time){
                 roomsToScan.delete(roomName)
                 continue
             }
-            console.log(roomName)
             const obsRoom = _.find(cities, city => city.controller.level == 8 && Game.map.getRoomLinearDistance(roomName, city.name) <= 10)
             if(obsRoom){
                 const rcache = u.getRoomCache(obsRoom.name)
