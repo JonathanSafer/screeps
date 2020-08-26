@@ -67,7 +67,7 @@ const ob = {
             && u.getRoomCache(city.name).scannerTargets 
             && u.getRoomCache(city.name).scannerTargets.length
             && _.find(city.find(FIND_MY_STRUCTURES), struct => struct.structureType == STRUCTURE_OBSERVER))
-        return _.find(obsCity.find(FIND_MY_STRUCTURES), struct => struct.structureType == STRUCTURE_OBSERVER)
+        return obsCity && _.find(obsCity.find(FIND_MY_STRUCTURES), struct => struct.structureType == STRUCTURE_OBSERVER)
     },
 
     scanNextRoom: function(observer) {
