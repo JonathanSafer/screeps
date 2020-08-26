@@ -395,7 +395,7 @@ var u = {
 
     cacheBoostsAvailable: function(cities) {
         const empireStore = u.empireStore(cities)
-        const cityCount = _.filter(cities, city => city.controller.level >= 7).length
+        const cityCount = _.filter(cities, city => city.controller.level >= 7).length || 1
         const boosts = settings.civBoosts.concat(settings.militaryBoosts)
         const boostQuantityRequired = settings.boostsNeeded * cityCount
         const boostsAvailable = _(boosts)
