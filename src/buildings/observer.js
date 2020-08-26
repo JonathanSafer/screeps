@@ -30,7 +30,7 @@ const ob = {
         }
         const roomDataCache = u.getsetd(Cache, "roomData", {})
         for(const room in Game.rooms){
-            if(roomsToScan[room]){
+            if(roomsToScan.has(room)){
                 const roomData = u.getsetd(roomDataCache, room, {})
                 ob.recordData(room, roomData)
                 roomsToScan.delete(room)
@@ -91,13 +91,9 @@ const ob = {
         let roomList = []
         const cities = u.getMyCities()
         for(const city of cities){
-            console.log(city)
             const roomPos = u.roomNameToPos(city.name)
-            console.log(roomPos[0] - 5, roomPos[1] - 5)
-            console.log(u.generateRoomList(roomPos[0] - 4, roomPos[1] - 4, 9, 9))
             roomList = roomList.concat(u.generateRoomList(roomPos[0] - 4, roomPos[1] - 4, 9, 9))//9 by 9
         }
-        console.log(roomList)
         const roomsToScan = new Set(roomList)
         const roomDataCache = u.getsetd(Cache, "roomData", {})
         for(const roomName of roomsToScan){
