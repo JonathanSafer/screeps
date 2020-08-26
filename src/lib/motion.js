@@ -216,13 +216,19 @@ var m = {
         const noviceWallRooms = m.findNoviceWallRooms(creep.room)
         //if room is highway with novice walls, make an object with each of the neighboring rooms as keys
         //values should be arrays of locations for walls in those rooms
+        const roomDataCache = u.getsetd(Cache, "roomData", {})
         const result = PathFinder.search(creep.pos, goals, {
             plainCost: Math.ceil(moveSpeed),
             swampCost: Math.ceil(moveSpeed * 5),
             maxRooms: maxRooms,
             maxOps: 10000,
             roomCallback: function(roomName){
-                if(avoidEnemies && Cache[roomName] && Cache[roomName].enemy){
+                const roomData = u.getsetd(roomDataCache, roomName, {})
+                if(roomData.owner && !settings.allies.includes(roomData.owner) 
+                    && roomData.rcl 
+                    && CONTROLLER_STRUCTURES[STRUCTURE_TOWER][roomData.rcl] 
+                    && creep.memory.tolerance 
+                    && creep.memory.tolerance > CONTROLLER_STRUCTURES[STRUCTURE_TOWER][roomData.rcl] * TOWER_POWER_ATTACK - (TOWER_POWER_ATTACK * TOWER_FALLOFF)){
                     return false
                 }
                 if(Game.map.getRoomStatus(roomName).status != "normal"){
@@ -293,6 +299,7 @@ var m = {
     },
 
     getRoute: function(start, finish, avoidEnemies){
+        const roomDataCache = u.getsetd(Cache, "roomData", {})
         const route = Game.map.findRoute(start, finish, {
             routeCallback: function(roomName){
                 if(u.isHighway(roomName)){
@@ -301,7 +308,8 @@ var m = {
                 if(Game.map.getRoomStatus(roomName).status != "normal") {
                     return Infinity
                 }
-                if(!!Cache[roomName] && !!Cache[roomName].enemy && avoidEnemies){
+                const roomData = u.getsetd(roomDataCache, roomName, {})
+                if(roomData.owner && !settings.allies.includes(roomData.owner) && roomData.rcl && CONTROLLER_STRUCTURES[STRUCTURE_TOWER][roomData.rcl] && avoidEnemies){
                     return 20
                 }
                 return settings.motion.backRoadPenalty

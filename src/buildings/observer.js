@@ -17,47 +17,57 @@ const ob = {
 
     scanRoom: function() {
         const observer = ob.getUnusedObserver()
-        if (!observer) return
+        if (!observer) return false
 
         ob.scanNextRoom(observer)
+        return true
     },
 
     recordRoomData: function() {
-        const lastScans = u.getsetd(Cache, "lastScans", [])
-        const scanRooms = u.getsetd(Cache, "scanRooms", {})
-        for (const room of lastScans) {
-            scanRooms[room] = ob.recordData(room)
+        const roomsToScan = Cache["roomsToScan"]
+        if(!roomsToScan){
+            return
         }
-        // Clear lastscans after we process them all
-        Cache.lastScans = []
+        const roomDataCache = u.getsetd(Cache, "roomData", {})
+        for(const room in Game.rooms){
+            if(roomsToScan[room]){
+                const roomData = u.getsetd(roomDataCache, room, {})
+                ob.recordData(room, roomData)
+                roomsToScan.delete(room)
+            }
+        }
     },
 
-    recordData: function(roomName) {
+    recordData: function(roomName, roomData) {
         const room = Game.rooms[roomName]
         if (!room) { // We don't have vision for some reason
             return
         }
-        const roomDataCache = u.getsetd(Cache, "roomData", {})
-        const data = {}
-        data.enemy = !!u.enemyOwned(room)
-        data.owner = room.controller && room.controller.owner 
-            && room.controller.owner.username
-        data.rcl = (room.controller && room.controller.level) || 0
-        data.towers = _(room.find(FIND_HOSTILE_STRUCTURES))
-            .filter({ structureType: STRUCTURE_TOWER })
-            .value().length
-        //data.template = !!rp.planRoom(roomName)
-        roomDataCache[roomName] = data
+        if(room.controller){
+            roomData.owner = room.controller.owner && room.controller.owner.username
+            roomData.rcl = (room.controller.level) || 0
+            roomData.controllerPos = room.controller.pos
+            roomData.sourcePos = room.find(FIND_SOURCES).map(source => source.pos)
+            if(room.controller.safeMode){
+                roomData.smEndTick = room.controller.safeMode + Game.time
+            }
+        }
+        const skLairs = _.filter(room.find(FIND_HOSTILE_STRUCTURES), struct => struct .structureType == STRUCTURE_KEEPER_LAIR)
+        if(skLairs && skLairs.length){
+            roomData.skLairs == skLairs.map(lair => lair.pos)
+        }
+        const scoutTime = room.controller ? settings.scouting.controllerRoom[roomData.rcl] :
+            skLairs && skLairs.length ? settings.scouting.sk :
+                settings.scouting.highway
+        roomData.scoutTime = Game.time + scoutTime
     },
 
     getUnusedObserver: function() {
-        return _(u.getMyCities())
-            .filter(city => !u.getRoomCache(city.name).scanned)
-            .map(city => {
-                const buildings = city.find(FIND_MY_STRUCTURES)
-                return _(buildings).find({ structureType: STRUCTURE_OBSERVER })
-            })
-            .find(observer => observer) // first non-null observer
+        const obsCity = _.find(u.getMyCities(), city => !u.getRoomCache(city.name).scanned 
+            && u.getRoomCache(city.name).scannerTargets 
+            && u.getRoomCache(city.name).scannerTargets.length
+            && _.find(city.find(FIND_MY_STRUCTURES), struct => struct.structureType == STRUCTURE_OBSERVER))
+        return _.find(obsCity.find(FIND_MY_STRUCTURES), struct => struct.structureType == STRUCTURE_OBSERVER)
     },
 
     scanNextRoom: function(observer) {
@@ -67,9 +77,6 @@ const ob = {
         const rcache = u.getRoomCache(observer.room.name)
         rcache.scanned = true // flag scanner as used
         rcache.scans = (rcache.scans || 0) + 1  // Record stats for scans
-
-        const lastScans = u.getsetd(Cache, "lastScans", [])
-        lastScans.push(target) // mark room so we collect data from it next tick
     },
 
     getScannerTarget: function(observer) {
@@ -81,18 +88,41 @@ const ob = {
     },
 
     findRoomsForScan: function() {
-        const size = Game.map.getWorldSize()
-        const rooms = u.generateRoomList(-size/2, -size/2, size, size)
-        for (const room of rooms) {
-            for (const city of u.getMyCities()) {
-                if (Game.map.getRoomLinearDistance(room, city.name) < 5) {
-                    const rcache = u.getRoomCache(city.name)
-                    const targets = u.getsetd(rcache, "scannerTargets", [])
-                    targets.push(room)
-                    break
-                }
-            }
+        let roomList = []
+        const cities = u.getMyCities()
+        for(const city of cities){
+            console.log(city)
+            const roomPos = u.roomNameToPos(city.name)
+            console.log(roomPos[0] - 5, roomPos[1] - 5)
+            console.log(u.generateRoomList(roomPos[0] - 4, roomPos[1] - 4, 9, 9))
+            roomList = roomList.concat(u.generateRoomList(roomPos[0] - 4, roomPos[1] - 4, 9, 9))//9 by 9
         }
+        console.log(roomList)
+        const roomsToScan = new Set(roomList)
+        console.log(roomsToScan)
+        const roomDataCache = u.getsetd(Cache, "roomData", {})
+        for(const roomName of roomsToScan){
+            console.log(Game.map.getRoomStatus(roomName).status)
+            const roomData = u.getsetd(roomDataCache, roomName, {})
+            if(Game.map.getRoomStatus(roomName).status == "closed" || roomData.scoutTime && roomData.scoutTime > Game.time){
+                roomsToScan.delete(roomName)
+                continue
+            }
+            console.log(roomName)
+            const obsRoom = _.find(cities, city => city.controller.level == 8 && Game.map.getRoomLinearDistance(roomName, city.name) <= 10)
+            if(obsRoom){
+                const rcache = u.getRoomCache(obsRoom.name)
+                const targets = u.getsetd(rcache, "scannerTargets", [])
+                targets.push(roomName)
+                continue
+            }
+            //if no rooms have an obs in range, we'll need a nearby room to send a scout
+            const scoutRoom = _.find(cities, city => Game.map.getRoomLinearDistance(roomName, city.name) <= 10)
+            const rcache = u.getRoomCache(scoutRoom.name)
+            const targets = u.getsetd(rcache, "scannerTargets", [])
+            targets.push(roomName)
+        }
+        Cache["roomsToScan"] = roomsToScan
     },
     
     observeNewRoomForMining: function(city) {

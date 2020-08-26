@@ -1,7 +1,7 @@
 
 
 var settings = {
-    allies: ["Atanner", "slowmotionghost", "Timendainum", "FeTiD"],
+    allies: ["Atanner", "slowmotionghost", "Timendainum", "FeTiD", "Yoner"],
     nukeStructures: [STRUCTURE_SPAWN, STRUCTURE_LAB, STRUCTURE_STORAGE, STRUCTURE_FACTORY,
         STRUCTURE_TERMINAL, STRUCTURE_POWER_SPAWN, STRUCTURE_NUKER],
     militaryBoosts:["XKHO2", "XGHO2", "XZHO2", "XLHO2", "XZH2O", "G"],
@@ -53,6 +53,7 @@ var settings = {
         backRoadPenalty: 1.5
     },
     scouting: {
+        assessTime: 1000,
         controllerRoom: [20000, 5000, 5000, 10000, 15000, 20000, 40000, 60000, 100000],//scout time based on rcl
         sk: 100000,
         highway: 10000000

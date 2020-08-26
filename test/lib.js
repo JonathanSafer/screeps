@@ -33,6 +33,9 @@ const GGame = class {
                 const p1 = u.roomNameToPos(r1)
                 const p2 = u.roomNameToPos(r2)
                 return Math.max(Math.abs(p1[0] - p2[0]), Math.abs(p1[1] - p2[1]))
+            },
+            getRoomStatus: function(){
+                return "normal"
             }
         }
         this._objects = {}

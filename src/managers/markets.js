@@ -137,11 +137,11 @@ var markets = {
                 }
                 if(x === senders.length && !Memory.rooms[myCity.name].termUsed){
                     const amount = 3000
-                    if(botarena && Game.time % 1000 != 0){
-                        //request mineral instead of buying
-                        trading.requestResource(myCity.name, mineral, amount, 0.8)
-                        continue
-                    }
+                    // if(botarena && Game.time % 1000 != 0){
+                    //     //request mineral instead of buying
+                    //     trading.requestResource(myCity.name, mineral, amount, 0.8)
+                    //     continue
+                    // }
                     //buy mineral
                     const goodPrice = botarena ? markets.getPrice(mineral) * 2 : markets.getPrice(mineral) * 1.2
                     const sellOrders = markets.sortOrder(Game.market.getAllOrders(order => order.type == ORDER_SELL 
