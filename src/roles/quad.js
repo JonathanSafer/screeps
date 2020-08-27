@@ -664,7 +664,7 @@ var rQ = {
 
     moveByPath: function(leader, quad, path, status){
         for(let i = 0; i < quad.length; i++){
-            if(quad[i].fatigue){
+            if(quad[i].fatigue || !quad[i].getActiveBodyparts(MOVE)){
                 return
             }
         }
