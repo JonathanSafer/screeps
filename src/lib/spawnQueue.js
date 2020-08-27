@@ -21,6 +21,7 @@ var sq = {
 
     respawn: function(creep, boosted) {
         const spawn = Game.spawns[creep.memory.city]
+        if(!spawn) return
         sq.initialize(spawn)
         sq.schedule(spawn, creep.memory.role, boosted)
     },
