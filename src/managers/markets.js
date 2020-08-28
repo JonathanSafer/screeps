@@ -75,7 +75,7 @@ var markets = {
             const candidates = _.filter(myCities, city => city.controller.level == maxLevel)
             const target = _.max(candidates, city => city.controller.progress).name
             for (const city of myCities){
-                if (city.name != target && city.storage && city.storage.store.energy > Game.rooms[target].storage.store.energy - 100000 && !Memory.rooms[city.name].termUsed){
+                if (city.name != target && city.storage && city.storage.store.energy > Game.rooms[target].storage.store.energy - 80000 && !Memory.rooms[city.name].termUsed){
                     city.terminal.send(RESOURCE_ENERGY, 25000, target)
                     Memory.rooms[city.name].termUsed = true
                 }
