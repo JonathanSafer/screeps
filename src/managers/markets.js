@@ -425,21 +425,21 @@ var markets = {
         for(const resource of resources){
             if(container.store[resource] > threshold){
                 const sellAmount = container.store[resource] - threshold
-                if(["botarena", "swc"].includes(Game.shard.name)){
-                    //check if anybody wants this resource and send if they do
-                    if(Cache.requests){
-                        for(const playerRequests of Object.values(Cache.requests)){
-                            for(const request of playerRequests){
-                                if(request.resourceType == resource && request.priority > 0.7 && Game.market.credits > 10000){
-                                    city.terminal.send(resource, Math.min(sellAmount, request.maxAmount), request.roomName)
-                                    return true
-                                }
-                            }
-                        }
-                    }
-                }
+                // if(["botarena", "swc"].includes(Game.shard.name)){
+                //     //check if anybody wants this resource and send if they do
+                //     if(Cache.requests){
+                //         for(const playerRequests of Object.values(Cache.requests)){
+                //             for(const request of playerRequests){
+                //                 if(request.resourceType == resource && request.priority > 0.7 && Game.market.credits > 10000){
+                //                     city.terminal.send(resource, Math.min(sellAmount, request.maxAmount), request.roomName)
+                //                     return true
+                //                 }
+                //             }
+                //         }
+                //     }
+                // }
                 const goodOrders = markets.sortOrder(buyOrders[resource]).reverse()
-                if(goodOrders.length && goodOrders[0].price > (0.75 * markets.getPrice(resource))){
+                if(goodOrders.length && goodOrders[0].price > (0.50 * markets.getPrice(resource))){
                     Game.market.deal(goodOrders[0].id, Math.min(Math.min(goodOrders[0].remainingAmount,  sellAmount), city.terminal.store[resource]), city.name)
                     return true
                 }
