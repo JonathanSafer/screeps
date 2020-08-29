@@ -100,7 +100,7 @@ const p = {
                 struct.structure.destroy()
             }
         }
-        if (look.length == 1) {
+        if (look.length == 1 && look[0].terrain != "wall") {
             //Log.info("hi")
             room.createConstructionSite(pos.x, pos.y, structureType, name)
         }
