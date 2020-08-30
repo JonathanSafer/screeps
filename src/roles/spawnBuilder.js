@@ -128,6 +128,11 @@ var rSB = {
             a.withdraw(creep, terminal, RESOURCE_ENERGY)
             return
         }
+        const dropped = _.find(creep.room.find(FIND_DROPPED_RESOURCES), r => r.resourceType == RESOURCE_ENERGY)
+        if(dropped){
+            a.pickup(creep, dropped)
+            return
+        }
         var sources =  creep.room.find(FIND_SOURCES)
         if (sources.length == 1){
             const result = creep.harvest(sources[0])
