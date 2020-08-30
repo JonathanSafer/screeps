@@ -100,20 +100,17 @@ var T = {
             if(heals == 0){
                 continue
             }
-            let boosted = false
+            let boostMultiplier = 1
             //if creep has one heal boosted, assume all are T3 boosted
             for(let j = 0; j < hostiles[i].body.length; j++){
                 if(hostiles[i].body[j].type === HEAL){
                     if(hostiles[i].body[j].boost){
-                        boosted = true
+                        boostMultiplier = BOOSTS[HEAL][hostiles[i].body[j].boost][HEAL]
                     }
                     break
                 }
             }
-            let heal = heals * HEAL_POWER
-            if(boosted){
-                heal = heal * 4
-            }
+            let heal = heals * HEAL_POWER * boostMultiplier
             for(var j = hostiles[i].pos.x - 3; j <= hostiles[i].pos.x + 3; j++){
                 for(var k = hostiles[i].pos.y - 3; k <= hostiles[i].pos.y + 3; k++){
                     const range = Math.abs(j - hostiles[i].pos.x) <= 1 && Math.abs(k - hostiles[i].pos.y) <= 1 ? 1 : 3
