@@ -130,7 +130,7 @@ var rSB = {
         }
         const dropped = _.find(creep.room.find(FIND_DROPPED_RESOURCES), r => r.resourceType == RESOURCE_ENERGY)
         if(dropped){
-            a.pickup(creep, dropped)
+            a.pick(creep, dropped)
             return
         }
         var sources =  creep.room.find(FIND_SOURCES)

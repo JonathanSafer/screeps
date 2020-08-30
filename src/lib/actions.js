@@ -76,6 +76,10 @@ var actions = {
     harvest: function(creep, target) {
         return actions.interact(creep, target, () => creep.harvest(target), 1)
     },
+
+    pick: function(creep, target){
+        return actions.interact(creep, target, () => creep.pickup(target), 1)
+    },
     
     pickup: function(creep) {
         var goodLoads = u.getGoodPickups(creep)
