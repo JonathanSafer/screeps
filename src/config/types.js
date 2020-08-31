@@ -6,6 +6,7 @@ function getRecipe(type, energyAvailable, room, boosted){
     const rcl = room.controller.level
 
     // used at all rcls
+    d.scout = [MOVE]
     d.quad = quadBody(energy, rcl, room, boosted)
     d.runner = scalingBody([2, 1], [CARRY, MOVE], energy)
     d.miner = minerBody(energy, rcl)
