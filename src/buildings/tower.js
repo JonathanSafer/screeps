@@ -110,7 +110,7 @@ var T = {
                     break
                 }
             }
-            let heal = heals * HEAL_POWER * boostMultiplier
+            const heal = heals * HEAL_POWER * boostMultiplier
             for(var j = hostiles[i].pos.x - 3; j <= hostiles[i].pos.x + 3; j++){
                 for(var k = hostiles[i].pos.y - 3; k <= hostiles[i].pos.y + 3; k++){
                     const range = Math.abs(j - hostiles[i].pos.x) <= 1 && Math.abs(k - hostiles[i].pos.y) <= 1 ? 1 : 3
