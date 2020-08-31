@@ -6,7 +6,9 @@ var rS = {
     type: "scout",
    
     run: function(creep) {
-        if(!Memory.creeps[creep.name].targetRoom || creep.room.name == Memory.creeps[creep.name].targetRoom)
+        const targetRoom = Memory.creeps[creep.name].targetRoom
+        if(!targetRoom || creep.room.name == targetRoom 
+            || (Cache.RoomData && Cache.roomdata[targetRoom] && Cache.roomdata[targetRoom].scoutTime > Game.time))
             rS.getNextTarget(creep)
         if(Memory.creeps[creep.name].targetRoom)
             motion.newMove(creep, new RoomPosition(25, 25, Memory.creeps[creep.name].targetRoom), 24)
