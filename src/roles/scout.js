@@ -6,12 +6,10 @@ var rS = {
     type: "scout",
    
     run: function(creep) {
-        if(!Memory.creeps[creep.name].targetRoom || creep.room.name == Memory.creeps[creep.name].targetRoom){
+        if(!Memory.creeps[creep.name].targetRoom || creep.room.name == Memory.creeps[creep.name].targetRoom)
             rS.getNextTarget(creep)
-        }
-        motion.newMove(creep, new RoomPosition(25, 25, creep.memory.targetRoom), 24)
-        return
-
+        if(Memory.creeps[creep.name].targetRoom)
+            motion.newMove(creep, new RoomPosition(25, 25, Memory.creeps[creep.name].targetRoom), 24)
     },
 
     getNextTarget: function(creep){
