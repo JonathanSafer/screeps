@@ -143,6 +143,7 @@ function updateCountsCity(city, creeps, rooms, claimRoom, unclaimRoom) {
         updateRunner(creeps, spawn, extensions, memory, rcl, emergencyTime)
         updateFerry(spawn, memory, rcl)
         updateMiner(rooms, rcl8, memory, spawn)
+        updateBuilder(rcl, memory, spawn)
     
         if (Game.time % 500 === 0) {
             runNuker(city)
@@ -150,7 +151,6 @@ function updateCountsCity(city, creeps, rooms, claimRoom, unclaimRoom) {
             updateTransporter(extensions, memory, creeps)
             updateColonizers(city, memory, claimRoom, unclaimRoom)
             updateUpgrader(city, controller, memory, rcl8, creeps, rcl)
-            updateBuilder(rcl, memory, spawn)
             updateMineralMiner(rcl, structures, spawn, memory)
             updatePowerSpawn(city, memory)
             updateStorageLink(spawn, memory, structures)
@@ -591,7 +591,7 @@ function updateBuilder(rcl, memory, spawn) {
     }
     if (totalSites > 0){
         // If room is full of energy and there is contruction, make a builder
-        if (room.energyAvailable == room.energyCapacityAvailable) {
+        if (room.energyAvailable == room.energyCapacityAvailable && Game.time % 500 == 0) {
             sq.schedule(spawn, rB.name)
         }
         memory[rB.name] = (totalSites > 10 && rcl > 2 && rcl < 6) ? settings.max.builders : 1
@@ -605,11 +605,11 @@ function updateBuilder(rcl, memory, spawn) {
         if(walls.length){//find lowest hits wall
             const minHits = _.min(walls, wall => wall.hits).hits
             if(minHits < settings.wallHeight[rcl - 1]){
-                if(rcl >= 7){
+                if(rcl >= 7 && Game.time % 500 == 0){
                     sq.schedule(spawn, rB.name, true)
                     return
-                } else {
-                    memory[rB.name]++
+                } else if(rcl <= 6){
+                    memory[rB.name] = settings.max.builders
                 }
             }
         }
