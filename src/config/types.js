@@ -15,7 +15,7 @@ function getRecipe(type, energyAvailable, room, boosted){
     d.builder = builderBody(energy, rcl)
     d.defender = defenderBody(energy, rcl, boosted)
     d.unclaimer = scalingBody([2, 1], [MOVE, CLAIM], energy)
-    d.harasser = harasserBody(energy, boosted)
+    d.harasser = harasserBody(energy, boosted, rcl)
 
     // used at rcl 4+
     d.spawnBuilder = scalingBody([2, 3, 5], [WORK, CARRY, MOVE], energy)
@@ -279,8 +279,8 @@ function defenderBody(energyAvailable, rcl, boosted) {
     return scalingBody(ratio, types, energyAvailable)
 }
 
-function harasserBody(energyAvailable, boosted){
-    if(boosted){
+function harasserBody(energyAvailable, boosted, rcl){
+    if(boosted && rcl == 8){
         return body([3, 31, 10, 6], [TOUGH, RANGED_ATTACK, MOVE, HEAL])
     }
     return scalingBody([4, 5, 1], [RANGED_ATTACK, MOVE, HEAL], energyAvailable)
