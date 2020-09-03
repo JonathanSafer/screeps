@@ -161,6 +161,7 @@ var rBr = {
             medic.moveTo(creep, {range: 1})
             return
         }
+        if(!canMove) return
         if(target){
             if(target.pos.isNearTo(creep)){
                 return //nothing to do if already at target
