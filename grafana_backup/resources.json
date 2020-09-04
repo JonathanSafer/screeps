@@ -1,0 +1,1072 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": "-- Grafana --",
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "gnetId": null,
+  "graphTooltip": 0,
+  "id": 3220,
+  "links": [],
+  "panels": [
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "ScreepsPlus-Graphite",
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 6,
+        "w": 7,
+        "x": 0,
+        "y": 0
+      },
+      "hiddenSeries": false,
+      "id": 2,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "connected",
+      "options": {
+        "dataLinks": []
+      },
+      "percentage": false,
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "refCount": 1,
+          "refId": "A",
+          "target": "aliasByMetric(screeps.yoner.resource.wire)"
+        },
+        {
+          "hide": false,
+          "refCount": 1,
+          "refId": "B",
+          "target": "aliasByMetric(screeps.yoner.resource.cell)"
+        },
+        {
+          "hide": false,
+          "refCount": 1,
+          "refId": "C",
+          "target": "aliasByMetric(screeps.yoner.resource.alloy)"
+        },
+        {
+          "hide": false,
+          "refCount": 1,
+          "refId": "D",
+          "target": "aliasByMetric(screeps.yoner.resource.condensate)"
+        },
+        {
+          "hide": false,
+          "refCount": 0,
+          "refId": "E",
+          "target": "alias(sumSeries(#A, #B, #D, #C), 'Sum')",
+          "targetFull": "alias(sumSeries(aliasByMetric(screeps.yoner.resource.wire), aliasByMetric(screeps.yoner.resource.cell), aliasByMetric(screeps.yoner.resource.condensate), aliasByMetric(screeps.yoner.resource.alloy)), 'Sum')"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": "30d",
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Tier 0 resources",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": "0",
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "ScreepsPlus-Graphite",
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 6,
+        "w": 7,
+        "x": 7,
+        "y": 0
+      },
+      "hiddenSeries": false,
+      "id": 5,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "connected",
+      "options": {
+        "dataLinks": []
+      },
+      "percentage": false,
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "refCount": 1,
+          "refId": "A",
+          "target": "aliasByMetric(screeps.yoner.resource.switch)"
+        },
+        {
+          "hide": false,
+          "refCount": 1,
+          "refId": "B",
+          "target": "aliasByMetric(screeps.yoner.resource.phlegm)"
+        },
+        {
+          "hide": false,
+          "refCount": 1,
+          "refId": "C",
+          "target": "aliasByMetric(screeps.yoner.resource.tube)"
+        },
+        {
+          "hide": false,
+          "refCount": 1,
+          "refId": "D",
+          "target": "aliasByMetric(screeps.yoner.resource.concentrate)"
+        },
+        {
+          "hide": false,
+          "refCount": 0,
+          "refId": "E",
+          "target": "alias(sumSeries(#A, #B, #D, #C), 'Sum')",
+          "targetFull": "alias(sumSeries(aliasByMetric(screeps.yoner.resource.switch), aliasByMetric(screeps.yoner.resource.phlegm), aliasByMetric(screeps.yoner.resource.concentrate), aliasByMetric(screeps.yoner.resource.tube)), 'Sum')"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": "30d",
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Tier 1 resources",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": "0",
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "ScreepsPlus-Graphite",
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 6,
+        "w": 7,
+        "x": 14,
+        "y": 0
+      },
+      "hiddenSeries": false,
+      "id": 4,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "connected",
+      "options": {
+        "dataLinks": []
+      },
+      "percentage": false,
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "refCount": 1,
+          "refId": "A",
+          "target": "aliasByMetric(screeps.yoner.resource.transistor)"
+        },
+        {
+          "hide": false,
+          "refCount": 1,
+          "refId": "B",
+          "target": "aliasByMetric(screeps.yoner.resource.tissue)"
+        },
+        {
+          "hide": false,
+          "refCount": 1,
+          "refId": "C",
+          "target": "aliasByMetric(screeps.yoner.resource.fixtures)"
+        },
+        {
+          "hide": false,
+          "refCount": 1,
+          "refId": "D",
+          "target": "aliasByMetric(screeps.yoner.resource.extract)"
+        },
+        {
+          "hide": false,
+          "refCount": 0,
+          "refId": "E",
+          "target": "alias(sumSeries(#A, #B, #D, #C), 'Sum')",
+          "targetFull": "alias(sumSeries(aliasByMetric(screeps.yoner.resource.transistor), aliasByMetric(screeps.yoner.resource.tissue), aliasByMetric(screeps.yoner.resource.extract), aliasByMetric(screeps.yoner.resource.fixtures)), 'Sum')"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": "30d",
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Tier 2 resources",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": "0",
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "ScreepsPlus-Graphite",
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 6,
+        "w": 7,
+        "x": 0,
+        "y": 6
+      },
+      "hiddenSeries": false,
+      "id": 7,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "connected",
+      "options": {
+        "dataLinks": []
+      },
+      "percentage": false,
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "refCount": 1,
+          "refId": "A",
+          "target": "aliasByMetric(screeps.yoner.resource.microchip)"
+        },
+        {
+          "hide": false,
+          "refCount": 1,
+          "refId": "B",
+          "target": "aliasByMetric(screeps.yoner.resource.muscle)"
+        },
+        {
+          "hide": false,
+          "refCount": 1,
+          "refId": "C",
+          "target": "aliasByMetric(screeps.yoner.resource.frame)"
+        },
+        {
+          "hide": false,
+          "refCount": 1,
+          "refId": "D",
+          "target": "aliasByMetric(screeps.yoner.resource.spirit)"
+        },
+        {
+          "hide": false,
+          "refCount": 0,
+          "refId": "E",
+          "target": "alias(sumSeries(#A, #B, #D, #C), 'Sum')",
+          "targetFull": "alias(sumSeries(aliasByMetric(screeps.yoner.resource.microchip), aliasByMetric(screeps.yoner.resource.muscle), aliasByMetric(screeps.yoner.resource.spirit), aliasByMetric(screeps.yoner.resource.frame)), 'Sum')"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": "30d",
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Tier 3 resources",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": "0",
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "ScreepsPlus-Graphite",
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 6,
+        "w": 7,
+        "x": 7,
+        "y": 6
+      },
+      "hiddenSeries": false,
+      "id": 3,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "connected",
+      "options": {
+        "dataLinks": []
+      },
+      "percentage": false,
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "refCount": 1,
+          "refId": "A",
+          "target": "aliasByMetric(screeps.yoner.resource.circuit)"
+        },
+        {
+          "hide": false,
+          "refCount": 1,
+          "refId": "B",
+          "target": "aliasByMetric(screeps.yoner.resource.organoid)"
+        },
+        {
+          "hide": false,
+          "refCount": 1,
+          "refId": "C",
+          "target": "aliasByMetric(screeps.yoner.resource.hydraulics)"
+        },
+        {
+          "hide": false,
+          "refCount": 1,
+          "refId": "D",
+          "target": "aliasByMetric(screeps.yoner.resource.emanation)"
+        },
+        {
+          "hide": false,
+          "refCount": 0,
+          "refId": "E",
+          "target": "alias(sumSeries(#A, #B, #D, #C), 'Sum')",
+          "targetFull": "alias(sumSeries(aliasByMetric(screeps.yoner.resource.circuit), aliasByMetric(screeps.yoner.resource.organoid), aliasByMetric(screeps.yoner.resource.emanation), aliasByMetric(screeps.yoner.resource.hydraulics)), 'Sum')"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": "30d",
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Tier 4 resources",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": "0",
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "ScreepsPlus-Graphite",
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 6,
+        "w": 7,
+        "x": 14,
+        "y": 6
+      },
+      "hiddenSeries": false,
+      "id": 6,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "connected",
+      "options": {
+        "dataLinks": []
+      },
+      "percentage": false,
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "refCount": 1,
+          "refId": "A",
+          "target": "aliasByMetric(screeps.yoner.resource.device)"
+        },
+        {
+          "hide": false,
+          "refCount": 1,
+          "refId": "B",
+          "target": "aliasByMetric(screeps.yoner.resource.organism)"
+        },
+        {
+          "hide": false,
+          "refCount": 1,
+          "refId": "C",
+          "target": "aliasByMetric(screeps.yoner.resource.machine)"
+        },
+        {
+          "hide": false,
+          "refCount": 1,
+          "refId": "D",
+          "target": "aliasByMetric(screeps.yoner.resource.essence)"
+        },
+        {
+          "hide": false,
+          "refCount": 0,
+          "refId": "E",
+          "target": "alias(sumSeries(#A, #B, #D, #C), 'Sum')",
+          "targetFull": "alias(sumSeries(aliasByMetric(screeps.yoner.resource.device), aliasByMetric(screeps.yoner.resource.organism), aliasByMetric(screeps.yoner.resource.essence), aliasByMetric(screeps.yoner.resource.machine)), 'Sum')"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": "30d",
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Tier 5 resources",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": "0",
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "ScreepsPlus-Graphite",
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 6,
+        "w": 7,
+        "x": 0,
+        "y": 12
+      },
+      "hiddenSeries": false,
+      "id": 10,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "connected",
+      "options": {
+        "dataLinks": []
+      },
+      "percentage": false,
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "refCount": 1,
+          "refId": "A",
+          "target": "aliasByMetric(screeps.yoner.resource.silicon)"
+        },
+        {
+          "hide": false,
+          "refCount": 1,
+          "refId": "B",
+          "target": "aliasByMetric(screeps.yoner.resource.biomass)"
+        },
+        {
+          "hide": false,
+          "refCount": 1,
+          "refId": "C",
+          "target": "aliasByMetric(screeps.yoner.resource.metal)"
+        },
+        {
+          "hide": false,
+          "refCount": 1,
+          "refId": "D",
+          "target": "aliasByMetric(screeps.yoner.resource.mist)"
+        },
+        {
+          "hide": false,
+          "refCount": 0,
+          "refId": "E",
+          "target": "alias(sumSeries(#A, #B, #D, #C), 'Sum')",
+          "targetFull": "alias(sumSeries(aliasByMetric(screeps.yoner.resource.silicon), aliasByMetric(screeps.yoner.resource.biomass), aliasByMetric(screeps.yoner.resource.mist), aliasByMetric(screeps.yoner.resource.metal)), 'Sum')"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": "30d",
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Base resources",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": "0",
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "ScreepsPlus-Graphite",
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 6,
+        "w": 14,
+        "x": 7,
+        "y": 12
+      },
+      "hiddenSeries": false,
+      "id": 9,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "connected",
+      "options": {
+        "dataLinks": []
+      },
+      "percentage": false,
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "refCount": 0,
+          "refId": "A",
+          "target": "aliasByMetric(screeps.yoner.resource.power)"
+        },
+        {
+          "refCount": 0,
+          "refId": "B",
+          "target": "aliasByMetric(screeps.yoner.resource.ops)"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": "20d",
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Key Resources",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": "0",
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": true,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "ScreepsPlus-Graphite",
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 6,
+        "w": 21,
+        "x": 0,
+        "y": 18
+      },
+      "hiddenSeries": false,
+      "id": 8,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": false,
+        "total": false,
+        "values": false
+      },
+      "lines": false,
+      "linewidth": 1,
+      "nullPointMode": "connected",
+      "options": {
+        "dataLinks": []
+      },
+      "percentage": false,
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "refCount": 0,
+          "refId": "A",
+          "target": "aliasByMetric(screeps.yoner.resource.G)"
+        },
+        {
+          "hide": false,
+          "refCount": 0,
+          "refId": "B",
+          "target": "alias(screeps.yoner.resource.XGH2O, 'upgrade')"
+        },
+        {
+          "hide": false,
+          "refCount": 0,
+          "refId": "C",
+          "target": "alias(screeps.yoner.resource.XLH2O, 'build/repair')"
+        },
+        {
+          "hide": false,
+          "refCount": 0,
+          "refId": "D",
+          "target": "alias(screeps.yoner.resource.XKHO2, 'ranged attack')"
+        },
+        {
+          "hide": false,
+          "refCount": 0,
+          "refId": "F",
+          "target": "alias(screeps.yoner.resource.XLHO2, 'heal')"
+        },
+        {
+          "hide": false,
+          "refCount": 0,
+          "refId": "E",
+          "target": "alias(screeps.yoner.resource.XZHO2, 'move')"
+        },
+        {
+          "hide": false,
+          "refCount": 0,
+          "refId": "G",
+          "target": "alias(screeps.yoner.resource.XGHO2, 'tough')"
+        },
+        {
+          "hide": false,
+          "refCount": 0,
+          "refId": "H",
+          "target": "alias(screeps.yoner.resource.XZH2O, 'dismantle')"
+        },
+        {
+          "refCount": 0,
+          "refId": "I",
+          "target": "alias(screeps.yoner.resource.XUH2O, 'attack')"
+        },
+        {
+          "refCount": 0,
+          "refId": "J",
+          "target": "alias(screeps.yoner.resource.XUHO2, 'harvest')"
+        },
+        {
+          "refCount": 0,
+          "refId": "K",
+          "target": "alias(screeps.yoner.resource.XKH2O, 'carry')"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Boosts",
+      "tooltip": {
+        "shared": false,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "series",
+        "name": null,
+        "show": true,
+        "values": [
+          "current"
+        ]
+      },
+      "yaxes": [
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": "0",
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    }
+  ],
+  "schemaVersion": 22,
+  "style": "dark",
+  "tags": [],
+  "templating": {
+    "list": []
+  },
+  "time": {
+    "from": "now-6h",
+    "to": "now"
+  },
+  "timepicker": {
+    "refresh_intervals": [
+      "5s",
+      "10s",
+      "30s",
+      "1m",
+      "5m",
+      "15m",
+      "30m",
+      "1h",
+      "2h",
+      "1d"
+    ]
+  },
+  "timezone": "",
+  "title": "Resource Dashboard",
+  "uid": "XsdIS5CZz",
+  "version": 16
+}
