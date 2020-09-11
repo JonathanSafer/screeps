@@ -540,20 +540,13 @@ function updateUpgrader(city, controller, memory, rcl8, creeps, rcl) {
     const room = Game.spawns[city].room
     memory[rU.name] = 0//temp
     if (rcl8){
-        if(Game.time % 1500 != 0){
-            return
-        }
         const bucketThreshold = settings.bucket.upgrade + settings.bucket.range * cityFraction(room.name)
         const haveEnoughCpu = Game.cpu.bucket > bucketThreshold
         if (controller.ticksToDowngrade < 100000 
             || (controller.room.storage.store.energy > settings.energy.rcl8upgrade && haveEnoughCpu)){
-            sq.schedule(Game.spawns[city], rU.name, true)
+            scheduleIfNeeded(rU.name, 1, true, Game.spawns[city], creeps)
         }
     } else {
-        if(room.storage && room.storage.store[RESOURCE_ENERGY] < 250000
-                && controller.ticksToDowngrade > CONTROLLER_DOWNGRADE[rcl.toString()]/2){
-            return
-        }
         var banks = u.getWithdrawLocations(creeps[0])
         //Log.info(banks);
         let money = _.sum(_.map(banks, bank => bank.store[RESOURCE_ENERGY]))

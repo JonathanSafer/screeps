@@ -26,7 +26,7 @@ var settings = {
         repair: 3000, //repairing walls in a room
         processPower: 2200,
         colony: 4000, // building new rooms
-        upgrade: 6000,
+        upgrade: 4500,
         energyMining: 4000,
         powerMining: 8000,
         mineralMining: 8000,
