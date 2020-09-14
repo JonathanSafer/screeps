@@ -294,6 +294,7 @@ var markets = {
             //buy minerals as needed
             if(!["botarena", "swc"].includes(Game.shard.name)){
                 markets.buyMins(city, baseMins)
+                markets.buyBoosts(city)
             }
             if(!level && !termUsed){
                 termUsed = markets.sellResources(city, bars, 3000/*TODO make this a setting*/, city.terminal, buyOrders)
@@ -542,6 +543,37 @@ var markets = {
         const buyAmount = Math.min(cheapest.remainingAmount, settings.powerBuyVolume)
         Game.market.deal(cheapest.id, buyAmount, city.name)
         return true
+    },
+
+    buyBoosts: function(city) {
+        const boosts = settings.civBoosts.concat(settings.militaryBoosts)
+        for(const boost in boosts){
+            if(city.storage.store[boost]) continue
+            const amountNeeded = 6000
+            const orderId = _.find(Object.keys(Game.market.orders),
+                order => Game.market.orders[order].roomName === city.name && Game.market.orders[order].resourceType === boost)
+            const order = Game.market.orders[orderId]
+            if(order && order.remainingAmount < amountNeeded){
+                //update order quantity
+                Game.market.extendOrder(orderId, (amountNeeded - order.remainingAmount))
+            } else if(!order){
+                let buyPrice = markets.getPrice(boost)
+                buyPrice = buyPrice * 0.8//start 20% below market value
+                Game.market.createOrder({
+                    type: ORDER_BUY,
+                    resourceType: boost,
+                    price: buyPrice,
+                    totalAmount: amountNeeded,
+                    roomName: city.name   
+                })
+            } else if(Game.time % 800 === 30){//order already exists for max amount and has not been satisfied
+                //increment price if price is not above market value 
+                const buyPrice = Math.min(markets.getPrice(boost) * 2, settings.upgradeBoostPrice)
+                if(order.price < buyPrice){
+                    Game.market.changeOrderPrice(orderId, (Math.max(order.price*1.04, order.price + .001)))
+                }
+            }
+        }
     },
 
     //////////////// MARKET UTILS ////////////////////

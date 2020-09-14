@@ -14,6 +14,7 @@ var settings = {
     // market
     creditMin: 1000000, //min credits needed to start buying energy
     powerPrice: 8, // price we will pay for power
+    upgradeBoostPrice: 15,
     powerBuyVolume: 5000, // amount of power we will buy at once
 
     miningDisabled: ["W2N240"], //cities that will attempt any highway mining
