@@ -547,7 +547,7 @@ var markets = {
 
     buyBoosts: function(city) {
         const boosts = settings.civBoosts.concat(settings.militaryBoosts)
-        for(const boost in boosts){
+        for(const boost of boosts){
             if(city.storage.store[boost]) continue
             const amountNeeded = 6000
             const orderId = _.find(Object.keys(Game.market.orders),
