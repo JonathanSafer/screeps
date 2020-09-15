@@ -36,6 +36,9 @@ profiler.enable()
 module.exports.loop = function () {
     "use strict"
     profiler.wrap(function () {
+        if(Game.cpu.unlockedTime && ((Game.cpu.unlockedTime - Date.now()) < 1000*60*60*24)) {
+            Game.cpu.unlock()
+        }
         er.reset()
 
         if(Game.shard.name == "shard2" && Game.cpu.bucket > 9500){
