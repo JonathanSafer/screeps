@@ -64,6 +64,9 @@ module.exports.loop = function () {
         var prevCpu = Game.cpu.getUsed()
         for (let i = 0; i < myCities.length; i += 1) {
             try {
+                if(Game.cpu.bucket < 10){
+                    return
+                }
                 var city = u.getsetd(myCities[i].memory, "city", myCities[i].name + "0")
                 const rcl = myCities[i].controller.level
                 const rclLimit =
