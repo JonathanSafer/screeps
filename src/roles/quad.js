@@ -475,6 +475,7 @@ var rQ = {
             return { pos: e.pos, range: 0 }}), {
             plainCost: 1,
             swampCost: 1,
+            maxOps: 10000,
             roomCallback: (roomName) => {
                 const room = Game.rooms[roomName]
                 if (!room || roomName != creep.room.name) return
