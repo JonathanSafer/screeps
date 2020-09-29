@@ -6,6 +6,136 @@ const rU = require("../roles/upgrader")
 const p = {
     frequency: 2000,
 
+    judgeNextRoom: function(){
+        const nextRoom = _.find(Cache.roomData, room => room.controllerPos && !room.score).controllerPos.roomName
+        if(nextRoom){
+            p.scoreRoom(nextRoom)
+            return
+        }
+        p.expand()
+    },
+
+    expand: function(){
+        console.log("attempting expansion")
+    },
+
+    scoreRoom: function(roomName){
+        const roomData = Cache.roomData[roomName]
+        if (roomData.sourcePos.length < 2){
+            roomData.score = -1
+            return
+        }
+        const terrain = Game.map.getRoomTerrain(roomName)
+        const exits = u.findExitPos(FIND_EXIT_TOP).concat(u.findExitPos(FIND_EXIT_BOTTOM), u.findExitPos(FIND_EXIT_LEFT), u.findExitPos(FIND_EXIT_RIGHT))
+        const wallMap = new PathFinder.CostMatrix
+        for(let i = 0; i < 50; i++){
+            for(let j = 0; j < 50; j++){
+                if(!(terrain.get(i,j) & TERRAIN_MASK_WALL) && !p.isNearExit(i, j, exits)){
+                    wallMap.set(i, j, 255)
+                }
+            }
+        }
+        let level = 0
+        let changed = true
+        while(changed == true){
+            changed = false
+            for(let i = 0; i < 50; i++){
+                for(let j = 0; j < 50; j++){
+                    if(wallMap.get(i,j) == level){
+                        p.spreadWall(i, j, wallMap, level)
+                        changed = true
+                    }
+                }
+            }
+            level++
+        }
+        const levelNeeded = Math.ceil(Math.max(template.dimensions.x, template.dimensions.y)/2)
+        if(level - 1 < levelNeeded){
+            roomData.score = -1
+            return //template won't fit
+        }
+        const candidates = {}
+        for(let i = 0; i < 50; i++){
+            for(let j = 0; j < 50; j++){
+                if(wallMap.get(i,j) >= levelNeeded){
+                    candidates[toString(i * 50 + j)] = {}
+                }
+            }
+        }
+        if(Object.keys(candidates).length > 1) p.narrowByControllerPos(candidates, roomData, roomName, levelNeeded)
+        if(Object.keys(candidates).length > 1) p.narrowBySourcePos(candidates, roomData, roomName)
+
+        const center = Object.keys(candidates[0])
+        const controllerScore = center.controllerDistance < levelNeeded + template.wallDistance ? 5 : Math.max(25 - center.controllerDistance, 0)
+        const sourceScore = Math.max((70 - center.sourceDistance)/5, 0)
+        roomData.score = controllerScore + sourceScore
+    },
+
+    narrowBySourcePos: function(candidates, roomData, roomName){
+        const sources = [new RoomPosition(roomData.sourcePos[0].x, roomData.controllerPos[0].y, roomData.controllerPos[0].roomName),
+            new RoomPosition(roomData.sourcePos[1].x, roomData.controllerPos[1].y, roomData.controllerPos[1].roomName)]
+        for(const pos of Object.keys(candidates)){
+            const realPos = new RoomPosition(parseInt(pos)/50, parseInt(pos)%50, roomName)
+            candidates[pos].sourceDistance = PathFinder.search(realPos, {pos: sources[0], range: 1}, {plainCost: 1, swampCost: 1}).cost +
+                PathFinder.search(realPos, {pos: sources[1], range: 1}, {plainCost: 1, swampCost: 1}).cost
+        }
+        const bestSourceDist = _.min(candidates, "sourceDistance").sourceDistance
+        for(const pos of Object.keys(candidates)){
+            if(candidates[pos].sourceDistance > bestSourceDist)
+                delete candidates[pos]
+        }
+    },
+
+    narrowByControllerPos: function(candidates, roomData, roomName, levelNeeded){
+        const controllerPos = new RoomPosition(roomData.controllerPos.x, roomData.controllerPos.y, roomData.controllerPos.roomName)
+        for(const pos of Object.keys(candidates)){
+            candidates[pos].controllerDistance = PathFinder.search(new RoomPosition(parseInt(pos)/50, parseInt(pos)%50, roomName), {pos: controllerPos, range: 1}, {plainCost: 1, swampCost: 1}).cost
+        }
+        const topCandidates = _.filter(candidates, pos => pos.controllerDistance >= levelNeeded + template.wallDistance)
+        if(topCandidates.length){
+            for(const pos of Object.keys(candidates)){
+                if(!topCandidates.includes(pos))
+                    delete candidates[pos]
+            }
+        }
+        const bestControllerDist = _.min(candidates, "controllerDistance").controllerDistance
+        for(const pos of Object.keys(candidates)){
+            if(candidates[pos].controllerDistance > bestControllerDist)
+                delete candidates[pos]
+        }
+    },
+
+    spreadWall: function(x, y, wallMap, level){
+        const maxX = Math.min(x + 1, 49)
+        const minX = Math.max(x - 1, 0)
+        const maxY = Math.min(y + 1, 49)
+        const minY = Math.max(y - 1, 0)
+        for(let i = minX; i <= maxX; i++){
+            for(let j = minY; j <= maxY; j++){
+                if(wallMap.get(i, j) > level){
+                    wallMap.set(i, j, level + 1)
+                }
+            }
+        }
+    },
+
+    isNearExit: function(x ,y, exits){
+        const distance = 2 + template.wallDistance
+        if((x > distance || x < 49 - distance) && (y > distance || y < 49 - distance)){
+            return false
+        }
+        for(const exit of exits){
+            if(exit.inRangeTo(x,y)){
+                return true
+            }
+        }
+        return false
+    },
+
+    expand: function(){
+        if(Game.cpu.bucket != 10000) return
+    },
+
     findRooms: function() {
         if (!p.newRoomNeeded()) {
             return

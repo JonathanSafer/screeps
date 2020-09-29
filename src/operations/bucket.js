@@ -1,12 +1,17 @@
 const settings = require("../config/settings")
 const observer = require("../buildings/observer")
+const u = require("../lib/utils")
+const rp = require("../managers/roomplan")
+const sq = require("../lib/spawnQueue")
+const rS = require("../roles/scout")
 
 const b = {
     SIZE: 10000, // 10K constant cpu bucket size
 
     manage: function() {
         if (b.growingTooQuickly()) {
-            b.wasteCpu(0)
+            const wasteAmount = Game.cpu.bucket == b.SIZE ? 50 : 1
+            b.wasteCpu(wasteAmount)
         }
     },
 
@@ -26,11 +31,31 @@ const b = {
         return (Cache.bucket.fillRate > percentEmpty * settings.bucket.growthLimit)
     },
 
-    wasteCpu(amount) {
+    wasteCpu: function(amount) {
         Cache.bucket.waste += Math.max(Game.cpu.limit + amount - Game.cpu.getUsed(), 0)
+        let spawnedScouts = false
         while (Game.cpu.getUsed() < Game.cpu.limit + amount) {
             //military.attack()
-            if(!observer.scanRoom()) break
+            if(!observer.scanRoom()){
+                if(!spawnedScouts){
+                    b.spawnScouts()
+                    spawnedScouts = true
+                }
+                rp.judgeNextRoom()
+            }
+        }
+    },
+
+    spawnScouts: function(){
+        const cities = u.getMyCities()
+        for(const city of cities){
+            if(city.controller.level < 8 && city.storage && city.storage.store[RESOURCE_ENERGY] > settings.energy.repair){
+                const rcache = u.getRoomCache(city.name)
+                const targets = u.getsetd(rcache, "scannerTargets", [])
+                if(targets.length){
+                    sq.schedule(Game.spawns[city.memory.city], rS.name)
+                }
+            }
         }
     }
 }
