@@ -15,10 +15,6 @@ const p = {
         p.expand()
     },
 
-    expand: function(){
-        console.log("attempting expansion")
-    },
-
     scoreRoom: function(roomName){
         const roomData = Cache.roomData[roomName]
         if (roomData.sourcePos.length < 2){
@@ -133,6 +129,7 @@ const p = {
     },
 
     expand: function(){
+        console.log("attempting expansion")
         if(Game.cpu.bucket != 10000) return
     },
 
