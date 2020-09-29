@@ -7,6 +7,7 @@ const p = {
     frequency: 2000,
 
     judgeNextRoom: function(){
+        if(!Cache.roomData) return
         const nextRoom = _.find(Cache.roomData, room => room.controllerPos && !room.score).controllerPos.roomName
         if(nextRoom){
             p.scoreRoom(nextRoom)

@@ -153,16 +153,16 @@ module.exports.loop = function () {
 
         if(Game.shard.name != "shard3"){
             if(Cache.roomData){
-                for(const roomName in Object.keys(Cache.roomData)){
+                for(const roomName of Object.keys(Cache.roomData)){
                     const roomInfo = Cache.roomData[roomName]
                     if(roomInfo.controllerPos){
                         const pos = roomInfo.controllerPos
                         Game.map.visual.circle(new RoomPosition(pos.x,pos.y,pos.roomName), {fill: "#FF0000", radius: 5})
                     }
                     if(roomInfo.sourcePos && roomInfo.sourcePos.length){
-                        const pos = roomInfo.sourcePos
-                        Game.map.visual.circle(new RoomPosition(pos[0].x,pos[0].y,pos[0].roomName), {fill: "#00FF00", radius: 5})
-                        Game.map.visual.circle(new RoomPosition(pos[1].x,pos[1].y,pos[1].roomName), {fill: "#00FF00", radius: 5})
+                        for(const pos of roomInfo.sourcePos){
+                            Game.map.visual.circle(new RoomPosition(pos.x,pos.y,pos.roomName), {fill: "#00FF00", radius: 5})
+                        }
                     }
                     if(roomInfo.level){
                         Game.map.visual.text(roomInfo.level, new RoomPosition(25,15,roomName), {color: "#0000FF", fontSize: 10})
