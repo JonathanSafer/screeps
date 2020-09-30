@@ -407,7 +407,7 @@ function updateColonizers(city, memory, claimRoom, unclaimRoom) {
     const roomName = Game.spawns[city].room.name
     if(roomName == claimRoom){
         const flag = Memory.flags.claim
-        Memory.flags[city + "harass"] = new RoomPosition(25, 25, roomName)
+        Memory.flags[city + "harass"] = new RoomPosition(25, 25, Memory.flags.claim.roomName)
         if(Game.spawns[city].room.controller.level < 7){
             memory[rSB.name] = 4
         } else if (flag && Game.rooms[flag.roomName] && Game.rooms[flag.roomName].controller && Game.rooms[flag.roomName].controller.level > 6) {
