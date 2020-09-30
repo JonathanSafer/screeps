@@ -48,8 +48,21 @@ var rH = {
         const hostiles = _.filter(creep.room.find(FIND_HOSTILE_CREEPS), c => !settings.allies.includes(c.owner.username))
         rH.maybeHeal(creep, hostiles)
         if(!hostiles.length){
-            if(rH.rally(creep)){
-                return
+            if(Memory.flags[creep.memory.city + "harass"] && creep.room.name == Memory.flags[creep.memory.city + "harass"].roomName){
+                const hostileStructures = creep.room.find(FIND_HOSTILE_STRUCTURES)
+                if(hostileStructures.length){
+                    if(!Game.getObjectById(creep.memory.target)){
+                        creep.memory.target = hostileStructures[0].id
+                    }
+                } else {
+                    if(rH.rally(creep)){
+                        return
+                    }
+                }
+            } else {
+                if(rH.rally(creep)){
+                    return
+                }
             }
         }
         creep.memory.dormant = false
