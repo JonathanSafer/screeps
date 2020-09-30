@@ -164,8 +164,8 @@ module.exports.loop = function () {
                             Game.map.visual.circle(new RoomPosition(pos.x,pos.y,pos.roomName), {fill: "#00FF00", radius: 5})
                         }
                     }
-                    if(roomInfo.level){
-                        Game.map.visual.text(roomInfo.level, new RoomPosition(25,15,roomName), {color: "#0000FF", fontSize: 10})
+                    if(roomInfo.rcl){
+                        Game.map.visual.text(roomInfo.rcl, new RoomPosition(25,15,roomName), {color: "#0000FF", fontSize: 10})
                     }
                     if(roomInfo.score){
                         Game.map.visual.text(roomInfo.score, new RoomPosition(25,35,roomName), {color: "#0000FF", fontSize: 10})

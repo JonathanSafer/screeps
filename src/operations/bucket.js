@@ -47,6 +47,7 @@ const b = {
     },
 
     spawnScouts: function(){
+        if(Game.time % 500 != 0) return
         const cities = u.getMyCities()
         for(const city of cities){
             if(city.controller.level < 8 && city.storage && city.storage.store[RESOURCE_ENERGY] > settings.energy.repair){

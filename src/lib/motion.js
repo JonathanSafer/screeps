@@ -231,13 +231,30 @@ var m = {
                     && creep.memory.tolerance > CONTROLLER_STRUCTURES[STRUCTURE_TOWER][roomData.rcl] * TOWER_POWER_ATTACK - (TOWER_POWER_ATTACK * TOWER_FALLOFF)){
                     return false
                 }
+                if(roomData.skLairs && roomData.rcl) return
                 if(Game.map.getRoomStatus(roomName).status != "normal"){
                     return false
+                }
+                const costs = new PathFinder.CostMatrix
+                if(roomData.skLairs && roomData.skLairs.length){
+                    const terrain = Game.map.getRoomTerrain(roomName)
+                    for(const lair of skLairs){
+                        const minX = Math.max(lair.x - 5, 0)
+                        const maxX = Math.min(lair.x + 5, 49)
+                        const minY = Math.max(lair.y - 5, 0)
+                        const maxY = Math.min(lair.y + 5, 49)
+                        for(let i = minX; i < maxX; i++){
+                            for (let j = minY; j < maxY; j++){
+                                if(!(terrain.get(i,j) & TERRAIN_MASK_WALL)){
+                                    costs.set(i, j, Math.ceil(50/Math.min(Math.abs(i - lair.x), Math.abs(j - lair.y))))
+                                }
+                            }
+                        }
+                    }
                 }
                 const room = Game.rooms[roomName]
                 if(!room){
                     if(noviceWallRooms[roomName] && noviceWallRooms[roomName].length){
-                        const costs = new PathFinder.CostMatrix
                         for(let i = 0; i < noviceWallRooms[roomName].length; i++){
                             costs.set(noviceWallRooms[roomName][i].x, noviceWallRooms[roomName][i].y, 0xff)
                         }
@@ -246,7 +263,6 @@ var m = {
                     //if room is not visible AND is on the novice highway list, set wall spots accordingly
                     return
                 }
-                const costs = new PathFinder.CostMatrix
 
                 room.find(FIND_STRUCTURES).forEach(function(struct) {
                     if (struct.structureType === STRUCTURE_ROAD || (struct.structureType == STRUCTURE_PORTAL && struct.pos.isEqualTo(goals))) {
