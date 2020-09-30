@@ -238,7 +238,7 @@ var m = {
                 const costs = new PathFinder.CostMatrix
                 if(roomData.skLairs && roomData.skLairs.length){
                     const terrain = Game.map.getRoomTerrain(roomName)
-                    for(const lair of skLairs){
+                    for(const lair of roomData.skLairs){
                         const minX = Math.max(lair.x - 5, 0)
                         const maxX = Math.min(lair.x + 5, 49)
                         const minY = Math.max(lair.y - 5, 0)
