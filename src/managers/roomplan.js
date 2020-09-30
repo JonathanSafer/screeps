@@ -64,7 +64,7 @@ const p = {
         if(Object.keys(candidates).length > 1) p.narrowByControllerPos(candidates, roomData, roomName, levelNeeded)
         if(Object.keys(candidates).length > 1) p.narrowBySourcePos(candidates, roomData, roomName)
 
-        const center = Object.keys(candidates)[0]
+        const center = Object.values(candidates)[0]
         const centerPoint = Object.keys(candidates)[0]
 
         if(!center.sourceDistance){

@@ -28,7 +28,7 @@ const b = {
         Cache.bucket.fillRate = 0.99 * oldRate + 0.01 * delta
 
         const percentEmpty = 1 - Game.cpu.bucket / b.SIZE
-        return (Cache.bucket.fillRate > percentEmpty * settings.bucket.growthLimit)
+        return (Cache.bucket.fillRate > percentEmpty * settings.bucket.growthLimit || Game.cpu.bucket == b.SIZE)
     },
 
     wasteCpu: function(amount) {
