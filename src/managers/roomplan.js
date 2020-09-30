@@ -148,12 +148,12 @@ const p = {
     },
 
     expand: function(){
-        console.log("attempting expansion")
         if(Game.cpu.bucket != 10000 || Memory.flags["claim"] || Game.shard.name.includes("shard")) return
         const myCities = u.getMyCities()
         if(Game.gcl.level == myCities.length) return
         const candidates = _.reject(Cache.roomData, room => !room.score || room.score == -1 || room.rcl || room.scoutTime < Game.time + CREEP_LIFE_TIME)
-        if(candidates.length) return
+        if(!candidates.length) return
+        console.log("attempting expansion")
         const expoRoom = _.max(candidates, room => room.score)
         const expoRoomName = expoRoom.controllerPos.roomName
         Memory.flags["claim"] = new RoomPosition(25, 25, expoRoomName)
