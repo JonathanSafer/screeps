@@ -2,6 +2,7 @@
 module.exports = {
     "wallDistance": 4,
     "dimensions": {"x":13, "y":11},
+    "centerOffset": {"x":6, "y":5},
     "offset": {"x":13, "y":12},
     "exits": [{"x":18,"y":12},{"x":20,"y":12},{"x":13,"y":17},{"x":19,"y":22},{"x":21,"y":22},{"x":24,"y":22},{"x":25,"y":20},{"x":25,"y":17}], // road spots on edge of template
     "buildings": {

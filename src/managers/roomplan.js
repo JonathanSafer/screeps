@@ -7,14 +7,15 @@ const p = {
     frequency: 2000,
 
     judgeNextRoom: function(){
-        if(!Cache.roomData) return
+        if(!Cache.roomData) return true
         const nextRoom = _.find(Cache.roomData, room => room.controllerPos && !room.score)
         if(nextRoom){
             const roomName = nextRoom.controllerPos.roomName
             p.scoreRoom(roomName)
-            return
+            return false
         }
         p.expand()
+        return true
     },
 
     scoreRoom: function(roomName){
@@ -48,7 +49,7 @@ const p = {
             level++
         }
         const levelNeeded = Math.ceil(Math.max(template.dimensions.x, template.dimensions.y)/2)
-        if(level - 1 < levelNeeded){
+        if(level - 2 < levelNeeded){
             roomData.score = -1
             return //template won't fit
         }
@@ -64,9 +65,25 @@ const p = {
         if(Object.keys(candidates).length > 1) p.narrowBySourcePos(candidates, roomData, roomName)
 
         const center = Object.keys(candidates)[0]
+        const centerPoint = Object.keys(candidates)[0]
+
+        if(!center.sourceDistance){
+            const sources = [new RoomPosition(roomData.sourcePos[0].x, roomData.sourcePos[0].y, roomData.sourcePos[0].roomName),
+                new RoomPosition(roomData.sourcePos[1].x, roomData.sourcePos[1].y, roomData.sourcePos[1].roomName)]
+            const realPos = new RoomPosition(Math.floor(centerPoint/50), centerPoint%50, roomName)
+            center.sourceDistance = PathFinder.search(realPos, {pos: sources[0], range: 1}, {plainCost: 1, swampCost: 1}).cost +
+                PathFinder.search(realPos, {pos: sources[1], range: 1}, {plainCost: 1, swampCost: 1}).cost
+        }
+        if(!center.controllerDistance){
+            const controllerPos = new RoomPosition(roomData.controllerPos.x, roomData.controllerPos.y, roomData.controllerPos.roomName)
+            center.controllerDistance = PathFinder.search(new RoomPosition(Math.floor(centerPoint/50), centerPoint%50, roomName), {pos: controllerPos, range: 1}, {plainCost: 1, swampCost: 1}).cost
+        }
+
         const controllerScore = center.controllerDistance < levelNeeded + template.wallDistance ? 5 : Math.max(25 - center.controllerDistance, 0)
         const sourceScore = Math.max((70 - center.sourceDistance)/5, 0)
-        roomData.score = controllerScore + sourceScore
+        const mineralScore = roomData.mineral == RESOURCE_CATALYST ? 5 : 0
+        roomData.score = controllerScore + sourceScore + mineralScore
+        roomData.center = centerPoint
     },
 
     narrowBySourcePos: function(candidates, roomData, roomName){
@@ -132,7 +149,15 @@ const p = {
 
     expand: function(){
         console.log("attempting expansion")
-        if(Game.cpu.bucket != 10000) return
+        if(Game.cpu.bucket != 10000 || Memory.flags["claim"] || Game.shard.name.includes("shard")) return
+        const myCities = u.getMyCities()
+        if(Game.gcl.level == myCities.length) return
+        const candidates = _.reject(Cache.roomData, room => !room.score || room.score == -1 || room.rcl || room.scoutTime < Game.time + CREEP_LIFE_TIME)
+        if(candidates.length) return
+        const expoRoom = _.max(candidates, room => room.score)
+        const expoRoomName = expoRoom.controllerPos.roomName
+        Memory.flags["claim"] = new RoomPosition(25, 25, expoRoomName)
+        Memory.flags["plan"] = new RoomPosition(Math.floor(expoRoom.center/50) - template.centerOffset.x, expoRoom.center%50 - template.centerOffset.y, expoRoomName)
     },
 
     findRooms: function() {

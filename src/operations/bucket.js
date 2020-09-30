@@ -41,7 +41,7 @@ const b = {
                     b.spawnScouts()
                     spawnedScouts = true
                 }
-                rp.judgeNextRoom()
+                if(rp.judgeNextRoom()) break
             }
         }
     },

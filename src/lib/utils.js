@@ -468,6 +468,14 @@ var u = {
 
     generateCreepName: function(counter, role){
         return role + "-" + counter
+    },
+
+    removeFlags: function(roomName){
+        for(const flagName of Object.keys(Memory.flags)){
+            if(Memory.flags[flagName].roomName == roomName){
+                delete Memory.flags[flagName]
+            }
+        }
     }
 }
 

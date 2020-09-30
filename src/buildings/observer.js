@@ -48,6 +48,7 @@ const ob = {
             roomData.rcl = (room.controller.level) || 0
             roomData.controllerPos = room.controller.pos
             roomData.sourcePos = room.find(FIND_SOURCES).map(source => source.pos)
+            roomData.mineral = room.find(FIND_MINERALS)[0].mineralType
             if(room.controller.safeMode){
                 roomData.smEndTick = room.controller.safeMode + Game.time
             }

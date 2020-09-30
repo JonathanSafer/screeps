@@ -4,6 +4,7 @@ var rU = require("./upgrader")
 var s = require("../config/settings")
 var rBr = require("./breaker")
 var motion = require("../lib/motion")
+var u = require("../lib/utils")
 
 var rSB = {
     name: "spawnBuilder",
@@ -51,13 +52,21 @@ var rSB = {
             }
             return
         }
+        if(Game.time % 100 == 0){
+            if(!Memory.flags.claim.startTime){
+                Memory.flags.claim.startTime = Game.time
+            }
+            if(Memory.flags.claim.startTime < Game.time - 10000){
+                u.removeFlags(Memory.flags.claim.roomName)
+                return
+            }
+        }
         if(creep.pos.roomName === Memory.flags.claim.roomName){
             if (!creep.room.controller || !creep.room.controller.my) {
                 rBr.breakStuff(creep, null)
                 motion.newMove(creep, creep.room.controller.pos, 3)
                 return
             }
-
             if(Game.time % 100 == 0 && rSB.jobDone(creep)){
                 delete Memory.flags.claim
                 delete Memory.flags.claimRally
