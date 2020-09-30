@@ -67,7 +67,7 @@ var rH = {
         }
         creep.memory.dormant = false
         const needRetreat = rH.maybeRetreat(creep, hostiles)
-        if(!needRetreat && hostiles.length){
+        if(!needRetreat && (hostiles.length || Game.getObjectById(creep.memory.target))){
             rH.aMove(creep, hostiles)
         }
         rH.shoot(creep, hostiles)
