@@ -136,7 +136,7 @@ const p = {
 
     isNearExit: function(x ,y, exits){
         const distance = 2 + template.wallDistance
-        if((x > distance || x < 49 - distance) && (y > distance || y < 49 - distance)){
+        if((x > distance && x < 49 - distance) && (y > distance && y < 49 - distance)){
             return false
         }
         for(const exit of exits){

@@ -157,18 +157,18 @@ module.exports.loop = function () {
                     const roomInfo = Cache.roomData[roomName]
                     if(roomInfo.controllerPos){
                         const pos = roomInfo.controllerPos
-                        Game.map.visual.circle(new RoomPosition(pos.x,pos.y,pos.roomName), {fill: "#FF0000", radius: 5})
+                        Game.map.visual.circle(new RoomPosition(pos.x,pos.y,pos.roomName), {fill: "#FF0000", radius: 2})
                     }
                     if(roomInfo.sourcePos && roomInfo.sourcePos.length){
                         for(const pos of roomInfo.sourcePos){
-                            Game.map.visual.circle(new RoomPosition(pos.x,pos.y,pos.roomName), {fill: "#00FF00", radius: 5})
+                            Game.map.visual.circle(new RoomPosition(pos.x,pos.y,pos.roomName), {fill: "#00FF00", radius: 2})
                         }
                     }
                     if(roomInfo.rcl){
-                        Game.map.visual.text(roomInfo.rcl, new RoomPosition(25,15,roomName), {color: "#0000FF", fontSize: 10})
+                        Game.map.visual.text(roomInfo.rcl, new RoomPosition(25,15,roomName), {color: "#00FF00", fontSize: 10})
                     }
                     if(roomInfo.score){
-                        Game.map.visual.text(roomInfo.score, new RoomPosition(25,35,roomName), {color: "#0000FF", fontSize: 10})
+                        Game.map.visual.text(roomInfo.score, new RoomPosition(25,35,roomName), {color: "#00FF00", fontSize: 10})
                     }
                 }
             }
