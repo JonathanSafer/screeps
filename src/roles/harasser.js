@@ -3,6 +3,7 @@ const motion = require("../lib/motion")
 const sq = require("../lib/spawnQueue")
 const a = require("../lib/actions")
 const u = require("../lib/utils")
+const military = require("../managers/military")
 
 var rH = {
     name: "harasser",
@@ -19,6 +20,10 @@ var rH = {
         if(creep.hits < creep.hitsMax * 0.2 && !creep.memory.reinforced){
             creep.memory.reinforced = true
             sq.respawn(creep, true)
+            if(Memory.flags["claim"] && creep.room.name == Memory.flags["claim"].roomName){
+                Memory.flags[creep.memory.city + "quadRally"] = Memory.flags["claim"]
+                military.spawnQuad(creep.memory.city, true)
+            }
         }
         if(Game.time % 51 == 0){
             //check to remove flag and respawn
