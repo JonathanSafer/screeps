@@ -148,7 +148,7 @@ function updateCountsCity(city, creeps, rooms, claimRoom, unclaimRoom) {
         if (Game.time % 500 === 0) {
             runNuker(city)
             checkLabs(city)
-            updateTransporter(extensions, memory, creeps)
+            updateTransporter(extensions, memory, creeps, structures)
             updateColonizers(city, memory, claimRoom, unclaimRoom)
             updateUpgrader(city, controller, memory, rcl8, creeps, rcl)
             updateMineralMiner(rcl, structures, spawn, memory)
@@ -266,6 +266,7 @@ function runTowers(city){
 function maybeSafeMode(city, hostiles){
     const room = Game.spawns[city].room
     const plan = Memory.rooms[room.name].plan
+    if(!plan) return
     const minX = plan.x - template.wallDistance
     const minY = plan.y - template.wallDistance
     const maxX = plan.x + template.dimensions.x + template.wallDistance - 1
@@ -525,8 +526,8 @@ function updateMineralMiner(rcl, buildings, spawn, memory) {
     }
 }
 
-function updateTransporter(extensions, memory, creeps) {
-    if (extensions < 1){
+function updateTransporter(extensions, memory, creeps, structures) {
+    if (extensions < 1 && !_.find(structures, struct => struct.structureType == STRUCTURE_CONTAINER)){
         memory[rT.name] = 0
     } else if (extensions < 10){
         memory[rT.name] = 1
