@@ -8,9 +8,10 @@ const p = {
 
     judgeNextRoom: function(){
         if(!Cache.roomData) return
-        const nextRoom = _.find(Cache.roomData, room => room.controllerPos && !room.score).controllerPos.roomName
+        const nextRoom = _.find(Cache.roomData, room => room.controllerPos && !room.score)
         if(nextRoom){
-            p.scoreRoom(nextRoom)
+            const roomName = nextRoom.controllerPos.roomName
+            p.scoreRoom(roomName)
             return
         }
         p.expand()
@@ -23,7 +24,7 @@ const p = {
             return
         }
         const terrain = Game.map.getRoomTerrain(roomName)
-        const exits = u.findExitPos(FIND_EXIT_TOP).concat(u.findExitPos(FIND_EXIT_BOTTOM), u.findExitPos(FIND_EXIT_LEFT), u.findExitPos(FIND_EXIT_RIGHT))
+        const exits = u.findExitPos(roomName, FIND_EXIT_TOP).concat(u.findExitPos(roomName, FIND_EXIT_BOTTOM), u.findExitPos(roomName, FIND_EXIT_LEFT), u.findExitPos(roomName, FIND_EXIT_RIGHT))
         const wallMap = new PathFinder.CostMatrix
         for(let i = 0; i < 50; i++){
             for(let j = 0; j < 50; j++){
@@ -55,24 +56,24 @@ const p = {
         for(let i = 0; i < 50; i++){
             for(let j = 0; j < 50; j++){
                 if(wallMap.get(i,j) >= levelNeeded){
-                    candidates[toString(i * 50 + j)] = {}
+                    candidates[i * 50 + j] = {}
                 }
             }
         }
         if(Object.keys(candidates).length > 1) p.narrowByControllerPos(candidates, roomData, roomName, levelNeeded)
         if(Object.keys(candidates).length > 1) p.narrowBySourcePos(candidates, roomData, roomName)
 
-        const center = Object.keys(candidates[0])
+        const center = Object.keys(candidates)[0]
         const controllerScore = center.controllerDistance < levelNeeded + template.wallDistance ? 5 : Math.max(25 - center.controllerDistance, 0)
         const sourceScore = Math.max((70 - center.sourceDistance)/5, 0)
         roomData.score = controllerScore + sourceScore
     },
 
     narrowBySourcePos: function(candidates, roomData, roomName){
-        const sources = [new RoomPosition(roomData.sourcePos[0].x, roomData.controllerPos[0].y, roomData.controllerPos[0].roomName),
-            new RoomPosition(roomData.sourcePos[1].x, roomData.controllerPos[1].y, roomData.controllerPos[1].roomName)]
+        const sources = [new RoomPosition(roomData.sourcePos[0].x, roomData.sourcePos[0].y, roomData.sourcePos[0].roomName),
+            new RoomPosition(roomData.sourcePos[1].x, roomData.sourcePos[1].y, roomData.sourcePos[1].roomName)]
         for(const pos of Object.keys(candidates)){
-            const realPos = new RoomPosition(parseInt(pos)/50, parseInt(pos)%50, roomName)
+            const realPos = new RoomPosition(Math.floor(pos/50), pos%50, roomName)
             candidates[pos].sourceDistance = PathFinder.search(realPos, {pos: sources[0], range: 1}, {plainCost: 1, swampCost: 1}).cost +
                 PathFinder.search(realPos, {pos: sources[1], range: 1}, {plainCost: 1, swampCost: 1}).cost
         }
@@ -86,12 +87,12 @@ const p = {
     narrowByControllerPos: function(candidates, roomData, roomName, levelNeeded){
         const controllerPos = new RoomPosition(roomData.controllerPos.x, roomData.controllerPos.y, roomData.controllerPos.roomName)
         for(const pos of Object.keys(candidates)){
-            candidates[pos].controllerDistance = PathFinder.search(new RoomPosition(parseInt(pos)/50, parseInt(pos)%50, roomName), {pos: controllerPos, range: 1}, {plainCost: 1, swampCost: 1}).cost
+            candidates[pos].controllerDistance = PathFinder.search(new RoomPosition(Math.floor(pos/50), pos%50, roomName), {pos: controllerPos, range: 1}, {plainCost: 1, swampCost: 1}).cost
         }
         const topCandidates = _.filter(candidates, pos => pos.controllerDistance >= levelNeeded + template.wallDistance)
         if(topCandidates.length){
             for(const pos of Object.keys(candidates)){
-                if(!topCandidates.includes(pos))
+                if(!topCandidates.includes(candidates[pos]))
                     delete candidates[pos]
             }
         }
@@ -122,7 +123,7 @@ const p = {
             return false
         }
         for(const exit of exits){
-            if(exit.inRangeTo(x,y)){
+            if(exit.inRangeTo(x,y, distance)){
                 return true
             }
         }
