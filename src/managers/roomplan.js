@@ -581,7 +581,7 @@ const p = {
         const exitPaths = p.getExitPaths(room, exits, plan, roadMatrix)
 
         //push all paths onto big list
-        const roads = p.compileRoads(sourcePaths, mineralPath, controllerPath, exitPaths)
+        const roads = p.compileRoads(controllerPath, sourcePaths, mineralPath, exitPaths)
         
         //place Csites
         let counter = 0
