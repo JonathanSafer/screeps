@@ -77,10 +77,10 @@ var rB = {
             var siege = _.find(creep.room.find(FIND_MY_CREEPS), c => c.memory.role == rD.name)
             if(siege){
                 const plan = creep.room.memory.plan
-                targets = _.reject(targets, site => site.pos.x > plan.x + template.dimensions.x + 2
-                        || site.pos.y > plan.y + template.dimensions.y + 2
-                        || site.pos.x < plan.x - 3
-                        || site.pos.y < plan.y - 3)
+                targets = _.reject(targets, site => site.pos.x > plan.x + template.dimensions.x + template.wallDistance
+                        || site.pos.y > plan.y + template.dimensions.y + template.wallDistance
+                        || site.pos.x < plan.x - (template.wallDistance + 1)
+                        || site.pos.y < plan.y - (template.wallDistance + 1))
             }
             if(targets.length){
                 var targetsByCost = _.sortBy(targets, target => target.progressTotal)
