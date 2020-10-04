@@ -143,7 +143,7 @@ module.exports.loop = function () {
 
         observer.recordRoomData()
         if(Game.time % settings.scouting.assessTime == 0) observer.findRoomsForScan()
-        if(Game.time % settings.cMTime == settings.cMOffset && !["botarena", "swc"].includes(Game.shard.name)){//run commodity manager every 400 (lower than lowest batched reaction time, on the 39 so it'll be before dormant period ends)
+        if(Game.time % settings.cMTime == settings.cMOffset && !PServ){//run commodity manager every 400 (lower than lowest batched reaction time, on the 39 so it'll be before dormant period ends)
             if(Game.time % settings.cMTime * 50 == settings.cMOffset){
                 cM.cleanCities(myCities)
             } else {

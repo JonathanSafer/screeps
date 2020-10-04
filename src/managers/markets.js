@@ -1,13 +1,8 @@
 var u = require("../lib/utils")
 var settings = require("../config/settings")
-const trading = require("./swcTrading")
 
 var markets = {
     manageMarket: function(myCities){//this function is now in charge of all terminal acitivity
-        const botarena = ["botarena", "swc"].includes(Game.shard.name)
-        if(botarena){
-            trading.checkAllies()
-        }
         if(Game.time % 10 != 0){
             return
         }
@@ -119,10 +114,6 @@ var markets = {
     },
     
     distributeMinerals: function(myCities){
-        const botarena = ["botarena", "swc"].includes(Game.shard.name)
-        if(botarena){
-            trading.startOfTick()
-        }
         let senders = myCities
         for (const myCity of myCities){
             const city = myCity.memory.city
@@ -147,13 +138,7 @@ var markets = {
                 }
                 if(x === senders.length && !Memory.rooms[myCity.name].termUsed){
                     const amount = 3000
-                    // if(botarena && Game.time % 1000 != 0){
-                    //     //request mineral instead of buying
-                    //     trading.requestResource(myCity.name, mineral, amount, 0.8)
-                    //     continue
-                    // }
-                    //buy mineral
-                    const goodPrice = botarena ? markets.getPrice(mineral) * 2 : markets.getPrice(mineral) * 1.2
+                    const goodPrice = PServ ? markets.getPrice(mineral) * 2 : markets.getPrice(mineral) * 1.2
                     const sellOrders = markets.sortOrder(Game.market.getAllOrders(order => order.type == ORDER_SELL 
                         && order.resourceType == mineral 
                         && order.amount >= amount 
@@ -171,12 +156,6 @@ var markets = {
                     }
                 }
             }
-        }
-        if(botarena){
-            if(Cache.specialRequest){
-                trading.requestResource(Cache.specialRequest[0], Cache.specialRequest[1], Cache.specialRequest[2], Cache.specialRequest[3])
-            }
-            trading.endOfTick()
         }
     },
 
@@ -292,7 +271,7 @@ var markets = {
             //if any base mineral (besides ghodium) is low, an order for it will be placed on the market. If an order already exists, update quantity
             //if an order already exists and is above threshold (arbitrary?), increase price
             //buy minerals as needed
-            if(!["botarena", "swc"].includes(Game.shard.name)){
+            if(!PServ){
                 markets.buyMins(city, baseMins)
                 markets.buyBoosts(city)
             }
@@ -426,19 +405,6 @@ var markets = {
         for(const resource of resources){
             if(container.store[resource] > threshold){
                 const sellAmount = container.store[resource] - threshold
-                // if(["botarena", "swc"].includes(Game.shard.name)){
-                //     //check if anybody wants this resource and send if they do
-                //     if(Cache.requests){
-                //         for(const playerRequests of Object.values(Cache.requests)){
-                //             for(const request of playerRequests){
-                //                 if(request.resourceType == resource && request.priority > 0.7 && Game.market.credits > 10000){
-                //                     city.terminal.send(resource, Math.min(sellAmount, request.maxAmount), request.roomName)
-                //                     return true
-                //                 }
-                //             }
-                //         }
-                //     }
-                // }
                 const goodOrders = markets.sortOrder(buyOrders[resource]).reverse()
                 if(goodOrders.length && goodOrders[0].price > (0.50 * markets.getPrice(resource))){
                     Game.market.deal(goodOrders[0].id, Math.min(Math.min(goodOrders[0].remainingAmount,  sellAmount), city.terminal.store[resource]), city.name)

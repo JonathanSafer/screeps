@@ -92,7 +92,7 @@ const ob = {
 
     findRoomsForScan: function() {
         let roomList = []
-        const cities = u.getMyCities()
+        const cities = _.filter(u.getMyCities(), c => c.controller.level >= 4)
         for(const city of cities){
             const roomPos = u.roomNameToPos(city.name)
             roomList = roomList.concat(u.generateRoomList(roomPos[0] - 4, roomPos[1] - 4, 9, 9))//9 by 9

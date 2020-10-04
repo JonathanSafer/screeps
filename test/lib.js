@@ -84,6 +84,7 @@ global.Structure = {}
 global.Spawn = {}
 global.Source = {}
 global.Flag = {}
+global.PServ = false
 global.PathFinder = {
     CostMatrix: class {
         constructor() {
