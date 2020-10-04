@@ -1,7 +1,7 @@
 var sq = {
-    schedule: function(spawn, role, boosted = false) {
+    schedule: function(spawn, role, boosted = false, flag = null) {
         sq.initialize(spawn)
-        spawn.memory.sq.push({role: role, boosted: boosted})
+        spawn.memory.sq.push({role: role, boosted: boosted, flag: flag})
     },
 
     peekNextRole: function(spawn) {
