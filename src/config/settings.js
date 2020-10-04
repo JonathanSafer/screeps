@@ -73,7 +73,7 @@ var settings = {
     resourceStatTime: 19 * 50,
 }
 
-if(PServ){
+if(!Game.shard.name.includes("shard")){
     //botarena and swc custom settings
     settings.allies = []
 }
