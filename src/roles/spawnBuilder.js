@@ -98,7 +98,8 @@ var rSB = {
     
     build: function(creep) {
         if(creep.room.controller && creep.room.controller.level < 2 
-            || creep.room.controller.ticksToDowngrade < CONTROLLER_DOWNGRADE[creep.room.controller.level] - 1000){
+            || creep.room.controller.ticksToDowngrade < CONTROLLER_DOWNGRADE[creep.room.controller.level] - 5000
+            || (creep.room.controller.ticksToDowngrade < CONTROLLER_DOWNGRADE[creep.room.controller.level] - 1000 && creep.pos.inRangeTo(creep.room.controller.pos, 3))){
             if(creep.upgradeController(creep.room.controller) == ERR_NOT_IN_RANGE) {
                 motion.newMove(creep, creep.room.controller.pos, 3)
             }
@@ -139,7 +140,7 @@ var rSB = {
             a.withdraw(creep, terminal, RESOURCE_ENERGY)
             return
         }
-        const dropped = _.find(creep.room.find(FIND_DROPPED_RESOURCES), r => r.resourceType == RESOURCE_ENERGY)
+        const dropped = _.find(creep.room.find(FIND_DROPPED_RESOURCES), r => r.resourceType == RESOURCE_ENERGY && r.amount > 50)
         if(dropped){
             a.pick(creep, dropped)
             return
