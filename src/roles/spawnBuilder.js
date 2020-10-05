@@ -42,15 +42,25 @@ var rSB = {
             return
         }
         if(!Memory.flags.claim){
-            if(creep.store[RESOURCE_ENERGY] > 0){
-                const containers = _.filter(creep.room.find(FIND_STRUCTURES), struct => struct.structureType == STRUCTURE_CONTAINER)
-                if (containers.length){
-                    a.charge(creep, containers[0])
-                } else {
-                    creep.drop(RESOURCE_ENERGY)
+            Game.spawns[creep.memory.city].memory[rSB.name] = 0
+            if(creep.memory.flagRoom){
+                if(creep.pos.roomName != creep.memory.flagRoom){
+                    motion.newMove(creep, new RoomPosition(24, 24, creep.memory.flagRoom), 23)
+                    return
                 }
+                creep.memory.city = creep.memory.flagRoom + "0"
+                const room = Game.rooms[creep.memory.flagRoom]
+                const minerCount = _.filter(room.find(FIND_MY_CREEPS), c => c.memory.role == "remoteMiner").length
+                if(minerCount < 2){
+                    creep.memory.role = "remoteMiner"
+                    return
+                }
+                creep.memory.role = rU.name
             }
             return
+        }
+        if(!creep.memory.flagRoom){
+            creep.memory.flagRoom = Memory.flags.claim.roomName
         }
         if(Game.time % 100 == 0){
             if(!Memory.flags.claim.startTime){
