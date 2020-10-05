@@ -139,6 +139,13 @@ var rF = {
                 break
             }
             const amountNeeded = Math.min(lab.store.getFreeCapacity(creep.memory.mineral), creep.store.getFreeCapacity())
+            if(amountNeeded === 0 && creep.memory.reactor){
+                //lab has incorrect mineral
+                //clear both reactors to reset lab process
+                rF.clearReactors(Game.spawns[creep.memory.city].memory)
+                creep.memory.target = rF.getJob(creep)
+                break
+            }
             if (creep.room.terminal.store[creep.memory.mineral] >= amountNeeded){
                 actions.withdraw(creep, creep.room.terminal, creep.memory.mineral, amountNeeded)
             } else {
@@ -201,7 +208,7 @@ var rF = {
             actions.withdraw(creep, creep.room.terminal, creep.memory.mineral, creep.memory.quantity)
             break
         case 13:
-            // move energy to storage to link
+            // move energy from storage to link
             if (creep.store.energy === 0 && link.energy === 0){//both are empty
                 actions.withdraw(creep, creep.room.storage, RESOURCE_ENERGY, LINK_CAPACITY)
             } else if (link.energy === 0){//link is empty and creep has energy
@@ -348,6 +355,13 @@ var rF = {
             return 8
         }
         return 0
+    },
+
+    clearReactors: function(memory){
+        const reactorInfo = Object.values(memory.ferryInfo.labInfo.reactors)
+        for(const reactor of reactorInfo){
+            reactor.fill = -1
+        }
     }
 }
 module.exports = rF
