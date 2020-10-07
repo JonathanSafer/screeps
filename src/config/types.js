@@ -228,9 +228,11 @@ function quadBody(energyAvailable, rcl, room, boosted){
         if(rcl == 8){
             return body([2, 18, 9, 8, 1, 12], [TOUGH, RANGED_ATTACK, MOVE, TOUGH, MOVE, HEAL])
         }
-        const ratio = [1, 4, 1, 1, 1, 2]
-        const types = [TOUGH, RANGED_ATTACK, MOVE, TOUGH, MOVE, HEAL]
-        return scalingBody(ratio, types, energyAvailable)
+        if(rcl == 7){
+            const ratio = [1, 4, 1, 1, 1, 2]
+            const types = [TOUGH, RANGED_ATTACK, MOVE, TOUGH, MOVE, HEAL]
+            return scalingBody(ratio, types, energyAvailable)
+        }
     }
     //make unboosted variant
     const types = [RANGED_ATTACK, MOVE, HEAL]
@@ -266,11 +268,13 @@ function defenderBody(energyAvailable, rcl, boosted) {
         if(rcl == 8){
             return body([6, 22, 10, 12], [TOUGH, RANGED_ATTACK, MOVE, HEAL])
         }
-        const ratio = [1, 9, 3, 2]
-        const types = [TOUGH, RANGED_ATTACK, MOVE, HEAL]
-        return scalingBody(ratio, types, energyAvailable)
+        if(rcl == 7){
+            const ratio = [1, 9, 3, 2]
+            const types = [TOUGH, RANGED_ATTACK, MOVE, HEAL]
+            return scalingBody(ratio, types, energyAvailable)
+        }
     }
-    const ratio = [3, 2, 1]
+    const ratio = [3, 4, 1]
     const types = [RANGED_ATTACK, MOVE, HEAL]
     const baseCost = cost(body(ratio, types))
     if(baseCost > energyAvailable){
