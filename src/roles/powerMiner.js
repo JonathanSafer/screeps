@@ -1,9 +1,9 @@
 var motion = require("../lib/motion")
-var actions = require("../lib/actions")
 var sq = require("../lib/spawnQueue")
 var rR = require("./runner")
 var u = require("../lib/utils")
 var rBr = require("./breaker")
+var settings = require("../config/settings")
 
 var rPM = {
     name: "powerMiner",
@@ -43,29 +43,32 @@ var rPM = {
 
         const canMove = rBr.canMove(creep, medic)
 
-        let target = Game.getObjectById(creep.memory.target)//target is pBank
-        if(target){
-            rPM.hitBank(creep, medic, target, canMove) 
-        } else {
-            target = rPM.findBank(creep, flagName)
-            if(target){//move to it
-                rPM.hitBank(creep, medic, target, canMove)
-                actions.attack(creep, target) == 0 ? rBr.medicMove(creep, medic) : 0
-                medic.heal(creep)
-            } else if (!Memory.flags[flagName]) {
-                return
-            } else if(creep.room.name != Memory.flags[flagName].roomName){ //rally
-                if(canMove){
-                    motion.newMove(creep, new RoomPosition(Memory.flags[flagName].x, Memory.flags[flagName].y, Memory.flags[flagName].roomName), 1)
-                    rBr.medicMove(creep, medic)
-                }
-            } else {
-                //if there's a flag, but no bank under it, retreat
-                if(canMove){
-                    rPM.retreat(creep, medic, flagName)
-                }
-            }
+        let bank = Game.getObjectById(creep.memory.target)//target is pBank
+        if(!bank) 
+            bank = rPM.findBank(creep, flagName)
+        const flag = Memory.flags[flagName]
+        if(!flag)
+            return
+        if(!bank && flag.roomName != creep.pos.roomName){
+            motion.newMove(creep, new RoomPosition(flag.x, flag.y, flag.roomName), 1)
+            return
         }
+        if(!bank){
+            rPM.retreat(creep, medic, flagName)
+            return
+        }
+        const hostile = rPM.scanRoom(creep)
+        if(hostile && (hostile.pos.inRangeTo(medic.pos, 3) || hostile.pos.inRangeTo(creep.pos, 3))){
+            const harassFlag = creep.memory.city + "harass"
+            if(!Memory.flags[harassFlag])
+                Memory.flags[harassFlag] = new RoomPosition(25, 25, creep.room.name)
+            creep.attack(hostile)
+            rBr.heal(creep,medic)
+            if(canMove)
+                motion.newMove(creep, hostile.pos, 0)
+            return
+        }
+        rPM.hitBank(creep, medic, bank, canMove)
         if(!canMove && !medic.pos.isNearTo(creep.pos)){
             rBr.medicMove(creep, medic)
         }
@@ -136,20 +139,19 @@ var rPM = {
     },
 
     roomScan: function(creep){//not in use. Will be used for self defense / harasser summon
-        if(!creep.memory.onEdge && Game.time % 20 != 0){
-            return []
+        if(!creep.memory.aware && Game.time % 5 != 0){
+            return null
         }
-        if(!creep.memory.onEdge){
-            creep.memory.onEdge = false
-        }
-        const hostiles = _.filter(creep.room.find(FIND_HOSTILE_CREEPS), c => c.getActiveBodyParts(ATTACK) > 0
-        || c.getActiveBodyParts(RANGED_ATTACK) > 0 || c.getActiveBodyParts(HEAL) > 0 || c.pos.isNearTo(creep.pos))
+        const hostiles = _.filter(creep.room.find(FIND_HOSTILE_CREEPS), c => settings.allies.includes(creep.owner.username) 
+            && c.pos.inRangeTo(creep.pos, 9) 
+            && (c.getActiveBodyParts(ATTACK) > 0 || c.getActiveBodyParts(RANGED_ATTACK) > 0 || c.pos.isNearTo(creep.pos)))
         if(!hostiles.length){
-            creep.memory.onEdge = false
-            return []
+            creep.memory.aware = false
+            return null
         }
-        creep.memory.onEdge = true
-        return hostiles
+        creep.memory.aware = true
+        const closestHostile = creep.pos.findClosestByRange(hostiles)
+        return closestHostile
     },
 
     attackHostiles: function(creep, bank, hostiles){ //not in use. Will be used for self defense / harasser summon
