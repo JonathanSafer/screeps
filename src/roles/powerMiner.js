@@ -57,7 +57,7 @@ var rPM = {
             rPM.retreat(creep, medic, flagName)
             return
         }
-        const hostile = rPM.scanRoom(creep)
+        const hostile = rPM.roomScan(creep)
         if(hostile && (hostile.pos.inRangeTo(medic.pos, 3) || hostile.pos.inRangeTo(creep.pos, 3))){
             const harassFlag = creep.memory.city + "harass"
             if(!Memory.flags[harassFlag])
