@@ -144,7 +144,7 @@ var rPM = {
         }
         const hostiles = _.filter(creep.room.find(FIND_HOSTILE_CREEPS), c => settings.allies.includes(creep.owner.username) 
             && c.pos.inRangeTo(creep.pos, 9) 
-            && (c.getActiveBodyParts(ATTACK) > 0 || c.getActiveBodyParts(RANGED_ATTACK) > 0 || c.pos.isNearTo(creep.pos)))
+            && (c.getActiveBodyparts(ATTACK) > 0 || c.getActiveBodyparts(RANGED_ATTACK) > 0 || c.pos.isNearTo(creep.pos)))
         if(!hostiles.length){
             creep.memory.aware = false
             return null
