@@ -17,6 +17,7 @@ TLDR flag other rooms to "claim" (claim room), "plan" (build base at flag locati
 1. Cities mine power for power creeps.
 1. Cities mine commodities and will attempt to create high level products with available factories and sell them.
 1. All structures and roads are placed automatically
+1. New rooms will be claimed automatically (private server only)
 1. AI optomized for Shard 3 (low CPU)
 
 ## Current Roles
@@ -29,8 +30,8 @@ TLDR flag other rooms to "claim" (claim room), "plan" (build base at flag locati
 1. Ferry              - miscellaneous task operator. tasks include; lab work, factory, terminal management etc.
 
 ### Military
-1. (big)Breaker       - destroys enemy buildings. Pair with healer.
-1. (big)Medic         - heals other military units
+1. Breaker       - destroys enemy buildings. Pair with healer.
+1. Medic         - heals other military units
 1. Quad               - ranged group of 4 units. units heal each other and focus attacks.
 1. Defender           - Defend against enemy invaders.
 1. Harasser           - Ranged attacking unit for cheap damage to enemy remote miners and protecting highways
@@ -43,6 +44,8 @@ TLDR flag other rooms to "claim" (claim room), "plan" (build base at flag locati
 1. Power Creep        - boost other creeps/resources/structures in a room
 1. Power Miner        - mine power in nearby highway rooms
 1. Spawn Builder      - build initial buildings in a new city
+1. Scout              - scout nearby rooms
+1. Unclaimer          - attack enemy controllers
 
 ## Flagging targets
 The PlaceFlag function can be used from the console to flag a target with a flag.
@@ -52,7 +55,7 @@ Flag Types:
 1. claim                   - claim a room
 1. plan                    - create a layout for a structures in a new room
 1. <roomName>break         - send a breaker to a room to destroy structures
-1. <roomName>bigBreak      - send a boosted breaker to a room to destroy structures
+1. <roomName>quadRally      - send a quad to a room to destroy and creeps
 
 If a flag requires a city name to be part of its name, this specifies the city that will send the creeps.
 For example: a flag named `E11N140break` will send a breaker from E11N140. A city's name will always be the room name with a '0' added to the end. For flags that require a city name, we will use a '-' to convey that. So in the example above, the flag would referred to as `-break`.
@@ -67,11 +70,14 @@ For example: a flag named `E11N140break` will send a breaker from E11N140. A cit
 1. Wait ~500 ticks for the `claim` flag to be recognized and processed. The closest room (greater than rcl 4) will create claimers to claim the room and spawnBuilders to build the spawn & get the room started.
 1. The `plan` flag will be replaced with construction sites for core buildings in the room after the room has been claimed.
 
-## Quad Attack
-Call `DeployQuad("E9N32")` to deploy a quad to E9N32.
-
 ## Other flag info
 There are some automated roles that currently run off of flagging mechanisms. These include the Power Miner, Deposit Miner, and Harasser. You do not need to interact with their respective flags (`-powerMine`, `-deposit`, `-harass`) for them to operate successfully.
+
+## More useful functions
+`DeployQuad(targetRoom)` deploy a quad to target room (must be a roomName)
+`SpawnQuad(city, boosted)` spawn a quad from specified city. If boosted is true, the city will attempt to make the quad boosted
+`SpawnBreaker(city, boosted)` spawn a breaker from specified city. If boosted is true, the city will attempt to make the breaker boosted
+`SpawnRole(role, city, boosted)` spawn any role from specified city. If boosted is true, the city will attempt to make the creep boosted
 
 # Best Practices for making changes
 - Make new paths in memory for new usecases. For example Memory.attacks.xxxx instead of Memory.xxxx. Easier to change and clean up this way.
