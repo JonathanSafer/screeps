@@ -74,10 +74,10 @@ For example: a flag named `E11N140break` will send a breaker from E11N140. A cit
 There are some automated roles that currently run off of flagging mechanisms. These include the Power Miner, Deposit Miner, and Harasser. You do not need to interact with their respective flags (`-powerMine`, `-deposit`, `-harass`) for them to operate successfully.
 
 ## More useful functions
-`DeployQuad(targetRoom)` deploy a quad to target room (must be a roomName)
-`SpawnQuad(city, boosted)` spawn a quad from specified city. If boosted is true, the city will attempt to make the quad boosted
-`SpawnBreaker(city, boosted)` spawn a breaker from specified city. If boosted is true, the city will attempt to make the breaker boosted
-`SpawnRole(role, city, boosted)` spawn any role from specified city. If boosted is true, the city will attempt to make the creep boosted
+* `DeployQuad(targetRoom)` deploy a quad to target room (must be a roomName)
+* `SpawnQuad(city, boosted)` spawn a quad from specified city. If boosted is true, the city will attempt to make the quad boosted
+* `SpawnBreaker(city, boosted)` spawn a breaker from specified city. If boosted is true, the city will attempt to make the breaker boosted
+* `SpawnRole(role, city, boosted)` spawn any role from specified city. If boosted is true, the city will attempt to make the creep boosted
 
 # Best Practices for making changes
 - Make new paths in memory for new usecases. For example Memory.attacks.xxxx instead of Memory.xxxx. Easier to change and clean up this way.
