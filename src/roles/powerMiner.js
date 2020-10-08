@@ -52,8 +52,8 @@ var rPM = {
         if(!bank && flag.roomName != creep.pos.roomName){
             if(canMove){
                 motion.newMove(creep, new RoomPosition(flag.x, flag.y, flag.roomName), 1)
-                rBr.medicMove(creep, medic)
             }
+            rBr.medicMove(creep, medic)
             return
         }
         if(!bank){
