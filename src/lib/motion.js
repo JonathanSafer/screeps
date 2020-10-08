@@ -288,12 +288,29 @@ var m = {
                     if(!ccache.lastMove || ccache.lastMove < (Game.time - 1)){
                         costs.set(c.pos.x, c.pos.y, 0xff)
                     }
+                    if(c.pos.isEqualTo(goals)){
+                        costs.set(c.pos.x, c.pos.y, 1)
+                    }
                 })
                 room.find(FIND_POWER_CREEPS).forEach(function(c) {
                     costs.set(c.pos.x, c.pos.y, 0xff)
                 })
                 if (boundingBox) {
                     m.enforceBoundingBox(costs, boundingBox)
+                }
+                const goalList = goals.length ? goals : [goals]
+                for(const goal of goalList){
+                    const range = goal.range
+                    const minX = Math.max(goal.pos.x - range, 0)
+                    const maxX = Math.min(goal.pos.x + range, 49)
+                    const minY = Math.max(goal.pos.y - range, 0)
+                    const maxY = Math.min(goal.pos.y + range, 49)
+                    for(let i = minX; i <= maxX; i++){
+                        for(let j = minY; j <= maxY; j++){
+                            if(costs.get(i,j) < 255)
+                                costs.set(i,j, 1)
+                        }
+                    }
                 }
                 return costs
             }

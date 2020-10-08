@@ -69,6 +69,7 @@ var rPM = {
             rBr.heal(creep,medic)
             if(canMove)
                 motion.newMove(creep, hostile.pos, 0)
+            rBr.medicMove(creep, medic)
             return
         }
         rPM.hitBank(creep, medic, bank, canMove)
