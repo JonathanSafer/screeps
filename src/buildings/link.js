@@ -13,7 +13,8 @@ var rL = {
         let storageLink = Game.getObjectById(links.store)
         let upgradeLink = Game.getObjectById(links.upgrade) || rcl < 7 || Game.time % 100 != 0
         let sourceLinks = _.map(links.source, src => Game.getObjectById(src))
-        if (storageLink && upgradeLink && _.reduce(sourceLinks, (l, r) => l && r)) {
+        if ((storageLink && upgradeLink && _.reduce(sourceLinks, (l, r) => l && r))
+            && (sourceLinks.length == 2 || Game.time % 200 != 0)) {
             return
         } else {
             const realLinks = rL.findStructure(room, STRUCTURE_LINK)
