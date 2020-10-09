@@ -300,16 +300,25 @@ var m = {
                 }
                 const goalList = goals.length ? goals : [goals]
                 for(const goal of goalList){
+                    if(goal.pos.roomName != roomName)
+                        continue
+                    const terrain = Game.map.getRoomTerrain(roomName)
                     const range = goal.range
                     const minX = Math.max(goal.pos.x - range, 0)
                     const maxX = Math.min(goal.pos.x + range, 49)
                     const minY = Math.max(goal.pos.y - range, 0)
                     const maxY = Math.min(goal.pos.y + range, 49)
                     for(let i = minX; i <= maxX; i++){
-                        for(let j = minY; j <= maxY; j++){
-                            if(costs.get(i,j) < 255)
-                                costs.set(i,j, 1)
-                        }
+                        if(costs.get(i,minY) < 100 && !(terrain.get(i,minY) & TERRAIN_MASK_WALL))
+                            costs.set(i,minY, 1)
+                        if(costs.get(i,maxY) < 100 && !(terrain.get(i,maxY) & TERRAIN_MASK_WALL))
+                            costs.set(i,maxY, 1)
+                    }
+                    for(let i = minY; i <= maxY; i++){
+                        if(costs.get(minX,i) < 100 && !(terrain.get(minX,i) & TERRAIN_MASK_WALL))
+                            costs.set(minX,i, 1)
+                        if(costs.get(maxX, i) < 100 && !(terrain.get(maxX, i) & TERRAIN_MASK_WALL))
+                            costs.set(maxX, i, 1)
                     }
                 }
                 return costs
