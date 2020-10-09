@@ -44,6 +44,7 @@ const ob = {
             return
         }
         if(room.controller){
+            roomData.safeModeCooldown = room.controller.safeModeCooldown && (Game.time + room.controller.safeModeCooldown) || 0
             roomData.owner = room.controller.owner && room.controller.owner.username
             roomData.rcl = (room.controller.level) || 0
             roomData.controllerPos = room.controller.pos

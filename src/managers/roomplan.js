@@ -155,7 +155,8 @@ const p = {
             || room.score == -1 
             || room.rcl 
             || room.scoutTime < Game.time + CREEP_LIFE_TIME 
-            || (room.claimBlock && room.claimBlock > Game.time))
+            || (room.claimBlock && room.claimBlock > Game.time)
+            || (room.safeModeCooldown && room.safeModeCooldown > Game.time + CREEP_LIFE_TIME))
         if(!candidates.length) return
         console.log("attempting expansion")
         const expoRoom = _.max(candidates, room => room.score)
