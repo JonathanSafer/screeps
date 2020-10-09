@@ -116,7 +116,7 @@ var rSB = {
             return
         }
         var targets = creep.room.find(FIND_MY_CONSTRUCTION_SITES)
-        var spawns = _.find(targets, site => site.structureType == STRUCTURE_SPAWN)
+        var spawn = _.find(targets, site => site.structureType == STRUCTURE_SPAWN)
         var extensions = _.find(targets, site => site.structureType == STRUCTURE_EXTENSION)
         var storage = _.find(targets, site => site.structureType == STRUCTURE_STORAGE)
         var terminal = _.find(targets, site => site.structureType == STRUCTURE_TERMINAL)
@@ -125,12 +125,12 @@ var rSB = {
             var target = targets[0]
             if (terminal){
                 target = terminal
-            } else if (storage){
-                target = storage
+            } else if (spawn){
+                target = spawn
             } else if (extensions){
                 target = extensions
-            } else if (spawns){
-                target = spawns
+            } else if (storage){
+                target = storage
             } else if(tower){
                 target = tower
             }
