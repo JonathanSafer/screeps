@@ -17,6 +17,9 @@ const GGame = class {
         this.rooms = {}
         this.creeps = {}
         this.spawns = {}
+        this.structures = {1: {owner: {username: "Yoner"}}}
+        this.constructionSites = {}
+        this.powerCreeps = {}
         this.shard = {
             name: "shard3"
         }
@@ -192,6 +195,7 @@ global.Creep = class extends RoomObject {
         this.name = name
         this.memory = {}
         global.Memory.creeps[name] = this.memory
+        this.owner = {username: "Yoner"}
     }
     notifyWhenAttacked() {}
     getActiveBodyparts(type) {return}
@@ -202,6 +206,7 @@ class Structure extends RoomObject {
     constructor(room, structureType) {
         super(room, FIND_STRUCTURES)
         this.structureType = structureType
+        this.owner = "Yoner"
     }
 }
 

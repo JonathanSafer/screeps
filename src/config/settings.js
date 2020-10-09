@@ -1,7 +1,8 @@
 
-
+const username = Object.values(Game.structures).concat(Object.values(Game.creeps), Object.values(Game.powerCreeps), Object.values(Game.constructionSites))[0].owner.username
 var settings = {
-    allies: ["Atanner", "slowmotionghost", "Timendainum", "FeTiD", "Yoner"],
+    username: username,
+    allies: ["Atanner", "slowmotionghost", "Timendainum", "FeTiD", username],
     nukeStructures: [STRUCTURE_SPAWN, STRUCTURE_LAB, STRUCTURE_STORAGE, STRUCTURE_FACTORY,
         STRUCTURE_TERMINAL, STRUCTURE_POWER_SPAWN, STRUCTURE_NUKER],
     militaryBoosts:["XKHO2", "XGHO2", "XZHO2", "XLHO2", "XZH2O", "G"],
@@ -75,7 +76,7 @@ var settings = {
 
 if(!Game.shard.name.includes("shard")){
     //botarena and swc custom settings
-    settings.allies = []
+    settings.allies = [username]
 }
 
 module.exports = settings

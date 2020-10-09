@@ -122,13 +122,13 @@ var u = {
     iReservedOrOwn: function(roomName) {
         var room = Game.rooms[roomName]
         var hasController = room && room.controller
-        return hasController && (room.controller.my || ((room.controller.reservation) && (room.controller.reservation.username == "Yoner")))
+        return hasController && (room.controller.my || ((room.controller.reservation) && (room.controller.reservation.username == settings.username)))
     },
     
     iReserved: function(roomName) {
         var room = Game.rooms[roomName]
         var hasController = room && room.controller
-        return hasController && ((room.controller.reservation) && (room.controller.reservation.username == "Yoner"))
+        return hasController && ((room.controller.reservation) && (room.controller.reservation.username == settings.username))
     },
 
     iOwn: function(roomName) {
