@@ -95,7 +95,7 @@ const ob = {
         const cities = _.filter(u.getMyCities(), c => c.controller.level >= 4)
         for(const city of cities){
             const roomPos = u.roomNameToPos(city.name)
-            roomList = roomList.concat(u.generateRoomList(roomPos[0] - 4, roomPos[1] - 4, 9, 9))//9 by 9
+            roomList = roomList.concat(u.generateRoomList(roomPos[0] - OBSERVER_RANGE, roomPos[1] - OBSERVER_RANGE, (OBSERVER_RANGE*2) + 1, (OBSERVER_RANGE*2) + 1))//21 by 21
         }
         const roomsToScan = new Set(roomList)
         const roomDataCache = u.getsetd(Cache, "roomData", {})
@@ -105,7 +105,7 @@ const ob = {
                 roomsToScan.delete(roomName)
                 continue
             }
-            const obsRoom = _.find(cities, city => city.controller.level == 8 && Game.map.getRoomLinearDistance(roomName, city.name) <= 10)
+            const obsRoom = _.find(cities, city => city.controller.level == 8 && Game.map.getRoomLinearDistance(roomName, city.name) <= OBSERVER_RANGE)
             if(obsRoom){
                 const rcache = u.getRoomCache(obsRoom.name)
                 const targets = u.getsetd(rcache, "scannerTargets", [])
@@ -113,7 +113,7 @@ const ob = {
                 continue
             }
             //if no rooms have an obs in range, we'll need a nearby room to send a scout
-            const scoutRoom = _.find(cities, city => Game.map.getRoomLinearDistance(roomName, city.name) <= 10)
+            const scoutRoom = _.find(cities, city => Game.map.getRoomLinearDistance(roomName, city.name) <= OBSERVER_RANGE)
             const rcache = u.getRoomCache(scoutRoom.name)
             const targets = u.getsetd(rcache, "scannerTargets", [])
             targets.push(roomName)
