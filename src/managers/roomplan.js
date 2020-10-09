@@ -258,10 +258,10 @@ const p = {
                 struct.structure.destroy()
             }
         }
-        if (look.length == 1 && look[0].terrain != "wall") {
-            //Log.info("hi")
-            room.createConstructionSite(pos.x, pos.y, structureType, name)
-        }
+        const terrain = _.find(look, item => item.type == "terrain")
+        if (terrain & TERRAIN_MASK_WALL || _.find(look, item => item.type == "structure")) 
+            return
+        room.createConstructionSite(pos.x, pos.y, structureType, name)
     },
 
     buildExtractor: function(room) {
