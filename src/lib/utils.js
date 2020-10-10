@@ -476,6 +476,14 @@ var u = {
                 delete Memory.flags[flagName]
             }
         }
+    },
+
+    generateFlagName: function(baseName){
+        let counter = 0
+        while(Memory.flags[baseName + counter]){
+            counter++
+        }
+        return baseName + counter
     }
 }
 

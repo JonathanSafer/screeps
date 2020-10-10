@@ -19,6 +19,11 @@ var sq = {
         return _.countBy(spawn.memory.sq, creep => creep.role)
     },
 
+    countByInfo: function(spawn, role, flag = null){
+        sq.initialize(spawn)
+        return _.filter(spawn.memory.sq, creep => creep.role == role && creep.flag == flag).length
+    },
+
     respawn: function(creep, boosted) {
         const spawn = Game.spawns[creep.memory.city]
         if(!spawn) return
