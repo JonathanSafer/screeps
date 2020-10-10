@@ -678,7 +678,7 @@ function updateStorageLink(spawn, memory, structures) {
 function updateHighwayCreep(flagName, spawn, creeps, role) {
     const flagNames = _.filter(Object.keys(Memory.flags), flag => flag.includes(flagName))
     for(const flag of flagNames){
-        scheduleIfNeeded(role, 1, role != rH.name, spawn, creeps, Memory.flags[flag])
+        scheduleIfNeeded(role, 1, role != rH.name, spawn, creeps, flag)
     }
 }
 
