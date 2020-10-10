@@ -17,6 +17,7 @@ var rH = {
             a.getBoosted(creep)
             return
         }
+        const flagName = creep.memory.flag || creep.memory.city + "harass"
         if(creep.hits < creep.hitsMax * 0.2 && !creep.memory.reinforced){
             creep.memory.reinforced = true
             sq.respawn(creep, true)
@@ -27,15 +28,15 @@ var rH = {
         }
         if(Game.time % 51 == 0){
             //check to remove flag and respawn
-            rH.removeFlag(creep)
-            if(Memory.flags[creep.memory.city + "harass"] && !creep.memory.respawnTime){
-                const route = motion.getRoute(Memory.flags[creep.memory.city + "harass"].roomName, Game.spawns[creep.memory.city].room.name, true)
+            rH.removeFlag(creep, flagName)
+            if(Memory.flags[flagName] && !creep.memory.respawnTime){
+                const route = motion.getRoute(Memory.flags[flagName].roomName, Game.spawns[creep.memory.city].room.name, true)
                 if(route && route.length){
                     creep.memory.respawnTime = (route.length * 50) + (creep.body.length * CREEP_SPAWN_TIME)
                 }
             }
         }
-        if(creep.memory.respawnTime && creep.ticksToLive == creep.memory.respawnTime && Memory.flags[creep.memory.city + "harass"]){
+        if(creep.memory.respawnTime && creep.ticksToLive == creep.memory.respawnTime && Memory.flags[flagName]){
             const reinforcement = _.find(creep.room.find(FIND_MY_CREEPS), c => c.memory.role == rH.name && c.name != creep.name)
             if(!reinforcement){
                 sq.respawn(creep)
@@ -48,19 +49,19 @@ var rH = {
         const hostiles = _.filter(creep.room.find(FIND_HOSTILE_CREEPS), c => !settings.allies.includes(c.owner.username))
         rH.maybeHeal(creep, hostiles)
         if(!hostiles.length){
-            if(Memory.flags[creep.memory.city + "harass"] && creep.room.name == Memory.flags[creep.memory.city + "harass"].roomName){
+            if(Memory.flags[flagName] && creep.room.name == Memory.flags[flagName].roomName){
                 const hostileStructures = creep.room.find(FIND_HOSTILE_STRUCTURES)
                 if(hostileStructures.length){
                     if(!Game.getObjectById(creep.memory.target)){
                         creep.memory.target = hostileStructures[0].id
                     }
                 } else {
-                    if(rH.rally(creep)){
+                    if(rH.rally(creep, flagName)){
                         return
                     }
                 }
             } else {
-                if(rH.rally(creep)){
+                if(rH.rally(creep, flagName)){
                     return
                 }
             }
@@ -171,8 +172,7 @@ var rH = {
         //move toward an enemy
     },
 
-    removeFlag: function(creep){
-        const flagName = creep.memory.city + "harass"
+    removeFlag: function(creep, flagName){
         if(!Memory.flags[flagName]){
             return
         }
@@ -203,9 +203,8 @@ var rH = {
         }
     },
 
-    rally: function(creep){
-        const destFlagName = creep.memory.city + "harass"
-        const dFlag = Memory.flags[destFlagName]
+    rally: function(creep, flagName){
+        const dFlag = Memory.flags[flagName]
         if (dFlag){
             if(creep.pos.roomName === dFlag.roomName){
                 //move to center of room
