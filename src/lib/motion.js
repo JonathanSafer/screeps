@@ -227,11 +227,11 @@ var m = {
                 if(roomData.owner && !settings.allies.includes(roomData.owner) 
                     && roomData.rcl 
                     && CONTROLLER_STRUCTURES[STRUCTURE_TOWER][roomData.rcl] 
-                    && creep.memory.tolerance 
-                    && creep.memory.tolerance > CONTROLLER_STRUCTURES[STRUCTURE_TOWER][roomData.rcl] * TOWER_POWER_ATTACK - (TOWER_POWER_ATTACK * TOWER_FALLOFF)){
+                    && (!creep.memory.tolerance 
+                    || creep.memory.tolerance < CONTROLLER_STRUCTURES[STRUCTURE_TOWER][roomData.rcl] * TOWER_POWER_ATTACK - (TOWER_POWER_ATTACK * TOWER_FALLOFF))){
                     return false
                 }
-                if(roomData.skLairs && roomData.rcl) return
+                if(roomData.skLairs && roomData.rcl) return false
                 if(Game.map.getRoomStatus(roomName).status != "normal"){
                     return false
                 }
