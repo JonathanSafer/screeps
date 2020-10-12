@@ -269,9 +269,7 @@ function defenderBody(energyAvailable, rcl, boosted) {
             return body([6, 22, 10, 12], [TOUGH, RANGED_ATTACK, MOVE, HEAL])
         }
         if(rcl == 7){
-            const ratio = [1, 9, 3, 2]
-            const types = [TOUGH, RANGED_ATTACK, MOVE, HEAL]
-            return scalingBody(ratio, types, energyAvailable)
+            return scalingBody([1, 9, 3, 2], [TOUGH, RANGED_ATTACK, MOVE, HEAL], energyAvailable)
         }
     }
     const ratio = [3, 4, 1]
@@ -284,8 +282,11 @@ function defenderBody(energyAvailable, rcl, boosted) {
 }
 
 function harasserBody(energyAvailable, boosted, rcl){
-    if(boosted && rcl == 8){
-        return body([3, 31, 10, 6], [TOUGH, RANGED_ATTACK, MOVE, HEAL])
+    if(boosted){
+        if(rcl == 8)
+            return body([3, 31, 10, 6], [TOUGH, RANGED_ATTACK, MOVE, HEAL])
+        if(rcl == 7)
+            return scalingBody([1, 9, 3, 2], [TOUGH, RANGED_ATTACK, MOVE, HEAL], energyAvailable)
     }
     return scalingBody([4, 5, 1], [RANGED_ATTACK, MOVE, HEAL], energyAvailable)
 }
