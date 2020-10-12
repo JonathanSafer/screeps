@@ -73,10 +73,10 @@ var rDM = {
                 }
                 creep.memory.mined += works
                 // update city level tracker for planning purposes
-                if(!Game.spawns[creep.memory.city].memory.deposit){
-                    Game.spawns[creep.memory.city].memory.deposit = 0
+                if(!Memory.flags[creep.memory.flag].harvested){
+                    Memory.flags[creep.memory.flag].harvested = 0
                 }
-                Game.spawns[creep.memory.city].memory.deposit = Game.spawns[creep.memory.city].memory.deposit + works
+                Memory.flags[creep.memory.flag].harvested += works
             }
             break
         }

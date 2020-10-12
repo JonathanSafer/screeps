@@ -35,7 +35,7 @@ function makeCreeps(role, city, unhealthyStore, creepWantsBoosts, flag = null) {
     const weHaveBoosts = u.boostsAvailable(role)
     const boosted = creepWantsBoosts && weHaveBoosts
 
-    const recipe = types.getRecipe(role.type, energyToSpend, room, boosted)
+    const recipe = types.getRecipe(role.type, energyToSpend, room, boosted, flag)
     const spawns = room.find(FIND_MY_SPAWNS)
     if(!Memory.counter){
         Memory.counter = 0

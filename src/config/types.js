@@ -1,6 +1,6 @@
 var motion = require("../lib/motion")
 
-function getRecipe(type, energyAvailable, room, boosted){
+function getRecipe(type, energyAvailable, room, boosted, flagName){
     const energy = energyAvailable || 0
     const d = {}
     const rcl = room.controller.level
@@ -61,7 +61,7 @@ function getRecipe(type, energyAvailable, room, boosted){
     d.erunner = body([2, 1], [CARRY, MOVE])
     d.claimer = body([5, 1], [MOVE, CLAIM])
     if (type === "depositMiner"){
-        const dMinerCounts = dMinerCalc(room, boosted)
+        const dMinerCounts = dMinerCalc(room, boosted, flagName)
         d["depositMiner"] = body(dMinerCounts, [WORK, CARRY, MOVE])
     }
     if (d[type] == null) {
@@ -83,16 +83,15 @@ function cost(recipe){
 function store(recipe){
     return _.filter(recipe, part => part == CARRY).length * CARRY_CAPACITY
 }
-function dMinerCalc(room, boosted){
+function dMinerCalc(room, boosted, flagName){
     const city = room.memory.city
     const spawn = Game.spawns[city]
     const baseBody = [1, 1, 1]
-    const flagName = city + "deposit"
     const flag = Memory.flags[flagName]
     if(!flag){
         return baseBody
     }
-    let harvested = spawn.memory.deposit
+    let harvested = flag.harvested
     if(!harvested){
         harvested = 0
     }
