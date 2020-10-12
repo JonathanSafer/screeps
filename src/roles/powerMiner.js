@@ -62,9 +62,11 @@ var rPM = {
         }
         const hostile = rPM.roomScan(creep)
         if(hostile && (hostile.pos.inRangeTo(medic.pos, 3) || hostile.pos.inRangeTo(creep.pos, 3))){
-            const harassFlag = creep.memory.city + "harass"
-            if(!Memory.flags[harassFlag])
+            if(!creep.memory.reinforced){
+                const harassFlag = u.generateFlagName(creep.memory.city + "harass")
                 Memory.flags[harassFlag] = new RoomPosition(25, 25, creep.room.name)
+                creep.memory.reinforced = true
+            }
             creep.attack(hostile)
             rBr.heal(creep,medic)
             if(canMove)
