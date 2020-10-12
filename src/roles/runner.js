@@ -23,7 +23,7 @@ var rR = {
                 return
             }
             //check for flag
-            const flagName = creep.memory.city + "powerMine"
+            const flagName = creep.memory.flag || creep.memory.city + "powerMine"
             const flag = Memory.flags[flagName]
             if (flag && flag.roomName !== creep.pos.roomName){
                 //move to flag range 5

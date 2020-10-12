@@ -120,7 +120,7 @@ var rPM = {
             creep.memory.bankInfo.runnersSummoned = true
             sq.initialize(Game.spawns[creep.memory.city])
             for(let i = 0; i < creep.memory.bankInfo.runnersNeeded; i++){
-                sq.schedule(Game.spawns[creep.memory.city], rR.name)
+                sq.schedule(Game.spawns[creep.memory.city], rR.name, false, creep.memory.flag)
             }
         }
     },
