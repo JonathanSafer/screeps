@@ -102,7 +102,7 @@ const ob = {
         const roomDataCache = u.getsetd(Cache, "roomData", {})
         for(const roomName of roomsToScan){
             const roomData = u.getsetd(roomDataCache, roomName, {})
-            if(Game.map.getRoomStatus(roomName).status == "closed" || roomData.scoutTime && roomData.scoutTime > Game.time){
+            if(Game.map.getRoomStatus(roomName).status != "normal" || roomData.scoutTime && roomData.scoutTime > Game.time){
                 roomsToScan.delete(roomName)
                 continue
             }
