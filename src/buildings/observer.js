@@ -189,8 +189,8 @@ const ob = {
 
     flagPowerBanks: function(structures, city, roomName) {
         const powerBank = _.find(structures, structure => structure.structureType === STRUCTURE_POWER_BANK)
-        const flagName = city + "powerMine"
-        if (powerBank && powerBank.power > 1500 && powerBank.ticksToDecay > 2800 && !Memory.flags[flagName] &&
+        const flagName = u.generateFlagName(city + "powerMine")
+        if (powerBank && powerBank.power > 1500 && powerBank.ticksToDecay > 2800 &&
                 structures.length < 30 && Game.spawns[city].room.storage.store.energy > settings.energy.powerMine){
             const terrain = Game.rooms[roomName].getTerrain()
             if (!ob.isBlockedByWalls(terrain, powerBank.pos)) {
@@ -212,12 +212,11 @@ const ob = {
             return false
         }
 
-        const depositFlagName = city + "deposit"
         for (let i = 0; i < deposits.length; i++) {
-            if(deposits[i].lastCooldown < 5 && !Memory.flags[depositFlagName] && !ob.checkFlags(deposits[i].pos)){
+            const depositFlagName = u.generateFlagName(city + "deposit")
+            if(deposits[i].lastCooldown < 5 && !ob.checkFlags(deposits[i].pos)){
                 Memory.flags[depositFlagName] = deposits[i].pos
-                Game.spawns[city].memory.deposit = Math.floor(Math.pow((deposits[i].lastCooldown / 0.001), 1/1.2))
-                break // only place one flag
+                Memory.flags[depositFlagName].harvested = Math.floor(Math.pow((deposits[i].lastCooldown / 0.001), 1/1.2))
             }
         }
     },
