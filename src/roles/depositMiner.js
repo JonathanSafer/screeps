@@ -72,10 +72,11 @@ var rDM = {
                     creep.memory.mined = 0
                 }
                 creep.memory.mined += works
-                // update city level tracker for planning purposes
-                if(!Memory.flags[creep.memory.flag].harvested){
+                // update harvest total tracker for planning purposes
+                if(!Memory.flags[creep.memory.flag])
+                    break
+                if(!Memory.flags[creep.memory.flag].harvested)
                     Memory.flags[creep.memory.flag].harvested = 0
-                }
                 Memory.flags[creep.memory.flag].harvested += works
             }
             break
