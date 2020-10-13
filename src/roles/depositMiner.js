@@ -102,10 +102,10 @@ var rDM = {
             
             //check for tampering with deposit
             const cooldown = deposit.lastCooldown
-            const expected = Math.ceil(0.001*Math.pow(Game.spawns[creep.memory.city].memory.deposit,1.2))
+            const expected = Math.ceil(0.001*Math.pow(Memory.flags[creep.memory.flag].harvested,1.2))
 
             if(cooldown > expected){
-                Game.spawns[creep.memory.city].memory.deposit = Math.floor(Math.pow((deposit.lastCooldown / 0.001), 1/1.2))
+                Memory.flags[creep.memory.flag].harvested = Math.ceil(Math.pow((deposit.lastCooldown / 0.001), 1/1.2))
             }
             if(cooldown > expected || dangerous){
                 //call in harasser
