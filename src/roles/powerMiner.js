@@ -28,7 +28,7 @@ var rPM = {
             }
         }
 
-        const flagName = creep.memory.city + "powerMine"
+        const flagName = creep.memory.flag || creep.memory.city + "powerMine"
         if(!Memory.flags[flagName]){
             creep.suicide()
             medic.suicide()
