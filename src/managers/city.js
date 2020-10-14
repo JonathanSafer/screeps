@@ -409,7 +409,9 @@ function updateColonizers(city, memory, claimRoom, unclaimRoom) {
     const roomName = Game.spawns[city].room.name
     if(roomName == claimRoom){
         const flag = Memory.flags.claim
-        Memory.flags[city + "harass"] = new RoomPosition(25, 25, Memory.flags.claim.roomName)
+        const harassFlagName = u.generateFlagName(city + "harass")
+        Memory.flags[harassFlagName] = new RoomPosition(25, 25, Memory.flags.claim.roomName)
+        Memory.flags[harassFlagName].boosted = true
         if(Game.spawns[city].room.controller.level < 7){
             memory[rSB.name] = 4
         } else if (flag && Game.rooms[flag.roomName] && Game.rooms[flag.roomName].controller && Game.rooms[flag.roomName].controller.level > 6) {
@@ -678,7 +680,8 @@ function updateStorageLink(spawn, memory, structures) {
 function updateHighwayCreep(flagName, spawn, creeps, role) {
     const flagNames = _.filter(Object.keys(Memory.flags), flag => flag.includes(flagName))
     for(const flag of flagNames){
-        scheduleIfNeeded(role, 1, role != rH.name, spawn, creeps, flag)
+        const boosted = role != rH.name || Memory.flags[flag].boosted
+        scheduleIfNeeded(role, 1, boosted, spawn, creeps, flag)
     }
 }
 
