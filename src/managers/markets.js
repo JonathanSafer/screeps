@@ -1,5 +1,6 @@
 var u = require("../lib/utils")
 var settings = require("../config/settings")
+const cM = require("./commodityManager")
 
 var markets = {
     manageMarket: function(myCities){//this function is now in charge of all terminal acitivity
@@ -243,7 +244,7 @@ var markets = {
         const baseMins = [RESOURCE_HYDROGEN, RESOURCE_OXYGEN, RESOURCE_UTRIUM, RESOURCE_LEMERGIUM, RESOURCE_KEANIUM, RESOURCE_ZYNTHIUM, RESOURCE_CATALYST]
         const bars = [RESOURCE_UTRIUM_BAR, RESOURCE_LEMERGIUM_BAR, RESOURCE_ZYNTHIUM_BAR, RESOURCE_KEANIUM_BAR, RESOURCE_GHODIUM_MELT, 
             RESOURCE_OXIDANT, RESOURCE_REDUCTANT, RESOURCE_PURIFIER, RESOURCE_CELL, RESOURCE_WIRE, RESOURCE_ALLOY, RESOURCE_CONDENSATE]
-        const highTier = [RESOURCE_ORGANISM, RESOURCE_MACHINE, RESOURCE_DEVICE, RESOURCE_ESSENCE, PIXEL]
+        const highTier = cM.getTopTier(cM.groupByFactoryLevel(termCities)).concat([PIXEL])
         
         markets.updateSellPoint(highTier, termCities, buyOrders)
         //markets.sellPixels(buyOrders)
