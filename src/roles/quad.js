@@ -816,17 +816,18 @@ var rQ = {
                     //if we have vision, add creeps to matrix, otherwise just return it plain
                     const quadNames = []
                     for(let i = 0; i < quad.length; i++){
-                        quadNames.push(quad[i].name)
+                        quadNames.push(quad[i].id)
                     }
                     for (const creep of Game.rooms[roomName].find(FIND_CREEPS)) {
                         if(!_(quad).find(member => member.pos.inRangeTo(creep.pos, 8))
                             || (!settings.allies.includes(creep.owner.username) && !_(quad).find(member => member.pos.inRangeTo(creep.pos, 3)))){
                             continue
                         }
-                        if(!quadNames.includes(creep.name)){
+                        if(!quadNames.includes(creep.id)){
                             //quad cannot move to any pos that another creep is capable of moving to
-                            const offset = creep.getActiveBodyparts(ATTACK) && !creep.fatigue ? 3 :
-                                !creep.fatigue || creep.getActiveBodyparts(ATTACK) ? 2 : 1
+                            const attackThreat = u.getCreepDamage(creep, ATTACK) > rQ.getDamageTolerance(quad)
+                            const offset = attackThreat && !creep.fatigue ? 3 :
+                                !creep.fatigue || attackThreat ? 2 : 1
                             for(let i = Math.max(0 , creep.pos.x - offset); i < Math.min(50, creep.pos.x + offset); i++){
                                 for(let j = Math.max(0 , creep.pos.y - offset); j < Math.min(50, creep.pos.y + offset); j++){
                                     costs.set(i, j, 255)
@@ -923,7 +924,16 @@ var rQ = {
                 break
             }
         }
+        if(!leader)
+            return null
+        if(!roomEdge)
+            for(let i = 0; i < quad.length; i++)
+                for(let j = i;j < quad.length; j++)
+                    if(!quad[i].pos.isNearTo(quad[j].pos))
+                        return null
+
         const result = {}
+
         result.leader = leader
         result.roomEdge = roomEdge
         //if all of the creeps in the squad are in the highest room, they must all be in the same room
