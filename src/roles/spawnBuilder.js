@@ -67,10 +67,10 @@ var rSB = {
                 Memory.flags.claim.startTime = Game.time
             }
             if(Memory.flags.claim.startTime < Game.time - 10000){
-                u.removeFlags(Memory.flags.claim.roomName)
                 if(Cache.roomData && Cache.roomData[Memory.flags.claim.roomName]){
-                    Cache.roomData[Memory.flags.claim.roomName].claimBlock = Game.time + 100000
+                    Cache.roomData[Memory.flags.claim.roomName].claimBlock = Game.time + 150000
                 }
+                u.removeFlags(Memory.flags.claim.roomName)
                 return
             }
         }
