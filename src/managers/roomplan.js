@@ -244,7 +244,7 @@ const p = {
 
     buildConstructionSite: function(room, structureType, pos, name) {
         //Log.info(room.lookAt(pos.x, pos.y)[0].type)
-        if(structureType == STRUCTURE_FACTORY && ["botarena", "swc"].includes(Game.shard.name)){
+        if(structureType == STRUCTURE_FACTORY && PServ){
             return
         }
         if(structureType == STRUCTURE_TOWER && room.controller.safeMode > 2000){
