@@ -687,7 +687,7 @@ var rQ = {
             for(let i = 0; i < quad.length; i++){
                 quad[i].move(direction)
             }
-        } else if(!status.roomEdge){//if not moving do an idle dance?
+        } else if(!status.roomEdge && (Game.cpu.bucket > 9000 || _.find(quad, c => c.hits < c.hitsMax))){//if not moving do an idle dance?
             const nextLocation = Math.floor(Math.random() * 3) + 1//1, 2, or 3
             for(let i = 0; i < quad.length; i++){
                 let nextCreep = i + nextLocation
