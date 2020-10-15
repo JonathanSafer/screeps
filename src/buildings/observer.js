@@ -193,7 +193,7 @@ const ob = {
         if (powerBank && powerBank.power > 1500 && powerBank.ticksToDecay > 2800 &&
                 structures.length < 30 && Game.spawns[city].room.storage.store.energy > settings.energy.powerMine){
             const terrain = Game.rooms[roomName].getTerrain()
-            if (!ob.isBlockedByWalls(terrain, powerBank.pos)) {
+            if (!ob.isBlockedByWalls(terrain, powerBank.pos) && !ob.checkFlags(powerBank.pos)) {
                 //put a flag on it
                 Memory.flags[flagName] = powerBank.pos
                 Log.info("Power Bank found in: " + roomName)
