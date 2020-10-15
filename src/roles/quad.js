@@ -82,7 +82,7 @@ var rQ = {
         let range = 0
         while(!formPoint){
             for(let i = Math.max(creep.pos.x - range, 1); i <= Math.min(creep.pos.x + range, 47); i++){
-                for(let j = Math.max(creep.pos.x - range, 1); j <= Math.min(creep.pos.x + range, 47); j++)
+                for(let j = Math.max(creep.pos.y - range, 1); j <= Math.min(creep.pos.y + range, 47); j++)
                     if(matrix.get(i,j) < 255){
                         const look = creep.room.lookForAtArea(LOOK_CREEPS, j, i, j+1, i+1, true)
                         if(!look.length || !_.find(look, c => !c.creep.my)){
@@ -103,7 +103,6 @@ var rQ = {
             const jimmyPos = new RoomPosition(formPoint.x, formPoint.y, formPoint.roomName)
             switch(i){
             case 0:
-                jimmyPos.x++
                 break
             case 1:
                 jimmyPos.y++
@@ -113,6 +112,7 @@ var rQ = {
                 jimmyPos.y++
                 break
             case 3:
+                jimmyPos.x++
                 break
             }
             new RoomVisual(creep.room.name).text(i,jimmyPos)
@@ -845,16 +845,11 @@ var rQ = {
                         for(let j = -1; j < 2; j++){
                             if(leader.pos.x + i > 0 && leader.pos.x + i < 50 && leader.pos.y + j > 0 && leader.pos.y + j < 50){
                                 const direction = leader.pos.getDirectionTo(new RoomPosition(leader.pos.x + i, leader.pos.y + j, roomName))
-                                let tolerance = 1//TODO: test with tolerance always at 1, it might work out
-                                if(status.sameRoom){
-                                    tolerance = 1
-                                }
+                                const tolerance = 1
                                 if(Math.abs(direction - status.roomEdge) != 4 && Math.abs(direction - status.roomEdge) > tolerance && (!tolerance || Math.abs(direction - status.roomEdge) != 7)){
                                     //because TOP == 1 and TOP_LEFT == 8, a difference of 7 actually signals adjacency
                                     //unwalkable
-                                    if(costs){
-                                        costs.set(leader.pos.x + i, leader.pos.y + j, 255)
-                                    }
+                                    costs.set(leader.pos.x + i, leader.pos.y + j, 255)
                                 }
                             }
                         }
@@ -875,7 +870,7 @@ var rQ = {
                             //quad cannot move to any pos that another creep is capable of moving to
                             const attackThreat = u.getCreepDamage(creep, ATTACK) > rQ.getDamageTolerance(quad)
                             const offset = attackThreat && !creep.fatigue ? 3 :
-                                !creep.fatigue || attackThreat ? 2 : 1
+                                attackThreat ? 2 : 1
                             for(let i = Math.max(0 , creep.pos.x - offset); i < Math.min(50, creep.pos.x + offset); i++){
                                 for(let j = Math.max(0 , creep.pos.y - offset); j < Math.min(50, creep.pos.y + offset); j++){
                                     costs.set(i, j, 255)
