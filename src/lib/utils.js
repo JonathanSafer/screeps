@@ -411,7 +411,8 @@ var u = {
             u.cacheBoostsAvailable(cities)
         }
         const boostsAvailable = Cache.boostsAvailable || []
-        return _(role.boosts).every(boost => boostsAvailable.includes(boost)) || (room && room.terminal && _(role.boosts).every(boost => room.terminal[boost] >= LAB_MINERAL_CAPACITY))
+        return _(role.boosts).every(boost => boostsAvailable.includes(boost)) 
+            || (room && room.terminal && _(role.boosts).every(boost => room.terminal.store[boost] >= LAB_MINERAL_CAPACITY))
     },
 
     checkRoom: function(creep){
