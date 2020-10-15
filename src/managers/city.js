@@ -32,7 +32,7 @@ function makeCreeps(role, city, unhealthyStore, creepWantsBoosts, flag = null) {
     var energyToSpend = unhealthyStore ? room.energyAvailable :
         room.energyCapacityAvailable
 
-    const weHaveBoosts = u.boostsAvailable(role)
+    const weHaveBoosts = u.boostsAvailable(role, room)
     const boosted = creepWantsBoosts && weHaveBoosts
 
     const recipe = types.getRecipe(role.type, energyToSpend, room, boosted, flag)

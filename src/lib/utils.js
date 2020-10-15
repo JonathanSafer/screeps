@@ -405,13 +405,13 @@ var u = {
         Cache.boostCheckTime = Game.time
     },
 
-    boostsAvailable: function(role) {
+    boostsAvailable: function(role, room) {
         if (!Cache.boostsAvailable || Game.time - Cache.boostCheckTime > 1000) {
             const cities = u.getMyCities()
             u.cacheBoostsAvailable(cities)
         }
         const boostsAvailable = Cache.boostsAvailable || []
-        return _(role.boosts).every(boost => boostsAvailable.includes(boost))
+        return _(role.boosts).every(boost => boostsAvailable.includes(boost)) || (room && room.terminal && _(role.boosts).every(boost => room.terminal[boost] >= LAB_MINERAL_CAPACITY))
     },
 
     checkRoom: function(creep){
