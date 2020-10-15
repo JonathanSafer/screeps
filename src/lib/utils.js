@@ -13,9 +13,9 @@ var u = {
         return u.getsetd(roomsCache, roomName, {})
     },
 
-    getCreepCache: function(creepName) {
+    getCreepCache: function(creepId) {
         const creepsCache = u.getsetd(Cache, "creeps", {})
-        return u.getsetd(creepsCache, creepName, {})
+        return u.getsetd(creepsCache, creepId, {})
     },
 
     getLabCache: function(labId){
@@ -460,11 +460,15 @@ var u = {
     },
 
     getCreepDamage: function(creep, type){
+        const creepCache = u.getCreepCache(creep.id)
+        if(creepCache[type + "damage"])
+            return creepCache[type + "damage"]
         const damageParts = creep.getActiveBodyparts(type)
         const boostedPart = _.find(creep.body, part => part.type == type && part.boost)
         const multiplier = boostedPart ? BOOSTS[type][boostedPart.boost][type] : 1
         const powerConstant = type == RANGED_ATTACK ? RANGED_ATTACK_POWER : ATTACK_POWER
-        return powerConstant * multiplier * damageParts
+        creepCache[type + "damage"] = powerConstant * multiplier * damageParts
+        return creepCache[type + "damage"]
     },
 
     generateCreepName: function(counter, role){
