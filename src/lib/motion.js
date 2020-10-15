@@ -17,7 +17,7 @@ var m = {
     // optional bounding box of form: [top, left, bottom, right]
     newMove: function(creep, endPos,  range = 0, avoidEnemies = true, boundingBox = null){
         //check for cached path and cached route
-        const ccache = u.getCreepCache(creep.name)
+        const ccache = u.getCreepCache(creep.id)
         const routeVerified = m.checkRoute(creep, endPos)
         const pathVerified = m.checkPath(creep, endPos)
         //if creep thinks it moved last tick, but pos is the same, it's stuck/needs recalc
@@ -67,7 +67,7 @@ var m = {
 
     //bool, returns success of pathfinding ops
     getRouteAndPath: function(creep, endPos, avoidEnemies, range, boundingBox){
-        const ccache = u.getCreepCache(creep.name)
+        const ccache = u.getCreepCache(creep.id)
 
         //if creep is in same room as target, path to target. Otherwise, path to nearest exit in the right direction
         const sameRoom = creep.pos.roomName == endPos.roomName
@@ -284,7 +284,7 @@ var m = {
                 })
                 // Avoid creeps in the room
                 room.find(FIND_CREEPS).forEach(function(c) {
-                    const ccache = u.getCreepCache(c.name)
+                    const ccache = u.getCreepCache(c.id)
                     if(!ccache.lastMove || ccache.lastMove < (Game.time - 1)){
                         costs.set(c.pos.x, c.pos.y, 0xff)
                     }
@@ -361,7 +361,7 @@ var m = {
     },
 
     checkRoute: function(creep, endPos){//verify that cached route is up to date
-        const ccache = u.getCreepCache(creep.name)
+        const ccache = u.getCreepCache(creep.id)
         //if creep is already in the same room as destination, route does not need to be checked
         if (ccache.route && endPos.roomName == ccache.route[ccache.route.length - 1].room){
             return true
@@ -373,7 +373,7 @@ var m = {
     },
 
     checkPath: function(creep, endPos){//verify that cached path is up to date
-        const ccache = u.getCreepCache(creep.name)
+        const ccache = u.getCreepCache(creep.id)
         //destination must match destination of cached path
         if(ccache.endPos && endPos.isEqualTo(ccache.endPos)){
             return true
