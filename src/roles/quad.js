@@ -75,6 +75,51 @@ var rQ = {
             creep.memory.state = CS.FORM
         }
     },
+
+    reform: function(quad, creep){
+        const matrix = rQ.getRoomMatrix(creep.pos.roomName)
+        let formPoint = null
+        let range = 0
+        while(!formPoint){
+            for(let i = Math.max(creep.pos.x - range, 1); i <= Math.min(creep.pos.x + range, 47); i++){
+                for(let j = Math.max(creep.pos.x - range, 1); j <= Math.min(creep.pos.x + range, 47); j++)
+                    if(matrix.get(i,j) < 255){
+                        const look = creep.room.lookForAtArea(LOOK_CREEPS, j, i, j+1, i+1, true)
+                        if(!look.length || !_.find(look, c => !c.creep.my)){
+                            formPoint = new RoomPosition(i, j,creep.pos.roomName)
+                            break
+                        }
+                    }
+                if(formPoint)
+                    break
+            }
+            range++
+        }
+        if(!formPoint){
+            Log.info("no form point")
+            return
+        }
+        for(let i = 0; i < quad.length; i++){
+            const jimmyPos = new RoomPosition(formPoint.x, formPoint.y, formPoint.roomName)
+            switch(i){
+            case 0:
+                jimmyPos.x++
+                break
+            case 1:
+                jimmyPos.y++
+                break
+            case 2:
+                jimmyPos.x++
+                jimmyPos.y++
+                break
+            case 3:
+                break
+            }
+            new RoomVisual(creep.room.name).text(i,jimmyPos)
+            if(quad[i].pos.isEqualTo(jimmyPos))
+                motion.newMove(quad[i], jimmyPos)
+        }
+    },
     
     formUp: function(creep){
         //maybe creeps could make sure that their entire squad is spawned until determining a captain and forming up, until then
@@ -106,7 +151,7 @@ var rQ = {
             }
             let inLine = 0
             if(!creep.pos.isEqualTo(formPos)){
-                creep.moveTo(formPos)
+                motion.newMove(creep, formPos)
             } else {
                 inLine++
             }
@@ -169,6 +214,9 @@ var rQ = {
 
         const status = rQ.getQuadStatus(quad)
 
+        if(!status)
+            rQ.reform(quad, creep)
+
         const target = Game.getObjectById(creep.memory.target)
 
         for(let i = 0; i < quad.length; i++){
@@ -185,19 +233,19 @@ var rQ = {
         rQ.shoot(everythingByRoom, target)
 
         let needRetreat = rQ.heal(quad, everythingByRoom)//if below certain health thresholds, we might need to retreat
-        if(!needRetreat){
+        if(!needRetreat && status){
             needRetreat = rQ.checkDamage(quad, everythingByRoom)
         }
 
         let retreated = false
-        if(needRetreat){
+        if(needRetreat && status){
             retreated = rQ.attemptRetreat(quad, everythingByRoom, status)
             //retreat may fail if there is nothing to retreat from
             //although it might be smart to move to a checkpoint if there is nothing to retreat from
         }
 
         //if we didn't retreat, move to target or rally point
-        if(!retreated){
+        if(!retreated && status){
             rQ.advance(creep, quad, everythingByRoom, target, status)
         }
 
