@@ -86,7 +86,8 @@ var rPM = {
             rBr.medicMove(creep, medic)
         }
         if(bank.pos.isNearTo(creep.pos)){
-            creep.attack(bank)
+            if(creep.hits == creep.hitsMax)
+                creep.attack(bank)
             medic.heal(creep)
         }
         rPM.summonRunners(creep, bank)
