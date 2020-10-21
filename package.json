@@ -7,10 +7,8 @@
     "lint": "eslint src",
     "test": "mocha",
     "coverage": "nyc mocha",
-
     "pretest": "npm run lint",
     "postinstall": "cd ./node_modules/eslint-plugin-screeps && npm install",
-
     "push": "screeps-api upload dist/main.js --server main",
     "botarena": "screeps-api upload dist/main.js --server botarena",
     "swc": "screeps-api upload dist/main.js --server swc",
@@ -31,5 +29,7 @@
     "rollup": "^2.7.2",
     "screeps-api": "^1.11.0"
   },
-  "dependencies": {}
+  "dependencies": {
+    "screepsmod-history": "^1.4.0"
+  }
 }

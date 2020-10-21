@@ -119,8 +119,12 @@ var m = {
         if(creep.level){
             return 0.001
         }
+        let bodySize = 0
+        if(creep.memory.tug && creep.memory.pullee){
+            bodySize = Game.getObjectById(creep.memory.pullee).body.length
+        }
         const moves = creep.getActiveBodyparts(MOVE)
-        const bodySize = creep.body.length
+        bodySize += creep.body.length
         const carries = _.filter(creep.body, part => part == CARRY).length//can't use getActive bc inactive carry parts need to be weightless
         const usedCarries = Math.ceil(creep.store.getUsedCapacity() / CARRY_CAPACITY)//used carries have weight
         const fatigues = bodySize - moves - carries + usedCarries
