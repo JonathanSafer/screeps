@@ -80,36 +80,6 @@ var actions = {
     pick: function(creep, target){
         return actions.interact(creep, target, () => creep.pickup(target), 1)
     },
-    
-    pickup: function(creep) {
-        var goodLoads = u.getGoodPickups(creep)
-        
-        if(creep.memory.targetId) {
-            var target = Game.getObjectById(creep.memory.targetId)
-            if(_.contains(goodLoads, target)) {
-                const result = actions.interact(creep, target, () => creep.pickup(target), 1)
-                switch (result) {
-                case OK:
-                    break
-                case ERR_INVALID_TARGET:
-                    creep.memory.targetId = null
-                    break
-                default:
-                    break
-                }
-                return result
-            }
-        }
-        //Log.info("finding a target");
-        
-        var newTargets = _.sortBy(goodLoads, drop => -1*drop.amount + 28*PathFinder.search(creep.pos, drop.pos).cost)
-        //Log.info(newTargets)
-        if (newTargets.length) {
-            creep.memory.targetId = newTargets[0].id
-
-            return actions.pickup(creep)
-        }
-    },
 
     upgrade: function(creep) {
         const location = creep.room.controller

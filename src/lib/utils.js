@@ -111,12 +111,31 @@ var u = {
         var localCreeps = u.splitCreepsByCity()
         var miners = _.filter(localCreeps[city], lcreep => lcreep.memory.role == "remoteMiner")
         var drops = _.flatten(_.map(miners, miner => miner.room.find(FIND_DROPPED_RESOURCES)))
-        // var allRooms = u.splitRoomsByCity();
-        // var rooms = allRooms[city]
-        // var drops = _.flatten(_.map(rooms, room => room.find(FIND_DROPPED_RESOURCES)));
-        var goodLoads = _.filter(drops, drop => (drop.amount >= 0.5 * creep.store.getCapacity()) || (drop == !RESOURCE_ENERGY))
-        //Log.info(JSON.stringify(allRooms));
-        return goodLoads
+        const runnersBySource = _.groupBy(_.filter(localCreeps), c => c.memory.role == "runner", runner => runner.memory.targetId)
+        const containers = _.map(miners, miner => _.find(miner.pos.lookFor(LOOK_STRUCTURES), struct => struct.structureType == STRUCTURE_CONTAINER))
+        const goodContainers = _.filter(containers, 
+            function(container){
+                if(!container || container.store.getUsedCapacity() <= 0.5 * creep.store.getCapacity())
+                    return false
+                let store = container.store.getUsedCapacity()
+                if(!runnersBySource[container.id])
+                    return true
+                for(const runner of runnersBySource[container.id])
+                    store -= runner.store.getFreeCapacity()
+                return store >= 0.5 * creep.store.getCapacity()
+            })
+        const goodDrops = _.filter(drops, 
+            function(drop){
+                if(drop.amount <= 0.5 * creep.store.getCapacity())
+                    return false
+                let amount = drop.amount
+                if(!runnersBySource[drop.id])
+                    return true
+                for(const runner of runnersBySource[drop.id])
+                    amount -= runner.store.getFreeCapacity()
+                return amount >= 0.5 * creep.store.getCapacity()
+            }) 
+        return goodDrops.concat(goodContainers)
     },
     
     iReservedOrOwn: function(roomName) {
@@ -156,18 +175,23 @@ var u = {
     },
     
     splitCreepsByCity: function(){
-        var creeps = _.filter(Game.creeps, creep => creep.my)
-        return _.groupBy(creeps, creep => creep.memory.city)
+        if(!Tmp.creepsByCity)
+            Tmp.creepsByCity = _.groupBy(Game.creeps, creep => creep.memory.city)
+        return Tmp.creepsByCity
     },
     
     splitRoomsByCity: function(){
-        var rooms = _.filter(Game.rooms, room => u.iReservedOrOwn(room.name))
-        //Log.info(JSON.stringify(rooms));
-        return _.groupBy(rooms, room => room.memory.city)
+        if(!Tmp.roomsByCity){
+            const rooms = _.filter(Game.rooms, room => u.iReservedOrOwn(room.name))
+            Tmp.roomsByCity = _.groupBy(rooms, room => room.memory.city)
+        }
+        return Tmp.roomsByCity
     },
 
     getMyCities: function() {
-        return _.filter(Game.rooms, (room) => u.iOwn(room.name))
+        if(!Tmp.myCities)
+            Tmp.myCities = _.filter(Game.rooms, (room) => u.iOwn(room.name))
+        return Tmp.myCities
     },
 
     getAvailableSpawn: function(spawns) {

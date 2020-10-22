@@ -75,7 +75,6 @@ const CCache = class {
 
     reset() {
         _(Object.keys(this))
-            .filter(key => key == "constructor" || key == "reset")
             .forEach(key => delete this[key])
     }
 }
@@ -196,6 +195,7 @@ global.Creep = class extends RoomObject {
         this.memory = {}
         global.Memory.creeps[name] = this.memory
         this.owner = {username: "Yoner"}
+        this.body = []
     }
     notifyWhenAttacked() {}
     getActiveBodyparts(type) {return}

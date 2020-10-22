@@ -21,39 +21,77 @@ var rR = {
         if (Game.time % 2) {
             actions.notice(creep) // cost: 15% when running, so 7% now
         }
+        if(creep.store.getUsedCapacity() == 0 && !creep.memory.targetId){
+            rR.checkForPullees(creep)
+        }
         // if there's room for more energy, go find some more
         // else find storage
-        if (creep.store.energy < 0.5 * creep.store.getCapacity()) {
-            actions.pickup(creep)
+        if (creep.store.getFreeCapacity() > 0.5 * creep.store.getCapacity()) {
+            rR.pickup(creep)
         } else {
-            // check if we are walking on sidewalk/construction, and adjust as needed.
-            if (creep.memory.location && Game.getObjectById(creep.memory.location)){
-                const target = Game.getObjectById(creep.memory.location)
-                if (actions.charge(creep, target) == ERR_FULL) {
-                    var locations = u.getTransferLocations(creep)
-                    var nextLocation = u.getNextLocation(creep.memory.target, locations)
-                    if (locations[nextLocation] == undefined){
-                        creep.memory.location = Game.spawns[creep.memory.city].id
-                    } else {
-                        creep.memory.target = nextLocation
-                        creep.memory.location = locations[nextLocation].id
-                    }
-                }
-            } else {
-                var targets =  u.getTransferLocations(creep)
-                var bucket = targets[creep.memory.target]
-                if (bucket == undefined) {
-                    var city = creep.memory.city
-                    bucket = Game.spawns[city]
-                }
-                creep.memory.location = bucket.id
-                if (actions.charge(creep, bucket) == ERR_FULL)
-                    rR.flipTarget(creep)
-            }
+            rR.deposit(creep)
         }
     },
+
     flipTarget: function(creep) {
         creep.memory.target = u.getNextLocation(creep.memory.target, u.getTransferLocations(creep))
+    },
+
+    checkForPullees: function(creep){
+        const pullee = _.find(creep.room.find(FIND_MY_CREEPS), c => c.memory.destination && !c.memory.paired)
+        if(pullee){
+            creep.memory.tug = true
+            creep.memory.pullee = pullee.id
+            pullee.memory.paired = true
+        }
+    },
+
+    pickup: function(creep) {
+        if(creep.memory.targetId) {
+            const target = Game.getObjectById(creep.memory.targetId)
+            if(target){
+                if(target.structureType){
+                    if(actions.withdraw(creep, target, RESOURCE_ENERGY) == 1)
+                        creep.memory.targetId = null
+                } else {
+                    if(actions.pick(creep, target) == 1)
+                        creep.memory.targetId = null
+                }
+                return
+            }
+        }
+        const goodLoads = u.getGoodPickups(creep)
+        if(!goodLoads.length)
+            return
+        const newTarget = _.min(goodLoads, drop => PathFinder.search(creep.pos, drop.pos).cost)
+        creep.memory.targetId = newTarget.id
+        return rR.pickup(creep)
+    },
+
+    deposit: function(creep){
+        if (creep.memory.location && Game.getObjectById(creep.memory.location)){
+            const target = Game.getObjectById(creep.memory.location)
+            if (actions.charge(creep, target) == ERR_FULL) {
+                var locations = u.getTransferLocations(creep)
+                var nextLocation = u.getNextLocation(creep.memory.target, locations)
+                if (locations[nextLocation] == undefined){
+                    creep.memory.location = Game.spawns[creep.memory.city].id
+                } else {
+                    creep.memory.target = nextLocation
+                    creep.memory.location = locations[nextLocation].id
+                }
+            }
+        } else {
+            var targets =  u.getTransferLocations(creep)
+            var bucket = targets[creep.memory.target]
+            if (bucket == undefined) {
+                var city = creep.memory.city
+                bucket = Game.spawns[city]
+            }
+            creep.memory.location = bucket.id
+            if (actions.charge(creep, bucket) == ERR_FULL)
+                rR.flipTarget(creep)
+        }
     },
 
     runTug: function(creep){

@@ -36,7 +36,7 @@ var markets = {
     sendCommodities: function(cities){
         for(const city of cities) {
             const memory = Game.spawns[city.memory.city].memory
-            if(memory.ferryInfo.factoryInfo && memory.ferryInfo.comSend.length){
+            if(memory.ferryInfo && memory.ferryInfo.factoryInfo && memory.ferryInfo.comSend.length){
                 const comSend = memory.ferryInfo.comSend[0]
                 if (Memory.rooms[city.name].termUsed) {
                     return
@@ -79,9 +79,15 @@ var markets = {
 
     relocateBaseMins: function(myCities){
         //receivers are rooms with a lvl 0 factory
-        const receivers = _.filter(myCities, city => city.terminal && !Game.spawns[city.memory.city].memory.ferryInfo.factoryInfo.factoryLevel && city.controller.level >= 7)
+        const receivers = _.filter(myCities, city => city.terminal 
+            && Game.spawns[city.memory.city].memory.ferryInfo
+            && Game.spawns[city.memory.city].memory.ferryInfo.factoryInfo
+            && !Game.spawns[city.memory.city].memory.ferryInfo.factoryInfo.factoryLevel && city.controller.level >= 7)
         //senders are rooms with a levelled factory, or no factory at all
-        const senders = _.filter(myCities, city => city.terminal && (Game.spawns[city.memory.city].memory.ferryInfo.factoryInfo.factoryLevel > 0 || city.controller.level == 6))
+        const senders = _.filter(myCities, city => city.terminal 
+            && Game.spawns[city.memory.city].memory.ferryInfo
+            && Game.spawns[city.memory.city].memory.ferryInfo.factoryInfo
+            && (Game.spawns[city.memory.city].memory.ferryInfo.factoryInfo.factoryLevel > 0 || city.controller.level == 6))
         const baseMins = [RESOURCE_HYDROGEN, RESOURCE_OXYGEN, RESOURCE_UTRIUM, RESOURCE_LEMERGIUM, RESOURCE_KEANIUM, RESOURCE_ZYNTHIUM, RESOURCE_CATALYST]
         const baseComs = [RESOURCE_SILICON, RESOURCE_METAL, RESOURCE_BIOMASS, RESOURCE_MIST]
         for(const sender of senders){
@@ -121,7 +127,7 @@ var markets = {
             if(!Game.spawns[city]){
                 continue
             }
-            const mineral = Game.spawns[city].memory.ferryInfo.mineralRequest
+            const mineral = Game.spawns[city].memory.ferryInfo && Game.spawns[city].memory.ferryInfo.mineralRequest
             if(mineral){
                 const x = senders.length
                 for (const sender of senders){
