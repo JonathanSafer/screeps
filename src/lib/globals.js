@@ -3,6 +3,7 @@ const sq = require("./spawnQueue")
 const rp = require("../managers/roomplan")
 const trading = require("../managers/swcTrading")
 
+global.Tmp = []
 global.T = function() { return `Time: ${Game.time}` }
 global.Cache = {}
 global.Log = {}
