@@ -36,6 +36,7 @@ profiler.enable()
 module.exports.loop = function () {
     "use strict"
     profiler.wrap(function () {
+        global.Tmp = []
         if(Game.cpu.unlockedTime && ((Game.cpu.unlockedTime - Date.now()) < 1000*60*60*24)) {
             Game.cpu.unlock()
         }
@@ -60,7 +61,6 @@ module.exports.loop = function () {
             //em.expand() // grow the empire!
         }
         //run cities
-        global.Tmp = []
         var prevCpu = Game.cpu.getUsed()
         for (let i = 0; i < myCities.length; i += 1) {
             try {
