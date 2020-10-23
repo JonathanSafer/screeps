@@ -451,7 +451,7 @@ function updateDefender(spawn, rcl) {
         for(const hostile of hostiles){
             const hasTough = hostile.getActiveBodyparts(TOUGH) > 0
             const isBoosted = _(hostile.body).find(part => part.boost)
-            if (isBoosted && (hasTough || isBoosted.boost.includes("X"))) {
+            if (isBoosted && (hasTough || isBoosted.boost.includes("X") || rcl < 8)) {
                 //add a defender to spawn queue if we don't have enough
                 //make sure to count spawned defenders as well as queued
                 const spawns = room.find(FIND_MY_SPAWNS)
