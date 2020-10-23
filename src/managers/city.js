@@ -549,7 +549,7 @@ function updateUpgrader(city, controller, memory, rcl8, creeps, rcl) {
     if (rcl8){
         const bucketThreshold = settings.bucket.upgrade + settings.bucket.range * cityFraction(room.name)
         const haveEnoughCpu = Game.cpu.bucket > bucketThreshold
-        if (controller.ticksToDowngrade < 100000 
+        if (controller.ticksToDowngrade < CONTROLLER_DOWNGRADE[rcl]/2 
             || (controller.room.storage.store.energy > settings.energy.rcl8upgrade && haveEnoughCpu)){
             scheduleIfNeeded(rU.name, 1, true, Game.spawns[city], creeps)
         }
@@ -572,7 +572,7 @@ function updateUpgrader(city, controller, memory, rcl8, creeps, rcl) {
             for(let i = 0; i < needed; i++){
                 sq.schedule(Game.spawns[city], rU.name, rcl >= 6)
             }
-        } else if (controller.ticksToDowngrade < 1000){
+        } else if (controller.ticksToDowngrade < CONTROLLER_DOWNGRADE[rcl]/2){
             sq.schedule(Game.spawns[city], rU.name, rcl >= 6)
         }
     }

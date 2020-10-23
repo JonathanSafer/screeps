@@ -32,6 +32,7 @@ describe("remoteMiner", function () {
     const rM = require("../src/roles/remoteMiner")
     describe("#run()", function () {
         it("should get source assigned", function () {
+            Tmp = {}
             const room = normalRoom(3)
             const miner = roleCreep(room, "1", rM.name)
             const miner2 = roleCreep(room, "2", rM.name)
