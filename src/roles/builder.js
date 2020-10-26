@@ -99,7 +99,12 @@ var rB = {
             const target = Game.getObjectById(creep.memory.repair)
             if(target){//if there is a target, repair it
                 if(creep.repair(target) === ERR_NOT_IN_RANGE){
-                    motion.newMove(creep, target.pos, 3)
+                    const box = motion.getBoundingBox(creep.room)
+                    box.top--
+                    box.bottom++
+                    box.left--
+                    box.right++
+                    motion.newMove(creep, target.pos, 3, true, box)
                 }
             } else {
                 creep.memory.repair = null
