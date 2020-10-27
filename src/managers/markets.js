@@ -111,10 +111,12 @@ var markets = {
                 }
                 if(sender.terminal.store[baseCom] > 0 && !Memory.rooms[sender.name].termUsed){
                     const amount = sender.terminal.store[baseCom]
-                    const receiver = receivers[Math.floor(Math.random() * Math.floor(receivers.length))].name
-                    sender.terminal.send(baseCom, amount, receiver)
-                    Memory.rooms[sender.name].termUsed = true
-                    go = false
+                    const receiver = _.find(receivers, r => !r.terminal.store[baseCom] || r.terminal.store[baseCom] < 8000)
+                    if(receiver){
+                        sender.terminal.send(baseCom, amount, receiver.name)
+                        Memory.rooms[sender.name].termUsed = true
+                        go = false
+                    }
                 }
             }
         }
