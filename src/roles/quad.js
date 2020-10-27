@@ -116,7 +116,7 @@ var rQ = {
                 break
             }
             new RoomVisual(creep.room.name).text(i,jimmyPos)
-            if(quad[i].pos.isEqualTo(jimmyPos))
+            if(!quad[i].pos.isEqualTo(jimmyPos))
                 motion.newMove(quad[i], jimmyPos)
         }
     },
