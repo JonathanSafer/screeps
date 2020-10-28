@@ -229,7 +229,7 @@ var m = {
             roomCallback: function(roomName){
                 const roomData = u.getsetd(roomDataCache, roomName, {})
                 if(roomName != creep.pos.roomName && roomData.owner && !settings.allies.includes(roomData.owner) 
-                    && roomName != goals.roomName
+                    && goals.pos && goals.pos.roomName != roomName
                     && roomData.rcl 
                     && CONTROLLER_STRUCTURES[STRUCTURE_TOWER][roomData.rcl] 
                     && (!creep.memory.tolerance 
