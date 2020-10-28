@@ -196,9 +196,9 @@ function makeEmergencyCreeps(extensions, creeps, city, rcl8, emergency) {
 
 function updateQR(spawn, creeps){
     const flag = spawn.name + "qrCode"
-    if(flag){
+    if(Memory.flags[flag]){
         const creepsNeeded = template.qrCoords.length
-        scheduleIfNeeded(rQr, creepsNeeded, false, spawn, creeps, flag)
+        scheduleIfNeeded(rQr.name, creepsNeeded, false, spawn, creeps, flag)
     }
 }
 
