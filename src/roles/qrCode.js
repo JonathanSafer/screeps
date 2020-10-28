@@ -17,7 +17,7 @@ const rQr = {
                 && c.memory.target == creep.memory.target + 1)){
             creep.memory.target++
         }
-        const target = template.qrCode[creep.memory.target]
+        const target = template.qrCoords[creep.memory.target]
         const targetPos = new RoomPosition(target.x + flag.x, target.y + flag.y, flag.roomName)
         if(!creep.pos.isEqualTo(targetPos))
             motion.newMove(creep, targetPos)
