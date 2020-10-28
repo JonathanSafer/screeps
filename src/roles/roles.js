@@ -17,6 +17,7 @@ var rD = require("./defender")
 var rPM = require("./powerMiner")
 var rQ = require("./quad")
 var rS = require("./scout")
+const rQr = require("./qrCode")
 
 
 var rr = {
@@ -24,7 +25,7 @@ var rr = {
     getRoles: function() {
         return [rF, rD, rT, rM, rR, rU, rB, rQ, rMM, rC, rUC,
             rSB, rH,rMe, rBr, rPM,
-            rRo, rDM, rS]
+            rRo, rDM, rS, rQr]
     },
 
     getCoreRoles: function() {

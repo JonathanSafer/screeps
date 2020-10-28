@@ -24,6 +24,7 @@ var fact = require("../buildings/factory")
 var link = require("../buildings/link")
 var e = require("../operations/error")
 var rMe = require("../roles/medic")
+const rQr = require("../roles/qrCode")
 
 
 function makeCreeps(role, city, unhealthyStore, creepWantsBoosts, flag = null) {
@@ -134,6 +135,7 @@ function updateCountsCity(city, creeps, rooms, claimRoom, unclaimRoom) {
 
     // Always update defender
     updateDefender(spawn, rcl)
+    updateQR(spawn, creeps)
 
     if(Game.time % 200 == 0){
         updateMilitary(city, memory, rooms, spawn, creeps)
@@ -189,6 +191,14 @@ function makeEmergencyCreeps(extensions, creeps, city, rcl8, emergency) {
             Log.info(`Making Emergency Runner in ${city}`)
             makeCreeps(rR, city, true)
         }
+    }
+}
+
+function updateQR(spawn, creeps){
+    const flag = spawn.name + "qrCode"
+    if(flag){
+        const creepsNeeded = template.qrCode.length
+        scheduleIfNeeded(rQr, creepsNeeded, false, spawn, creeps, flag)
     }
 }
 
