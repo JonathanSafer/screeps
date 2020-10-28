@@ -12,7 +12,7 @@ const rQr = {
         if(!flag)
             return
         const localCreeps = u.splitCreepsByCity()[creep.memory.city]
-        while(creep.memory.target < template.qrCode.length - 2 
+        while(creep.memory.target < template.qrCoords.length - 2 
             && !_.find(localCreeps, c => c.memory.role == rQr.name 
                 && c.memory.target == creep.memory.target + 1)){
             creep.memory.target++
