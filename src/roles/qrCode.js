@@ -13,7 +13,7 @@ const rQr = {
             return
         const localCreeps = u.splitCreepsByCity()[creep.memory.city]
         const qrs = _.filter(localCreeps, c => c.memory.role == rQr.name)
-        if(!creep.memory.row === undefined){
+        if(creep.memory.row === undefined){
             let freeRow = null
             for(let i = 0; i < template.qrCoords.length; i++){
                 if(!_.find(qrs, c => c.memory.row == i && c.memory.target == 0)){
@@ -29,7 +29,7 @@ const rQr = {
             }
             creep.memory.row = freeRow
         }
-        const row = creep.memory.freeRow
+        const row = creep.memory.row
         while(creep.memory.target < template.qrCoords[row].length - 1 
             && !_.find(qrs, c => c.memory.row == row && c.memory.target == creep.memory.target + 1)){
             creep.memory.target++
