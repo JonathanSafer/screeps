@@ -523,7 +523,7 @@ var markets = {
     buyBoosts: function(city) {
         const boosts = settings.civBoosts.concat(settings.militaryBoosts)
         for(const boost of boosts){
-            if(city.storage.store[boost]) continue
+            if(city.terminal.store[boost] && city.terminal.store[boost] >= 3000) continue
             const amountNeeded = 6000
             const orderId = _.find(Object.keys(Game.market.orders),
                 order => Game.market.orders[order].roomName === city.name && Game.market.orders[order].resourceType === boost)
@@ -533,7 +533,7 @@ var markets = {
                 Game.market.extendOrder(orderId, (amountNeeded - order.remainingAmount))
             } else if(!order){
                 let buyPrice = markets.getPrice(boost)
-                buyPrice = buyPrice * 0.8//start 20% below market value
+                buyPrice = Math.min(buyPrice * 0.8, settings.upgradeBoostPrice)//start 20% below market value
                 Game.market.createOrder({
                     type: ORDER_BUY,
                     resourceType: boost,
