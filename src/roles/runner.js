@@ -18,7 +18,7 @@ var rR = {
             return
         }
         // notice if there's stuff next to you before wandering off!  
-        if (Game.time % 2) {
+        if (Game.cpu.bucket > 9500 || Game.time % 2) {
             actions.notice(creep) // cost: 15% when running, so 7% now
         }
         if(creep.store.getUsedCapacity() == 0 && !creep.memory.targetId){
@@ -69,29 +69,11 @@ var rR = {
     },
 
     deposit: function(creep){
-        if (creep.memory.location && Game.getObjectById(creep.memory.location)){
-            const target = Game.getObjectById(creep.memory.location)
-            if (actions.charge(creep, target) == ERR_FULL) {
-                var locations = u.getTransferLocations(creep)
-                var nextLocation = u.getNextLocation(creep.memory.target, locations)
-                if (locations[nextLocation] == undefined){
-                    creep.memory.location = Game.spawns[creep.memory.city].id
-                } else {
-                    creep.memory.target = nextLocation
-                    creep.memory.location = locations[nextLocation].id
-                }
-            }
-        } else {
-            var targets =  u.getTransferLocations(creep)
-            var bucket = targets[creep.memory.target]
-            if (bucket == undefined) {
-                var city = creep.memory.city
-                bucket = Game.spawns[city]
-            }
-            creep.memory.location = bucket.id
-            if (actions.charge(creep, bucket) == ERR_FULL)
-                rR.flipTarget(creep)
-        }
+        if (!creep.memory.location || !Game.getObjectById(creep.memory.location))
+            creep.memory.location =  u.getStorage(Game.spawns[creep.memory.city].room).id
+        const target = Game.getObjectById(creep.memory.location)
+        if (actions.charge(creep, target) == ERR_FULL) 
+            creep.memory.location =  u.getStorage(Game.spawns[creep.memory.city].room).id
     },
 
     runTug: function(creep){
@@ -102,10 +84,13 @@ var rR = {
         }
         if(!pullee.pos.isNearTo(creep.pos)){
             motion.newMove(creep, pullee.pos, 1)
+            return
         }
         const destination = new RoomPosition(pullee.memory.destination.x, pullee.memory.destination.y, pullee.memory.destination.roomName)
         if(creep.pos.isEqualTo(destination)){
-            motion.newMove(creep, pullee.pos)
+            creep.move(pullee)
+            creep.pull(pullee)
+            pullee.move(creep)
             creep.memory.tug = false
             return
         }

@@ -383,64 +383,78 @@ const p = {
     },
 
     buildControllerLink: function(room) {
-        p.buildLinkInArea(room, room.controller.pos, 3, rU.name, 1)
+        const spawn = Game.spawns[room.name + "0"]
+        if(spawn.memory.upgradeLinkPos){
+            const pos = spawn.memory.upgradeLinkPos
+            p.buildConstructionSite(room, STRUCTURE_LINK, new RoomPosition(pos/50, pos%50, room.name), name)
+            return
+        }
+        const creeps = room.controller.pos.findInRange(FIND_MY_CREEPS, 3)
+        const upgrader = _.find(creeps, c => c.memory.role = rU.name)
+        if(!upgrader)
+            return
+        let location = null
+        for(let i = upgrader.pos.x - 1; i <= upgrader.pos.x + 1; i++){
+            if(location)
+                break
+            for(let j = upgrader.pos.y - 1; j <= upgrader.pos.y + 1; j++){
+                if(upgrader.pos.isEqualTo(i,j))
+                    continue
+                const look = new RoomPosition(i, j, room.name).lookAt()
+                for(const item of look){
+                    if(item.type == LOOK_STRUCTURES 
+                        || (item.type == LOOK_TERRAIN && item[LOOK_TERRAIN] == TERRAIN_MASK_WALL))
+                        continue
+                }
+                location = i*50+j
+                break 
+            }
+        }
+        if(location){
+            spawn.memory.upgradeLinkPos = location
+            p.buildConstructionSite(room, STRUCTURE_LINK, new RoomPosition(location/50, location%50, room.name))
+        } else {
+            Log.info(`No link placement for controller in ${room.name}`)
+        }
     },
 
     buildSourceLinks: function(room) {
         const sources = room.find(FIND_SOURCES)
-        const neighbors = _.find(sources, p.tooCloseToSource)
-        if (neighbors != undefined) {  // sources are next to eachother.
-            Log.info("Sources are next to each other in: " + room.name)
-            return
-        }
-
-        _.forEach(sources, source => p.buildLinkInArea(room, source.pos, 1, rM.name, 1))
-    },
-
-    buildLinkInArea: function(room, structPos, creepRange, creepType, range) {
-        if (p.hasLink(structPos, range + creepRange)) {
-            return // We already have links
-        }
-
-        const creeps = structPos.findInRange(FIND_MY_CREEPS, creepRange)
-        const workers = _.filter(creeps, creep => creep.memory.role == creepType)
-        if (workers.length != 1) {
-            Log.info("Wrong number of " + creepType + " for link placement: " + room.name)
-            return
-        }
-
-        Log.info("Building link: " + room.name)
-        const workerPos = workers[0].pos
-        const wx = workerPos.x
-        const wy = workerPos.y
-        const area = room.lookAtArea(wy - range, wx - range, wy + range, wx + range)
-        for (const row of Object.entries(area)) {
-            const cols = row[1]
-            for (const col of Object.entries(cols)) {
-                const items = area[row[0]][col[0]]
-                const x = Number(col[0])
-                const y = Number(row[0])
-                if (items.length == 1 && room.getTerrain().get(x, y) != TERRAIN_MASK_WALL)
-                {
-                    room.createConstructionSite(x, y, STRUCTURE_LINK)
-                    return
+        const spawn = Game.spawns[room.name + "0"]
+        for(const source of sources){
+            if(spawn.memory.sources[source.id][STRUCTURE_LINK + "Pos"]){
+                const pos = spawn.memory.sources[source.id][STRUCTURE_LINK + "Pos"]
+                p.buildConstructionSite(room, STRUCTURE_LINK, new RoomPosition(pos/50, pos%50, room.name))
+            }
+            const creeps = source.pos.findInRange(FIND_MY_CREEPS, 1)
+            const miner = _.find(creeps, c => c.memory.source = source.id)
+            if(!miner)
+                continue
+            let location = null
+            for(let i = miner.pos.x - 1; i <= miner.pos.x + 1; i++){
+                if(location)
+                    break
+                for(let j = miner.pos.y - 1; j <= miner.pos.y + 1; j++){
+                    if(miner.pos.isEqualTo(i,j))
+                        continue
+                    const look = new RoomPosition(i,j,miner.pos.roomName).lookAt()
+                    for(const item of look){
+                        if(item.type == LOOK_STRUCTURES 
+                            || (item.type == LOOK_CREEPS && item[LOOK_CREEPS].memory.role == rM.name)
+                            || (item.type == LOOK_TERRAIN && item[LOOK_TERRAIN] == TERRAIN_MASK_WALL))
+                            continue
+                    }
+                    location = i*50+j
+                    break 
                 }
             }
+            if(location){
+                spawn.memory.sources[source.id][STRUCTURE_LINK + "Pos"] = location
+                p.buildConstructionSite(room, STRUCTURE_LINK, new RoomPosition(location/50, location%50, room.name))
+            } else {
+                Log.info(`No link placement for source at ${source.pos}`)
+            }
         }
-    },
-
-    tooCloseToSource: function(source) {
-        return source.pos.findInRange(FIND_SOURCES, 3).length > 1
-    },
-
-    hasLink: function(pos, distance) {
-        const links = pos.findInRange(FIND_MY_STRUCTURES, distance, {
-            filter: { structureType: STRUCTURE_LINK }
-        })
-        const newLinks = pos.findInRange(FIND_MY_CONSTRUCTION_SITES, distance, {
-            filter: { structureType: STRUCTURE_LINK }
-        })
-        return links.length > 0 || newLinks.length > 0
     },
 
     makeRoadMatrix: function(room, plan){

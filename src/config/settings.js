@@ -60,6 +60,7 @@ var settings = {
         sk: 100000,
         highway: 10000000
     },
+    minerUpdateTime: 50,
     powerMiningRange: 2,
     miningRange: 7,
     observerFrequency: 20, // how often each city scans a room

@@ -6,29 +6,39 @@ var rL = {
     STORAGE: 1,
     LINK: 1,
 
-    fixCacheIfInvalid: function(room, rcl) {
+    fixCacheIfInvalid: function(room) {
         const rN = room.name
         if (!Cache[rN]) Cache[rN] = {}
         const links = Cache[rN].links || {}
         let storageLink = Game.getObjectById(links.store)
-        let upgradeLink = Game.getObjectById(links.upgrade) || rcl < 7 || Game.time % 100 != 0
+        let upgradeLink = Game.getObjectById(links.upgrade)
         let sourceLinks = _.map(links.source, src => Game.getObjectById(src))
-        if ((storageLink && upgradeLink && _.reduce(sourceLinks, (l, r) => l && r))
-            && (sourceLinks.length == 2 || Game.time % 200 != 0)) {
+        if (storageLink && Game.time % 100 != 0 && upgradeLink && _.reduce(sourceLinks, (l, r) => l && r)
+            && sourceLinks.length == 2) {
             return
         } else {
-            const realLinks = rL.findStructure(room, STRUCTURE_LINK)
+            const memory = Game.spawns[room.memory.city].memory
             sourceLinks = []
-            for (const link of realLinks) {
-                if (link.pos.findInRange(FIND_SOURCES, rL.SOURCE + rL.LINK).length > 0) {
-                    sourceLinks.push(link)
-                } else if (rL.isNearStructure(link.pos, STRUCTURE_CONTROLLER, rL.UPGRADE + rL.LINK)) {
-                    upgradeLink = link
-                } else if (rL.isNearStructure(link.pos, STRUCTURE_STORAGE, rL.STORAGE + rL.LINK)) {
-                    storageLink = link
+            for(const source in memory.sources){
+                const linkPos = memory.sources[source][STRUCTURE_LINK + "Pos"]
+                if(linkPos){
+                    const look = room.lookForAt(LOOK_STRUCTURES, linkPos/50, linkPos%50)
+                    for(const result of look){
+                        if(result.structureType == STRUCTURE_LINK)
+                            sourceLinks.push(result)
+                    }
                 }
             }
-
+            if(memory.upgradeLinkPos){
+                const look = room.lookForAt(LOOK_STRUCTURES, memory.upgradeLinkPos/50, memory.upgradeLinkPos%50)
+                for(const result of look){
+                    if(result.structureType == STRUCTURE_LINK)
+                        upgradeLink = result
+                }
+            }
+            const structures = room.find(FIND_MY_STRUCTURES)
+            storageLink = _.find(structures, struct => struct.structureType == STRUCTURE_LINK
+                && struct.pos.inRangeTo(room.storage, 2))
             links.store = storageLink ? storageLink.id : null
             links.upgrade = upgradeLink ? upgradeLink.id : null
             links.source = _.map(sourceLinks, link => link ? link.id : null)
@@ -38,9 +48,9 @@ var rL = {
 
     run: function(room) {
         const rcl = room.controller && room.controller.level
-        if (rcl < 6) return
+        if (rcl < 5) return
 
-        rL.fixCacheIfInvalid(room, rcl)
+        rL.fixCacheIfInvalid(room)
 
         const links = Cache[room.name].links
         const storageLink = Game.getObjectById(links.store)
@@ -68,30 +78,6 @@ var rL = {
 
     readyForLinkTransfer(sender, receiver) {
         return receiver && !receiver.store.getUsedCapacity(RESOURCE_ENERGY) && !sender.cooldown
-    },
-
-    getUpgradeLink: function(room) {
-        if (room.controller.level < 7) return false
-        const links = rL.findNearStructures(room.controller.pos, 
-            STRUCTURE_LINK, 
-            rL.UPGRADE + rL.LINK)
-        return links.length > 0 ? links[0] : undefined
-    },
-
-    findNearStructures: function(pos, type, range) {
-        return pos.findInRange(FIND_STRUCTURES, range, {
-            filter: { structureType: type }
-        })
-    },
-
-    isNearStructure: function(pos, type, range) {
-        return rL.findNearStructures(pos, type, range).length > 0
-    },
-
-    findStructure: function(room, type) {
-        return room.find(FIND_STRUCTURES, {
-            filter: { structureType: type }
-        })
     }
 }
 

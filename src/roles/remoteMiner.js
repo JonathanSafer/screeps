@@ -1,6 +1,8 @@
 var a = require("../lib/actions")
 var sq = require("../lib/spawnQueue")
 var motion = require("../lib/motion")
+const u = require("../lib/utils")
+const settings = require("../config/settings")
 
 var rM = {
     name: "remoteMiner",
@@ -14,45 +16,187 @@ var rM = {
         if(creep.ticksToLive == creep.memory.spawnBuffer + (creep.body.length * CREEP_SPAWN_TIME) && Game.spawns[creep.memory.city].memory.remoteMiner > 0) {
             sq.respawn(creep)
         }
-        if(creep.hits < creep.hitsMax){
+        if(creep.hits < creep.hitsMax && creep.pos.roomName == Game.spawns[creep.memory.city].pos.roomName){
             Game.spawns[creep.memory.city].memory.towersActive = true
             motion.newMove(creep, Game.spawns[creep.memory.city].pos, 7)
             return
         }
         if(!creep.memory.source) {
             rM.nextSource(creep)
-        } else if (!Game.getObjectById(creep.memory.source)){
-            motion.newMove(creep, new RoomPosition(25, 25, creep.memory.sourceRoom), 10)
-            creep.moveTo(new RoomPosition(25, 25, creep.memory.sourceRoom), {reusePath: 50}) 
-        } else {
-            if (creep.saying != "*"){
-                rM.harvestTarget(creep)
-            }
-            if (Game.time % 50 === 0 && !creep.memory.link && rM.canCarry(creep)) {
-                //find link
-                var source = Game.getObjectById(creep.memory.source)
-                var structures = source.pos.findInRange(FIND_MY_STRUCTURES, 2)
-                const links = _.filter(structures, structure => structure.structureType === STRUCTURE_LINK && structure.pos.inRangeTo(source.pos, 3))
-                //Log.info(link)
-                if (links.length > 1){
-                    creep.memory.link = source.pos.findClosestByRange(links).id
-                } else if(links.length){
-                    creep.memory.link = links[0].id
-                }
-            }
-            if (creep.memory.link){
-                if (creep.store.energy == creep.store.getCapacity()){
-                    const link = Game.getObjectById(creep.memory.link)
+            return
+        }
+        const source = Game.getObjectById(creep.memory.source)
+        rM.setMoveStatus(creep)
+        rM.maybeMove(creep, source)
+        if(!source)
+            return
+        if(creep.memory.construction && rM.build(creep, source))
+            return
+        if(creep.memory.link){
+            const link = Game.getObjectById(creep.memory.link)
+            if(link){
+                if(source.energy > 0 && creep.store.getFreeCapacity() > 0)
+                    creep.harvest(source)
+                if(!creep.store.getFreeCapacity())
                     a.charge(creep, link)
-                    if (link && link.energy >= link.energyCapacity * .5){
-                        creep.say("*", true)
-                    }
+                return
+            } else {
+                creep.memory.link = null
+            }
+        }
+        if(creep.memory.container){
+            const container = Game.getObjectById(creep.memory.container)
+            if(container){
+                if(source.energy > 0 && container.store.getFreeCapacity() > 0 || creep.store.getFreeCapacity() > 0){
+                    creep.harvest(source)
+                } else if (container.hits < container.hitsMax * 0.9 && creep.store.getUsedCapacity()){
+                    creep.repair(container)
                 }
+            } else {
+                creep.memory.container = null
+            }
+        }
+        if(source.energy > 0)
+            creep.harvest(source)
+        if(Game.time % settings.minerUpdateTime == 0){
+            //update container/link status
+            //if we have a link no need to search
+            if(creep.memory.link && Game.getObjectById(creep.memory.link))
+                return
+            //get Destination assigns structures/sites anyway so might as well reuse
+            rM.getDestination(creep, source)
+            if(!creep.memory.link && !creep.memory.container && !creep.memory.construction)
+                rM.placeContainer(creep, source)
+        }
+    },
+
+    placeContainer: function(creep, source){
+        const spawn = Game.spawns[creep.memory.city]
+        if(spawn.memory[source.id][STRUCTURE_CONTAINER + "Pos"]){
+            const pos = spawn.memory[source.id][STRUCTURE_CONTAINER + "Pos"]
+            source.room.createConstructionSite(pos/50, pos%50, STRUCTURE_CONTAINER)
+            return
+        }
+        spawn.memory[source.id][STRUCTURE_CONTAINER + "Pos"] = creep.pos.x * 50 + creep.pos.y
+        creep.pos.createConstructionSite(STRUCTURE_CONTAINER)
+    },
+
+    build: function (creep, source){
+        const cSite = Game.getObjectById(creep.memory.construction)
+        if(!cSite){
+            creep.memory.construction = null
+            return false
+        }
+        if(creep.store.getUsedCapacity() && !creep.store.getFreeCapacity()){
+            creep.build(cSite)
+        } else {
+            creep.harvest(source)
+        }
+        return true
+    },
+
+    maybeMove: function(creep, source){
+        if(creep.memory.moveStatus == "static"){
+            if(!source){
+                creep.memory.destination = creep.memory.sourcePos
+                return
+            }
+            if(!creep.memory.destination || creep.memory.destination == creep.memory.sourcePos)
+                creep.memory.destination = rM.getDestination(source)
+            return
+        }
+        if(!source){
+            motion.newMove(creep, new RoomPosition(creep.memory.sourcePos.x, creep.memory.sourcePos.y, creep.memory.sourcePos.roomName), 1)
+            return
+        }
+        if(!creep.memory.miningPos){
+            creep.memory.miningPos = rM.getDestination(source)
+            if(!creep.memory.miningPos)
+                return
+        }
+        const miningPos = new RoomPosition(creep.memory.miningPos.x, creep.memory.miningPos.y, creep.memory.miningPos.roomName)
+        if(!creep.pos.isEqualTo(miningPos))
+            motion.newMove(creep, miningPos)
+    },
+
+    getLinkMiningPos: function(link, source){
+        for(let i = link.pos.x - 1; i <= link.pos.x + 1; i++){
+            for(let j = link.pos.y - 1; j <= link.pos.y + 1; j++){
+                const testPos = new RoomPosition(i, j, link.pos.roomName)
+                if(testPos.isNearTo(source) && !rM.isPositionBlocked(testPos))
+                    return testPos
+            }
+        }
+        return null
+    },
+
+    getDestination: function(creep, source) {
+        //look for links
+        const link = rM.findStruct(creep, source, STRUCTURE_LINK)
+        if(link){
+            creep.memory.link = link.id
+            return rM.getLinkMiningPos(link, source)
+        }
+        const linkSite = rM.findStruct(creep, source, STRUCTURE_LINK, true)
+        if(linkSite){
+            creep.memory.construction = linkSite.id
+            return rM.getLinkMiningPos(linkSite, source)
+        }
+        //look for containers
+        const container = rM.findStruct(creep, source, STRUCTURE_CONTAINER)
+        if(container){
+            creep.memory.container = container.id
+            return container.pos
+        }
+        const containerSite = rM.findStruct(creep, source, STRUCTURE_CONTAINER, true)
+        if(containerSite){
+            creep.memory.construction = containerSite.id
+            return containerSite.pos
+        }
+        //look for empty space to mine
+        for(let i = source.pos.x - 1; i <= source.pos.x + 1; i++){
+            for(let j = source.pos.y - 1;j <= source.pos.y + 1; j++){
+                if(!rM.isPositionBlocked(new RoomPosition(i, j, source.pos.roomName)))
+                    return new RoomPosition(i, j, source.pos.roomName)
             }
         }
     },
 
-    canCarry: function(creep) {
+    findStruct: function(creep, source, structureType, construction = false){
+        const type = construction ? LOOK_CONSTRUCTION_SITES : LOOK_STRUCTURES
+        if(!source.room.controller || !source.room.controller.my)
+            return null
+        const memory = Game.spawns[creep.memory.city].memory
+        const structPos = memory.sources[source.id][structureType + "Pos"]
+        if(structPos){
+            const realPos = new RoomPosition(structPos/50, structPos%50, source.pos.roomName)
+            const look = realPos.lookFor(type)
+            const structure = _.find(look, struct => struct.structureType == structureType && (!struct.owner || struct.my))
+            if(structure)
+                return structure
+        }
+        return null
+    },
+
+    isPositionBlocked: function(roomPos){
+        const look = roomPos.look()
+        look.forEach(function(lookObject) {
+            if((lookObject.type == LOOK_TERRAIN 
+                && lookObject[LOOK_TERRAIN] == TERRAIN_MASK_WALL)
+                || (lookObject.type == LOOK_STRUCTURES
+                && OBSTACLE_OBJECT_TYPES[lookObject[LOOK_STRUCTURES].structureType])) {
+                return true
+            }
+        })
+        return false
+    },
+
+    setMoveStatus: function(creep) {
+        if(!creep.memory.moveStatus)
+            creep.memory.moveStatus = creep.getActiveBodyparts(MOVE) ? "mobile" : "static"
+    },
+
+    canCarry: function(creep){
         return creep.getActiveBodyparts(CARRY) > 0
     },
 
@@ -67,14 +211,15 @@ var rM = {
         }
 
         if(a.harvest(creep, source) === 1 && !creep.memory.spawnBuffer){
-            creep.memory.spawnBuffer = Game.spawns[creep.memory.city].pos.getRangeTo(source)
+            creep.memory.spawnBuffer = PathFinder.search(Game.spawns[creep.memory.city].pos, source.pos).cost
         }
     },
 
     /** pick a target id for creep **/
     nextSource: function(creep) {
         var city = creep.memory.city
-        var miners = _.filter(Game.spawns[city].room.find(FIND_MY_CREEPS), c => c.memory.role === rM.name && c.ticksToLive > 50)
+        var miners = _.filter(u.splitCreepsByCity()[city], c => c.memory.role === rM.name 
+            && c.ticksToLive > (c.memory.spawnBuffer || 50))
         var occupied = []
         _.each(miners, function(minerInfo){
             occupied.push(minerInfo.memory.source)
@@ -85,7 +230,7 @@ var rM = {
         
         if (openSources.length){
             creep.memory.source = openSources[0]
-            creep.memory.sourceRoom = Game.spawns[city].memory.sources[openSources[0]].roomName
+            creep.memory.sourcePos = Game.spawns[city].memory.sources[openSources[0]]
         }
     }
 }

@@ -81,28 +81,21 @@ var u = {
 
         // 2. Container
         const container = Game.getObjectById(roomCache.container)
-        if (container) return container     
-        const containers = room.find(FIND_STRUCTURES,{ 
-            filter: { structureType: STRUCTURE_CONTAINER } 
-        })
-        if (containers.length) {
-            roomCache.container = containers[0].id
-            return containers[0]
+        if (container) return container  
+        const structures = room.find(FIND_STRUCTURES)
+        const spawn = _.find(structures, struct => struct.structureType == STRUCTURE_SPAWN)
+        const newContainer = spawn && _.find(structures, struct => struct.structureType == STRUCTURE_CONTAINER
+            && struct.pos.inRangeTo(spawn, 3))
+        if (newContainer) {
+            roomCache.container = newContainer.id
+            return newContainer
         }
 
         // 3. Terminal
         if(room.terminal) return room.terminal
          
         // 4. Spawn   
-        const spawn = Game.getObjectById(roomCache.spawn)
         if (spawn) return spawn
-        const spawns = room.find(FIND_STRUCTURES, { 
-            filter: { structureType: STRUCTURE_SPAWN }
-        })
-        if (spawns.length) {
-            roomCache.spawn = spawns[0].id
-            return spawns[0]
-        }
         return false
     },
     
