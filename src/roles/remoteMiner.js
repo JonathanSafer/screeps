@@ -110,7 +110,7 @@ var rM = {
             return
         }
         if(!creep.memory.miningPos){
-            creep.memory.miningPos = rM.getDestination(source)
+            creep.memory.miningPos = rM.getDestination(creep, source)
             if(!creep.memory.miningPos)
                 return
         }
