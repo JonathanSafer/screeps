@@ -668,7 +668,7 @@ function updateRunner(creeps, spawn, extensions, memory, rcl, emergencyTime) {
 }
 
 function updateFerry(spawn, memory, rcl) {
-    if (rcl >= 6) {
+    if (rcl >= 5) {
         memory[rF.name] = 1
         return
     }

@@ -231,12 +231,11 @@ const p = {
                 if (room.controller.level >= 4 && room.storage) {
                     p.buildWalls(room, plan)
                 }
+                if(room.controller.level >= 5)
+                    p.buildControllerLink(room)
                 if (room.controller.level >= 6) {
                     p.buildExtractor(room)
                     p.buildSourceLinks(room)
-                }
-                if(room.controller.level >= 7){
-                    p.buildControllerLink(room)
                 }
             }
         }
