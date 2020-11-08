@@ -77,8 +77,13 @@ var rM = {
             source.room.createConstructionSite(pos/50, pos%50, STRUCTURE_CONTAINER)
             return
         }
-        spawn.memory.sources[source.id][STRUCTURE_CONTAINER + "Pos"] = creep.pos.x * 50 + creep.pos.y
-        creep.pos.createConstructionSite(STRUCTURE_CONTAINER)
+        if(creep.memory.miningPos || creep.memory.destination){
+            const pos = creep.memory.miningPos || creep.memory.destination
+            if(creep.pos.isEqualTo(new RoomPosition(pos.x, pos.y, pos.roomName))){
+                spawn.memory.sources[source.id][STRUCTURE_CONTAINER + "Pos"] = creep.pos.x * 50 + creep.pos.y
+                creep.pos.createConstructionSite(STRUCTURE_CONTAINER)
+            }
+        }
     },
 
     build: function (creep, source){
@@ -182,7 +187,7 @@ var rM = {
         const look = roomPos.look()
         look.forEach(function(lookObject) {
             if((lookObject.type == LOOK_TERRAIN 
-                && lookObject[LOOK_TERRAIN] == TERRAIN_MASK_WALL)
+                && lookObject[LOOK_TERRAIN] == "wall")//no constant for wall atm
                 || (lookObject.type == LOOK_STRUCTURES
                 && OBSTACLE_OBJECT_TYPES[lookObject[LOOK_STRUCTURES].structureType])) {
                 return true
