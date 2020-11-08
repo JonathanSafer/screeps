@@ -399,7 +399,7 @@ const p = {
             for(let j = upgrader.pos.y - 1; j <= upgrader.pos.y + 1; j++){
                 if(upgrader.pos.isEqualTo(i,j))
                     continue
-                const look = new RoomPosition(i, j, room.name).lookAt()
+                const look = room.lookAt(pos.i, pos.j)
                 for(const item of look){
                     if(item.type == LOOK_STRUCTURES 
                         || (item.type == LOOK_TERRAIN && item[LOOK_TERRAIN] == TERRAIN_MASK_WALL))
@@ -436,7 +436,7 @@ const p = {
                 for(let j = miner.pos.y - 1; j <= miner.pos.y + 1; j++){
                     if(miner.pos.isEqualTo(i,j))
                         continue
-                    const look = new RoomPosition(i,j,miner.pos.roomName).lookAt()
+                    const look = room.lookAt(pos.i, pos.j)
                     for(const item of look){
                         if(item.type == LOOK_STRUCTURES 
                             || (item.type == LOOK_CREEPS && item[LOOK_CREEPS].memory.role == rM.name)
