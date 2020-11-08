@@ -487,7 +487,20 @@ function cityFraction(cityName) {
     return _.indexOf(myCities, cityName) / myCities.length
 }
 
-function updateMiner(rooms, rcl8, memory, spawn){        
+function updateMiner(rooms, rcl8, memory, spawn){   
+    if (!memory.sources) memory.sources = {}
+    if (rcl8 && _.keys(memory.sources).length > 2) memory.sources = {}
+    let miners = 0
+    const miningRooms = rcl8 ? [spawn.room] : rooms
+    const sources = _.flatten(_.map(miningRooms, room => room.find(FIND_SOURCES)))
+
+    _.each(sources, function(sourceInfo){
+        const sourceId = sourceInfo.id
+        const sourcePos = sourceInfo.pos
+        if (!([sourceId] in memory.sources)){
+            memory.sources[sourceId] = sourcePos
+        }
+    })     
     if(rcl8){
         const bucketThreshold = settings.bucket.energyMining + settings.bucket.range * cityFraction(spawn.room.name)
         if (Game.cpu.bucket < bucketThreshold) {
@@ -505,19 +518,6 @@ function updateMiner(rooms, rcl8, memory, spawn){
         }
         return
     }
-    if (!memory.sources) memory.sources = {}
-    if (rcl8 && _.keys(memory.sources).length > 2) memory.sources = {}
-    let miners = 0
-    const miningRooms = rcl8 ? [spawn.room] : rooms
-    const sources = _.flatten(_.map(miningRooms, room => room.find(FIND_SOURCES)))
-
-    _.each(sources, function(sourceInfo){
-        const sourceId = sourceInfo.id
-        const sourcePos = sourceInfo.pos
-        if (!([sourceId] in memory.sources)){
-            memory.sources[sourceId] = sourcePos
-        }
-    })
     _.each(memory.sources, () => miners++)
     const flag = Memory.flags.claim
     if(flag && flag.roomName === spawn.pos.roomName &&
