@@ -76,6 +76,20 @@ var rL = {
         }
     },
 
+    getUpgradeLink: function(room) {
+        if (room.controller.level < 5) return false
+        const spawn = Game.spawns[room.memory.city]
+        const linkPos = spawn.memory.upgradeLinkPos
+        if(linkPos){
+            const look = room.lookForAt(LOOK_STRUCTURES, linkPos/50, linkPos%50)
+            for(const result of look){
+                if(result.structureType == STRUCTURE_LINK)
+                    return result
+            }
+        }
+        return undefined
+    },
+
     readyForLinkTransfer(sender, receiver) {
         return receiver && !receiver.store.getUsedCapacity(RESOURCE_ENERGY) && !sender.cooldown
     }
