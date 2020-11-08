@@ -72,12 +72,12 @@ var rM = {
 
     placeContainer: function(creep, source){
         const spawn = Game.spawns[creep.memory.city]
-        if(spawn.memory[source.id][STRUCTURE_CONTAINER + "Pos"]){
-            const pos = spawn.memory[source.id][STRUCTURE_CONTAINER + "Pos"]
+        if(spawn.memory.sources[source.id][STRUCTURE_CONTAINER + "Pos"]){
+            const pos = spawn.memory.sources[source.id][STRUCTURE_CONTAINER + "Pos"]
             source.room.createConstructionSite(pos/50, pos%50, STRUCTURE_CONTAINER)
             return
         }
-        spawn.memory[source.id][STRUCTURE_CONTAINER + "Pos"] = creep.pos.x * 50 + creep.pos.y
+        spawn.memory.sources[source.id][STRUCTURE_CONTAINER + "Pos"] = creep.pos.x * 50 + creep.pos.y
         creep.pos.createConstructionSite(STRUCTURE_CONTAINER)
     },
 
