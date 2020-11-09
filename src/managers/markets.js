@@ -120,6 +120,19 @@ var markets = {
                 }
             }
         }
+        for(const receiver of receivers){
+            for(const baseCom of baseComs){
+                if(receiver.storage.store[baseCom] > 80000 && !Memory.rooms[receiver.name].termUsed){
+                    const amount = receiver.terminal.store[baseCom]
+                    const newReceiver = _.find(receivers, r => !r.terminal.store[baseCom] || r.terminal.store[baseCom] < 8000)
+                    if(newReceiver){
+                        receiver.terminal.send(baseCom, amount, newReceiver.name)
+                        Memory.rooms[receiver.name].termUsed = true
+                        break
+                    }
+                }
+            }
+        }
     },
     
     distributeMinerals: function(myCities){
