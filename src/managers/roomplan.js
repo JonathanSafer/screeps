@@ -427,6 +427,7 @@ const p = {
             if(spawn.memory.sources[source.id][STRUCTURE_LINK + "Pos"]){
                 const pos = spawn.memory.sources[source.id][STRUCTURE_LINK + "Pos"]
                 p.buildConstructionSite(room, STRUCTURE_LINK, new RoomPosition(Math.floor(pos/50), pos%50, room.name))
+                continue
             }
             const creeps = source.pos.findInRange(FIND_MY_CREEPS, 1)
             const miner = _.find(creeps, c => c.memory.source = source.id)
