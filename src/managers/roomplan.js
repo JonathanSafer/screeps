@@ -403,7 +403,7 @@ const p = {
                 let go = true
                 for(const item of look){
                     if(item.type == LOOK_STRUCTURES 
-                        || (item.type == LOOK_TERRAIN && item[LOOK_TERRAIN] == TERRAIN_MASK_WALL))
+                        || (item.type == LOOK_TERRAIN && item[LOOK_TERRAIN] == "wall"))
                         go = false
                 }
                 if(go){
@@ -444,7 +444,7 @@ const p = {
                     for(const item of look){
                         if(item.type == LOOK_STRUCTURES 
                             || (item.type == LOOK_CREEPS && item[LOOK_CREEPS].memory.role == rM.name)
-                            || (item.type == LOOK_TERRAIN && item[LOOK_TERRAIN] == TERRAIN_MASK_WALL))
+                            || (item.type == LOOK_TERRAIN && item[LOOK_TERRAIN] == "wall"))
                             go = false
                     }
                     if(go){
