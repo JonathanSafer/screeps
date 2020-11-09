@@ -185,14 +185,14 @@ var rM = {
 
     isPositionBlocked: function(roomPos){
         const look = roomPos.look()
-        look.forEach(function(lookObject) {
+        for(const lookObject of look){
             if((lookObject.type == LOOK_TERRAIN 
                 && lookObject[LOOK_TERRAIN] == "wall")//no constant for wall atm
                 || (lookObject.type == LOOK_STRUCTURES
                 && OBSTACLE_OBJECT_TYPES[lookObject[LOOK_STRUCTURES].structureType])) {
                 return true
             }
-        })
+        }
         return false
     },
 
