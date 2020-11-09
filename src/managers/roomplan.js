@@ -385,7 +385,7 @@ const p = {
         const spawn = Game.spawns[room.name + "0"]
         if(spawn.memory.upgradeLinkPos){
             const pos = spawn.memory.upgradeLinkPos
-            p.buildConstructionSite(room, STRUCTURE_LINK, new RoomPosition(pos/50, pos%50, room.name), name)
+            p.buildConstructionSite(room, STRUCTURE_LINK, new RoomPosition(pos/50, pos%50, room.name))
             return
         }
         const creeps = room.controller.pos.findInRange(FIND_MY_CREEPS, 3)
