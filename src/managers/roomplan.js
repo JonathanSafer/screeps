@@ -400,13 +400,16 @@ const p = {
                 if(upgrader.pos.isEqualTo(i,j) || i <= 2 || j <= 2)
                     continue
                 const look = room.lookAt(i, j)
+                let go = true
                 for(const item of look){
                     if(item.type == LOOK_STRUCTURES 
                         || (item.type == LOOK_TERRAIN && item[LOOK_TERRAIN] == TERRAIN_MASK_WALL))
-                        continue
+                        go = false
                 }
-                location = i*50+j
-                break 
+                if(go){
+                    location = i*50+j
+                    break 
+                }
             }
         }
         if(location){
@@ -437,14 +440,17 @@ const p = {
                     if(miner.pos.isEqualTo(i,j) || i <= 2 || j <= 2)
                         continue
                     const look = room.lookAt(i, j)
+                    let go = true
                     for(const item of look){
                         if(item.type == LOOK_STRUCTURES 
                             || (item.type == LOOK_CREEPS && item[LOOK_CREEPS].memory.role == rM.name)
                             || (item.type == LOOK_TERRAIN && item[LOOK_TERRAIN] == TERRAIN_MASK_WALL))
-                            continue
+                            go = false
                     }
-                    location = i*50+j
-                    break 
+                    if(go){
+                        location = i*50+j
+                        break 
+                    } 
                 }
             }
             if(location){
