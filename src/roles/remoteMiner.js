@@ -107,7 +107,7 @@ var rM = {
                 return
             }
             if(!creep.memory.destination || creep.memory.destination == creep.memory.sourcePos)
-                creep.memory.destination = rM.getDestination(source)
+                creep.memory.destination = rM.getDestination(creep, source)
             return
         }
         if(!source){
