@@ -163,11 +163,7 @@ var rT = {
             }
             result = actions.withdraw(creep, bucket)
             if (result == ERR_NOT_ENOUGH_RESOURCES){
-                const targets = u.getWithdrawLocations(creep)
-                creep.memory.target = u.getNextLocation(creep.memory.target, targets)
-                if (targets[creep.memory.target]){
-                    creep.memory.location = targets[creep.memory.target].id
-                }
+                creep.memory.location = u.getStorage(creep.room).id
             }
         } else {
             const location = u.getStorage(creep.room)
