@@ -43,8 +43,7 @@ var rM = {
             } else {
                 creep.memory.link = null
             }
-        }
-        if(creep.memory.container){
+        } else if(creep.memory.container){
             const container = Game.getObjectById(creep.memory.container)
             if(container){
                 if(source.energy > 0 && container.store.getFreeCapacity() > 0 || creep.store.getFreeCapacity() > 0){
@@ -55,10 +54,13 @@ var rM = {
             } else {
                 creep.memory.container = null
             }
-        }
-        if(source.energy > 0)
+        } else if(source.energy > 0){
             creep.harvest(source)
+        }
         if(Game.time % settings.minerUpdateTime == 0){
+            if(creep.pos.isNearTo(source.pos) && !creep.memory.spawnBuffer){
+                creep.memory.spawnBuffer = PathFinder.search(Game.spawns[creep.memory.city].pos, source.pos).cost
+            }
             //update container/link status
             //if we have a link no need to search
             if(creep.memory.link && Game.getObjectById(creep.memory.link))
