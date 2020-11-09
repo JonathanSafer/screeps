@@ -397,7 +397,7 @@ const p = {
             if(location)
                 break
             for(let j = upgrader.pos.y - 1; j <= upgrader.pos.y + 1; j++){
-                if(upgrader.pos.isEqualTo(i,j))
+                if(upgrader.pos.isEqualTo(i,j) || i <= 2 || j <= 2)
                     continue
                 const look = room.lookAt(i, j)
                 for(const item of look){
@@ -434,7 +434,7 @@ const p = {
                 if(location)
                     break
                 for(let j = miner.pos.y - 1; j <= miner.pos.y + 1; j++){
-                    if(miner.pos.isEqualTo(i,j))
+                    if(miner.pos.isEqualTo(i,j) || i <= 2 || j <= 2)
                         continue
                     const look = room.lookAt(i, j)
                     for(const item of look){
