@@ -22,7 +22,7 @@ var rL = {
             for(const source in memory.sources){
                 const linkPos = memory.sources[source][STRUCTURE_LINK + "Pos"]
                 if(linkPos){
-                    const look = room.lookForAt(LOOK_STRUCTURES, linkPos/50, linkPos%50)
+                    const look = room.lookForAt(LOOK_STRUCTURES, Math.floor(linkPos/50), linkPos%50)
                     for(const result of look){
                         if(result.structureType == STRUCTURE_LINK)
                             sourceLinks.push(result)

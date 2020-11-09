@@ -74,7 +74,7 @@ var rM = {
         const spawn = Game.spawns[creep.memory.city]
         if(spawn.memory.sources[source.id][STRUCTURE_CONTAINER + "Pos"]){
             const pos = spawn.memory.sources[source.id][STRUCTURE_CONTAINER + "Pos"]
-            source.room.createConstructionSite(pos/50, pos%50, STRUCTURE_CONTAINER)
+            source.room.createConstructionSite(Math.floor(pos/50), pos%50, STRUCTURE_CONTAINER)
             return
         }
         if(creep.memory.miningPos || creep.memory.destination){
@@ -174,7 +174,7 @@ var rM = {
         const memory = Game.spawns[creep.memory.city].memory
         const structPos = memory.sources[source.id][structureType + "Pos"]
         if(structPos){
-            const realPos = new RoomPosition(structPos/50, structPos%50, source.pos.roomName)
+            const realPos = new RoomPosition(Math.floor(structPos/50), structPos%50, source.pos.roomName)
             const look = realPos.lookFor(type)
             const structure = _.find(look, struct => struct.structureType == structureType && (!struct.owner || struct.my))
             if(structure)

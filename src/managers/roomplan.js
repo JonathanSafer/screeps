@@ -385,7 +385,7 @@ const p = {
         const spawn = Game.spawns[room.name + "0"]
         if(spawn.memory.upgradeLinkPos){
             const pos = spawn.memory.upgradeLinkPos
-            p.buildConstructionSite(room, STRUCTURE_LINK, new RoomPosition(pos/50, pos%50, room.name))
+            p.buildConstructionSite(room, STRUCTURE_LINK, new RoomPosition(Math.floor(pos/50), pos%50, room.name))
             return
         }
         const creeps = room.controller.pos.findInRange(FIND_MY_CREEPS, 3)
@@ -411,7 +411,7 @@ const p = {
         }
         if(location){
             spawn.memory.upgradeLinkPos = location
-            p.buildConstructionSite(room, STRUCTURE_LINK, new RoomPosition(location/50, location%50, room.name))
+            p.buildConstructionSite(room, STRUCTURE_LINK, new RoomPosition(Math.floor(location/50), location%50, room.name))
         } else {
             Log.info(`No link placement for controller in ${room.name}`)
         }
@@ -423,7 +423,7 @@ const p = {
         for(const source of sources){
             if(spawn.memory.sources[source.id][STRUCTURE_LINK + "Pos"]){
                 const pos = spawn.memory.sources[source.id][STRUCTURE_LINK + "Pos"]
-                p.buildConstructionSite(room, STRUCTURE_LINK, new RoomPosition(pos/50, pos%50, room.name))
+                p.buildConstructionSite(room, STRUCTURE_LINK, new RoomPosition(Math.floor(pos/50), pos%50, room.name))
             }
             const creeps = source.pos.findInRange(FIND_MY_CREEPS, 1)
             const miner = _.find(creeps, c => c.memory.source = source.id)
@@ -449,7 +449,7 @@ const p = {
             }
             if(location){
                 spawn.memory.sources[source.id][STRUCTURE_LINK + "Pos"] = location
-                p.buildConstructionSite(room, STRUCTURE_LINK, new RoomPosition(location/50, location%50, room.name))
+                p.buildConstructionSite(room, STRUCTURE_LINK, new RoomPosition(Math.floor(location/50), location%50, room.name))
             } else {
                 Log.info(`No link placement for source at ${source.pos}`)
             }
