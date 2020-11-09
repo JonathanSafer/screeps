@@ -174,11 +174,12 @@ function minerBody(energyAvailable, rcl) {
     let works = Math.floor((energyAvailable - BODYPART_COST[MOVE]) / BODYPART_COST[WORK])
     if (works >= 25 && rcl > 7 && !PServ) works = 25
     else if (works >= 10 && (!PServ || rcl >= 6)) works = 10
-    else if (works >= 5) works = 5
+    else if (works >= 6) works = 6
     else works = Math.max(1, works)
     const energyAfterWorks = energyAvailable - works * BODYPART_COST[WORK]
-    const moves = Math.floor(Math.min(Math.ceil(works / 2), Math.max(1, energyAfterWorks / BODYPART_COST[MOVE])))
+    const moves = rcl >= 6 ? Math.floor(Math.min(Math.ceil(works / 2), Math.max(1, energyAfterWorks / BODYPART_COST[MOVE]))): 0
     const energyAfterMoves = energyAfterWorks - moves * BODYPART_COST[MOVE]
+    const minCarries = energyAfterMoves/BODYPART_COST[CARRY] >= 1 ? 1 : 0
     
     // Figure out how many carries we can afford/will fill the link in fewest ticks
     const carriesPerLinkFill = Game.cpu.bucket < 9500 ? Math.ceil(LINK_CAPACITY / CARRY_CAPACITY) : Math.ceil(LINK_CAPACITY / CARRY_CAPACITY)/2
@@ -187,7 +188,7 @@ function minerBody(energyAvailable, rcl) {
         .filter(c => loadsNeeded(c) < loadsNeeded(c - 1)) // more carries => fewer loads?
         .filter(c => c <= energyAfterMoves / BODYPART_COST[CARRY])  // how many can we afford?
         .filter(c => works + c + moves <= MAX_CREEP_SIZE)
-    const carries = rcl >= 6 ? Math.max(...storeChoices, 0) : 0
+    const carries = rcl >= 6 ? Math.max(...storeChoices, minCarries) : minCarries
     return body([works, carries, moves], [WORK, CARRY, MOVE])
 }
 
