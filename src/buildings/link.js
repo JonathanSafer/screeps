@@ -83,7 +83,7 @@ var rL = {
         const spawn = Game.spawns[room.memory.city]
         const linkPos = spawn.memory.upgradeLinkPos
         if(linkPos){
-            const look = room.lookForAt(LOOK_STRUCTURES, linkPos/50, linkPos%50)
+            const look = room.lookForAt(LOOK_STRUCTURES, Math.floor(linkPos/50), linkPos%50)
             for(const result of look){
                 if(result.structureType == STRUCTURE_LINK)
                     return result
