@@ -13,7 +13,9 @@ var rL = {
         let storageLink = Game.getObjectById(links.store)
         let upgradeLink = Game.getObjectById(links.upgrade)
         let sourceLinks = _.map(links.source, src => Game.getObjectById(src))
-        if (storageLink && Game.time % 100 != 0 && upgradeLink && _.reduce(sourceLinks, (l, r) => l && r)
+        if(storageLink && Game.time % 10 != 0)
+            return
+        if (storageLink && upgradeLink && _.reduce(sourceLinks, (l, r) => l && r)
             && sourceLinks.length == 2) {
             return
         } else {
