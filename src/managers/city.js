@@ -215,7 +215,7 @@ function runTowers(city){
         if(spawn.memory.towersActive == false && Game.time % checkTime != 0){
             return
         }
-        var towers = _.filter(Game.structures, (structure) => structure.structureType == STRUCTURE_TOWER && structure.room.memory.city == city)
+        var towers = _.filter(spawn.room.find(FIND_MY_STRUCTURES), (structure) => structure.structureType == STRUCTURE_TOWER)
         var hostileCreep = spawn.room.find(FIND_HOSTILE_CREEPS)
         var injuredCreep = spawn.room.find(FIND_MY_CREEPS, {filter: (injured) => { 
             return (injured) && injured.hits < injured.hitsMax
@@ -233,6 +233,7 @@ function runTowers(city){
         if (Game.time % checkTime === 0) {
             const needRepair = _.filter(spawn.room.find(FIND_STRUCTURES), s => s.structureType != STRUCTURE_WALL
                 && s.structureType != STRUCTURE_RAMPART
+                && s.structureType != STRUCTURE_CONTAINER
                 && s.hitsMax - s.hits > TOWER_POWER_REPAIR)//structure must need at least as many hits missing as a minimum tower shot
             if(needRepair.length){
                 damaged =  _.min(needRepair, function(s) {
