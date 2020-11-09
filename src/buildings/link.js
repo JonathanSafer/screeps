@@ -32,7 +32,7 @@ var rL = {
                 }
             }
             if(memory.upgradeLinkPos){
-                const look = room.lookForAt(LOOK_STRUCTURES, memory.upgradeLinkPos/50, memory.upgradeLinkPos%50)
+                const look = room.lookForAt(LOOK_STRUCTURES, Math.floor(memory.upgradeLinkPos/50), memory.upgradeLinkPos%50)
                 for(const result of look){
                     if(result.structureType == STRUCTURE_LINK)
                         upgradeLink = result
