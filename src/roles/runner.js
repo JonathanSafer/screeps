@@ -87,6 +87,8 @@ var rR = {
             return
         }
         const destination = new RoomPosition(pullee.memory.destination.x, pullee.memory.destination.y, pullee.memory.destination.roomName)
+        if(creep.fatigue)
+            return
         if(creep.pos.isEqualTo(destination)){
             creep.move(pullee)
             creep.pull(pullee)
