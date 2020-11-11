@@ -503,19 +503,20 @@ function updateMiner(rooms, rcl8, memory, spawn){
         }
     })     
     if(rcl8){
-        const bucketThreshold = settings.bucket.energyMining + settings.bucket.range * cityFraction(spawn.room.name)
+        const powerCreeps = spawn.room.find(FIND_MY_POWER_CREEPS)
+        let bucketThreshold = settings.bucket.energyMining + settings.bucket.range * cityFraction(spawn.room.name) 
+        if(powerCreeps.length && powerCreeps[0].powers[PWR_REGEN_SOURCE] || spawn.room.storage.store[RESOURCE_ENERGY] < settings.energy.processPower){
+            bucketThreshold -= settings.bucket.range/2
+        }
         if (Game.cpu.bucket < bucketThreshold) {
             memory[rM.name] = 0
             return
         }
 
-        const powerCreeps = spawn.room.find(FIND_MY_POWER_CREEPS)
         if(_.find(spawn.room.find(FIND_MY_CREEPS), c => c.memory.role == rD.name)){
             memory[rM.name] = 0
-        } else if((powerCreeps.length && powerCreeps[0].powers[PWR_REGEN_SOURCE])  || spawn.room.storage.store[RESOURCE_ENERGY] < settings.energy.processPower){
-            memory[rM.name] = 2
         } else {
-            memory[rM.name] = 0
+            memory[rM.name] = 2
         }
         return
     }
