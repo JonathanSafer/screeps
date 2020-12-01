@@ -67,7 +67,7 @@ var rM = {
                 return
             //get Destination assigns structures/sites anyway so might as well reuse
             rM.getDestination(creep, source)
-            if(!creep.memory.link && !creep.memory.container && !creep.memory.construction && creep.getActiveBodyparts(WORK) > 5)
+            if(!creep.memory.link && !creep.memory.container && !creep.memory.construction)
                 rM.placeContainer(creep, source)
         }
     },
