@@ -20,9 +20,14 @@ servers:
     port: 443
     username: '$SCREEPS_USER'
     password: '$BOTARENA_PASS'
-  season:
+  splus2:
     host: server2.screepspl.us
     secure: true
     port: 443
     username: '$SCREEPS_USER'
     password: '$BOTARENA_PASS'
+  season:
+    host: screeps.com
+    secure: true
+    token: '$SEASON_TOKEN'
+    path: /season

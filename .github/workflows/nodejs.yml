@@ -41,6 +41,7 @@ jobs:
         BOTARENA_PASS: ${{ secrets.BOTARENA_PASS }}
         SCREEPS_USER: ${{ secrets.SCREEPS_USER }}
         PTR_TOKEN:  ${{ secrets.MMO_TOKEN }}
+        SEASON_TOKEN: ${{ secrets.MMO_TOKEN }}
     - name: Deploy
       run: |
         npm run push
@@ -48,3 +49,4 @@ jobs:
         npm run ptr
         npm run swc
         npm run botarena
+        npm run splus2
