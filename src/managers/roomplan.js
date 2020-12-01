@@ -250,7 +250,7 @@ const p = {
             return
         }
         const look = room.lookAt(pos.x, pos.y)
-        if(room.controller.level < 5 && structureType == STRUCTURE_TERMINAL){
+        if(room.controller.level < 5 && room.controller.level > 1 && structureType == STRUCTURE_TERMINAL){
             structureType = STRUCTURE_CONTAINER
         } else if(structureType == STRUCTURE_TERMINAL){
             const struct = _.find(look, object => object.type == "structure")
