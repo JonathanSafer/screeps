@@ -44,7 +44,7 @@ global.RoomWeights = function(roomName) {
     rp.planRoom(roomName)
 }
 
-global.PServ = !Game.shard.name.includes("shard") || Game.shard.name == "shardSeason"
+global.PServ = (!Game.shard.name.includes("shard") || Game.shard.name == "shardSeason")
 
 global.RequestResource = function(roomName, resourceType, maxAmount, priority) {
     trading.startOfTick()
