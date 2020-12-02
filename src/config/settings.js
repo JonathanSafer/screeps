@@ -75,7 +75,7 @@ var settings = {
     resourceStatTime: 19 * 50,
 }
 
-if(!Game.shard.name.includes("shard") || Game.shard.name.length != 6){
+if(!Game.shard.name.includes("shard") || Game.shard.name == "shardSeason"){
     //botarena and swc custom settings
     settings.allies = [username]
 }

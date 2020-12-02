@@ -13,7 +13,7 @@ var rT = {
             return
         }
         var city = creep.memory.city
-        if (creep.saying > 0){
+        if (creep.saying > 0 && creep.room.energyAvailable == creep.room.energyCapacityAvailable){
             creep.say(creep.saying - 1)
             return
         }
