@@ -171,10 +171,10 @@ function pMinerBody(boosted){
 
 function minerBody(energyAvailable, rcl) {
     // miners. at least 1 move. 5 works until we can afford 10
-    let works = Math.floor((energyAvailable - BODYPART_COST[MOVE]) / BODYPART_COST[WORK])
+    let works = Math.floor((energyAvailable) / BODYPART_COST[WORK])
     if (works >= 25 && rcl > 7 && !PServ) works = 25
-    else if (works >= 10 && (!PServ || rcl >= 6)) works = 10
-    else if (works >= 6) works = 6
+    else if (works > 10 && (!PServ || rcl >= 6)) works = 10
+    else if (works > 6) works = 6
     else works = Math.max(1, works)
     const energyAfterWorks = energyAvailable - works * BODYPART_COST[WORK]
     const moves = rcl >= 6 ? Math.floor(Math.min(Math.ceil(works / 2), Math.max(1, energyAfterWorks / BODYPART_COST[MOVE]))): 0
@@ -182,7 +182,7 @@ function minerBody(energyAvailable, rcl) {
     const minCarries = energyAfterMoves/BODYPART_COST[CARRY] >= 1 ? 1 : 0
     
     // Figure out how many carries we can afford/will fill the link in fewest ticks
-    const carriesPerLinkFill = Game.cpu.bucket < 9500 ? Math.ceil(LINK_CAPACITY / CARRY_CAPACITY) : Math.ceil(LINK_CAPACITY / CARRY_CAPACITY)/2
+    const carriesPerLinkFill = Game.cpu.bucket < 9500 ? Math.ceil(LINK_CAPACITY / CARRY_CAPACITY) : Math.ceil(LINK_CAPACITY / CARRY_CAPACITY)/4
     const loadsNeeded = (c => c <= 0 ? Infinity : Math.ceil(carriesPerLinkFill / c))
     const storeChoices = [...Array(carriesPerLinkFill + 1).keys()] // range [0,n + 1]
         .filter(c => loadsNeeded(c) < loadsNeeded(c - 1)) // more carries => fewer loads?
