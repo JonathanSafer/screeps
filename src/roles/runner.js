@@ -21,12 +21,18 @@ var rR = {
         if (Game.cpu.bucket > 9500 || Game.time % 2) {
             actions.notice(creep) // cost: 15% when running, so 7% now
         }
-        if(creep.store.getUsedCapacity() == 0 && !creep.memory.targetId){
+        if(creep.memory.target == 1 && creep.store.getUsedCapacity() == 0)
+            creep.memory.target = 0
+        if(creep.memory.target == 0 && creep.store.getFreeCapacity() < 0.5 * creep.store.getCapacity()){
+            creep.memory.target = 1
+            creep.memory.targetId = null
+        }
+        if(creep.memory.target == 0 && !creep.memory.targetId){
             rR.checkForPullees(creep)
         }
         // if there's room for more energy, go find some more
         // else find storage
-        if (creep.store.getFreeCapacity() > 0.5 * creep.store.getCapacity()) {
+        if (creep.memory.target == 0 && !creep.memory.tug) {
             rR.pickup(creep)
         } else {
             rR.deposit(creep)
