@@ -51,7 +51,15 @@ var rR = {
             const target = Game.getObjectById(creep.memory.targetId)
             if(target){
                 if(target.store){
-                    if(actions.withdraw(creep, target, RESOURCE_ENERGY) == 1)
+                    let max = 0
+                    let maxResource = null
+                    for(const resource in target.store){
+                        if(target.store[resource] > max){
+                            max = target.store[resource]
+                            maxResource = resource
+                        }
+                    }
+                    if(actions.withdraw(creep, target, maxResource) == 1)
                         creep.memory.targetId = null
                 } else {
                     if(actions.pick(creep, target) == 1)
@@ -63,7 +71,11 @@ var rR = {
         const goodLoads = u.getGoodPickups(creep)
         if(!goodLoads.length)
             return
-        const newTarget = _.min(goodLoads, drop => PathFinder.search(creep.pos, drop.pos).cost)
+        const newTarget = _.min(goodLoads, function(drop){
+            const distance = PathFinder.search(creep.pos, drop.pos).cost
+            const amount = drop.amount || drop.store.getUsedCapacity()
+            return distance/amount
+        })
         creep.memory.targetId = newTarget.id
         return rR.pickup(creep)
     },
