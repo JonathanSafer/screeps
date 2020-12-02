@@ -50,7 +50,7 @@ const b = {
         if(Game.time % 500 != 0) return
         const cities = u.getMyCities()
         for(const city of cities){
-            if(city.controller.level < 8 && city.storage && city.storage.store[RESOURCE_ENERGY] > settings.energy.repair){
+            if(city.controller.level < 8){
                 const rcache = u.getRoomCache(city.name)
                 const targets = u.getsetd(rcache, "scannerTargets", [])
                 if(targets.length){
