@@ -283,7 +283,7 @@ var m = {
                     }
                 })
                 room.find(FIND_MY_CONSTRUCTION_SITES).forEach(function(struct) {
-                    if(struct.structureType != STRUCTURE_ROAD && struct.structureType != STRUCTURE_RAMPART){
+                    if(struct.structureType != STRUCTURE_ROAD && struct.structureType != STRUCTURE_RAMPART && struct.structureType != STRUCTURE_CONTAINER){
                         costs.set(struct.pos.x, struct.pos.y, 0xff)
                     }
                 })
