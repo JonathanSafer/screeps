@@ -54,6 +54,11 @@ const ob = {
                 roomData.smEndTick = room.controller.safeMode + Game.time
             }
         }
+        const sources = room.find(FIND_SOURCES)
+        roomData.sources = {}
+        for(const source of sources){
+            roomData.sources[source.id] = source.pos
+        }
         const skLairs = _.filter(room.find(FIND_HOSTILE_STRUCTURES), struct => struct.structureType == STRUCTURE_KEEPER_LAIR)
         if(skLairs && skLairs.length){
             roomData.skLairs == skLairs.map(lair => lair.pos)
