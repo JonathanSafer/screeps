@@ -538,7 +538,8 @@ function updateMineralMiner(rcl, buildings, spawn, memory) {
         if(extractor) {
             var cityObject = spawn.room
             var minerals = cityObject.find(FIND_MINERALS)
-            if(spawn.room.terminal && (spawn.room.terminal.store[minerals[0].mineralType] < 6000 || Game.cpu.bucket > settings.bucket.mineralMining)){
+            if(spawn.room.terminal && (spawn.room.terminal.store[minerals[0].mineralType] < 6000 
+                || (Game.cpu.bucket > settings.bucket.mineralMining && spawn.room.storage && spawn.room.storage.store[minerals[0].mineralType] < 50000))){
                 memory[rMM.name] = (minerals[0].mineralAmount < 1) ? 0 : 1
             }
         }

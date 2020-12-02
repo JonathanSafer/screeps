@@ -50,7 +50,7 @@ var rR = {
         if(creep.memory.targetId) {
             const target = Game.getObjectById(creep.memory.targetId)
             if(target){
-                if(target.structureType){
+                if(target.store){
                     if(actions.withdraw(creep, target, RESOURCE_ENERGY) == 1)
                         creep.memory.targetId = null
                 } else {
