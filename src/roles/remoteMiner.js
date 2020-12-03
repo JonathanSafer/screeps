@@ -46,7 +46,7 @@ var rM = {
         } else if(creep.memory.container){
             const container = Game.getObjectById(creep.memory.container)
             if(container){
-                if(source.energy > 0 && container.store.getFreeCapacity() > 0 || creep.store.getFreeCapacity() > 0){
+                if(source.energy > 0 && (container.store.getFreeCapacity() > 0 || creep.store.getFreeCapacity() > 0)){
                     creep.harvest(source)
                 } else if (container.hits < container.hitsMax * 0.9 && creep.store.getUsedCapacity() > 0){
                     creep.repair(container)
