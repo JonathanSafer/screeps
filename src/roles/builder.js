@@ -47,7 +47,7 @@ var rB = {
     },
 
     getEnergy: function(creep) {
-        var location = u.getStorage(creep.room)
+        var location = u.getStorage(Game.spawns[creep.memory.city].room)
         if(location.store.energy < 300 || (location.structureType != STRUCTURE_SPAWN && location.store.energy < 800)){
             return
         }
@@ -99,7 +99,9 @@ var rB = {
             const target = Game.getObjectById(creep.memory.repair)
             if(target){//if there is a target, repair it
                 if(creep.repair(target) === ERR_NOT_IN_RANGE){
-                    const box = motion.getBoundingBox(creep.room)
+                    const box = creep.pos.roomName == Game.spawns[creep.memory.city].pos.roomName 
+                        && Game.spawns[creep.memory.city].memory.towersActive 
+                        && motion.getBoundingBox(creep.room)
                     box.top--
                     box.bottom++
                     box.left--
