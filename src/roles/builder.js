@@ -102,10 +102,12 @@ var rB = {
                     const box = creep.pos.roomName == Game.spawns[creep.memory.city].pos.roomName 
                         && Game.spawns[creep.memory.city].memory.towersActive 
                         && motion.getBoundingBox(creep.room)
-                    box.top--
-                    box.bottom++
-                    box.left--
-                    box.right++
+                    if(box){
+                        box.top--
+                        box.bottom++
+                        box.left--
+                        box.right++
+                    }
                     motion.newMove(creep, target.pos, 3, true, box)
                 }
             } else {
