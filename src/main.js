@@ -37,12 +37,9 @@ module.exports.loop = function () {
     "use strict"
     profiler.wrap(function () {
         global.Tmp = []
-        if(Game.cpu.unlockedTime && ((Game.cpu.unlockedTime - Date.now()) < 1000*60*60*24)) {
-            Game.cpu.unlock()
-        }
         er.reset()
 
-        if(Game.shard.name == "shard2" && Game.cpu.bucket > 9500){
+        if(Game.shard.name == "shard1" && Game.cpu.bucket == 10000){
             Game.cpu.generatePixel()
         }
         var localRooms = u.splitRoomsByCity() // only used for remote mining?
