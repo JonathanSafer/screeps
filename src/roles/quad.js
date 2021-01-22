@@ -433,8 +433,8 @@ var rQ = {
         let damage = rQ.getTowerDamage(quad)
         const tolerance = rQ.getDamageTolerance(quad)
         for(const roomName of Object.values(everythingByRoom)){
-            const melee = _.filter(roomName.hostiles, c => c.getActiveBodyparts(ATTACK))
-            const ranged = _.filter(roomName.hostiles, c => c.getActiveBodyparts(RANGED_ATTACK))
+            const melee = _.filter(roomName.hostiles, c => !c.level && c.getActiveBodyparts(ATTACK))
+            const ranged = _.filter(roomName.hostiles, c => !c.level &&c.getActiveBodyparts(RANGED_ATTACK))
             for(const member of roomName.creeps){
                 for(const attacker of melee){
                     if(member.pos.isNearTo(attacker.pos) ||(member.pos.inRangeTo(attacker.pos, 2) && !attacker.fatigue)){

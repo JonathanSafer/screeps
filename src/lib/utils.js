@@ -302,7 +302,7 @@ var u = {
     },
 
     findHostileCreeps: function(room){
-        return _.filter(room.find(FIND_HOSTILE_CREEPS), c => !settings.allies.includes(c.owner.username))
+        return _.filter(room.find(FIND_HOSTILE_CREEPS).concat(room.find(FIND_HOSTILE_POWER_CREEPS)), c => !settings.allies.includes(c.owner.username))
     },
 
     findHostileStructures: function(room){
