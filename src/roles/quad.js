@@ -526,7 +526,7 @@ var rQ = {
             maxOps: 10000,
             roomCallback: (roomName) => {
                 const room = Game.rooms[roomName]
-                if (!room || roomName != creep.room.name) return
+                if (!room || roomName != creep.room.name) return false
 
                 // 2 times largest building since quad is 2 wide
                 const maxHits = 2 * _(structures).max("hits").hits
