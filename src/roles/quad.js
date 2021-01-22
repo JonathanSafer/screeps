@@ -479,7 +479,7 @@ var rQ = {
         if(!target && creep.memory.targetPos && creep.pos.roomName == creep.memory.targetPos.roomName){
             creep.memory.targetPos = null
         }
-        if(target || creep.memory.targetPos){
+        if((target && target.pos) || creep.memory.targetPos){
             const pos = (target && target.pos) || new RoomPosition(creep.memory.targetPos.x, creep.memory.targetPos.y, creep.memory.targetPos.roomName)
             if(target){
                 creep.memory.targetPos = target.pos
@@ -624,7 +624,7 @@ var rQ = {
         for(let i = 0; i < Object.keys(everythingByRoom).length; i++){
             allHostiles = allHostiles.concat(Object.values(everythingByRoom)[i].hostiles)
         }
-        const dangerous = _.filter(allHostiles, c => c.getActiveBodyparts(ATTACK) || c.getActiveBodyparts(RANGED_ATTACK))
+        const dangerous = _.filter(allHostiles, c => !c.level && (c.getActiveBodyparts(ATTACK) || c.getActiveBodyparts(RANGED_ATTACK)))
         let goals = _.map(dangerous, function(c) {
             return { pos: c.pos, range: 5 }
         })
