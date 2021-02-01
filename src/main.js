@@ -38,6 +38,11 @@ module.exports.loop = function () {
     profiler.wrap(function () {
         global.Tmp = []
         er.reset()
+        if (Game.cpu.bucket < 50 && Game.shard.name != "shard1"){
+            Log.error("Bucket too low")
+            Game.notify(`Bucket hit minimum threshold at tick ${Game.time}`)
+            return
+        }
 
         if(Game.shard.name == "shard1" && Game.cpu.bucket == 10000){
             Game.cpu.generatePixel()
