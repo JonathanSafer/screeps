@@ -52,6 +52,11 @@ module.exports.loop = function () {
         var myCities = u.getMyCities()
         let claimRoom, unclaimRoom
 
+        if(!Memory.gameState)
+            c.setGameState()
+        if(Memory.gameState < 4)
+            c.runEarlyGame()
+
         // TODO add a setup function to validate memory etc
         if (!Memory.flags) Memory.flags = {}
         if(Game.time % 500 == 0){

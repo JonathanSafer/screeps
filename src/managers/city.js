@@ -28,6 +28,7 @@ const rQr = require("../roles/qrCode")
 
 
 function makeCreeps(role, city, unhealthyStore, creepWantsBoosts, flag = null) {
+    if(Memory.gameState < 4) return false
     const room = Game.spawns[city].room
    
     var energyToSpend = unhealthyStore ? room.energyAvailable :
@@ -732,6 +733,47 @@ function runNuker(city){
     }
 }
 
+function setGameState(){
+    if(Game.rooms.length == 1 && Game.gcl.level == 1){
+        Memory.gameState = 0
+    } else {
+        Memory.gameState = 4
+    }
+}
+
+function runEarlyGame(){
+    const spawn = Object.values(Game.spawns)[0]
+    const room = spawn.room
+    let role = null
+    let budget = 0
+    switch(Memory.gameState){
+    case 0:
+        role = rR
+        budget = 100
+        break
+    case 1:
+        role = rM
+        budget = 200
+        break
+    case 2:
+        role = rR
+        budget = 100
+        break
+    case 3:
+        role = rU
+        budget = 200
+        break
+    }
+    const recipe = types.getRecipe(role.type, budget, room, false, null)
+    const result = spawn.spawnCreep(recipe, Memory.gameState + "a")
+    if(result == 0){
+        Game.creeps[name].memory.role = role.name
+        Game.creeps[name].memory.target = role.target
+        Game.creeps[name].memory.city = room.name + "0"
+        Memory.gameState++
+    }
+}
+
 module.exports = {
     chooseClosestRoom: chooseClosestRoom,
     runCity: runCity,
@@ -739,4 +781,6 @@ module.exports = {
     runTowers: runTowers,
     runPowerSpawn: runPowerSpawn,
     scheduleIfNeeded: scheduleIfNeeded,
+    setGameState: setGameState,
+    runEarlyGame: runEarlyGame,
 }

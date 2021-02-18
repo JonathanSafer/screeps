@@ -8,7 +8,7 @@ function getRecipe(type, energyAvailable, room, boosted, flagName){
     // used at all rcls
     d.scout = [MOVE]
     d.quad = quadBody(energy, rcl, room, boosted)
-    d.runner = scalingBody([2, 1], [CARRY, MOVE], energy)
+    d.runner = rcl == 1 ? scalingBody([1, 1], [CARRY, MOVE], energy) : scalingBody([2, 1], [CARRY, MOVE], energy)
     d.miner = minerBody(energy, rcl)
     d.normal = upgraderBody(energy, rcl, room)
     d.transporter = scalingBody([2, 1], [CARRY, MOVE], energy, 30)
