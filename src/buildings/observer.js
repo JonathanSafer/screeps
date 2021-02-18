@@ -205,8 +205,7 @@ const ob = {
                 structures.length < 30 && Game.spawns[city].room.storage.store.energy > settings.energy.powerMine){
             const terrain = Game.rooms[roomName].getTerrain()
             if (!ob.isBlockedByWalls(terrain, powerBank.pos) && !ob.checkFlags(powerBank.pos)) {
-                //put a flag on it
-                Memory.flags[flagName] = powerBank.pos
+                u.placeFlag(flagName, powerBank.pos, Game.time + powerBank.ticksToDecay)
                 Log.info("Power Bank found in: " + roomName)
             }
         }
@@ -226,6 +225,7 @@ const ob = {
         for (let i = 0; i < deposits.length; i++) {
             const depositFlagName = u.generateFlagName(city + "deposit")
             if(deposits[i].lastCooldown < 5 && !ob.checkFlags(deposits[i].pos)){
+                u.placeFlag(depositFlagName, deposits[i].pos, Game.time + settings.depositFlagRemoveTime)
                 Memory.flags[depositFlagName] = deposits[i].pos
                 Memory.flags[depositFlagName].harvested = Math.floor(Math.pow((deposits[i].lastCooldown / 0.001), 1/1.2))
             }

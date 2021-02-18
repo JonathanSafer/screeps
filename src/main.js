@@ -134,11 +134,8 @@ module.exports.loop = function () {
             }
         }
 
-        //market (seems to use about 3 cpu, so we can make this run every few ticks when we start needing cpu)
         m.manageMarket(myCities)
 
-        //rp.findRooms();
-        //rp.planRooms();
         if (Game.time % settings.roomplanTime == settings.roomplanOffset){
             rp.buildConstructionSites() 
         }// TODO: this could go in run city?
@@ -153,7 +150,10 @@ module.exports.loop = function () {
             }
         }
 
-        if(Game.shard.name != "shard3"){
+        if(Game.time % settings.flagCleanup) u.cleanFlags()
+
+        if(Game.cpu.bucket == 10000){
+            //TODO: visuals should be its own file
             if(Cache.roomData){
                 for(const roomName of Object.keys(Cache.roomData)){
                     const roomInfo = Cache.roomData[roomName]

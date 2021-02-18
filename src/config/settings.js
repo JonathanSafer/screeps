@@ -23,6 +23,8 @@ var settings = {
     boostsNeeded: 6000, // boost needed per city for us to boost creeps
     boostAmount: 5000, //threshold to stop producing boosts (add ~8000 to this and ghodium amount since this does not include ready to go boosts in terminal)
     wallHeight: [0, 0, 0, 30000, 100000, 500000, 2000000, 10000000],
+    flagCleanup: 2000, //interval to update old flags
+    depositFlagRemoveTime: 100000, //ticks after deposit flag is placed after which it should be removed regardless of deposit status
     bucket: {//minimum bucket thresholds
         resourceMining: 1000,
         repair: 3000, //repairing walls in a room
@@ -45,11 +47,11 @@ var settings = {
         powerMine: 450000
     },
     max: {
-        upgraders: 6, // low rcl
+        upgraders: 6, // low rcl TODO: is this in use anymore?
         runners: 6, // low rcl
-        builders: 3,
+        builders: 3, // TODO: is this in use anymore?
         transporters: 2,
-        miners: 1, // rcl8
+        miners: 1, // rcl8 TODO: this should'nt be in use anymore
     },
     motion: {
         backRoadPenalty: 1.5
@@ -61,13 +63,13 @@ var settings = {
         highway: 10000000
     },
     minerUpdateTime: 50,
-    powerMiningRange: 2,
-    miningRange: 7,
+    powerMiningRange: 2, //manhattan distance that we can powermine (in rooms)
+    miningRange: 7, //manhattan distance that we can deposit mine (in rooms)
     observerFrequency: 20, // how often each city scans a room
 
     // Profiling
-    profileFrequency: 19, // profiler runs every 123 ticks
-    profileLength: 1, // profiler is run for 7 ticks
+    profileFrequency: 19,
+    profileLength: 1,
     profileResultsLength: 50, // top 50 results are recorded
 
     // Stats

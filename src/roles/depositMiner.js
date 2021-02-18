@@ -112,7 +112,7 @@ var rDM = {
                 //call in harasser
                 const flagName = u.generateFlagName(creep.memory.city + "harass")
                 if(!_.find(Memory.flags, flag => flag.roomName == creep.room.name))
-                    Memory.flags[flagName] = new RoomPosition(25, 25, creep.room.name)
+                    u.placeFlag(flagName, new RoomPosition(25, 25, creep.room.name))
             }
         }
     },

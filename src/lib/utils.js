@@ -506,6 +506,21 @@ var u = {
             counter++
         }
         return baseName + counter
+    },
+
+    cleanFlags: function(){
+        if(!Memory.flags) return
+        for(const flagName of Object.keys(Memory.flags)){
+            Memory.flags[flagName].removeTime = Memory.flags[flagName].removeTime || Game.time + 20000
+            if(Game.time > Memory.flags[flagName].removeTime){
+                delete Memory.flags[flagName]
+            }
+        }
+    },
+
+    placeFlag: function(flagName, roomPos, removeTime = null){
+        Memory.flags[flagName] = roomPos
+        Memory.flags[flagName].removeTime = removeTime
     }
 }
 

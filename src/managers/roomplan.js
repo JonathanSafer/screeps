@@ -161,8 +161,8 @@ const p = {
         console.log("attempting expansion")
         const expoRoom = _.max(candidates, room => room.score)
         const expoRoomName = expoRoom.controllerPos.roomName
-        Memory.flags["claim"] = new RoomPosition(25, 25, expoRoomName)
-        Memory.flags["plan"] = new RoomPosition(Math.floor(expoRoom.center/50) - template.centerOffset.x, expoRoom.center%50 - template.centerOffset.y, expoRoomName)
+        u.placeFlag("claim", new RoomPosition(25, 25, expoRoomName))
+        u.placeFlag("plan", new RoomPosition(Math.floor(expoRoom.center/50) - template.centerOffset.x, expoRoom.center%50 - template.centerOffset.y, expoRoomName))
     },
 
     findRooms: function() {
