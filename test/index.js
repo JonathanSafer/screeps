@@ -17,6 +17,7 @@ describe("#main", function () {
         new StructureController(room)
         new StructureTerminal(room)
         new StructureStorage(room)
+        new Mineral(room, "X")
         const creep = new Creep(room, "7")
         creep.memory.role = "remoteMiner"
         creep.memory.city = city

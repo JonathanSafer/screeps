@@ -32,6 +32,9 @@ const GGame = class {
             }
         }
         this.map = {
+            describeExits: function(){
+                return []
+            },
             getWorldSize: () => 102,
             getRoomLinearDistance: function(r1, r2) {
                 const p1 = u.roomNameToPos(r1)
@@ -101,6 +104,10 @@ global.PathFinder = {
         set(x, y, val) {
             this._bits[y * 50 + x] = 0xff & val
         }
+    },
+
+    search: function(){
+        return {path: [], cost: 0}
     }
 }
 
@@ -132,6 +139,14 @@ const RoomPosition = class {
     findInRange() {
         return []
     }
+
+    lookFor() {
+        return []
+    }
+
+    createConstructionSite() {
+        return 0
+    }
 }
 
 global.RoomPosition = RoomPosition
@@ -159,6 +174,9 @@ global.Room = class {
         case FIND_SOURCES:
             group = FIND_SOURCES
             break
+        case FIND_MINERALS:
+            group = FIND_MINERALS
+            break
         default:
             group = -1
         }
@@ -175,6 +193,28 @@ global.Room = class {
             this._objects[group] = []
         }
         this._objects[group].push(object)
+    }
+
+    lookAt(){
+        return []
+    }
+
+    lookForAt(){
+        return []
+    }
+
+    createConstructionSite(){
+        return 0
+    }
+}
+
+Room.Terrain = class {
+    constructor() {
+        this._bits = Array(2500).fill(0)
+    }
+
+    get(x, y) {
+        return this._bits[y * 50 + x]
     }
 }
 
@@ -208,6 +248,14 @@ class Structure extends RoomObject {
         super(room, FIND_STRUCTURES)
         this.structureType = structureType
         this.owner = "Yoner"
+    }
+}
+
+global.Mineral = class extends RoomObject {
+    constructor(room, type) {
+        super(room, FIND_MINERALS)
+        this.type = type
+        this.pos = new RoomPosition(1, 1, room)
     }
 }
 
