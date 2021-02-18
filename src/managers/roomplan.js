@@ -2,6 +2,7 @@ const u = require("../lib/utils")
 const template = require("../config/template")
 const rM = require("../roles/remoteMiner")
 const rU = require("../roles/upgrader")
+const motion = require("../lib/motion")
 
 const p = {
     frequency: 2000,
@@ -148,7 +149,7 @@ const p = {
     },
 
     expand: function(){
-        if(Game.cpu.bucket != 10000 || Memory.flags["claim"] || Game.shard.name.includes("shard")) return
+        if(Game.cpu.bucket != 10000 || Memory.flags["claim"] || !PServ) return
         const myCities = u.getMyCities()
         if(Game.gcl.level == myCities.length) return
         const candidates = _.reject(Cache.roomData, room => !room.score 
@@ -158,9 +159,29 @@ const p = {
             || (room.claimBlock && room.claimBlock > Game.time)
             || (room.safeModeCooldown && room.safeModeCooldown > Game.time + CREEP_LIFE_TIME))
         if(!candidates.length) return
-        console.log("attempting expansion")
-        const expoRoom = _.max(candidates, room => room.score)
-        const expoRoomName = expoRoom.controllerPos.roomName
+        Log.info("attempting expansion")
+        const expoRooms = _.sortBy(candidates, room => room.score)
+        const expoRoomName = null
+        for(candidate of expoRooms){
+            if(expoRoomName) break
+            for(room of myCities){
+                const controllerPos = new RoomPosition(expoRoom.controllerPos.x, expoRoom.controllerPos.y, expoRoom.controllerPos.roomName)
+                const result = PathFinder.search(room.controller.pos, {pos: controllerPos, range: 1}, {
+                    plainCost: 1, swampCost: 1, maxOps: 10000, roomCallback: (roomName) => {
+                        if(!Cache.roomData[roomName] || (Cache.roomData.rcl && CONTROLLER_STRUCTURES[STRUCTURE_TOWER][Cache.roomData[roomName].rcl] && !settings.allies.includes(Cache.roomData[roomName].owner)))
+                            return false
+                    }
+                })
+                if(!result.incomplete && result.path.length < CREEP_CLAIM_LIFE_TIME){
+                    expoRoomName = controllerPos.roomName
+                    break
+                }
+            }
+        }
+        if(!expoRoomName){
+            Log.info("No valid rooms in range")
+            return
+        }
         u.placeFlag("claim", new RoomPosition(25, 25, expoRoomName))
         u.placeFlag("plan", new RoomPosition(Math.floor(expoRoom.center/50) - template.centerOffset.x, expoRoom.center%50 - template.centerOffset.y, expoRoomName))
     },
