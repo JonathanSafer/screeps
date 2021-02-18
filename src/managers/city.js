@@ -734,7 +734,7 @@ function runNuker(city){
 }
 
 function setGameState(){
-    if(Game.rooms.length == 1 && Game.gcl.level == 1){
+    if(Object.keys(Game.rooms).length == 1 && Game.gcl.level == 1){
         Memory.gameState = 0
     } else {
         Memory.gameState = 4

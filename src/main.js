@@ -38,7 +38,7 @@ module.exports.loop = function () {
     profiler.wrap(function () {
         global.Tmp = []
         er.reset()
-        if (Game.cpu.bucket < 50 && Game.shard.name != "shard1"){
+        if (Game.cpu.bucket < 50 && Game.shard.name != "shard1" && Game.time > 50){
             Log.error("Bucket too low")
             Game.notify(`Bucket hit minimum threshold at tick ${Game.time}`)
             return
