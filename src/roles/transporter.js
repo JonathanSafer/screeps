@@ -162,7 +162,7 @@ var rT = {
                 return result
             }
             result = actions.withdraw(creep, bucket)
-            if (result == ERR_NOT_ENOUGH_RESOURCES){
+            if (result == ERR_NOT_ENOUGH_RESOURCES || bucket.structureType == STRUCTURE_SPAWN){
                 creep.memory.location = u.getStorage(creep.room).id
             }
         } else {
