@@ -96,7 +96,7 @@ var rM = {
             creep.memory.construction = null
             return false
         }
-        if(creep.store.getUsedCapacity() && !creep.store.getFreeCapacity()){
+        if(creep.store.getUsedCapacity() > creep.store.getCapacity()/2){
             creep.build(cSite)
         } else {
             creep.harvest(source)
