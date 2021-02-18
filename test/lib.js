@@ -14,6 +14,7 @@ global._ = _
 const u = require("./testUtils.js")
 const GGame = class {
     constructor() {
+        this.gcl = {}
         this.rooms = {}
         this.creeps = {}
         this.spawns = {}
