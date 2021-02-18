@@ -113,7 +113,7 @@ var rR = {
             pullee.move(creep)
             creep.memory.tug = false
             return
-        } else if(creep.tickToLive == 1){
+        } else if(creep.ticksToLive == 1){
             pullee.memory.paired = false
         }
         motion.newMove(creep, destination)
