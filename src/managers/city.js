@@ -764,8 +764,9 @@ function runEarlyGame(){
         budget = 200
         break
     }
+    const name = Memory.gameState + "a"
     const recipe = types.getRecipe(role.type, budget, room, false, null)
-    const result = spawn.spawnCreep(recipe, Memory.gameState + "a")
+    const result = spawn.spawnCreep(recipe, name)
     if(result == 0){
         Game.creeps[name].memory.role = role.name
         Game.creeps[name].memory.target = role.target
