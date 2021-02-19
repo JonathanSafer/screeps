@@ -10,6 +10,13 @@ const b = {
 
     manage: function() {
         Memory.avgCpu = Memory.avgCpu ? (Memory.avgCpu * .999) + (Game.cpu.getUsed() * .001): Game.cpu.limit
+        if(Game.time % 1000 == 2){
+            const cities = u.getMyCities()
+            if(Memory.avgCpu/Game.cpu.limit > settings.dropRemote)
+                rp.dropRemote(cities)
+            if(Memory.avgCpu/Game.cpu.limit < settings.addRemote)
+                rp.searchForRemote(cities)
+        }
         if (b.growingTooQuickly()) {
             const wasteAmount = Game.cpu.bucket == b.SIZE ? 50 : 1
             b.wasteCpu(wasteAmount)

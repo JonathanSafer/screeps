@@ -187,6 +187,83 @@ const p = {
         u.placeFlag("plan", new RoomPosition(Math.floor(expoRoom.center/50) - template.centerOffset.x, expoRoom.center%50 - template.centerOffset.y, expoRoomName))
     },
 
+    searchForRemote: function(cities){
+        let remote = null
+        Log.info("Searching for new remotes")
+        for(const city of cities){
+            const result = p.findBestRemote(city)
+            if(result && (!remote || result.score < remote.score))
+                remote = result
+        }//result object will have roomName, score, and homeName
+        if(remote){
+            p.addRemote(remote.roomName, remote.homeName)
+            Log.info(`Remote ${remote.roomName} added to ${remote.homeName}`)
+        } else {
+            Log.info("No valid remotes found")
+        }
+    },
+
+    addRemote: function(roomName, homeName){
+        //return 0
+        return roomName, homeName
+    },
+
+    findBestRemote: function(city) {
+        let remote = null
+        const spawn = Game.spawns[city.name + "0"]
+        const memory = spawn.memory
+        const spawnFreeTime = memory.spawnAvailability
+        if(spawnFreeTime < settings.spawnFreeTime) return null
+        let distance = 1
+        while(!remote){
+            if(distance > 2) break
+            const min = 0 - distance
+            const max = distance + 1
+            for(let i = min; i < max; i++){
+                for(let j = min; j < max; j++){
+                    if(j != min && j != max + 1 && i != min && i != max)
+                        continue
+                    const roomName = 0//TODO
+                    const score = p.scoreRemoteRoom(roomName, spawn)
+                    //lower score is better
+                    if(score > 0 && (!remote || score < remote.score))
+                        remote = {roomName: roomName, homeName: city.name, score: score}
+                }
+            }
+            if(remote) break
+            distance++
+        }
+        //make sure we can afford this remote in terms of spawn time and that it is profitable
+        if(remote){
+            const spawnTimeNeeded = p.calcSpawnTimeNeeded(remote.roomName, spawn)
+            const profitMargin = p.calcRemoteProfit(remote.roomName, spawn)
+            if(spawnFreeTime - spawnTimeNeeded < settings.spawnFreeTime || profitMargin < 0)
+                return null
+        }
+        return remote
+    },
+
+    scoreRemoteRoom: function(roomName, spawn){
+        return roomName, spawn//TODO
+    },
+
+    dropRemote: function(cities){
+        return cities//TODO
+    },
+
+    findWorstRemote: function(city){
+        return city//TODO
+        //return null
+    },
+
+    calcSpawnTimeNeeded: function(){
+        return 1//TODO
+    },
+
+    calcRemoteProfit: function(){
+        return 0//TODO
+    },
+
     findRooms: function() {
         if (!p.newRoomNeeded()) {
             return
