@@ -9,6 +9,7 @@ const b = {
     SIZE: 10000, // 10K constant cpu bucket size
 
     manage: function() {
+        Memory.avgCpu = Memory.avgCpu ? (Memory.avgCpu * .999) + (Game.cpu.getUsed() * .001): Game.cpu.limit
         if (b.growingTooQuickly()) {
             const wasteAmount = Game.cpu.bucket == b.SIZE ? 50 : 1
             b.wasteCpu(wasteAmount)

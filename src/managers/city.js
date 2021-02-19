@@ -70,7 +70,8 @@ function runCity(city, creeps){
     const spawn = Game.spawns[city]
     if (!spawn) return false
     const room = spawn.room
-    // Clear all commodity moves: spawn.memory.ferryInfo.comSend = []
+
+    updateSpawnStress(spawn)
 
     // Only build required roles during financial stress
     const emergencyRoles = rr.getEmergencyRoles()
@@ -773,6 +774,14 @@ function runEarlyGame(){
         Game.creeps[name].memory.city = room.name + "0"
         Memory.gameState++
     }
+}
+
+function updateSpawnStress(spawn){
+    const room = spawn.room
+    const memory = spawn.memory
+    if(!memory.spawnAvailability) memory.spawnAvailability = 0
+    const freeSpawns = _.filter(room.find(FIND_MY_SPAWNS), s => !s.spawning)
+    memory.spawnAvailability = (memory.spawnAvailability * .9993) + (freeSpawns * 0.0007)
 }
 
 module.exports = {
