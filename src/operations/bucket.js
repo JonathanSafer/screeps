@@ -49,6 +49,8 @@ const b = {
     spawnScouts: function(){
         if(Game.time % 500 != 0) return
         const cities = u.getMyCities()
+        const rcl8 = _.find(cities, city => city.controller.level == 8)
+        if(!rcl8) observer.findRoomsForScan()
         for(const city of cities){
             if(city.controller.level < 8){
                 const rcache = u.getRoomCache(city.name)
