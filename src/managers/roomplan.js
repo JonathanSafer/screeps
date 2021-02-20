@@ -233,7 +233,7 @@ const p = {
             const max = distance + 1
             for(let i = min; i < max; i++){
                 for(let j = min; j < max; j++){
-                    if(j != min && j != max + 1 && i != min && i != max)
+                    if(j != min && j != max - 1 && i != min && i != max - 1)
                         continue
                     const roomPos = [roomCoords[0] + i, roomCoords[1] + j]
                     const roomName = u.roomPosToName(roomPos)
