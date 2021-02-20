@@ -251,6 +251,7 @@ const p = {
             const resourcesNeeded = p.calcSpawnTimeNeeded(remote.roomName, spawn)
             const spawnTimeNeeded = resourcesNeeded.time
             const profitMargin = resourcesNeeded.profit
+            Log.info(`Remote found at ${remote.roomName} with spawn time of ${spawnTimeNeeded} and profit of ${profitMargin}`)
             if(spawnFreeTime - spawnTimeNeeded < settings.spawnFreeTime || profitMargin < 0)
                 return null
         }
