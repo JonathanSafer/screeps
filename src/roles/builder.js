@@ -75,7 +75,7 @@ var rB = {
             // ignore any construction sites outside of wall limits
             var targets = Game.spawns[creep.memory.city].room.find(FIND_MY_CONSTRUCTION_SITES)
             var siege = _.find(creep.room.find(FIND_MY_CREEPS), c => c.memory.role == rD.name) 
-                && Game.spawns[creep.memory.city].room.controller.safeMode
+                && !Game.spawns[creep.memory.city].room.controller.safeMode
             if(siege){
                 const plan = creep.room.memory.plan
                 targets = _.reject(targets, site => site.pos.x > plan.x + template.dimensions.x + template.wallDistance
