@@ -611,7 +611,7 @@ function updateBuilder(rcl, memory, spawn) {
         if (room.energyAvailable == room.energyCapacityAvailable && Game.time % 500 == 0) {
             sq.schedule(spawn, rB.name)
         }
-        memory[rB.name] = (totalSites > 10 && rcl > 2 && rcl < 6) ? settings.max.builders : 1
+        memory[rB.name] = rcl < 6 ? settings.max.builders : 1
     } else {
         memory[rB.name] = 0
     }

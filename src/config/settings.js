@@ -52,7 +52,7 @@ var settings = {
     max: {
         upgraders: 6, // low rcl TODO: is this in use anymore?
         runners: 6, // low rcl
-        builders: 3, // TODO: is this in use anymore?
+        builders: 3,
         transporters: 2,
         miners: 1, // rcl8 TODO: this should'nt be in use anymore
     },
