@@ -666,9 +666,9 @@ function updateRunner(creeps, spawn, extensions, memory, rcl, emergencyTime) {
     var miners = _.filter(creeps, creep => creep.memory.role == rM.name && !creep.memory.link)
     var distances = _.map(miners, miner => PathFinder.search(spawn.pos, miner.pos).cost)
     var totalDistance = _.sum(distances)
-    var minerEnergyPerTick = extensions < 5 ? 10 : 20
-    var energyProduced = 1.0 * totalDistance * minerEnergyPerTick
-    var energyCarried = types.store(types.getRecipe("runner", spawn.room.energyAvailable, spawn.room))
+    var minerEnergyPerTick = extensions < 5 ? 5 : 10
+    var energyProduced = 2 * totalDistance * minerEnergyPerTick
+    var energyCarried = types.store(types.getRecipe("runner", spawn.room.energyCapacityAvailable, spawn.room))
     memory[rR.name] = Math.min(settings.max.runners, Math.max(Math.ceil(energyProduced / energyCarried), 2))
 }
 

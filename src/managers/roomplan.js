@@ -2,7 +2,11 @@ const u = require("../lib/utils")
 const template = require("../config/template")
 const rM = require("../roles/remoteMiner")
 const rU = require("../roles/upgrader")
+const rR = require("../roles/runner")
+const rH = require("../roles/harasser")
+const rQ = require("../roles/quad")
 const settings = require("../config/settings")
+const types = require("../config/types")
 
 const p = {
     frequency: 2000,
@@ -190,6 +194,7 @@ const p = {
     searchForRemote: function(cities){
         let remote = null
         Log.info("Searching for new remotes")
+        if(!Memory.remotes) Memory.remotes = new Set()
         for(const city of cities){
             const result = p.findBestRemote(city)
             if(result && (!remote || result.score < remote.score))
@@ -204,6 +209,12 @@ const p = {
     },
 
     addRemote: function(roomName, homeName){
+        Memory.remotes.add(roomName)
+        const memory = Memory.spawns[homeName + "0"]
+        const roomInfo = Cache.roomData[roomName]
+        for(const sourceId of Object.keys(roomInfo.sources))
+            //uncomment this to activate
+            //memory.sources[sourceId] = roomInfo.sources[sourceId]
         //return 0
         return roomName, homeName
     },
@@ -215,6 +226,7 @@ const p = {
         const spawnFreeTime = memory.spawnAvailability
         if(spawnFreeTime < settings.spawnFreeTime) return null
         let distance = 1
+        const roomCoords = u.roomNameToPos(city.name)
         while(!remote){
             if(distance > 2) break
             const min = 0 - distance
@@ -223,7 +235,8 @@ const p = {
                 for(let j = min; j < max; j++){
                     if(j != min && j != max + 1 && i != min && i != max)
                         continue
-                    const roomName = 0//TODO
+                    const roomPos = [roomCoords[0] + i, roomCoords[1] + j]
+                    const roomName = u.roomPosToName(roomPos)
                     const score = p.scoreRemoteRoom(roomName, spawn)
                     //lower score is better
                     if(score > 0 && (!remote || score < remote.score))
@@ -235,8 +248,9 @@ const p = {
         }
         //make sure we can afford this remote in terms of spawn time and that it is profitable
         if(remote){
-            const spawnTimeNeeded = p.calcSpawnTimeNeeded(remote.roomName, spawn)
-            const profitMargin = p.calcRemoteProfit(remote.roomName, spawn)
+            const resourcesNeeded = p.calcSpawnTimeNeeded(remote.roomName, spawn)
+            const spawnTimeNeeded = resourcesNeeded.time
+            const profitMargin = resourcesNeeded,profit
             if(spawnFreeTime - spawnTimeNeeded < settings.spawnFreeTime || profitMargin < 0)
                 return null
         }
@@ -244,7 +258,22 @@ const p = {
     },
 
     scoreRemoteRoom: function(roomName, spawn){
-        return roomName, spawn//TODO
+        const roomInfo = Cache.roomData[roomName]
+        if(!roomInfo || roomInfo.rcl || !roomInfo.sources.length 
+            || (roomInfo.safeTime && roomInfo.safeTime > Game.time)
+            || Memory.remotes[roomName]) return -1
+        let totalDistance = 0
+        for(const source in roomInfo.sources){
+            const sourcePos = new RoomPosition(source.x, source.y, roomName)
+            const result = PathFinder.search(spawn.pos, {pos: sourcePos, range: 1}, {
+                plainCost: 1,
+                swampCost: 1,
+                maxOps: 10000
+            })
+            if(result.incomplete) return -1
+            totalDistance += result.cost
+        }
+        return totalDistance/Object.keys(roomInfo.sources).length
     },
 
     dropRemote: function(cities){
@@ -256,12 +285,65 @@ const p = {
         //return null
     },
 
-    calcSpawnTimeNeeded: function(){
-        return 1//TODO
-    },
+    calcSpawnTimeNeeded: function(roomName, spawn){
+        //return 3 for invalid (no room can handle 3 spawns worth of spawn time)
+        //reserver = 2 body parts every lifetime - distance from controller to spawn
+        let totalTime = 0
+        let totalCost = 0//cost per tick
+        const roomInfo = Cache.roomData[roomName]
+        if(roomInfo.controllerPos){
+            const controllerPos = new RoomPosition(roomInfo.controllerPos.x, roomInfo.controllerPos.y, roomName)
+            const path = PathFinder.search(spawn.pos, {pos: controllerPos, range: 1}, {
+                plainCost: 1,
+                swampCost: 1,
+                maxOps: 10000
+            })
+            if(path.incomplete) return {profit: 0, time: 3}
+            totalTime += (2 * CREEP_SPAWN_TIME)/ (CREEP_CLAIM_LIFE_TIME - path.cost)
+            totalCost += types.cost([MOVE, CLAIM])/ (CREEP_CLAIM_LIFE_TIME - path.cost)
+        }
 
-    calcRemoteProfit: function(){
-        return 0//TODO
+        const minerBody = types.getRecipe(rM.type, spawn.room.energyCapacityAvailable, spawn.room)
+        const minerCost = types.cost(minerBody)
+        const minerSize = minerBody.length   
+        const runnerBody = types.getRecipe(rR.type, spawn.room.energyCapacityAvailable, spawn.room)
+        const runnerCost = types.cost(runnerBody)
+        const runnerSize = runnerBody.length
+        const energyCarried = types.store(runnerBody)
+        const harasserBody = types.getRecipe(rH.type, spawn.room.energyCapacityAvailable, spawn.room)
+        const harasserCost = types.cost(harasserBody)
+        const harasserSize = harasserBody.length
+        const quadBody = types.getRecipe(rQ.type, spawn.room.energyCapacityAvailable, spawn.room)
+        const quadCost = types.cost(quadBody) * 4
+        const quadSize = quadBody.length * 4
+        const roadUpkeep = ROAD_DECAY_AMOUNT/ROAD_DECAY_TIME * REPAIR_COST
+        const sourceEnergy = roomInfo.controllerPos ? SOURCE_ENERGY_CAPACITY : SOURCE_ENERGY_KEEPER_CAPACITY
+
+        totalTime += harasserSize * CREEP_SPAWN_TIME/CREEP_LIFE_TIME
+        totalCost += harasserCost/CREEP_LIFE_TIME
+
+        if(!roomInfo.controllerPos){
+            totalTime += quadSize * CREEP_SPAWN_TIME/(CREEP_LIFE_TIME - quadSize)//subtracting quad size to account for prespawn
+            totalCost += quadCost/(CREEP_LIFE_TIME - quadSize)
+        }
+
+        for(const source in roomInfo.sources){
+            const sourcePos = new RoomPosition(source.x, source.y, roomName)
+            const result = PathFinder.search(spawn.pos, {pos: sourcePos, range: 1}, {
+                plainCost: 1,
+                swampCost: 1,
+                maxOps: 10000
+            })
+            if(result.incomplete) return {profit: 0, time: 3}
+            const energyProduced = 2 * result.length * sourceEnergy/ENERGY_REGEN_TIME
+            const runnersNeeded = energyProduced / energyCarried
+            totalTime += ((minerSize * CREEP_SPAWN_TIME)/ (CREEP_LIFE_TIME - result.length)) + (runnersNeeded * runnerSize * CREEP_SPAWN_TIME/CREEP_LIFE_TIME)
+            totalCost += (minerCost/ (CREEP_LIFE_TIME - result.length)) + (roadUpkeep * result.length) + (runnersNeeded * runnerCost/CREEP_LIFE_TIME)
+        }
+
+        const revenue = sourceEnergy * Object.keys(roomInfo.sources).length/ENERGY_REGEN_TIME
+        const profit = revenue - totalCost
+        return {profit: profit, time: totalTime}
     },
 
     findRooms: function() {

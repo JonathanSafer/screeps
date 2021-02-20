@@ -27,7 +27,7 @@ var settings = {
     depositFlagRemoveTime: 100000, //ticks after deposit flag is placed after which it should be removed regardless of deposit status
     addRemote: 0.6,
     removeRemote: 0.8,
-    spawnFreeTime: 0.3,
+    spawnFreeTime: 0.3, //amount of spawn time to be left open for miscellaneous activity
     bucket: {//minimum bucket thresholds
         resourceMining: 1000,
         repair: 3000, //repairing walls in a room
