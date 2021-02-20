@@ -212,11 +212,11 @@ const p = {
         Memory.remotes.add(roomName)
         const memory = Memory.spawns[homeName + "0"]
         const roomInfo = Cache.roomData[roomName]
-        for(const sourceId of Object.keys(roomInfo.sources))
+        for(const sourceId of Object.keys(roomInfo.sources)){
+            return memory, sourceId
             //uncomment this to activate
             //memory.sources[sourceId] = roomInfo.sources[sourceId]
-        //return 0
-        return roomName, homeName
+        }
     },
 
     findBestRemote: function(city) {
@@ -250,7 +250,7 @@ const p = {
         if(remote){
             const resourcesNeeded = p.calcSpawnTimeNeeded(remote.roomName, spawn)
             const spawnTimeNeeded = resourcesNeeded.time
-            const profitMargin = resourcesNeeded,profit
+            const profitMargin = resourcesNeeded.profit
             if(spawnFreeTime - spawnTimeNeeded < settings.spawnFreeTime || profitMargin < 0)
                 return null
         }
