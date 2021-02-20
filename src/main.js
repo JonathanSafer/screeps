@@ -141,7 +141,7 @@ module.exports.loop = function () {
 
         m.manageMarket(myCities)
 
-        if (Game.time % settings.roomplanTime == settings.roomplanOffset || Game.time < 1000){
+        if (Game.time % settings.roomplanTime == settings.roomplanOffset || (Game.time < 20000 && Game.cpu.bucket > 1000)){
             rp.buildConstructionSites() 
         }// TODO: this could go in run city?
 
