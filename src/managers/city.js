@@ -665,7 +665,8 @@ function updateRunner(creeps, spawn, extensions, memory, rcl, emergencyTime) {
     }
     var miners = _.filter(creeps, creep => creep.memory.role == rM.name && !creep.memory.link)
     var distances = _.map(miners, miner => PathFinder.search(spawn.pos, miner.pos).cost)
-    var totalDistance = _.sum(distances)
+    let totalDistance = _.sum(distances)
+    if(extensions < 10 && Game.gcl.level == 1) totalDistance = totalDistance * 1.5//for when there are no roads
     var minerEnergyPerTick = SOURCE_ENERGY_CAPACITY/ENERGY_REGEN_TIME
     var energyProduced = 2 * totalDistance * minerEnergyPerTick
     var energyCarried = types.store(types.getRecipe("runner", spawn.room.energyCapacityAvailable, spawn.room))
