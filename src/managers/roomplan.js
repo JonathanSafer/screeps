@@ -259,7 +259,7 @@ const p = {
 
     scoreRemoteRoom: function(roomName, spawn){
         const roomInfo = Cache.roomData[roomName]
-        if(!roomInfo || roomInfo.rcl || !roomInfo.sources.length 
+        if(!roomInfo || roomInfo.rcl || !Object.keys(roomInfo.sources).length 
             || (roomInfo.safeTime && roomInfo.safeTime > Game.time)
             || Memory.remotes[roomName]) return -1
         let totalDistance = 0
