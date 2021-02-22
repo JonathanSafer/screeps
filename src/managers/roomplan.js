@@ -262,7 +262,7 @@ const p = {
         const roomInfo = Cache.roomData[roomName]
         if(!roomInfo || roomInfo.rcl || !roomInfo.sources || !Object.keys(roomInfo.sources).length 
             || (roomInfo.safeTime && roomInfo.safeTime > Game.time)
-            || Memory.remotes[roomName]) return -1
+            || Memory.remotes[roomName] || spawn.room.energyCapacityAvailable < 2300) return -1
         let totalDistance = 0
         for(const source in roomInfo.sources){
             const sourcePos = new RoomPosition(roomInfo.sources[source].x, roomInfo.sources[source].y, roomName)
@@ -336,10 +336,10 @@ const p = {
                 maxOps: 10000
             })
             if(result.incomplete) return {profit: 0, time: 3}
-            const energyProduced = 2 * result.length * sourceEnergy/ENERGY_REGEN_TIME
+            const energyProduced = 2 * result.cost * sourceEnergy/ENERGY_REGEN_TIME
             const runnersNeeded = energyProduced / energyCarried
-            totalTime += ((minerSize * CREEP_SPAWN_TIME)/ (CREEP_LIFE_TIME - result.length)) + (runnersNeeded * runnerSize * CREEP_SPAWN_TIME/CREEP_LIFE_TIME)
-            totalCost += (minerCost/ (CREEP_LIFE_TIME - result.length)) + (roadUpkeep * result.length) + (runnersNeeded * runnerCost/CREEP_LIFE_TIME)
+            totalTime += ((minerSize * CREEP_SPAWN_TIME)/ (CREEP_LIFE_TIME - result.cost)) + (runnersNeeded * runnerSize * CREEP_SPAWN_TIME/CREEP_LIFE_TIME)
+            totalCost += (minerCost/ (CREEP_LIFE_TIME - result.cost)) + (roadUpkeep * result.cost) + (runnersNeeded * runnerCost/CREEP_LIFE_TIME)
         }
 
         const revenue = sourceEnergy * Object.keys(roomInfo.sources).length/ENERGY_REGEN_TIME
