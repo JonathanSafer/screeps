@@ -329,7 +329,7 @@ const p = {
         }
 
         for(const source in roomInfo.sources){
-            const sourcePos = new RoomPosition(source.x, source.y, roomName)
+            const sourcePos = new RoomPosition(roomInfo.sources[source].x, roomInfo.sources[source].y, roomName)
             const result = PathFinder.search(spawn.pos, {pos: sourcePos, range: 1}, {
                 plainCost: 1,
                 swampCost: 1,
