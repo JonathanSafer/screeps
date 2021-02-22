@@ -194,7 +194,7 @@ const p = {
     searchForRemote: function(cities){
         let remote = null
         Log.info("Searching for new remotes")
-        if(!Memory.remotes) Memory.remotes = new Set()
+        if(!Memory.remotes) Memory.remotes = {}
         for(const city of cities){
             const result = p.findBestRemote(city)
             if(result && (!remote || result.score < remote.score))
@@ -209,7 +209,7 @@ const p = {
     },
 
     addRemote: function(roomName, homeName){
-        Memory.remotes.add(roomName)
+        Memory.remotes[roomName] = 1
         const memory = Memory.spawns[homeName + "0"]
         const roomInfo = Cache.roomData[roomName]
         for(const sourceId of Object.keys(roomInfo.sources)){
