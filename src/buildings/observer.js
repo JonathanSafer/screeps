@@ -99,7 +99,7 @@ const ob = {
     findRoomsForScan: function() {
         let roomList = []
         const cities = _.filter(u.getMyCities(), c => c.controller.level >= 4)
-        const lowLevel = _.filter(u.getMyCities(), c => c.controller.level < 4 && c.controller.level > 2)
+        const lowLevel = _.filter(u.getMyCities(), c => c.controller.level < 4 && c.energyCapacityAvailable >= 550)
         for(const city of lowLevel){
             const roomPos = u.roomNameToPos(city.name)
             roomList = roomList.concat(u.generateRoomList(roomPos[0] - 1, roomPos[1] - 1, 3, 3))//3 by 3
