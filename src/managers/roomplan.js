@@ -275,6 +275,7 @@ const p = {
                     const safe = Memory.remotes[rN] 
                         || (Cache.roomData[rN] && Cache.roomData[rN].owner == settings.username)
                         || u.isHighway(rN)
+                        || rN == roomName
                     if(!safe) return false
                 }
             })

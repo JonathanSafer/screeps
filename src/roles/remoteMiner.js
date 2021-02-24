@@ -174,8 +174,6 @@ var rM = {
 
     findStruct: function(creep, source, structureType, construction = false){
         const type = construction ? LOOK_CONSTRUCTION_SITES : LOOK_STRUCTURES
-        if(!source.room.controller || !source.room.controller.my)
-            return null
         const memory = Game.spawns[creep.memory.city].memory
         const structPos = memory.sources[source.id][structureType + "Pos"]
         if(structPos){
