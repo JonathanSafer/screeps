@@ -43,16 +43,18 @@ var m = {
         if(pathVerified && routeVerified && moveFailed){
             //look for blocking creeps and attempt a swap
             const nextPos = m.getNextPos(creep, ccache)
-            const creeps = nextPos.lookFor(LOOK_CREEPS)
-            if(creeps.length && creeps[0].my && creeps[0].memory.moveStatus != "static"){
-                //swap
-                const result = creep.moveByPath(ccache.path)
-                if(result == OK){
-                    ccache.lastMove = Game.time
-                    ccache.lastPos = creep.pos
+            if(nextPos && Game.rooms[nextPos.roomName]){
+                const creeps = nextPos.lookFor(LOOK_CREEPS).concat(nextPos.lookFor(LOOK_POWER_CREEPS))
+                if(creeps.length && creeps[0].my && creeps[0].memory.moveStatus != "static"){
+                    Log.info("attempting swap")
+                    const result = creep.moveByPath(ccache.path)
+                    if(result == OK){
+                        ccache.lastMove = Game.time
+                        ccache.lastPos = creep.pos
+                    }
+                    creeps[0].move(creep)
+                    return
                 }
-                creeps[0].move(creep)
-                return
             }
         }
         //recalc needed
@@ -82,8 +84,10 @@ var m = {
 
     getNextPos: function(creep, ccache){
         for(let i = 0; i < ccache.path.length; i++){
-            if(creep.pos.isEqualTo(ccache.path[i]))
+            if(creep.pos.isEqualTo(ccache.path[i])){
+                Log.info(`nextPos: ${ccache.path[i + 1]}`)
                 return ccache.path[i + 1]
+            }
         }
         Log.error(`Failure to find next pos at ${creep.pos}`)
     },
