@@ -46,7 +46,6 @@ var m = {
             if(nextPos && Game.rooms[nextPos.roomName]){
                 const creeps = nextPos.lookFor(LOOK_CREEPS).concat(nextPos.lookFor(LOOK_POWER_CREEPS))
                 if(creeps.length && creeps[0].my && creeps[0].memory.moveStatus != "static"){
-                    Log.info("attempting swap")
                     const result = creep.moveByPath(ccache.path)
                     if(result == OK){
                         ccache.lastMove = Game.time
@@ -85,11 +84,10 @@ var m = {
     getNextPos: function(creep, ccache){
         for(let i = 0; i < ccache.path.length; i++){
             if(creep.pos.isEqualTo(ccache.path[i])){
-                Log.info(`nextPos: ${ccache.path[i + 1]}`)
                 return ccache.path[i + 1]
             }
         }
-        Log.error(`Failure to find next pos at ${creep.pos}`)
+        return ccache.path[0]
     },
 
     //bool, returns success of pathfinding ops
