@@ -653,15 +653,17 @@ const p = {
 
     makeRoadMatrix: function(room, plan){
         const costs = new PathFinder.CostMatrix()
-        _.forEach(template.buildings, function(locations, structureType) {//don't make roads anywhere that a structure needs to go
-            locations.pos.forEach(location => {
-                var pos = {"x": plan.x + location.x - template.offset.x, 
-                    "y": plan.y + location.y - template.offset.y}
-                if(structureType !== STRUCTURE_ROAD){
-                    costs.set(pos.x, pos.y, 0xff)
-                }
+        if(plan){
+            _.forEach(template.buildings, function(locations, structureType) {//don't make roads anywhere that a structure needs to go
+                locations.pos.forEach(location => {
+                    var pos = {"x": plan.x + location.x - template.offset.x, 
+                        "y": plan.y + location.y - template.offset.y}
+                    if(structureType !== STRUCTURE_ROAD){
+                        costs.set(pos.x, pos.y, 0xff)
+                    }
+                })
             })
-        })
+        } 
         room.find(FIND_STRUCTURES).forEach(function(struct) {
             if (struct.structureType === STRUCTURE_ROAD) {
                 // Favor roads over plain tiles
@@ -687,11 +689,19 @@ const p = {
     getSourcePaths: function(room, exits, roadMatrix){
         const sources = Object.keys(Game.spawns[room.memory.city].memory.sources)
         const sourcePaths = []
-        for (var i = 0; i < sources.length; i++) {
+        for (let i = 0; i < sources.length; i++) {
+            const source = Game.getObjectById(sources[i])
+            if(!source) continue
             const sourcePos = Game.getObjectById(sources[i]).pos
             const sourcePath = PathFinder.search(sourcePos, exits, {
-                plainCost: 4, swampCost: 4, maxRooms: 1, 
-                roomCallback: () => roadMatrix
+                plainCost: 4, swampCost: 5, maxRooms: 1, 
+                roomCallback: function(roomName){
+                    if(roomName == room.name)
+                        return roadMatrix
+                    if(Game.rooms[roomName]){
+                        return p.makeRoadMatrix(Game.rooms[roomName], Game.rooms[roomName].memory.plan)
+                    }
+                }
             })
             for(var j = 0; j < sourcePath.path.length; j++){
                 sourcePaths.push(sourcePath.path[j])
