@@ -40,6 +40,21 @@ var m = {
                 }
             }
         }
+        if(pathVerified && routeVerified && moveFailed){
+            //look for blocking creeps and attempt a swap
+            const nextPos = m.getNextPos(creep, ccache)
+            const creeps = nextPos.lookFor(LOOK_CREEPS)
+            if(creeps.length && creeps[0].my && creeps[0].memory.moveStatus != "static"){
+                //swap
+                const result = creep.moveByPath(ccache.path)
+                if(result == OK){
+                    ccache.lastMove = Game.time
+                    ccache.lastPos = creep.pos
+                }
+                creeps[0].move(creep)
+                return
+            }
+        }
         //recalc needed
         if(ccache.pathFail > 2){
             if(Game.time % 50 != 0){
@@ -63,6 +78,14 @@ var m = {
             }
             ccache.pathFail = 1
         }
+    },
+
+    getNextPos: function(creep, ccache){
+        for(let i = 0; i < ccache.path.length; i++){
+            if(creep.pos.isEqualTo(ccache.path[i]))
+                return ccache.path[i + 1]
+        }
+        Log.error(`Failure to find next pos at ${creep.pos}`)
     },
 
     //bool, returns success of pathfinding ops
@@ -291,14 +314,18 @@ var m = {
                 room.find(FIND_CREEPS).forEach(function(c) {
                     const ccache = u.getCreepCache(c.id)
                     if(!ccache.lastMove || ccache.lastMove < (Game.time - 1)){
-                        costs.set(c.pos.x, c.pos.y, 0xff)
+                        if(!creep.my || creep.memory.moveStatus == "static"){
+                            costs.set(c.pos.x, c.pos.y, 0xff)
+                        } else {
+                            costs.set(c.pos.x, c.pos.y, 30)
+                        }
                     }
                     if(c.pos.isEqualTo(goals)){
                         costs.set(c.pos.x, c.pos.y, 1)
                     }
                 })
                 room.find(FIND_POWER_CREEPS).forEach(function(c) {
-                    costs.set(c.pos.x, c.pos.y, 0xff)
+                    c.my ? costs.set(c.pos.x, c.pos.y, 30): costs.set(c.pos.x, c.pos.y, 0xff)
                 })
                 if (boundingBox) {
                     m.enforceBoundingBox(costs, boundingBox)
