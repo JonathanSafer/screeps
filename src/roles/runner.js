@@ -120,7 +120,7 @@ var rR = {
         } else if(creep.ticksToLive == 1){
             pullee.memory.paired = false
         }
-        const range = pullee.memory.destination == pullee.memory.sourcePos ? 1 : 0
+        const range = new RoomPosition(destination.x, destination.y, destination.roomName).isEqualTo(pullee.memory.sourcePos.x, pullee.memory.sourcePos.y)  ? 1 : 0
         motion.newMove(creep, destination, range)
         creep.pull(pullee)
         pullee.move(creep)
@@ -132,16 +132,34 @@ var rR = {
             creep.pull(pullee)
             pullee.move(creep)
         }
-        const endRoom = pullee.destination.roomName
+        const endRoom = pullee.memory.destination.roomName
         const nextRoomDir = Game.map.findExit(creep.pos.roomName, endRoom)
         const nextRoom = Game.map.describeExits(creep.pos.roomName)[nextRoomDir]
         if(u.isOnEdge(creep.pos) && u.isOnEdge(pullee.pos)){
-            motion.newMove(creep, new RoomPosition(25, 25, creep.pos.roomName), 24)
+            //_cp_
+            //_pc_
+            //_b__
+            //__b_
+            let direction = null
+            if(creep.pos.x == 0){
+                direction = RIGHT
+            } else if(creep.pos.x == 49){
+                direction = LEFT
+            } else if(creep.pos.y == 0){
+                direction = BOTTOM
+            } else {
+                direction = TOP
+            }
+            creep.move(direction)
             return
         }
         const sameRoom = creep.pos.roomName == pullee.pos.roomName
         if(sameRoom && creep.pos.roomName == endRoom){
-            const range = pullee.memory.destination == pullee.memory.sourcePos ? 1 : 0
+            if(!creep.pos.isNearTo(pullee.pos)){
+                motion.newMove(creep, pullee.pos, 1)
+                return
+            }
+            const range = new RoomPosition(destination.x, destination.y, destination.roomName).isEqualTo(pullee.memory.sourcePos.x, pullee.memory.sourcePos.y)  ? 1 : 0
             motion.newMove(creep, destination, range)
             creep.pull(pullee)
             pullee.move(creep)

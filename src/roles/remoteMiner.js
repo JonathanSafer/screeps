@@ -110,7 +110,8 @@ var rM = {
                 creep.memory.destination = creep.memory.sourcePos
                 return
             }
-            if(!creep.memory.destination || creep.memory.destination == creep.memory.sourcePos)
+            if(!creep.memory.destination 
+                || new RoomPosition(creep.memory.destination.x, creep.memory.destination.y, creep.memory.destination.roomName).isEqualTo(creep.memory.sourcePos.x, creep.memory.sourcePos.y))
                 creep.memory.destination = rM.getDestination(creep, source)
             return
         }
