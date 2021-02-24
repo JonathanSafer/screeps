@@ -222,6 +222,7 @@ const p = {
     findBestRemote: function(city) {
         let remote = null
         const spawn = Game.spawns[city.name + "0"]
+        if(!spawn) return null
         const memory = spawn.memory
         const spawnFreeTime = memory.spawnAvailability
         if(spawnFreeTime < settings.spawnFreeTime) return null

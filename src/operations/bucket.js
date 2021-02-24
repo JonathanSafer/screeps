@@ -64,7 +64,9 @@ const b = {
                 const rcache = u.getRoomCache(city.name)
                 const targets = u.getsetd(rcache, "scannerTargets", [])
                 if(targets.length){
-                    sq.schedule(Game.spawns[city.memory.city], rS.name)
+                    const spawn = Game.spawns[city.memory.city]
+                    if(spawn)
+                        sq.schedule(spawn, rS.name)
                 }
             }
         }
