@@ -33,11 +33,11 @@ var u = {
     },
 
     isOnEdge: function(pos){//determine if a roomPos is on a room edge
-        if(pos.x == 0 || pos.x == 49 || pos.y == 0 || pos.y == 49){
-            return true
-        } else {
-            return false
-        }
+        return pos.x == 0 || pos.x == 49 || pos.y == 0 || pos.y == 49
+    },
+
+    isNearEdge: function(pos){
+        return pos.x <= 1 || pos.x >= 48 || pos.y <= 1 || pos.y >= 48
     },
     
     getTransferLocations: function(creep) {

@@ -262,14 +262,20 @@ const p = {
         const roomInfo = Cache.roomData[roomName]
         if(!roomInfo || roomInfo.rcl || !roomInfo.sources || !Object.keys(roomInfo.sources).length 
             || (roomInfo.safeTime && roomInfo.safeTime > Game.time)
-            || Memory.remotes[roomName] || spawn.room.energyCapacityAvailable < 2300) return -1
+            || Memory.remotes[roomName] || (spawn.room.energyCapacityAvailable < 2300 && !roomInfo.controllerPos)) return -1
         let totalDistance = 0
         for(const source in roomInfo.sources){
             const sourcePos = new RoomPosition(roomInfo.sources[source].x, roomInfo.sources[source].y, roomName)
             const result = PathFinder.search(spawn.pos, {pos: sourcePos, range: 1}, {
                 plainCost: 1,
                 swampCost: 1,
-                maxOps: 10000
+                maxOps: 10000,
+                roomCallback: function(rN){
+                    const safe = Memory.remotes[rN] 
+                        || (Cache.roomData[rN] && Cache.roomData[rN].owner == settings.username)
+                        || u.isHighway(rN)
+                    if(!safe) return false
+                }
             })
             if(result.incomplete) return -1
             totalDistance += result.cost

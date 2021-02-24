@@ -100,13 +100,17 @@ var rR = {
             creep.memory.tug = false
             return
         }
+        if(creep.fatigue)
+            return
+        const destination = new RoomPosition(pullee.memory.destination.x, pullee.memory.destination.y, pullee.memory.destination.roomName)
+        if((u.isOnEdge(creep.pos) && u.isNearEdge(pullee.pos)) || (u.isOnEdge(pullee.pos) && u.isNearEdge(creep.pos))){
+            rR.runBorderTug(creep, pullee, destination)
+            return
+        }
         if(!pullee.pos.isNearTo(creep.pos)){
             motion.newMove(creep, pullee.pos, 1)
             return
         }
-        const destination = new RoomPosition(pullee.memory.destination.x, pullee.memory.destination.y, pullee.memory.destination.roomName)
-        if(creep.fatigue)
-            return
         if(creep.pos.isEqualTo(destination)){
             creep.move(pullee)
             creep.pull(pullee)
@@ -116,9 +120,39 @@ var rR = {
         } else if(creep.ticksToLive == 1){
             pullee.memory.paired = false
         }
-        motion.newMove(creep, destination)
+        const range = pullee.memory.destination == pullee.memory.sourcePos ? 1 : 0
+        motion.newMove(creep, destination, range)
         creep.pull(pullee)
         pullee.move(creep)
+    },
+
+    runBorderTug: function(creep, pullee, destination){
+        if(u.isOnEdge(creep.pos) && !u.isOnEdge(pullee.pos)){
+            creep.move(pullee)
+            creep.pull(pullee)
+            pullee.move(creep)
+        }
+        const endRoom = pullee.destination.roomName
+        const nextRoomDir = Game.map.findExit(creep.pos.roomName, endRoom)
+        const nextRoom = Game.map.describeExits(creep.pos.roomName)[nextRoomDir]
+        if(u.isOnEdge(creep.pos) && u.isOnEdge(pullee.pos)){
+            motion.newMove(creep, new RoomPosition(25, 25, creep.pos.roomName), 24)
+            return
+        }
+        const sameRoom = creep.pos.roomName == pullee.pos.roomName
+        if(sameRoom && creep.pos.roomName == endRoom){
+            const range = pullee.memory.destination == pullee.memory.sourcePos ? 1 : 0
+            motion.newMove(creep, destination, range)
+            creep.pull(pullee)
+            pullee.move(creep)
+            return
+        }
+        if(!sameRoom && (pullee.pos.roomName == endRoom || pullee.pos.roomName == nextRoom)){
+            creep.move(nextRoomDir)
+        }
+        //cases
+        //_p_c --> do nothing
+        //cp__ --> do nothing
     },
 
     runPower: function(creep){
