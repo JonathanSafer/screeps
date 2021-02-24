@@ -814,6 +814,7 @@ const p = {
             counter = csites.length
         }
         for(let i = 0; i < roads.length; i++){
+            new RoomVisual(roads[i].roomName).circle(roads[i], {fill: "#ff1111", radius: 0.1, stroke: "red"})
             room.visual.circle(roads[i], {fill: "#ff1111", radius: 0.1, stroke: "red"})
             if(counter < 20){//doesn't update during the tick
                 const look = room.lookForAt(LOOK_STRUCTURES, roads[i])
@@ -822,7 +823,7 @@ const p = {
                         continue
                     }
                 }
-                if(!room.createConstructionSite(roads[i], STRUCTURE_ROAD)){
+                if(!roads[i].createConstructionSite(STRUCTURE_ROAD)){
                     counter++
                 }
             }

@@ -1,6 +1,7 @@
 var actions = require("../lib/actions")
 var u = require("../lib/utils")
 var motion = require("../lib/motion")
+const settings = require("../config/settings")
 
 var rR = {
     name: "runner",
@@ -131,9 +132,21 @@ var rR = {
             creep.move(pullee)
             creep.pull(pullee)
             pullee.move(creep)
+            return
         }
         const endRoom = pullee.memory.destination.roomName
-        const nextRoomDir = Game.map.findExit(creep.pos.roomName, endRoom)
+        const roomDataCache = u.getsetd(Cache, "roomData", {})
+        const nextRoomDir = Game.map.findExit(creep.pos.roomName, endRoom, {
+            routeCallback: function(roomName){
+                if(u.isHighway(roomName)) return 1
+                if(Game.map.getRoomStatus(roomName).status != "normal") return Infinity
+                const roomData = u.getsetd(roomDataCache, roomName, {})
+                if(Memory.remotes[roomName]) return 1
+                if(roomData.owner && !settings.allies.includes(roomData.owner)) return 50
+                if(Memory.remotes[roomName]) return 1
+                return 50
+            }
+        })
         const nextRoom = Game.map.describeExits(creep.pos.roomName)[nextRoomDir]
         if(u.isOnEdge(creep.pos) && u.isOnEdge(pullee.pos)){
             //_cp_
@@ -154,7 +167,17 @@ var rR = {
             return
         }
         const sameRoom = creep.pos.roomName == pullee.pos.roomName
-        if(sameRoom && creep.pos.roomName == endRoom){
+        let direction = null
+        if(pullee.pos.x == 0){
+            direction = LEFT
+        } else if(pullee.pos.x == 49){
+            direction = RIGHT
+        } else if(pullee.pos.y == 0){
+            direction = TOP
+        } else {
+            direction = BOTTOM
+        }
+        if(sameRoom && (creep.pos.roomName == endRoom || direction != nextRoomDir)){
             if(!creep.pos.isNearTo(pullee.pos)){
                 motion.newMove(creep, pullee.pos, 1)
                 return
