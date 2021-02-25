@@ -40,22 +40,6 @@ var m = {
                 }
             }
         }
-        if(pathVerified && routeVerified && moveFailed){
-            //look for blocking creeps and attempt a swap
-            const nextPos = m.getNextPos(creep, ccache)
-            if(nextPos && Game.rooms[nextPos.roomName]){
-                const creeps = nextPos.lookFor(LOOK_CREEPS).concat(nextPos.lookFor(LOOK_POWER_CREEPS))
-                if(creeps.length && creeps[0].my && creeps[0].memory.moveStatus != "static"){
-                    const result = creep.moveByPath(ccache.path)
-                    if(result == OK){
-                        ccache.lastMove = Game.time
-                        ccache.lastPos = creep.pos
-                    }
-                    creeps[0].move(creep)
-                    return
-                }
-            }
-        }
         //recalc needed
         if(ccache.pathFail > 2){
             if(Game.time % 50 != 0){
@@ -70,6 +54,17 @@ var m = {
             if(creep.moveByPath(ccache.path) == OK){
                 ccache.lastMove = Game.time
                 ccache.lastPos = creep.pos
+                const nextPos = ccache.path[0]
+                if(Game.rooms[nextPos.roomName]){
+                    const creeps = nextPos.lookFor(LOOK_CREEPS).concat(nextPos.lookFor(LOOK_POWER_CREEPS))
+                    if(creeps.length && creeps[0].my && creeps[0].memory.moveStatus != "static"){
+                        const scache = u.getCreepCache(creeps[0].id)
+                        if(!scache.lastMove || scache.lastMove < (Game.time - 1)){
+                            creeps[0].move(creep)
+                        }
+                    }
+                }
+
             }
         } else {
             Log.info(`Pathing failure at ${creep.pos}`)
@@ -79,15 +74,6 @@ var m = {
             }
             ccache.pathFail = 1
         }
-    },
-
-    getNextPos: function(creep, ccache){
-        for(let i = 0; i < ccache.path.length; i++){
-            if(creep.pos.isEqualTo(ccache.path[i])){
-                return ccache.path[i + 1]
-            }
-        }
-        return ccache.path[0]
     },
 
     //bool, returns success of pathfinding ops
@@ -343,15 +329,15 @@ var m = {
                     const minY = Math.max(goal.pos.y - range, 0)
                     const maxY = Math.min(goal.pos.y + range, 49)
                     for(let i = minX; i <= maxX; i++){
-                        if(costs.get(i,minY) < 100 && !(terrain.get(i,minY) & TERRAIN_MASK_WALL))
+                        if(costs.get(i,minY) < 30 && !(terrain.get(i,minY) & TERRAIN_MASK_WALL))
                             costs.set(i,minY, 1)
-                        if(costs.get(i,maxY) < 100 && !(terrain.get(i,maxY) & TERRAIN_MASK_WALL))
+                        if(costs.get(i,maxY) < 30 && !(terrain.get(i,maxY) & TERRAIN_MASK_WALL))
                             costs.set(i,maxY, 1)
                     }
                     for(let i = minY; i <= maxY; i++){
-                        if(costs.get(minX,i) < 100 && !(terrain.get(minX,i) & TERRAIN_MASK_WALL))
+                        if(costs.get(minX,i) < 30 && !(terrain.get(minX,i) & TERRAIN_MASK_WALL))
                             costs.set(minX,i, 1)
-                        if(costs.get(maxX, i) < 100 && !(terrain.get(maxX, i) & TERRAIN_MASK_WALL))
+                        if(costs.get(maxX, i) < 30 && !(terrain.get(maxX, i) & TERRAIN_MASK_WALL))
                             costs.set(maxX, i, 1)
                     }
                 }

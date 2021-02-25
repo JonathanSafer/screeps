@@ -689,7 +689,7 @@ const p = {
     },
 
     getSourcePaths: function(room, exits, roadMatrix){
-        const sources = Object.keys(Game.spawns[room.memory.city].memory.sources)
+        const sources = Object.keys(Game.spawns[room.memory.city].memory.sources).reverse()
         const sourcePaths = []
         for (let i = 0; i < sources.length; i++) {
             const source = Game.getObjectById(sources[i])
@@ -816,7 +816,6 @@ const p = {
         }
         for(let i = 0; i < roads.length; i++){
             new RoomVisual(roads[i].roomName).circle(roads[i], {fill: "#ff1111", radius: 0.1, stroke: "red"})
-            room.visual.circle(roads[i], {fill: "#ff1111", radius: 0.1, stroke: "red"})
             if(counter < 20){//doesn't update during the tick
                 const look = room.lookForAt(LOOK_STRUCTURES, roads[i])
                 if(look.length){
