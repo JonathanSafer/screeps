@@ -253,6 +253,7 @@ var m = {
                 }
                 const costs = new PathFinder.CostMatrix
                 if(roomData.skLairs && roomData.skLairs.length){
+                    if(!Memory.remotes[roomName] && avoidEnemies && creep.memory.role != "scout") return
                     const terrain = Game.map.getRoomTerrain(roomName)
                     for(const lair of roomData.skLairs){
                         const minX = Math.max(lair.x - 5, 0)

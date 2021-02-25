@@ -582,7 +582,7 @@ function updateUpgrader(city, controller, memory, rcl8, creeps, rcl) {
             return
         }
         if(money > (capacity * .28)){
-            let needed = Math.floor((money/capacity) * 4)
+            let needed = Math.floor((money/capacity) * 5)
             if(room.storage){
                 needed = Math.floor(Math.pow((money/capacity) * 4, 2))
             }

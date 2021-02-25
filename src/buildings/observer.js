@@ -61,7 +61,7 @@ const ob = {
         }
         const skLairs = _.filter(room.find(FIND_HOSTILE_STRUCTURES), struct => struct.structureType == STRUCTURE_KEEPER_LAIR)
         if(skLairs && skLairs.length){
-            roomData.skLairs == skLairs.map(lair => lair.pos)
+            roomData.skLairs = skLairs.map(lair => lair.pos)
             const core = _.find(room.find(FIND_HOSTILE_STRUCTURES), struct => struct.structureType == STRUCTURE_INVADER_CORE)
             roomData.rcl = core ? core.level : 0
         }
