@@ -51,3 +51,12 @@ global.RequestResource = function(roomName, resourceType, maxAmount, priority) {
     trading.requestResource(roomName, resourceType, maxAmount, priority)
     trading.endOfTick()
 }
+global.PCAssign = function(name, city, shard){
+    const creep = Game.powerCreeps[name]
+    if(!creep){
+        Log.error("invalid PC name")
+    }
+    creep.memory.city = city
+    creep.memory.shard = shard || Game.shard
+    Log.info(`${name} has been assigned to ${city} on ${creep.memory.shard}`)
+}

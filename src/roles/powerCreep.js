@@ -24,7 +24,9 @@ var rPC = {
 
     /** @param {Creep} creep **/
     run: function(creep) {
-        if(creep.shard && creep.shard != Game.shard.name){
+        if(creep.shard)
+            creep.memory.shard = creep.shard
+        if(creep.memory.shard && creep.memory.shard != Game.shard.name){
             return
         }
         if(creep.hits < creep.hitsMax && creep.memory.city){
@@ -88,7 +90,7 @@ var rPC = {
 
     getNextState: function(creep) {
         switch (creep.memory.state) {
-        case CS.START: return CS.SPAWN
+        case CS.START: return creep.memory.city ? CS.SPAWN : CS.START
         case CS.SPAWN: return (creep.spawnCooldownTime > Date.now()) ? CS.SPAWN :
             rPC.isPowerEnabled(creep) ? rPC.getNextWork(creep) : CS.ENABLE_POWER
         case CS.ENABLE_POWER: return rPC.atTarget(creep) ? rPC.getNextWork(creep) : CS.ENABLE_POWER
@@ -109,7 +111,6 @@ var rPC = {
     },
 
     initializePowerCreep: function(creep) {
-        if(Game.shard.name != "shard3") return
         if (!creep.memory.city) {
             const cities = u.getMyCities()
             const usedRooms = _(Game.powerCreeps)
@@ -118,14 +119,14 @@ var rPC = {
             const citiesWithoutAnyPC = _.filter(cities, city => city.controller.level == 8
                 && u.getFactory(city) && !u.getFactory(city).level
                 && !usedRooms.includes(city.name))
-            const city = _.sample(citiesWithoutAnyPC) // pick a random city
-            if(city) creep.memory.city = city.name
+            Log.info(`PowerCreep ${creep.name} is unassigned, please assign using PCAssign(name, city). Available cities on this shard are ${citiesWithoutAnyPC}`)
         }
     },
 
     spawnPowerCreep: function(creep) {
         // spawn creep
         if(!Game.rooms[creep.memory.city]){
+            Log.error(`PC ${creep.name} is unable to spawn`)
             return
         }
         const structures = Game.rooms[creep.memory.city].find(FIND_MY_STRUCTURES)
