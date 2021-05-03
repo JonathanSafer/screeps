@@ -1,6 +1,5 @@
 var a = require("../lib/actions")
 var u = require("../lib/utils")
-var rU = require("./upgrader")
 var motion = require("../lib/motion")
 const rB = require("./builder")
 
@@ -20,7 +19,7 @@ var rRe = {
     },
 
     repair: function(creep){
-        //TODO find closest road in need of significant repair
+        const needRepair = rRe.findRepair(creep)
         if (needRepair) {
             creep.memory.repair = needRepair.id
             return a.repair(creep, needRepair)
@@ -29,7 +28,7 @@ var rRe = {
     },
 
     getEnergy: function(creep) {
-        const storage = u.getStorage(Game.spawns[creep.memory.city].room)
+        const location = u.getStorage(Game.spawns[creep.memory.city].room)
         //TODO compile all energy depots and choose closest one (probably using runner's method)
         if (a.withdraw(creep, location) == ERR_NOT_ENOUGH_RESOURCES) {
             //TODO set location to null so that new one is found on next tick
@@ -59,6 +58,16 @@ var rRe = {
             }
             creep.memory.nextCheckTime = Game.time + 100
         }
+        return false
+    },
+
+    findRepair: function(creep){
+        if(creep.memory.repair){
+            const target = Game.getObjectById(creep.memory.repair)
+            if(target)
+                return target
+        }
+        //TODO find closest road in need of significant repair
         return false
     }
 }
