@@ -29,6 +29,9 @@ var rPC = {
         if(creep.memory.shard && creep.memory.shard != Game.shard.name){
             return
         }
+        if(creep.ticksToLive == 1){
+            Game.notify(`PC ${creep.name} died in ${creep.room.name}. Last state: ${creep.memory.state}`)
+        }
         if(creep.hits < creep.hitsMax && creep.memory.city){
             creep.moveTo(Game.rooms[creep.memory.city].storage)
             return
