@@ -93,7 +93,7 @@ var rPC = {
 
     getNextState: function(creep) {
         switch (creep.memory.state) {
-        case CS.START: return !!creep.memory.city ? CS.SPAWN : CS.START
+        case CS.START: return creep.memory.city ? CS.SPAWN : CS.START
         case CS.SPAWN: return (creep.spawnCooldownTime > Date.now()) ? CS.SPAWN :
             rPC.isPowerEnabled(creep) ? rPC.getNextWork(creep) : CS.ENABLE_POWER
         case CS.ENABLE_POWER: return rPC.atTarget(creep) ? rPC.getNextWork(creep) : CS.ENABLE_POWER
