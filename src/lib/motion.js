@@ -60,7 +60,7 @@ var m = {
                     if(creeps.length && creeps[0].my && creeps[0].memory.moveStatus != "static"){
                         const scache = u.getCreepCache(creeps[0].id)
                         if(!scache.lastMove || scache.lastMove < (Game.time - 1)){
-                            creeps[0].move(creeps[0].getDirectionTo(creep.pos))
+                            creeps[0].move(creeps[0].pos.getDirectionTo(creep.pos))
                         }
                     }
                 }
