@@ -5,6 +5,7 @@ const simpleAllies = require("./swcTrading")
 
 var markets = {
     manageMarket: function(myCities){//this function is now in charge of all terminal acitivity
+        if(PServ) simpleAllies.checkAllies()
         if(Game.time % 10 != 0){
             return
         }
@@ -459,6 +460,10 @@ var markets = {
             if(container.store[resource] > threshold){
                 const sellAmount = container.store[resource] - threshold
                 const goodOrders = markets.sortOrder(buyOrders[resource]).reverse()
+                if(PServ){
+                    threshold = threshold*2
+                    //distribute to allies in need
+                }
                 if(goodOrders.length && goodOrders[0].price > (0.50 * markets.getPrice(resource))){
                     Game.market.deal(goodOrders[0].id, Math.min(Math.min(goodOrders[0].remainingAmount,  sellAmount), city.terminal.store[resource]), city.name)
                     return true
