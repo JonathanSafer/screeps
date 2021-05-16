@@ -1,6 +1,7 @@
 var u = require("../lib/utils")
 var settings = require("../config/settings")
 const cM = require("./commodityManager")
+const simpleAllies = require("./swcTrading")
 
 var markets = {
     manageMarket: function(myCities){//this function is now in charge of all terminal acitivity
@@ -25,7 +26,6 @@ var markets = {
         }
 
         switch (Game.time % 200) {
-        case 0: markets.distributeEnergy(termCities); break
         case 10: markets.distributePower(termCities); break
         case 20: markets.distributeUpgrade(termCities); break
         case 30: markets.buyAndSell(termCities); break
@@ -59,20 +59,30 @@ var markets = {
             var sortedCities = _.sortBy(needEnergy, city => city.storage.store.energy)
             receiver = sortedCities[0].name
             for (const city of myCities){
-                if (city.storage && city.storage.store.energy > Game.rooms[receiver].storage.store.energy + 150000 && !Memory.rooms[city.name].termUsed){
-                    city.terminal.send(RESOURCE_ENERGY, 25000, receiver)
-                    Memory.rooms[city.name].termUsed = true
+                if (city.storage && city.storage.store.energy > Game.rooms[receiver].storage.store.energy + 150000){
+                    const memory = Game.spawns[city.memory.city].memory
+                    if(memory.ferryInfo && memory.ferryInfo.comSend){
+                        memory.ferryInfo.comSend.push([RESOURCE_ENERGY, 25000, receiver])
+                    }
                 }
+            }
+            if(PServ){
+                simpleAllies.requestResource(receiver, RESOURCE_ENERGY, 100000, 0.8)
             }
         }
         if(!_.find(myCities, city => city.controller.level == 8)){
             //focus first city to rcl8
             const target = _.min(myCities, city => city.controller.progressTotal - city.controller.progress).name
             for (const city of myCities){
-                if (city.name != target && city.storage && city.storage.store.energy > Game.rooms[target].storage.store.energy - 80000 && !Memory.rooms[city.name].termUsed){
-                    city.terminal.send(RESOURCE_ENERGY, 25000, target)
-                    Memory.rooms[city.name].termUsed = true
+                if (city.name != target && city.storage && city.storage.store.energy > Game.rooms[target].storage.store.energy - 80000){
+                    const memory = Game.spawns[city.memory.city].memory
+                    if(memory.ferryInfo && memory.ferryInfo.comSend){
+                        memory.ferryInfo.comSend.push([RESOURCE_ENERGY, 25000, target])
+                    }
                 }
+            }
+            if(PServ && Game.rooms[target].storage && Game.rooms[target].storage.store[RESOURCE_ENERGY] < 600000){
+                simpleAllies.requestResource(receiver, RESOURCE_ENERGY, 100000, 0.5)
             }
         }
     },
@@ -269,6 +279,11 @@ var markets = {
         
         markets.updateSellPoint(highTier, termCities, buyOrders)
         //markets.sellPixels(buyOrders)
+
+        if(PServ){
+            simpleAllies.startOfTick()
+        }
+        markets.distributeEnergy(termCities)
         
         for (const city of termCities) {
             //if no terminal continue or no spawn
@@ -296,6 +311,8 @@ var markets = {
             if(!PServ){
                 markets.buyMins(city, baseMins)
                 markets.buyBoosts(city)
+            } else {
+                markets.requestMins(city, baseMins)
             }
             if(!level && !termUsed){
                 termUsed = markets.sellResources(city, bars, 3000/*TODO make this a setting*/, city.terminal, buyOrders)
@@ -308,6 +325,9 @@ var markets = {
             //sell products
             termUsed = markets.sellProducts(city, termUsed, buyOrders, highTier)
 
+            if(PServ){
+                simpleAllies.endOfTick()
+            }
             //termUsed = markets.buyPower(city, termUsed, sellOrders)
         }
     },
@@ -419,6 +439,17 @@ var markets = {
                         Game.market.changeOrderPrice(orderId, (Math.max(order.price*1.04, order.price + .001)))
                     }
                 }
+            }
+        }
+    },
+
+    requestMins: function(city, minerals){
+        const terminal = city.terminal
+        for(let i = 0; i < minerals.length; i++){
+            const mineralAmount = terminal.store[minerals[i]]
+            if(mineralAmount < 8000){
+                const amountNeeded = 8000 - mineralAmount
+                simpleAllies.requestResource(city.name, minerals[i], amountNeeded, (amountNeeded * amountNeeded)/64000000)
             }
         }
     },
