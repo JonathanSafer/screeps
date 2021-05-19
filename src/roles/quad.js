@@ -218,7 +218,7 @@ var rQ = {
         return [quad, everythingByRoom]
     },
 
-    isSafe(everythingByRoom, quad){
+    isSafe: function(everythingByRoom, quad){
         for(let i = 0; i < quad.length; i++){
             if(quad[i].hits < quad[i].hitsMax) return false
         }
@@ -275,7 +275,7 @@ var rQ = {
         const flagName = quad[0].memory.city + "quadRally"
         const flag = Memory.flags[flagName]
 
-        if(flag && creep.memory.safeTime < Game.time && rQ.isSafe(everythingByRoom, quad) && creep.room.name != flag.roomName){
+        if(flag && (!creep.memory.safeTime || creep.memory.safeTime < Game.time) && rQ.isSafe(everythingByRoom, quad) && creep.room.name != flag.roomName){
             creep.memory.state = CS.RALLY
             rQ.rally(creep)
             return
