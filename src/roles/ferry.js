@@ -20,12 +20,13 @@ var rF = {
         if (creep.saying == "getJob"){
             creep.memory.target = rF.getJob(creep)
         }
+        const refreshTime = Memory.avgCpu < 0.7 * Game.cpu.limit ? 2 : 10
         const link = Game.getObjectById(Game.spawns[creep.memory.city].memory.storageLink)
         switch(creep.memory.target){
         case 0:
             //no jobs available
             //Log.info('hi')
-            if (Game.time % 10 === 0){
+            if (Game.time % refreshTime === 0){
                 creep.say("getJob")
             }
             break
