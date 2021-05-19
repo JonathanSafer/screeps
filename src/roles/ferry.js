@@ -236,7 +236,7 @@ var rF = {
         }
         if (link && !link.store.energy && upgradeLink && !upgradeLink.store.energy) {
             return 13
-        } else if (link && link.store.energy > 0) {
+        } else if (link && link.store.energy > 0 && !link.cooldown) {
             return 5
         }
         if(!creep.room.terminal){
