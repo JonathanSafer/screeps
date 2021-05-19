@@ -248,6 +248,7 @@ var rQ = {
 
         if(!flag || !rQ.isSafe(everythingByRoom, quad) || creep.room.name == flag.roomName){
             creep.memory.safeTime = Game.time + 20
+            creep.memory.state = CS.ENGAGE
             rQ.engage(creep)
             return
         }
@@ -271,6 +272,14 @@ var rQ = {
         if(!info) return
         const quad = info[0]
         const everythingByRoom = info[1]
+        const flagName = quad[0].memory.city + "quadRally"
+        const flag = Memory.flags[flagName]
+
+        if(flag && creep.memory.safeTime < Game.time && rQ.isSafe(everythingByRoom, quad) && creep.room.name != flag.roomName){
+            creep.memory.state = CS.RALLY
+            rQ.rally(creep)
+            return
+        }
 
         const status = rQ.getQuadStatus(quad)
 
