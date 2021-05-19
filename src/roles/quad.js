@@ -50,7 +50,7 @@ var rQ = {
             rQ.engage(creep)
             break
         case CS.RALLY:
-            //...
+            rQ.rally(creep)
             break
         case CS.DORMANT:
             //...
@@ -120,7 +120,7 @@ var rQ = {
                 motion.newMove(quad[i], jimmyPos)
         }
     },
-    
+
     formUp: function(creep){
         //maybe creeps could make sure that their entire squad is spawned until determining a captain and forming up, until then
         //they would renew themselves (has to be done before boosting though)
@@ -198,19 +198,79 @@ var rQ = {
         }
     },
 
-    engage: function(creep){
-        //TODO: check formation status. If formation is broken up, reform
-        //if a member has died, go into YOLO mode
-        //captain should preemptively send everybody in YOLO mode if it is at 1 ttl
-
+    update: function(creep){
+        //generic info gathering at tick start
         const quad = [creep, Game.getObjectById(creep.memory.jimmys[0]),
             Game.getObjectById(creep.memory.jimmys[1]),
             Game.getObjectById(creep.memory.jimmys[2])]
 
         if(!rQ.allPresent(quad)){//if quad not fully formed, yolo mode
             rQ.yolo(quad)
+            return false
+        }
+
+        for(let i = 0; i < quad.length; i++){
+            if(!Cache[quad[i].room.name] || !Cache[quad[i].room.name].quadMatrix){//this can be combined with the part where we find enemies
+                rQ.getRoomMatrix(quad[i].room.name)
+            }
+        }
+        const everythingByRoom = rQ.splitEverythingByRoom(quad)
+        return [quad, everythingByRoom]
+    },
+
+    isSafe(everythingByRoom, quad){
+        for(let i = 0; i < quad.length; i++){
+            if(quad[i].hits < quad[i].hitsMax) return false
+        }
+        const rooms = Object.keys(everythingByRoom)
+        for(let i = 0; i < rooms.length; i++){
+            const controller = Game.rooms[rooms[i]].controller
+            if(controller && controller.owner && !settings.allies.includes(controller.owner.username)){
+                const tower = _.find(everythingByRoom[rooms[i]].structures, struct => struct.structureType == STRUCTURE_TOWER)
+                if(tower) return false
+            }
+            const hostile = _.find(everythingByRoom[rooms[i]].hostiles, h => (u.getCreepDamage(h, ATTACK) > 0 || u.getCreepDamage(h, RANGED_ATTACK) > 0) && 
+                h.pos.inRangeTo(quad[0], 8) || h.pos.inRangeTo(quad[1], 8) || h.pos.inRangeTo(quad[2], 8) || h.pos.inRangeTo(quad[3], 8))
+            if(hostile) return false
+        }
+        return true
+    },
+
+    rally: function(creep){
+        //move in snake-mode
+        const info = rQ.update(creep)
+        if(!info) return
+        const quad = info[0]
+        const everythingByRoom = info[1]
+        const flagName = quad[0].memory.city + "quadRally"
+        const flag = Memory.flags[flagName]
+        const flagPos = new RoomPosition(flag.x, flag.y, flag.roomName)
+
+        if(!flag || !rQ.isSafe(everythingByRoom, quad) || creep.room.name == flag.roomName){
+            creep.memory.safeTime = Game.time + 20
+            rQ.engage(creep)
             return
         }
+
+        motion.newMove(quad[3], quad[2].pos, 0)
+        if(quad[2].pos.inRangeTo(quad[3].pos, 2) || u.isOnEdge(quad[2].pos))
+            motion.newMove(quad[2], quad[1].pos, 0)
+        if(quad[1].pos.inRangeTo(quad[2].pos, 2) || u.isOnEdge(quad[1].pos))
+            motion.newMove(quad[1], quad[0].pos, 0)
+        if(quad[0].pos.inRangeTo(quad[1].pos, 2) || u.isOnEdge(quad[0].pos))
+            motion.newMove(quad[0], flagPos, 23)
+    },
+    
+
+    engage: function(creep){
+        //TODO: check formation status. If formation is broken up, reform
+        //if a member has died, go into YOLO mode
+        //captain should preemptively send everybody in YOLO mode if it is at 1 ttl
+
+        const info = rQ.update(creep)
+        if(!info) return
+        const quad = info[0]
+        const everythingByRoom = info[1]
 
         const status = rQ.getQuadStatus(quad)
 
@@ -219,17 +279,6 @@ var rQ = {
 
         const target = Game.getObjectById(creep.memory.target)
 
-        for(let i = 0; i < quad.length; i++){
-            if(!Cache[quad[i].room.name] || !Cache[quad[i].room.name].quadMatrix){//this can be combined with the part where we find enemies
-                rQ.getRoomMatrix(quad[i].room.name)
-            }
-        }
-        //everythingByRoom should be an object with keys being roomNames
-        //values should be objects, with keys "creeps", "hostiles", "structures"
-        //each of those keys will be paired with arrays
-        //"creeps" will never be empty, the other two could be
-        const everythingByRoom = rQ.splitEverythingByRoom(quad)
-        //each creep shoots best target in room
         rQ.shoot(everythingByRoom, target)
 
         let needRetreat = rQ.heal(quad, everythingByRoom)//if below certain health thresholds, we might need to retreat
