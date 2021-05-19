@@ -68,7 +68,7 @@ var markets = {
                 }
             }
             if(PServ){
-                simpleAllies.requestResource(receiver, RESOURCE_ENERGY, 100000, 0.8)
+                simpleAllies.requestResource(receiver, RESOURCE_ENERGY, 100000, 0.1)
             }
         }
         if(!_.find(myCities, city => city.controller.level == 8)){
@@ -82,8 +82,8 @@ var markets = {
                     }
                 }
             }
-            if(PServ && Game.rooms[target].storage && Game.rooms[target].storage.store[RESOURCE_ENERGY] < 600000){
-                simpleAllies.requestResource(receiver, RESOURCE_ENERGY, 100000, 0.5)
+            if(target && PServ && Game.rooms[target].storage && Game.rooms[target].storage.store[RESOURCE_ENERGY] < 600000){
+                simpleAllies.requestResource(target, RESOURCE_ENERGY, 100000, 0.2)
             }
         }
     },

@@ -146,7 +146,7 @@ var rQ = {
                     {maxRooms: 1, roomCallback: function() { return matrix }}).path
                 //TODO: if path is less than 2 in length, find a new startPos and try again
 
-                formPos = path[path.length - 2]
+                formPos = path[Math.max(path.length - 2, 0)]
                 creep.memory.rally = formPos
             }
             let inLine = 0
