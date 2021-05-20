@@ -2,6 +2,7 @@ var actions = require("../lib/actions")
 var u = require("../lib/utils")
 var motion = require("../lib/motion")
 const settings = require("../config/settings")
+const rU = require("./upgrader")
 
 var rR = {
     name: "runner",
@@ -12,6 +13,9 @@ var rR = {
     run: function(creep) {
         if (creep.memory.flag && creep.memory.flag.includes("powerMine")){
             rR.runPower(creep)
+            return
+        }
+        if(creep.memory.juicer && rR.runController(creep)){
             return
         }
         if(creep.memory.tug){
@@ -34,7 +38,9 @@ var rR = {
         // if there's room for more energy, go find some more
         // else find storage
         if (creep.memory.target == 0 && !creep.memory.tug) {
-            rR.pickup(creep)
+            if(!rR.pickup(creep) && Game.cpu.bucket > 9500){
+                rR.runController(creep)
+            }
         } else {
             rR.deposit(creep)
         }
@@ -51,6 +57,27 @@ var rR = {
             creep.memory.pullee = pullee.id
             pullee.memory.paired = true
         }
+    },
+
+    runController: function(creep){
+        if(creep.saying == "*"){
+            creep.memory.juicer = false
+            return false
+        }
+        const link = rU.getUpgradeLink(creep)
+        if(!link) return false
+        creep.memory.juicer = true
+        if(creep.store.energy > 0){
+            if(actions.charge(creep, link) == 0){
+                creep.say("*")
+            }
+        } else {
+            if (!creep.memory.location || !Game.getObjectById(creep.memory.location))
+                creep.memory.location =  u.getStorage(Game.spawns[creep.memory.city].room).id
+            const target = Game.getObjectById(creep.memory.location)
+            actions.withdraw(creep, target)
+        }
+        return true
     },
 
     pickup: function(creep) {
@@ -72,12 +99,12 @@ var rR = {
                     if(actions.pick(creep, target) == 1)
                         creep.memory.targetId = null
                 }
-                return
+                return true
             }
         }
         const goodLoads = u.getGoodPickups(creep)
         if(!goodLoads.length)
-            return
+            return false
         const newTarget = _.min(goodLoads, function(drop){
             const distance = PathFinder.search(creep.pos, drop.pos).cost
             const amount = drop.amount || drop.store.getUsedCapacity()
