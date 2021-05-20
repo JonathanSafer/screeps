@@ -66,6 +66,7 @@ var rR = {
         }
         const link = rU.getUpgradeLink(creep)
         if(!link) return false
+        if(!creep.memory.juicer && link.getFreeCapacity(RESOURCE_ENERGY) == 0) return false
         creep.memory.juicer = true
         if(creep.store.energy > 0){
             if(actions.charge(creep, link) == 1){

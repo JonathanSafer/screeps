@@ -81,8 +81,8 @@ var rQ = {
         let formPoint = null
         let range = 0
         while(!formPoint){
-            for(let i = Math.max(creep.pos.x - range, 1); i <= Math.min(creep.pos.x + range, 47); i++){
-                for(let j = Math.max(creep.pos.y - range, 1); j <= Math.min(creep.pos.y + range, 47); j++)
+            for(let i = Math.max(creep.pos.x - range, 2); i <= Math.min(creep.pos.x + range, 46); i++){
+                for(let j = Math.max(creep.pos.y - range, 2); j <= Math.min(creep.pos.y + range, 46); j++)
                     if(matrix.get(i,j) < 255){
                         const look = creep.room.lookForAtArea(LOOK_CREEPS, j, i, j+1, i+1, true)
                         if(!look.length || !_.find(look, c => !c.creep.my)){
