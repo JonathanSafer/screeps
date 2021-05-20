@@ -119,6 +119,7 @@ var rQ = {
             if(!quad[i].pos.isEqualTo(jimmyPos))
                 motion.newMove(quad[i], jimmyPos)
         }
+        quad[0].memory.reform = Game.time + 5
     },
 
     formUp: function(creep){
@@ -218,7 +219,7 @@ var rQ = {
         return [quad, everythingByRoom]
     },
 
-    isSafe: function(everythingByRoom, quad){
+    isSafe: function(everythingByRoom, quad/*, destination*/){
         for(let i = 0; i < quad.length; i++){
             if(quad[i].hits < quad[i].hitsMax) return false
         }
@@ -233,6 +234,10 @@ var rQ = {
                 h.pos.inRangeTo(quad[0], 8) || h.pos.inRangeTo(quad[1], 8) || h.pos.inRangeTo(quad[2], 8) || h.pos.inRangeTo(quad[3], 8))
             if(hostile) return false
         }
+        // const exits = Game.map.describeExits(quad[i].pos.roomName)
+        // const nextExit = Game.map.findExit(quad[i].pos.roomName, destination)
+        // if(exits[nextExit] == destination && )
+
         return true
     },
 
@@ -246,7 +251,7 @@ var rQ = {
         const flag = Memory.flags[flagName]
         const flagPos = new RoomPosition(flag.x, flag.y, flag.roomName)
 
-        if(!flag || !rQ.isSafe(everythingByRoom, quad) || creep.room.name == flag.roomName){
+        if(!flag || !rQ.isSafe(everythingByRoom, quad/*, flag.roomName*/) || creep.room.name == flag.roomName){
             creep.memory.safeTime = Game.time + 20
             creep.memory.state = CS.ENGAGE
             rQ.engage(creep)
@@ -1032,6 +1037,9 @@ var rQ = {
                 for(let j = i;j < quad.length; j++)
                     if(!quad[i].pos.isNearTo(quad[j].pos))
                         return null
+        if(roomEdge && quad[0].memory.reform && quad[0].memory.reform > Game.time){
+            return null
+        }
 
         const result = {}
 
