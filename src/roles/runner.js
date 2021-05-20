@@ -60,7 +60,7 @@ var rR = {
     },
 
     runController: function(creep){
-        if(creep.saying == "*"){
+        if(creep.saying == "*" && creep.store.energy == 0){
             creep.memory.juicer = false
             return false
         }
@@ -68,7 +68,7 @@ var rR = {
         if(!link) return false
         creep.memory.juicer = true
         if(creep.store.energy > 0){
-            if(actions.charge(creep, link) == 0){
+            if(actions.charge(creep, link) == 1){
                 creep.say("*")
             }
         } else {
