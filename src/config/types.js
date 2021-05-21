@@ -253,10 +253,10 @@ function quadBody(energyAvailable, rcl, room, boosted){
         ratio = [7, 10, 3]
         break
     case 7:
-        ratio = [19, 25, 6]
+        ratio = [10, 22, 12]
         break
     case 8:
-        ratio = [15, 25, 10]
+        ratio = [13, 25, 12]
         break
     }
     return scalingBody(ratio, types, energyAvailable)

@@ -71,6 +71,11 @@ var rR = {
         if(creep.store.energy > 0){
             if(actions.charge(creep, link) == 1){
                 creep.say("*")
+                const upgrader = _.find(creep.room.find(FIND_MY_CREEPS), c => c.memory.role == rU.name)
+                if(!upgrader){
+                    creep.memory.juicer = false
+                    return false
+                }
             }
         } else {
             if (!creep.memory.location || !Game.getObjectById(creep.memory.location))
