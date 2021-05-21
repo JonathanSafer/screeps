@@ -71,6 +71,8 @@ var rR = {
         if(creep.store.energy > 0){
             if(actions.charge(creep, link) == 1){
                 creep.say("*")
+            }
+            if(link.store.getFreeCapacity(RESOURCE_ENERGY) == 0){
                 const upgrader = _.find(creep.room.find(FIND_MY_CREEPS), c => c.memory.role == rU.name)
                 if(!upgrader){
                     creep.memory.juicer = false
