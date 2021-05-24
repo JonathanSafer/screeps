@@ -117,6 +117,11 @@ var fact = {
     },
 
     chooseProduce: function(factory, city){
+        const terminal = Game.spawns[city].room.terminal
+        if(!terminal){
+            Game.spawns[city].memory.ferryInfo.factoryInfo.produce = "dormant"
+            return
+        }
         if(factory.level >= 1){
             //check terminal for resources needed to produce same level comms
             if(fact.checkTerminal(factory, city)){
@@ -128,7 +133,6 @@ var fact = {
             //make 5k of each base resource commodity (in increments of 200)
             const bars = [RESOURCE_UTRIUM_BAR, RESOURCE_LEMERGIUM_BAR, RESOURCE_ZYNTHIUM_BAR,
                 RESOURCE_KEANIUM_BAR, RESOURCE_OXIDANT, RESOURCE_REDUCTANT, RESOURCE_PURIFIER, RESOURCE_GHODIUM_MELT]
-            const terminal = Game.spawns[city].room.terminal
             for(let i = 0; i < bars.length; i++){
                 if(terminal.store[bars[i]] < 3000){
                     Game.spawns[city].memory.ferryInfo.factoryInfo.produce = bars[i]
