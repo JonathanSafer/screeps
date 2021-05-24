@@ -670,7 +670,7 @@ function updateRunner(creeps, spawn, extensions, memory, rcl, emergencyTime) {
         return
     }
     var miners = _.filter(creeps, creep => creep.memory.role == rM.name && !creep.memory.link)
-    const minRunners = miners.length ? 2 : 0
+    const minRunners = rcl < 7 ? 2 : 0
     var distances = _.map(miners, miner => PathFinder.search(spawn.pos, miner.pos).cost)
     let totalDistance = _.sum(distances)
     if(extensions < 10 && Game.gcl.level == 1) totalDistance = totalDistance * 1.5//for when there are no roads
