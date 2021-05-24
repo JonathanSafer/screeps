@@ -630,7 +630,7 @@ var rQ = {
                 return costs
             }
         })
-        if (result.incomplete) return
+        if (result.incomplete || !result.path.length) return false
         
         const path = result.path
         

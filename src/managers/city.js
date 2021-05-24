@@ -91,6 +91,11 @@ function runCity(city, creeps){
         const queueCount = queuedCounts[role.name] || 0
         counts[role.name] = liveCount + queueCount
     })
+
+    if(Game.time % 50 == 0 && spawn.memory.sq.length){
+        const priorities = rr.getRolePriorities()
+        spawn.memory.sq = _.sortBy(spawn.memory.sq, item => priorities[item.role])
+    }
     
     let usedQueue = true
     const nextRoleInfo = sq.peekNextRole(spawn) || {}
@@ -659,18 +664,25 @@ function updateBuilder(rcl, memory, spawn) {
 }
 
 function updateRunner(creeps, spawn, extensions, memory, rcl, emergencyTime) {
-    if (rcl >= 7 && !emergencyTime) {
+    if (rcl == 8 && !emergencyTime) {
         memory[rR.name] = 0
         return
     }
     var miners = _.filter(creeps, creep => creep.memory.role == rM.name && !creep.memory.link)
+    const minRunners = miners.length ? 2 : 0
     var distances = _.map(miners, miner => PathFinder.search(spawn.pos, miner.pos).cost)
     let totalDistance = _.sum(distances)
     if(extensions < 10 && Game.gcl.level == 1) totalDistance = totalDistance * 1.5//for when there are no roads
     var minerEnergyPerTick = SOURCE_ENERGY_CAPACITY/ENERGY_REGEN_TIME
     var energyProduced = 2 * totalDistance * minerEnergyPerTick
     var energyCarried = types.store(types.getRecipe("runner", spawn.room.energyCapacityAvailable, spawn.room))
-    memory[rR.name] = Math.min(settings.max.runners, Math.max(Math.ceil(energyProduced / energyCarried), 2))
+    memory[rR.name] = Math.min(settings.max.runners, Math.max(Math.ceil(energyProduced / energyCarried), minRunners))
+    if(rcl >= 5){
+        const upgraders = _.filter(creeps, creep => creep.memory.role == rU.name).length
+        const bonusRunners = Math.floor(upgraders/3)
+        memory[rR.name] += bonusRunners
+    }
+    scheduleIfNeeded(rR.name, memory[rR.name], false, spawn, creeps)
 }
 
 function updateFerry(spawn, memory, rcl) {

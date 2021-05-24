@@ -28,6 +28,31 @@ var rr = {
             rRo, rDM, rS, rQr]
     },
 
+    getRolePriorities: function(){
+        const priorites = {}
+        priorites[rF.name] = 0
+        priorites[rD.name] = 1
+        priorites[rT.name] = 2
+        priorites[rM.name] = 3
+        priorites[rR.name] = 4
+        priorites[rU.name] = 5
+        priorites[rB.name] = 6
+        priorites[rQ.name] = 7
+        priorites[rMM.name] = 8
+        priorites[rC.name] = 9
+        priorites[rUC.name] = 10
+        priorites[rSB.name] = 11
+        priorites[rH.name] = 12
+        priorites[rMe.name] = 13
+        priorites[rBr.name] = 13
+        priorites[rPM.name] = 13
+        priorites[rRo.name] = 14
+        priorites[rDM.name] = 15
+        priorites[rS.name] = 16
+        priorites[rQr.name] = 17
+        return priorites
+    },
+
     getCoreRoles: function() {
         return [rF, rD, rT, rM, rR, rU, rB]
     },
