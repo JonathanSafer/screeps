@@ -289,7 +289,7 @@ var m = {
                         }
                     } else if (struct.structureType !== STRUCTURE_CONTAINER &&
                              (struct.structureType !== STRUCTURE_RAMPART ||
-                              !struct.my)) {
+                              !(struct.my || (settings.allies.includes(struct.owner.username) && struct.isPublic)))) {
                     // Can't walk through non-walkable buildings
                         costs.set(struct.pos.x, struct.pos.y, 0xff)
                     }
