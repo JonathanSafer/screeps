@@ -319,7 +319,7 @@ function runPowerSpawn(city){
                 Game.spawns[city].memory.ferryInfo.needPower = false
             }
         }
-        if(powerSpawn && powerSpawn.energy >= 50 && powerSpawn.power > 0 && powerSpawn.room.storage.store.energy > settings.energy.processPower && Game.cpu.bucket > settings.bucket.processPower){
+        if(settings.processPower && powerSpawn && powerSpawn.energy >= 50 && powerSpawn.power > 0 && powerSpawn.room.storage.store.energy > settings.energy.processPower && Game.cpu.bucket > settings.bucket.processPower){
             powerSpawn.processPower()
         }
     }
@@ -573,7 +573,7 @@ function updateUpgrader(city, controller, memory, rcl8, creeps, rcl) {
         const bucketThreshold = settings.bucket.upgrade + settings.bucket.range * cityFraction(room.name)
         const haveEnoughCpu = Game.cpu.bucket > bucketThreshold
         if (controller.ticksToDowngrade < CONTROLLER_DOWNGRADE[rcl]/2 
-            || (controller.room.storage.store.energy > settings.energy.rcl8upgrade && haveEnoughCpu)){
+            || (controller.room.storage.store.energy > settings.energy.rcl8upgrade && haveEnoughCpu && settings.rcl8Upgrade)){
             scheduleIfNeeded(rU.name, 1, true, Game.spawns[city], creeps)
         }
     } else {

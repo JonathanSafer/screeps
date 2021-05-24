@@ -296,9 +296,6 @@ var markets = {
                 termUsed = true
             }
             if(!termUsed){
-                termUsed = markets.sellPower(city, buyOrders)
-            }
-            if(!termUsed){
                 termUsed = markets.sellOps(city, buyOrders)
             }
             const memory = Game.spawns[city.memory.city].memory
@@ -320,6 +317,9 @@ var markets = {
             }
             if(!termUsed){
                 termUsed = markets.sellResources(city, baseMins, 20000/*TODO make this a setting*/, city.storage, buyOrders)
+            }
+            if(!termUsed && !settings.processPower){
+                termUsed = markets.sellResources(city, [RESOURCE_POWER], 5000/*TODO make this a setting*/, city.terminal, buyOrders)
             }
             //buy/sell energy
             termUsed = markets.processEnergy(city, termUsed, highEnergyOrder, energyOrders)
@@ -353,34 +353,6 @@ var markets = {
             //otherwise, walk down sell price proportionally to how badly we need to sell
             Memory.sellPoint[resources[i]] = Memory.sellPoint[resources[i]] * (1 - (Math.pow(store, 2)/ 100000000))//100 million (subject to change)
         }
-    },
-    
-    sellPower: function(city, buyOrders){
-        const terminal = city.terminal
-        if ("power" in terminal.store && terminal.store["power"] > 10000){
-            var goodOrders = markets.sortOrder(buyOrders["power"])
-            if (goodOrders.length && goodOrders[goodOrders.length - 1].price > .20){
-                Game.market.deal(goodOrders[goodOrders.length - 1].id, Math.min(goodOrders[goodOrders.length - 1].remainingAmount,  Math.max(0, terminal.store["power"] - 10000)), city.name)
-                Log.info(Math.min(goodOrders[goodOrders.length - 1].remainingAmount,  Math.max(0, terminal.store["power"] - 10000)) + " " + "power" + " sold for " + goodOrders[goodOrders.length - 1].price)
-                return true
-            } else {
-                //make a sell order
-                const orderId = _.find(Object.keys(Game.market.orders),
-                    order => Game.market.orders[order].roomName === city.name && Game.market.orders[order].resourceType === "power")
-                const order = Game.market.orders[orderId]
-                if(!order){
-                    const sellPrice = markets.getPrice("power") * .90
-                    Game.market.createOrder({
-                        type: ORDER_SELL,
-                        resourceType: "power",
-                        price: sellPrice,
-                        totalAmount: 2000,
-                        roomName: city.name   
-                    })
-                }
-            }
-        }
-        return false
     },
 
     sellOps: function(city, buyOrders){
