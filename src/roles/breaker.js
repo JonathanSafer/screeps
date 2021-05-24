@@ -127,7 +127,7 @@ var rBr = {
         //retreat if necessary
         //if retreating, determine when it is safe to resume attack
         //possibly use avoid towers
-        const hostiles = creep.room.find(FIND_HOSTILE_CREEPS)
+        const hostiles = u.findHostileCreeps(creep.room)
         let damage = 0
         const duo = [creep, medic]
 
@@ -248,7 +248,7 @@ var rBr = {
     findTarget: function(creep, medic){
         const flag = creep.memory.city + "break"
         const structures = creep.room.find(FIND_STRUCTURES, {
-            filter: structure => structure.hits
+            filter: structure => structure.hits && (!structure.owner || !settings.allies.includes(structure.owner.username))
         })
         if(!Memory.flags[flag] || creep.pos.roomName == Memory.flags[flag].roomName){
             //we are in destination room, target "valuable" structures
