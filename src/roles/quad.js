@@ -768,7 +768,7 @@ var rQ = {
                 quad[i].heal(quad[i])
             }
         }
-        if(damaged.hits < damaged.hitsMax * 0.8){
+        if(damaged.hits < damaged.hitsMax * 0.85){
             return true
         }
         return false
