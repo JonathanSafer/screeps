@@ -106,6 +106,9 @@ var rBr = {
             return
         }
         // if next to enemy structure, break it
+        if(creep.room.controller && (creep.room.controller.owner && settings.allies.includes(creep.room.controller.owner.username)
+            || creep.room.controller.reservation && settings.allies.includes(creep.room.controller.reservation.username)))
+            return
         const structures = creep.room.lookForAtArea(LOOK_STRUCTURES, 
             Math.max(0, creep.pos.y - 1),
             Math.max(0, creep.pos.x - 1), 
