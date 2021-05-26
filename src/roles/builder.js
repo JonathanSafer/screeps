@@ -78,10 +78,11 @@ var rB = {
                 && !Game.spawns[creep.memory.city].room.controller.safeMode
             if(siege){
                 const plan = creep.room.memory.plan
-                targets = _.reject(targets, site => site.pos.x > plan.x + template.dimensions.x + template.wallDistance
-                        || site.pos.y > plan.y + template.dimensions.y + template.wallDistance
-                        || site.pos.x < plan.x - (template.wallDistance + 1)
-                        || site.pos.y < plan.y - (template.wallDistance + 1))
+                targets = _.reject(targets, site => (site.pos.x > plan.x + template.dimensions.x
+                        || site.pos.y > plan.y + template.dimensions.y
+                        || site.pos.x < plan.x
+                        || site.pos.y < plan.y)
+                        && !(site.structureType == STRUCTURE_RAMPART || site.structureType == STRUCTURE_WALL))
             }
             if(targets.length){
                 var targetsByCost = _.sortBy(targets, target => target.progressTotal)
