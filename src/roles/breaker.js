@@ -102,7 +102,7 @@ var rBr = {
         }
         // if room is claimed by us, stop coming
         if(creep.room.controller && creep.room.controller.my){
-            if (reachedFlag) delete Memory.flags[flagName]
+            //if (reachedFlag) delete Memory.flags[flagName]
             return
         }
         // if next to enemy structure, break it

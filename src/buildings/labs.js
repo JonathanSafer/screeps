@@ -59,7 +59,6 @@ var labs = {
             return
         }
 
-        //if time % reacttime != 4, return
         if(spawn.memory.ferryInfo.labInfo.boost){
             //loop thru receivers, react in each one that is not designated as a booster
             labs.runReaction(spawn.memory.ferryInfo.labInfo.receivers, reactor0, reactor1)
@@ -68,7 +67,16 @@ var labs = {
 
     updateLabs: function(reactor0, reactor1, spawn){
         if(spawn.memory.ferryInfo.labInfo.reactors[reactor0.id].fill || spawn.memory.ferryInfo.labInfo.reactors[reactor1.id].fill){
+            if(Game.time % 200000 == 0){
+                spawn.memory.ferryInfo.labInfo.reactors[reactor0.id].fill = -1
+                spawn.memory.ferryInfo.labInfo.reactors[reactor1.id].fill = -1
+            }
             return//if either of the reactors is requesting a fill up, no need to choose a new mineral
+        }
+        if(reactor0.mineralType || reactor1.mineralType){
+            spawn.memory.ferryInfo.labInfo.reactors[reactor0.id].fill = -1
+            spawn.memory.ferryInfo.labInfo.reactors[reactor1.id].fill = -1
+            return
         }
         //if that is not the case, all receivers must be emptied
         let oldMineral = null
@@ -126,7 +134,7 @@ var labs = {
     },
 
     runReaction: function(receivers, reactor0, reactor1) {
-        if (!!reactor0.mineralType && !!reactor1.mineralType){
+        if (reactor0.mineralType && reactor1.mineralType){
             const produce = REACTIONS[reactor0.mineralType][reactor1.mineralType]
             const reactionTime = REACTION_TIME[produce]
             if (Game.time % reactionTime === 4 && Game.cpu.bucket > 2000){
