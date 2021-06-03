@@ -92,18 +92,10 @@ var rBr = {
     },
 
     breakStuff: function(creep, target) {
-        const flagName = creep.memory.city + "break"
-        const flag = Memory.flags[flagName]
-        const reachedFlag = flag && (creep.pos.roomName == flag.roomName)
         if(target && target.pos.isNearTo(creep.pos)){
             creep.dismantle(target)
             return
             // if next to target, break it
-        }
-        // if room is claimed by us, stop coming
-        if(creep.room.controller && creep.room.controller.my){
-            //if (reachedFlag) delete Memory.flags[flagName]
-            return
         }
         // if next to enemy structure, break it
         if(creep.room.controller && (creep.room.controller.owner && settings.allies.includes(creep.room.controller.owner.username)
