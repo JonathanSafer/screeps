@@ -573,7 +573,7 @@ function updateUpgrader(city, controller, memory, rcl8, creeps, rcl) {
         const bucketThreshold = settings.bucket.upgrade + settings.bucket.range * cityFraction(room.name)
         const haveEnoughCpu = Game.cpu.bucket > bucketThreshold
         if (controller.ticksToDowngrade < CONTROLLER_DOWNGRADE[rcl]/2 
-            || (controller.room.storage.store.energy > settings.energy.rcl8upgrade && haveEnoughCpu && settings.rcl8Upgrade)){
+            || (controller.room.storage.store.energy > settings.energy.rcl8upgrade && haveEnoughCpu && settings.rcl8upgrade)){
             scheduleIfNeeded(rU.name, 1, true, Game.spawns[city], creeps)
         }
     } else {
