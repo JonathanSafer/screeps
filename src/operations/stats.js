@@ -32,42 +32,47 @@ var statsLib = {
             stats["gcl.progress"] = Game.gcl.progress
             stats["gcl.progressTotal"] = Game.gcl.progressTotal
             stats["gcl.level"] = Game.gcl.level
-            stats["gcl.total"] = 
+            stats["gcl.total"] =
                 GCL_MULTIPLY * Math.pow(Game.gcl.level, GCL_POW) + Game.gcl.progress
             stats["gpl.progress"] = Game.gpl.progress
             stats["gpl.progressTotal"] = Game.gpl.progressTotal
             stats["gpl.level"] = Game.gpl.level
-            stats["gpl.total"] = 
+            stats["gpl.total"] =
                 POWER_LEVEL_MULTIPLY * Math.pow(Game.gpl.level, POWER_LEVEL_POW) + Game.gpl.progress
             stats["energy"] = u.getDropTotals()
 
             const heapStats = Game.cpu.getHeapStatistics()
             stats["heap.available"] = heapStats["total_available_size"]
-            
+
             var cities = []
             _.forEach(Object.keys(Game.rooms), function(roomName){
                 const room = Game.rooms[roomName]
                 const city = Game.rooms[roomName].memory.city
                 cities.push(city)
-        
+
                 if(room.controller && room.controller.my){
                     stats["cities." + city + ".rcl.level"] = room.controller.level
                     stats["cities." + city + ".rcl.progress"] = room.controller.progress
                     stats["cities." + city + ".rcl.progressTotal"] = room.controller.progressTotal
-        
+
                     stats["cities." + city + ".spawn.energy"] = room.energyAvailable
                     stats["cities." + city + ".spawn.energyTotal"] = room.energyCapacityAvailable
-        
+
                     if(room.storage){
                         stats["cities." + city + ".storage.energy"] = room.storage.store.energy
+                        const factory = _.find(room.find(FIND_MY_STRUCTURES), s => s.structureType == STRUCTURE_FACTORY)
+                        if(factory){
+                            stats["cities." + city + ".factory.level"] = factory.level
+                            stats["cities." + city + ".factory.cooldown"] = factory.cooldown
+                        }
                     }
                     stats["cities." + city + ".cpu"] = statsLib.cityCpuMap[city]
 
                     // Record construction progress in the city
                     const sites = room.find(FIND_CONSTRUCTION_SITES)
-                    stats[`cities.${city}.sites.progress`] = 
+                    stats[`cities.${city}.sites.progress`] =
                         _.reduce(sites, (sum, site) => sum + site.progress, 0)
-                    stats[`cities.${city}.sites.progressTotal`] = 
+                    stats[`cities.${city}.sites.progressTotal`] =
                         _.reduce(sites, (sum, site) => sum + site.progressTotal, 0)
 
                     // observer scans
@@ -112,7 +117,7 @@ var statsLib = {
                 }
                 stats["cities." + city + ".deposits"] = 0
                 stats["cities." + city + ".minerals"] = 0
-                
+
                 const spawn = Game.spawns[city]
                 if(spawn){
                     // Record the weakest wall in each city
@@ -168,7 +173,7 @@ var statsLib = {
             }
 
             RawMemory.segments[0] = JSON.stringify(stats)
-        }  
+        }
     }
 }
 
