@@ -12,12 +12,12 @@ Log.error = function(text) { console.log(`<p style="color:red">[ERROR] ${Game.ti
 
 // Function to buy sub token. Price in millions. BuyToken(3) will pay 3 million
 global.BuyToken = function(price) {
-    Game.market.createOrder({ 
-        type: ORDER_BUY, 
+    Game.market.createOrder({
+        type: ORDER_BUY,
         resourceType: SUBSCRIPTION_TOKEN,
         price: price * 1e6,
         totalAmount: 1,
-        roomName: "E11S22" 
+        roomName: "E11S22"
     })
 }
 global.SpawnQuad = function(city, boosted){
@@ -32,8 +32,9 @@ global.SpawnRole = function(role, city, boosted){
     sq.initialize(Game.spawns[city])
     sq.schedule(Game.spawns[city], role, boosted)
 }
-global.PlaceFlag = function(flagName, x, y, roomName){
+global.PlaceFlag = function(flagName, x, y, roomName, duration){
     Memory.flags[flagName] = new RoomPosition(x, y, roomName)
+    Memory.flags[flagName] = duration || 20000
 }
 
 global.DeployQuad = function(roomName, boosted) {
