@@ -127,8 +127,8 @@ var rBr = {
         const duo = [creep, medic]
 
 
-        const melee = _.filter(hostiles, c => c.getActiveBodyparts(ATTACK))
-        const ranged = _.filter(hostiles, c => c.getActiveBodyparts(RANGED_ATTACK))
+        const melee = _.filter(hostiles, c => !c.level && c.getActiveBodyparts(ATTACK))
+        const ranged = _.filter(hostiles, c => !c.level && c.getActiveBodyparts(RANGED_ATTACK))
         for(const member of duo){
             for(const attacker of melee){
                 if(member.pos.isNearTo(attacker.pos) ||(member.pos.inRangeTo(attacker.pos, 2) && !attacker.fatigue)){
