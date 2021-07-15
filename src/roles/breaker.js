@@ -8,9 +8,9 @@ var rQ = require("./quad")
 var rBr = {
     name: "breaker",
     type: "breaker",
-    boosts: [RESOURCE_CATALYZED_GHODIUM_ALKALIDE, 
+    boosts: [RESOURCE_CATALYZED_GHODIUM_ALKALIDE,
         RESOURCE_CATALYZED_ZYNTHIUM_ALKALIDE, RESOURCE_CATALYZED_ZYNTHIUM_ACID],
-   
+
     /** @param {Creep} creep **/
     run: function(creep) {
         if(creep.memory.needBoost && !creep.memory.boosted){
@@ -41,7 +41,7 @@ var rBr = {
                 }
             }
         }
-        //attempt to break target, 
+        //attempt to break target,
         //if target is not in range and there is another valid target in range, break new valid target
         //if target cannot be pathed to, choose new target to be saved as target
         rBr.breakStuff(creep, target)
@@ -101,10 +101,10 @@ var rBr = {
         if(creep.room.controller && (creep.room.controller.owner && settings.allies.includes(creep.room.controller.owner.username)
             || creep.room.controller.reservation && settings.allies.includes(creep.room.controller.reservation.username)))
             return
-        const structures = creep.room.lookForAtArea(LOOK_STRUCTURES, 
+        const structures = creep.room.lookForAtArea(LOOK_STRUCTURES,
             Math.max(0, creep.pos.y - 1),
-            Math.max(0, creep.pos.x - 1), 
-            Math.min(49, creep.pos.y + 1), 
+            Math.max(0, creep.pos.x - 1),
+            Math.min(49, creep.pos.y + 1),
             Math.min(49, creep.pos.x + 1), true) //returns an array of structures
         if(structures.length){
             creep.dismantle(structures[0].structure)
@@ -190,36 +190,21 @@ var rBr = {
                 // count structure 4 times since quad will hit it in 4 positions
                 // the path is relative to the top left creep, __ so a structure in the
                 // bottom right needs to be counted against a  _S path through the top left
+                const terrain = new Room.Terrain(roomName)
                 for (const structure of structures) {
                     const oldCost = costs.get(structure.pos.x, structure.pos.y)
                     const cost = rQ.getCost(structure.hits, maxHits, oldCost)
                     costs.set(structure.pos.x, structure.pos.y, cost)
-                }
-
-                const terrain = new Room.Terrain(roomName)
-                //fill matrix with default terrain values
-                for(let i = 0; i < 50; i++){
-                    for(let j = 0; j < 50; j++){
-                        switch(terrain.get(i,j)) {
-                        case TERRAIN_MASK_WALL:
-                            costs.set(i, j, 255)
-                            break
-                        case TERRAIN_MASK_SWAMP:
-                            costs.set(i, j, 5)
-                            break
-                        case 0:
-                            costs.set(i, j, 1)
-                            break
-                        }
-                    }
+                    if(terrain.get(structure.pos.x, structure.pos.y) & TERRAIN_MASK_WALL)
+                        costs.set(structure.pos.x, structure.pos.y, 254)//targettable but otherwise essentially impassable
                 }
                 return costs
             }
         })
         if (result.incomplete) return false
-        
+
         const path = result.path
-        
+
         const wallInPath = rBr.getWallInPath(creep.room, path)
         if (wallInPath) {
             return wallInPath
@@ -261,8 +246,8 @@ var rBr = {
             delete Memory.flags[flag]
         }
         //if in a friendly room or my room, ignore structures and rally. Else, set nearest structure as target
-        if(creep.room.controller && creep.room.controller.owner 
-                && (settings.allies.includes(creep.room.controller.owner.username) 
+        if(creep.room.controller && creep.room.controller.owner
+                && (settings.allies.includes(creep.room.controller.owner.username)
                 || creep.room.controller.my)){
             rBr.rally(creep, medic, flag)
         } else {
@@ -302,6 +287,6 @@ var rBr = {
         } else {
             medic.heal(medic)
         }
-    } 
+    }
 }
 module.exports = rBr
