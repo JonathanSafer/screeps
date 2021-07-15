@@ -34,7 +34,7 @@ global.SpawnRole = function(role, city, boosted){
 }
 global.PlaceFlag = function(flagName, x, y, roomName, duration){
     Memory.flags[flagName] = new RoomPosition(x, y, roomName)
-    Memory.flags[flagName] = duration || 20000
+    Memory.flags[flagName].removeTime = duration || 20000
 }
 
 global.DeployQuad = function(roomName, boosted) {
