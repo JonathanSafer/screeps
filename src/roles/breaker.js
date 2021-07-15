@@ -198,6 +198,10 @@ var rBr = {
                     if(terrain.get(structure.pos.x, structure.pos.y) & TERRAIN_MASK_WALL)
                         costs.set(structure.pos.x, structure.pos.y, 254)//targettable but otherwise essentially impassable
                 }
+                const creeps = Game.rooms[roomName].find(FIND_CREEPS)
+                for(const c of creeps){
+                    costs.set(c.pos.x, c.pos.y, 255)
+                }
                 return costs
             }
         })
