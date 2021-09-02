@@ -13,10 +13,10 @@ const p = {
 
     judgeNextRoom: function(){
         if(!Cache.roomData) return true
-        const nextRoom = _.find(Cache.roomData, room => room.controllerPos && !room.score)
+        const roomData = Cache.roomData
+        const nextRoom = _.find(Object.keys(roomData), roomName => roomData[roomName].ctrlP && !roomData[roomName].s)
         if(nextRoom){
-            const roomName = nextRoom.controllerPos.roomName
-            p.scoreRoom(roomName)
+            p.scoreRoom(nextRoom)
             return false
         }
         p.expand()
@@ -25,8 +25,8 @@ const p = {
 
     scoreRoom: function(roomName){
         const roomData = Cache.roomData[roomName]
-        if (roomData.sourcePos.length < 2){
-            roomData.score = -1
+        if (roomData.srcP.length < 2){
+            roomData.s = -1
             return
         }
         const terrain = Game.map.getRoomTerrain(roomName)
@@ -55,7 +55,7 @@ const p = {
         }
         const levelNeeded = Math.ceil(Math.max(template.dimensions.x, template.dimensions.y)/2)
         if(level - 2 < levelNeeded){
-            roomData.score = -1
+            roomData.s = -1
             return //template won't fit
         }
         const candidates = {}
@@ -73,27 +73,25 @@ const p = {
         const centerPoint = Object.keys(candidates)[0]
 
         if(!center.sourceDistance){
-            const sources = [new RoomPosition(roomData.sourcePos[0].x, roomData.sourcePos[0].y, roomData.sourcePos[0].roomName),
-                new RoomPosition(roomData.sourcePos[1].x, roomData.sourcePos[1].y, roomData.sourcePos[1].roomName)]
+            const sources = [u.unpackPos(roomData.srcP[0], roomName), u.unpackPos(roomData.srcP[1], roomName)]
             const realPos = new RoomPosition(Math.floor(centerPoint/50), centerPoint%50, roomName)
             center.sourceDistance = PathFinder.search(realPos, {pos: sources[0], range: 1}, {plainCost: 1, swampCost: 1}).cost +
                 PathFinder.search(realPos, {pos: sources[1], range: 1}, {plainCost: 1, swampCost: 1}).cost
         }
         if(!center.controllerDistance){
-            const controllerPos = new RoomPosition(roomData.controllerPos.x, roomData.controllerPos.y, roomData.controllerPos.roomName)
+            const controllerPos = u.unpackPos(roomData.ctrlP[0], roomName)
             center.controllerDistance = PathFinder.search(new RoomPosition(Math.floor(centerPoint/50), centerPoint%50, roomName), {pos: controllerPos, range: 1}, {plainCost: 1, swampCost: 1}).cost
         }
 
         const controllerScore = center.controllerDistance < levelNeeded + template.wallDistance ? 5 : Math.max(25 - center.controllerDistance, 0)
         const sourceScore = Math.max((70 - center.sourceDistance)/5, 0)
-        const mineralScore = roomData.mineral == RESOURCE_CATALYST ? 5 : 0
-        roomData.score = controllerScore + sourceScore + mineralScore
-        roomData.center = centerPoint
+        const mineralScore = roomData.min == RESOURCE_CATALYST ? 5 : 0
+        roomData.s = controllerScore + sourceScore + mineralScore
+        roomData.c = centerPoint
     },
 
     narrowBySourcePos: function(candidates, roomData, roomName){
-        const sources = [new RoomPosition(roomData.sourcePos[0].x, roomData.sourcePos[0].y, roomData.sourcePos[0].roomName),
-            new RoomPosition(roomData.sourcePos[1].x, roomData.sourcePos[1].y, roomData.sourcePos[1].roomName)]
+        const sources = [u.unpackPos(roomData.srcP[0], roomName), u.unpackPos(roomData.srcP[1], roomName)]
         for(const pos of Object.keys(candidates)){
             const realPos = new RoomPosition(Math.floor(pos/50), pos%50, roomName)
             candidates[pos].sourceDistance = PathFinder.search(realPos, {pos: sources[0], range: 1}, {plainCost: 1, swampCost: 1}).cost +
@@ -107,7 +105,7 @@ const p = {
     },
 
     narrowByControllerPos: function(candidates, roomData, roomName, levelNeeded){
-        const controllerPos = new RoomPosition(roomData.controllerPos.x, roomData.controllerPos.y, roomData.controllerPos.roomName)
+        const controllerPos = u.unpackPos(roomData.ctrlP[0], roomName)
         for(const pos of Object.keys(candidates)){
             candidates[pos].controllerDistance = PathFinder.search(new RoomPosition(Math.floor(pos/50), pos%50, roomName), {pos: controllerPos, range: 1}, {plainCost: 1, swampCost: 1}).cost
         }
@@ -156,12 +154,12 @@ const p = {
         if(Game.cpu.bucket != 10000 || Memory.flags["claim"] || !PServ) return
         const myCities = u.getMyCities()
         if(Game.gcl.level == myCities.length) return
-        const candidates = _.reject(Cache.roomData, room => !room.score 
-            || room.score == -1 
+        const candidates = _.reject(Cache.roomData, room => !room.s 
+            || room.s == -1 
             || room.rcl 
-            || room.scoutTime < Game.time + CREEP_LIFE_TIME 
-            || (room.claimBlock && room.claimBlock > Game.time)
-            || (room.safeModeCooldown && room.safeModeCooldown > Game.time + CREEP_LIFE_TIME))
+            || room.sct < Game.time + CREEP_LIFE_TIME 
+            || (room.cB && room.cB > Game.time)
+            || (room.sMC && room.sMC > Game.time + CREEP_LIFE_TIME))
         if(!candidates.length) return
         Log.info("attempting expansion")
         const expoRooms = _.sortBy(candidates, room => room.score)
@@ -172,7 +170,7 @@ const p = {
                 const controllerPos = new RoomPosition(candidate.controllerPos.x, candidate.controllerPos.y, candidate.controllerPos.roomName)
                 const result = PathFinder.search(room.controller.pos, {pos: controllerPos, range: 1}, {
                     plainCost: 1, swampCost: 1, maxOps: 10000, roomCallback: (roomName) => {
-                        if(!Cache.roomData[roomName] || (Cache.roomData.rcl && CONTROLLER_STRUCTURES[STRUCTURE_TOWER][Cache.roomData[roomName].rcl] && !settings.allies.includes(Cache.roomData[roomName].owner)))
+                        if(!Cache.roomData[roomName] || (Cache.roomData.rcl && CONTROLLER_STRUCTURES[STRUCTURE_TOWER][Cache.roomData[roomName].rcl] && !settings.allies.includes(Cache.roomData[roomName].own)))
                             return false
                     }
                 })
@@ -188,7 +186,7 @@ const p = {
         }
         const expoRoom = Cache.roomData[expoRoomName]
         u.placeFlag("claim", new RoomPosition(25, 25, expoRoomName))
-        u.placeFlag("plan", new RoomPosition(Math.floor(expoRoom.center/50) - template.centerOffset.x, expoRoom.center%50 - template.centerOffset.y, expoRoomName))
+        u.placeFlag("plan", new RoomPosition(Math.floor(expoRoom.c/50) - template.centerOffset.x, expoRoom.c%50 - template.centerOffset.y, expoRoomName))
     },
 
     searchForRemote: function(cities){
@@ -212,10 +210,10 @@ const p = {
         Memory.remotes[roomName] = 1
         const memory = Memory.spawns[homeName + "0"]
         const roomInfo = Cache.roomData[roomName]
-        for(const sourceId of Object.keys(roomInfo.sources)){
+        for(const sourceId of Object.keys(roomInfo.src)){
             return memory, sourceId
             //uncomment this to activate
-            //memory.sources[sourceId] = roomInfo.sources[sourceId]
+            //memory.sources[sourceId] = roomInfo.src[sourceId]
         }
     },
 
@@ -261,19 +259,19 @@ const p = {
 
     scoreRemoteRoom: function(roomName, spawn){
         const roomInfo = Cache.roomData[roomName]
-        if(!roomInfo || roomInfo.rcl || !roomInfo.sources || !Object.keys(roomInfo.sources).length 
-            || (roomInfo.safeTime && roomInfo.safeTime > Game.time)
-            || Memory.remotes[roomName] || (spawn.room.energyCapacityAvailable < 2300 && !roomInfo.controllerPos)) return -1
+        if(!roomInfo || roomInfo.rcl || !roomInfo.src || !Object.keys(roomInfo.src).length 
+            || (roomInfo.sT && roomInfo.sT > Game.time)
+            || Memory.remotes[roomName] || (spawn.room.energyCapacityAvailable < 2300 && !roomInfo.ctrlP)) return -1
         let totalDistance = 0
-        for(const source in roomInfo.sources){
-            const sourcePos = new RoomPosition(roomInfo.sources[source].x, roomInfo.sources[source].y, roomName)
+        for(const source in roomInfo.src){
+            const sourcePos = u.unpackPos(source, roomName)
             const result = PathFinder.search(spawn.pos, {pos: sourcePos, range: 1}, {
                 plainCost: 1,
                 swampCost: 1,
                 maxOps: 10000,
                 roomCallback: function(rN){
                     const safe = Memory.remotes[rN] 
-                        || (Cache.roomData[rN] && Cache.roomData[rN].owner == settings.username)
+                        || (Cache.roomData[rN] && Cache.roomData[rN].own == settings.username)
                         || u.isHighway(rN)
                         || rN == roomName
                     if(!safe) return false
@@ -282,7 +280,7 @@ const p = {
             if(result.incomplete) return -1
             totalDistance += result.cost
         }
-        return totalDistance/Object.keys(roomInfo.sources).length
+        return totalDistance/Object.keys(roomInfo.src).length
     },
 
     dropRemote: function(cities){
@@ -300,8 +298,8 @@ const p = {
         let totalTime = 0
         let totalCost = 0//cost per tick
         const roomInfo = Cache.roomData[roomName]
-        if(roomInfo.controllerPos){
-            const controllerPos = new RoomPosition(roomInfo.controllerPos.x, roomInfo.controllerPos.y, roomName)
+        if(roomInfo.ctrlP){
+            const controllerPos = u.unpackPos(roomInfo.ctrlP, roomName)
             const path = PathFinder.search(spawn.pos, {pos: controllerPos, range: 1}, {
                 plainCost: 1,
                 swampCost: 1,
@@ -326,18 +324,18 @@ const p = {
         const quadCost = types.cost(quadBody) * 4
         const quadSize = quadBody.length * 4
         const roadUpkeep = ROAD_DECAY_AMOUNT/ROAD_DECAY_TIME * REPAIR_COST
-        const sourceEnergy = roomInfo.controllerPos ? SOURCE_ENERGY_CAPACITY : SOURCE_ENERGY_KEEPER_CAPACITY
+        const sourceEnergy = roomInfo.ctrlP ? SOURCE_ENERGY_CAPACITY : SOURCE_ENERGY_KEEPER_CAPACITY
 
         totalTime += harasserSize * CREEP_SPAWN_TIME/CREEP_LIFE_TIME
         totalCost += harasserCost/CREEP_LIFE_TIME
 
-        if(!roomInfo.controllerPos){
+        if(!roomInfo.ctrlP){
             totalTime += quadSize * CREEP_SPAWN_TIME/(CREEP_LIFE_TIME - quadSize)//subtracting quad size to account for prespawn
             totalCost += quadCost/(CREEP_LIFE_TIME - quadSize)
         }
 
-        for(const source in roomInfo.sources){
-            const sourcePos = new RoomPosition(roomInfo.sources[source].x, roomInfo.sources[source].y, roomName)
+        for(const source in roomInfo.srcP){
+            const sourcePos = u.unpackPos(source, roomName)
             const result = PathFinder.search(spawn.pos, {pos: sourcePos, range: 1}, {
                 plainCost: 1,
                 swampCost: 1,
@@ -350,7 +348,7 @@ const p = {
             totalCost += (minerCost/ (CREEP_LIFE_TIME - result.cost)) + (roadUpkeep * result.cost) + (runnersNeeded * runnerCost/CREEP_LIFE_TIME)
         }
 
-        const revenue = sourceEnergy * Object.keys(roomInfo.sources).length/ENERGY_REGEN_TIME
+        const revenue = sourceEnergy * Object.keys(roomInfo.rcl).length/ENERGY_REGEN_TIME
         const profit = revenue - totalCost
         return {profit: profit, time: totalTime}
     },
