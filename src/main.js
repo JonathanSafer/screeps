@@ -13,6 +13,7 @@ const observer = require("./buildings/observer")
 require("./operations/profiler-prep")
 require("./lib/globals")
 var rr = require("./roles/roles")
+const data = require("./operations/data")
 
 //Code to manually profile:
 //Game.profiler.profile(1000);
@@ -156,6 +157,8 @@ module.exports.loop = function () {
         }
 
         if(Game.time % settings.flagCleanup) u.cleanFlags()
+
+        data.makeVisuals()
 
         // disable emailing
         u.silenceCreeps()
