@@ -177,7 +177,7 @@ var rR = {
                 if(Game.map.getRoomStatus(roomName).status != "normal") return Infinity
                 const roomData = u.getsetd(roomDataCache, roomName, {})
                 if(Memory.remotes[roomName]) return 1
-                if(roomData.own && !settings.allies.includes(roomData.own)) return 50
+                if(roomData.owner && !settings.allies.includes(roomData.owner)) return 50
                 if(Memory.remotes[roomName]) return 1
                 return 50
             }

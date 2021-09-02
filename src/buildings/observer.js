@@ -44,31 +44,31 @@ const ob = {
             return
         }
         if(room.controller){
-            roomData.sMC = room.controller.safeModeCooldown && (Game.time + room.controller.safeModeCooldown) || 0
-            roomData.own = room.controller.owner && room.controller.owner.username
+            roomData.safeModeCooldown = room.controller.safeModeCooldown && (Game.time + room.controller.safeModeCooldown) || 0
+            roomData.owner = room.controller.owner && room.controller.owner.username
             roomData.rcl = (room.controller.level) || 0
-            roomData.ctrlP = u.packPos(room.controller.pos)
-            roomData.srcP = room.find(FIND_SOURCES).map(source => u.packPos(source.pos))
-            roomData.min = room.find(FIND_MINERALS)[0].mineralType
+            roomData.controllerPos = room.controller.pos
+            roomData.sourcePos = room.find(FIND_SOURCES).map(source => source.pos)
+            roomData.mineral = room.find(FIND_MINERALS)[0].mineralType
             if(room.controller.safeMode){
-                roomData.sME = room.controller.safeMode + Game.time
+                roomData.smEndTick = room.controller.safeMode + Game.time
             }
         }
         const sources = room.find(FIND_SOURCES)
-        roomData.src = {}
+        roomData.sources = {}
         for(const source of sources){
             roomData.sources[source.id] = source.pos
         }
         const skLairs = _.filter(room.find(FIND_HOSTILE_STRUCTURES), struct => struct.structureType == STRUCTURE_KEEPER_LAIR)
         if(skLairs && skLairs.length){
-            roomData.skL = skLairs.map(lair => u.packPos(lair.pos))
+            roomData.skLairs = skLairs.map(lair => lair.pos)
             const core = _.find(room.find(FIND_HOSTILE_STRUCTURES), struct => struct.structureType == STRUCTURE_INVADER_CORE)
             roomData.rcl = core ? core.level : 0
         }
         const scoutTime = room.controller ? settings.scouting.controllerRoom[roomData.rcl] :
             skLairs && skLairs.length ? settings.scouting.sk :
                 settings.scouting.highway
-        roomData.sct = Game.time + scoutTime
+        roomData.scoutTime = Game.time + scoutTime
     },
 
     getUnusedObserver: function() {
@@ -112,7 +112,7 @@ const ob = {
         const roomDataCache = u.getsetd(Cache, "roomData", {})
         for(const roomName of roomsToScan){
             const roomData = u.getsetd(roomDataCache, roomName, {})
-            if(Game.map.getRoomStatus(roomName).status != "normal" || roomData.sct && roomData.sct > Game.time){
+            if(Game.map.getRoomStatus(roomName).status != "normal" || roomData.scoutTime && roomData.scoutTime > Game.time){
                 roomsToScan.delete(roomName)
                 continue
             }

@@ -521,14 +521,6 @@ var u = {
     placeFlag: function(flagName, roomPos, removeTime = null){
         Memory.flags[flagName] = roomPos
         Memory.flags[flagName].removeTime = removeTime
-    },
-
-    packPos: function(pos){
-        return (pos.x * 50) + pos.y
-    },
-
-    unpackPos: function(pos, roomName){
-        return new RoomPosition(Math.floor(pos/50), pos%50, roomName)
     }
 }
 

@@ -239,7 +239,7 @@ var m = {
             maxOps: 10000,
             roomCallback: function(roomName){
                 const roomData = u.getsetd(roomDataCache, roomName, {})
-                if(roomName != creep.pos.roomName && roomData.own && !settings.allies.includes(roomData.own) 
+                if(roomName != creep.pos.roomName && roomData.owner && !settings.allies.includes(roomData.owner) 
                     && goals.pos && goals.pos.roomName != roomName
                     && roomData.rcl 
                     && CONTROLLER_STRUCTURES[STRUCTURE_TOWER][roomData.rcl] 
@@ -247,16 +247,15 @@ var m = {
                     || creep.memory.tolerance < CONTROLLER_STRUCTURES[STRUCTURE_TOWER][roomData.rcl] * TOWER_POWER_ATTACK - (TOWER_POWER_ATTACK * TOWER_FALLOFF))){
                     return false
                 }
-                if(roomData.skL && roomData.rcl) return false
+                if(roomData.skLairs && roomData.rcl) return false
                 if(Game.map.getRoomStatus(roomName).status != "normal"){
                     return false
                 }
                 const costs = new PathFinder.CostMatrix
-                if(roomData.skL && roomData.skL.length){
-                    if(!Memory.remotes[roomName] && avoidEnemies && creep.memory.role != "scout") return false
+                if(roomData.skLairs && roomData.skLairs.length){
+                    if(!Memory.remotes[roomName] && avoidEnemies && creep.memory.role != "scout") return
                     const terrain = Game.map.getRoomTerrain(roomName)
-                    for(const lairPos of roomData.skL){
-                        const lair = u.unpackPos(lairPos, roomName)
+                    for(const lair of roomData.skLairs){
                         const minX = Math.max(lair.x - 5, 0)
                         const maxX = Math.min(lair.x + 5, 49)
                         const minY = Math.max(lair.y - 5, 0)
@@ -373,7 +372,7 @@ var m = {
                     return Infinity
                 }
                 const roomData = u.getsetd(roomDataCache, roomName, {})
-                if(roomData.own && !settings.allies.includes(roomData.own) && roomData.rcl && CONTROLLER_STRUCTURES[STRUCTURE_TOWER][roomData.rcl] && avoidEnemies){
+                if(roomData.owner && !settings.allies.includes(roomData.owner) && roomData.rcl && CONTROLLER_STRUCTURES[STRUCTURE_TOWER][roomData.rcl] && avoidEnemies){
                     return 20
                 }
                 return settings.motion.backRoadPenalty
