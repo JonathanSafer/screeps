@@ -1,6 +1,7 @@
 const quad = require("../roles/quad")
 const sq = require("../lib/spawnQueue")
 const u = require("../lib/utils")
+const settings = require("../config/settings")
 
 const m = {
 
@@ -39,8 +40,8 @@ const m = {
                         const route = Game.map.findRoute(city, neighbor)
                         return route == ERR_NO_PATH || route.length > 1
                     }
-                    return data.enemy && data.towers <= 2
-                            && data.rcl <= 6 && !tooFar()
+                    return !settings.allies.includes(data.own) && data.rcl <= 6 
+                        && data.sME && data.sME < Game.time && !tooFar()
                 }).value()
             })
             .flatten()
