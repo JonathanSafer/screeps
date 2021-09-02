@@ -20,12 +20,7 @@ var statsLib = {
         }
 
         //stats
-        if(Game.time % settings.statTime == 0){
-            //activate segment
-            RawMemory.setActiveSegments([0])
-        }
         if (Game.time % settings.statTime == 1){
-            RawMemory.setActiveSegments([])
             const stats = {}
             stats["cpu.getUsed"] = Game.cpu.getUsed()
             stats["cpu.bucket"] = Game.cpu.bucket
