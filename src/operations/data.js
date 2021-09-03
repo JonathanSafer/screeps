@@ -2,16 +2,16 @@
 
 /*
 Shorthand and uses
-sMC => safeModeCooldown: roomplan
-sME => safeMode end tick: military
-own => owner: military, roomplan, motion
-rcl => rcl: military, roomplan, visuals, motion
-ctrlP => controller position: roomplan, visuals
-srcP => source positions: roomplan, visuals
-src => source IDs: roomplan
-min => mineralType: roomplan
-skL => source keeper lair positions: motion
-sct => scout time: roomplan, scout
+sMC => safeModeCooldown: obs, roomplan
+sME => safeMode end tick: obs, military
+own => owner: military, obs, roomplan, motion
+rcl => rcl: military, obs, roomplan, visuals, motion
+ctrlP => controller position: obs, roomplan, visuals
+srcP => source positions: obs, roomplan
+src => source IDs: obs, roomplan
+min => mineralType: obs, roomplan
+skL => source keeper lair positions: obs, motion
+sct => scout time: obs, roomplan, scout
 s => score: roomplan, visuals
 c => template center: roomplan
 sT => room is unsafe until this tick: roomplan
@@ -27,6 +27,17 @@ const u = require("../lib/utils")
 
 var data = {
     updateData: function(){
+        if(!Memory.data){
+            Memory.data = {}
+        }
+        
+
+
+
+
+
+        const dataString = JSON.stringify(Cache.roomData)
+        const segmentSize = 50000
         //load data into  both 1-40 and 41 - 80
         //if one side gets corrupted we can recover from the other side
         //otherwise we will update both sides in one 8 tick session
@@ -42,9 +53,9 @@ var data = {
                         const pos = u.unpackPos(roomInfo.ctrlP, roomName)
                         Game.map.visual.circle(pos, {fill: "#FF0000", radius: 2})
                     }
-                    if(roomInfo.src && roomInfo.src.length){
-                        for(const pos of roomInfo.src){
-                            Game.map.visual.circle(u.unpackPos(pos, roomName), {fill: "#00FF00", radius: 2})
+                    if(roomInfo.src && Object.keys(roomInfo.src).length){
+                        for(const source in roomInfo.src){
+                            Game.map.visual.circle(u.unpackPos(roomInfo.src[source], roomName), {fill: "#00FF00", radius: 2})
                         }
                     }
                     if(roomInfo.rcl){

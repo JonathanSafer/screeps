@@ -48,7 +48,6 @@ const ob = {
             roomData.own = room.controller.owner && room.controller.owner.username
             roomData.rcl = (room.controller.level) || 0
             roomData.ctrlP = u.packPos(room.controller.pos)
-            roomData.srcP = room.find(FIND_SOURCES).map(source => u.packPos(source.pos))
             roomData.min = room.find(FIND_MINERALS)[0].mineralType
             if(room.controller.safeMode){
                 roomData.sME = room.controller.safeMode + Game.time
@@ -57,7 +56,7 @@ const ob = {
         const sources = room.find(FIND_SOURCES)
         roomData.src = {}
         for(const source of sources){
-            roomData.sources[source.id] = source.pos
+            roomData.src[source.id] = u.packPos(source.pos)
         }
         const skLairs = _.filter(room.find(FIND_HOSTILE_STRUCTURES), struct => struct.structureType == STRUCTURE_KEEPER_LAIR)
         if(skLairs && skLairs.length){

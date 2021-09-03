@@ -5,7 +5,7 @@ const trading = require("../managers/swcTrading")
 
 global.Tmp = {}
 global.T = function() { return `Time: ${Game.time}` }
-global.Cache = {}
+global.Cache = { roomData: {} }
 global.Log = {}
 Log.info = function(text) { console.log(`<p style="color:yellow">[INFO] ${Game.time}: ${text}</p>`) }
 Log.error = function(text) { console.log(`<p style="color:red">[ERROR] ${Game.time}: ${text}</p>`) }

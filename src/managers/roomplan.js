@@ -25,7 +25,7 @@ const p = {
 
     scoreRoom: function(roomName){
         const roomData = Cache.roomData[roomName]
-        if (roomData.srcP.length < 2){
+        if (Object.keys(roomData.src).length < 2){
             roomData.s = -1
             return
         }
@@ -73,13 +73,14 @@ const p = {
         const centerPoint = Object.keys(candidates)[0]
 
         if(!center.sourceDistance){
-            const sources = [u.unpackPos(roomData.srcP[0], roomName), u.unpackPos(roomData.srcP[1], roomName)]
+            //TODO sources should be map from src
+            const sources = [u.unpackPos(Object.values(roomData.src)[0], roomName), u.unpackPos(Object.values(roomData.src)[1], roomName)]
             const realPos = new RoomPosition(Math.floor(centerPoint/50), centerPoint%50, roomName)
             center.sourceDistance = PathFinder.search(realPos, {pos: sources[0], range: 1}, {plainCost: 1, swampCost: 1}).cost +
                 PathFinder.search(realPos, {pos: sources[1], range: 1}, {plainCost: 1, swampCost: 1}).cost
         }
         if(!center.controllerDistance){
-            const controllerPos = u.unpackPos(roomData.ctrlP[0], roomName)
+            const controllerPos = u.unpackPos(roomData.ctrlP, roomName)
             center.controllerDistance = PathFinder.search(new RoomPosition(Math.floor(centerPoint/50), centerPoint%50, roomName), {pos: controllerPos, range: 1}, {plainCost: 1, swampCost: 1}).cost
         }
 
@@ -91,7 +92,8 @@ const p = {
     },
 
     narrowBySourcePos: function(candidates, roomData, roomName){
-        const sources = [u.unpackPos(roomData.srcP[0], roomName), u.unpackPos(roomData.srcP[1], roomName)]
+        //TODO sources should be map from src
+        const sources = [u.unpackPos(Object.values(roomData.src)[0], roomName), u.unpackPos(Object.values(roomData.src)[1], roomName)]
         for(const pos of Object.keys(candidates)){
             const realPos = new RoomPosition(Math.floor(pos/50), pos%50, roomName)
             candidates[pos].sourceDistance = PathFinder.search(realPos, {pos: sources[0], range: 1}, {plainCost: 1, swampCost: 1}).cost +
@@ -105,7 +107,7 @@ const p = {
     },
 
     narrowByControllerPos: function(candidates, roomData, roomName, levelNeeded){
-        const controllerPos = u.unpackPos(roomData.ctrlP[0], roomName)
+        const controllerPos = u.unpackPos(roomData.ctrlP, roomName)
         for(const pos of Object.keys(candidates)){
             candidates[pos].controllerDistance = PathFinder.search(new RoomPosition(Math.floor(pos/50), pos%50, roomName), {pos: controllerPos, range: 1}, {plainCost: 1, swampCost: 1}).cost
         }
@@ -210,10 +212,10 @@ const p = {
         Memory.remotes[roomName] = 1
         const memory = Memory.spawns[homeName + "0"]
         const roomInfo = Cache.roomData[roomName]
-        for(const sourceId of Object.keys(roomInfo.src)){
+        for(const sourceId in Object.keys(roomInfo.src)){
             return memory, sourceId
             //uncomment this to activate
-            //memory.sources[sourceId] = roomInfo.src[sourceId]
+            //memory.sources[sourceId] = u.unpackPos(roomInfo.src[sourceId], roomName)
         }
     },
 
@@ -264,7 +266,7 @@ const p = {
             || Memory.remotes[roomName] || (spawn.room.energyCapacityAvailable < 2300 && !roomInfo.ctrlP)) return -1
         let totalDistance = 0
         for(const source in roomInfo.src){
-            const sourcePos = u.unpackPos(source, roomName)
+            const sourcePos = u.unpackPos(roomInfo.src[source], roomName)
             const result = PathFinder.search(spawn.pos, {pos: sourcePos, range: 1}, {
                 plainCost: 1,
                 swampCost: 1,
@@ -334,8 +336,8 @@ const p = {
             totalCost += quadCost/(CREEP_LIFE_TIME - quadSize)
         }
 
-        for(const source in roomInfo.srcP){
-            const sourcePos = u.unpackPos(source, roomName)
+        for(const source in roomInfo.src){
+            const sourcePos = u.unpackPos(roomInfo.src[source], roomName)
             const result = PathFinder.search(spawn.pos, {pos: sourcePos, range: 1}, {
                 plainCost: 1,
                 swampCost: 1,
