@@ -36,8 +36,8 @@ var data = {
 
 
 
-        const dataString = JSON.stringify(Cache.roomData)
-        const segmentSize = 50000
+        //const dataString = JSON.stringify(Cache.roomData)
+        //const segmentSize = 50000
         //load data into  both 1-40 and 41 - 80
         //if one side gets corrupted we can recover from the other side
         //otherwise we will update both sides in one 8 tick session
