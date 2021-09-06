@@ -80,6 +80,9 @@ var settings = {
     // Stats
     statTime: 19,
     resourceStatTime: 19 * 50,
+
+    //Data
+    backupTime: 52 //backupTime * statTime = backup interval
 }
 
 if(!Game.shard.name.includes("shard") || Game.shard.name == "shardSeason"){

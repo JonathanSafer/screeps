@@ -49,7 +49,7 @@ var data = {
         //backup every 1k ticks for 4 ticks => <0.2cpu/tick avg
         //load data into  both 1-20 and 21 - 40
         //if one side gets corrupted we can recover from the other side
-        //otherwise we will update both sides in one 8 tick session
+        //otherwise we will update both sides in one 4 tick session
     },
 
     checkReset: function () {
@@ -61,24 +61,75 @@ var data = {
 
     recoverData: function() {
         switch(Game.time - Memory.data.lastReset){
-            case 0:
-                //load first half of data
-                break
-            case 1:
-                //read in first half of data
-                //load second half of data
-                break
-            case 2:
-                //read in second half of data
-                break
-            default:
-                return
+        case 0:
+            //load first half of data
+            break
+        case 1:
+            //read in first half of data
+            //load second half of data
+            break
+        case 2:
+            //read in second half of data
+            break
+        default:
+            return
         }
     },
 
     backupData: function(){
         //don't backup during stats update or recovery
         //backup to section, then toggle section upon completion
+        if(Game.time - Memory.data.lastReset < 2) return
+        switch(Game.time % (settings.statTime * settings.backupTime)){
+        case 2:
+        case 4:
+            //backup first half to section
+            data.startBackup()
+            break
+        case 3:
+        case 5:
+            //continue backup if needed
+            data.continueBackup()
+            break
+        default: 
+            return
+        }
+    },
+
+    startBackup: function() {
+        const startSeg = Memory.data.section ? 21 : 1
+        let dataString = JSON.stringify(Cache.roomData)
+        for(let i = startSeg; i < startSeg + 10; i++){
+            const breakPoint = data.getBreakPoint(dataString)
+            RawMemory.segments[i] = dataString.substring(0, breakPoint)
+            if(breakPoint == dataString.length) {
+                Memory.data.section = (Memory.data.section + 1) % 2
+                return
+            }
+            dataString = dataString.substring(breakPoint)
+        }
+        Cache.dataString = dataString
+    },
+
+    continueBackup: function() {
+        const startSeg = Memory.data.section ? 31 : 11
+        let dataString = Cache.dataString
+        if(!dataString || !dataString.length) return
+        for(let i = startSeg; i < startSeg + 10; i++){
+            const breakPoint = data.getBreakPoint(dataString)
+            RawMemory.segments[i] = dataString.substring(0, breakPoint)
+            if(breakPoint == dataString.length) {
+                Memory.data.section = (Memory.data.section + 1) % 2
+                delete Cache.dataString
+                return
+            }
+            if(i == startSeg + 6){
+                Log.info("roomData storage running low")
+                Game.notify("roomData storage running low", 1440)
+            }
+            dataString = dataString.substring(breakPoint)
+        }
+        Cache.dataString = dataString
     },
 
     getBreakPoint: function(str) {
@@ -100,7 +151,7 @@ var data = {
             bytes += (codePoint < 0x80 ? 1 : (codePoint < 0x800 ? 2 : 3))
             i++
         }
-        return i;
+        return i
     },
 
     makeVisuals: function(){
