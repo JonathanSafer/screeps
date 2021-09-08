@@ -156,23 +156,23 @@ const p = {
         if(Game.cpu.bucket != 10000 || Memory.flags["claim"] || !PServ) return
         const myCities = u.getMyCities()
         if(Game.gcl.level == myCities.length) return
-        const candidates = _.reject(Cache.roomData, room => !room.s 
-            || room.s == -1 
-            || room.rcl 
-            || room.sct < Game.time + CREEP_LIFE_TIME 
-            || (room.cB && room.cB > Game.time)
-            || (room.sMC && room.sMC > Game.time + CREEP_LIFE_TIME))
+        const candidates = _.reject(Object.keys(Cache.roomData), roomName => !Cache.roomData[roomName].s 
+            || Cache.roomData[roomName].s == -1 
+            || Cache.roomData[roomName].rcl 
+            || Cache.roomData[roomName].sct < Game.time + CREEP_LIFE_TIME 
+            || (Cache.roomData[roomName].cB && Cache.roomData[roomName].cB > Game.time)
+            || (Cache.roomData[roomName].sMC && Cache.roomData[roomName].sMC > Game.time + CREEP_LIFE_TIME))
         if(!candidates.length) return
         Log.info("attempting expansion")
-        const expoRooms = _.sortBy(candidates, room => room.score)
+        const expoRooms = _.sortBy(candidates, roomName => Cache.roomData[roomName].s)
         let expoRoomName = null
         for(const candidate of expoRooms){
             if(expoRoomName) break
             for(const room of myCities){
-                const controllerPos = new RoomPosition(candidate.controllerPos.x, candidate.controllerPos.y, candidate.controllerPos.roomName)
+                const controllerPos = u.unpackPos(Cache.roomData[candidate].ctrlP, candidate)
                 const result = PathFinder.search(room.controller.pos, {pos: controllerPos, range: 1}, {
                     plainCost: 1, swampCost: 1, maxOps: 10000, roomCallback: (roomName) => {
-                        if(!Cache.roomData[roomName] || (Cache.roomData.rcl && CONTROLLER_STRUCTURES[STRUCTURE_TOWER][Cache.roomData[roomName].rcl] && !settings.allies.includes(Cache.roomData[roomName].own)))
+                        if(!Cache.roomData[roomName] || (Cache.roomData[roomName].rcl && CONTROLLER_STRUCTURES[STRUCTURE_TOWER][Cache.roomData[roomName].rcl] && !settings.allies.includes(Cache.roomData[roomName].own)))
                             return false
                     }
                 })
