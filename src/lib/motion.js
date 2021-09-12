@@ -363,7 +363,7 @@ var m = {
     },
 
     getRoute: function(start, finish, avoidEnemies){
-        const roomDataCache = u.getsetd(Cache, "roomData", {})
+        const roomDataCache = Cache.roomData
         const route = Game.map.findRoute(start, finish, {
             routeCallback: function(roomName){
                 if(u.isHighway(roomName)){
@@ -374,7 +374,7 @@ var m = {
                 }
                 const roomData = u.getsetd(roomDataCache, roomName, {})
                 if(roomData.own && !settings.allies.includes(roomData.own) && roomData.rcl && CONTROLLER_STRUCTURES[STRUCTURE_TOWER][roomData.rcl] && avoidEnemies){
-                    return 20
+                    return 5
                 }
                 return settings.motion.backRoadPenalty
             }
