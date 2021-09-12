@@ -37,6 +37,7 @@ profiler.enable()
 module.exports.loop = function () {
     "use strict"
     profiler.wrap(function () {
+        RawMemory.setActiveSegments([])
         global.Tmp = []
         data.updateData()
         er.reset()
