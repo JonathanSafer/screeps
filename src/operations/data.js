@@ -60,23 +60,56 @@ var data = {
     },
 
     recoverData: function() {
+        const s = (Memory.data.section + 1) % 2 ? 21 : 1
         switch(Game.time - Memory.data.lastReset){
         case 0:
             //load first half of data
+            RawMemory.setActiveSegments([s,s+1,s+2,s+3,s+4,s+5,s+6,s+7,s+8,s+9])
             break
         case 1:
             //read in first half of data
+            data.readData(s, false)
             //load second half of data
+            if(Cache.dataString)
+                RawMemory.setActiveSegments([s+10,s+11,s+12,s+13,s+14,s+15,s+16,s+17,s+18,s+19])
             break
         case 2:
             //read in second half of data
+            data.readData(s, true)
             break
         default:
             return
         }
     },
 
-    backupData: function(){
+    readData: function(startSeg, continuing) {
+        if(continuing && !Cache.dataString) return
+        if(!Cache.dataString)
+            Cache.dataString = ""
+        for(let i = startSeg; i < startSeg + 10; i++){
+            const segment = RawMemory.segments[i]
+            if(!segment.length){
+                data.uploadData()
+                break
+            }
+        }
+        if(continuing && Cache.dataString){//auto upload if we're using exactly 20 segments
+            data.uploadData()
+        }
+    },
+
+    uploadData: function() {
+        try {
+            Cache.roomData = JSON.parse(Cache.dataString)
+        } catch (error) {
+            const msg = "Out of storage for roomData. Resetting..."
+            Log.error(msg)
+            Game.notify(msg)
+        }
+        delete Cache.dataString
+    },
+
+    backupData: function() {
         //don't backup during stats update or recovery
         //backup to section, then toggle section upon completion
         if(Game.time - Memory.data.lastReset < 2) return
@@ -130,8 +163,9 @@ var data = {
                 delete Cache.dataString
             }
             if(i == startSeg + 6 && Cache.dataString){
-                Log.info("roomData storage running low")
-                Game.notify("roomData storage running low", 1440)
+                const msg = "roomData storage running low"
+                Log.info(msg)
+                Game.notify(msg, 1440)
             }
             dataString = dataString.substring(breakPoint)
         }
