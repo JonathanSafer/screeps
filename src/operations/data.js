@@ -92,6 +92,10 @@ var data = {
     },
 
     uploadData: function() {
+        if(!Cache.dataString.length){
+            delete Cache.dataString
+            return
+        }
         try {
             Cache.roomData = JSON.parse(Cache.dataString)
         } catch (error) {
