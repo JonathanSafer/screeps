@@ -100,11 +100,15 @@ var data = {
         const startSeg = Memory.data.section ? 21 : 1
         let dataString = JSON.stringify(Cache.roomData)
         for(let i = startSeg; i < startSeg + 10; i++){
+            if(!dataString || !dataString.length){
+                RawMemory.segments[i] = ""
+                continue
+            }
             const breakPoint = data.getBreakPoint(dataString)
             RawMemory.segments[i] = dataString.substring(0, breakPoint)
             if(breakPoint == dataString.length) {
                 Memory.data.section = (Memory.data.section + 1) % 2
-                return
+                continue
             }
             dataString = dataString.substring(breakPoint)
         }
@@ -114,22 +118,23 @@ var data = {
     continueBackup: function() {
         const startSeg = Memory.data.section ? 31 : 11
         let dataString = Cache.dataString
-        if(!dataString || !dataString.length) return
         for(let i = startSeg; i < startSeg + 10; i++){
+            if(!dataString || !dataString.length){
+                RawMemory.segments[i] = ""
+                continue
+            }
             const breakPoint = data.getBreakPoint(dataString)
             RawMemory.segments[i] = dataString.substring(0, breakPoint)
             if(breakPoint == dataString.length) {
                 Memory.data.section = (Memory.data.section + 1) % 2
                 delete Cache.dataString
-                return
             }
-            if(i == startSeg + 6){
+            if(i == startSeg + 6 && Cache.dataString){
                 Log.info("roomData storage running low")
                 Game.notify("roomData storage running low", 1440)
             }
             dataString = dataString.substring(breakPoint)
         }
-        Cache.dataString = dataString
     },
 
     getBreakPoint: function(str) {
