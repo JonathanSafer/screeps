@@ -20,7 +20,7 @@ var statsLib = {
         }
 
         //stats
-        if (Game.time % settings.statTime == 1){
+        if (Game.time % settings.statTime == 1 && Game.time - Memory.data.lastReset > 5){
             const stats = {}
             stats["cpu.getUsed"] = Game.cpu.getUsed()
             stats["cpu.bucket"] = Game.cpu.bucket
