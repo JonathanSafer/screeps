@@ -38,6 +38,7 @@ module.exports.loop = function () {
     "use strict"
     profiler.wrap(function () {
         global.Tmp = []
+        data.updateData()
         er.reset()
         if (Game.cpu.bucket < 50 && Game.shard.name != "shard1" && Game.time > 50){
             Log.error("Bucket too low")
@@ -159,6 +160,7 @@ module.exports.loop = function () {
         if(Game.time % settings.flagCleanup) u.cleanFlags()
 
         data.makeVisuals()
+        data.backupData()
 
         // disable emailing
         u.silenceCreeps()

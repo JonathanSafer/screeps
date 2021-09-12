@@ -30,19 +30,12 @@ var data = {
         if(!Memory.data){
             Memory.data = {
                 lastReset: 0,
-                uploading: false, //are we uploading and in the middle of a section
                 section: 0, //section being uploaded to. Always recover from other section
             }
         }
         data.checkReset()
         data.recoverData()
 
-
-
-
-
-        //const dataString = JSON.stringify(Cache.roomData)
-        //const segmentSize = 50000
         //150k chars ~= 165kb
         //373k => 427kb ~4000 rooms
         //~3 cpu for 87k chars ~100kb, so probably ~30 cpu per tick for backing up data
