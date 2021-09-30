@@ -648,6 +648,8 @@ var rQ = {
 
     // Find the first wall in our path and select it
     getWallInQuadPath: function(room, path) {
+        if(u.isFriendlyRoom(room))
+            return null
         const blockingStructures = [STRUCTURE_WALL, STRUCTURE_RAMPART]
         return _(path)
             .map(pos => rQ.getOverlappingStructures(room, pos))
