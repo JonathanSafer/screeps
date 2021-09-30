@@ -294,6 +294,8 @@ function breakerBody(energyAvailable, rcl, boosted){
     if(!boosted){
         return scalingBody([1 , 1], [WORK, MOVE], energyAvailable)
     }
+    if(rcl == 8)
+        return body([16, 24, 10], [TOUGH, WORK, MOVE])
     return scalingBody([1, 3, 1], [TOUGH, WORK, MOVE], energyAvailable)
 }
 
@@ -301,6 +303,8 @@ function medicBody(energyAvailable, rcl, boosted){
     if(!boosted){
         return scalingBody([1 , 1], [HEAL, MOVE], energyAvailable)
     }
+    if(rcl == 8)
+        return body([16, 24, 10], [TOUGH, HEAL, MOVE])
     return scalingBody([1, 3, 1], [TOUGH, HEAL, MOVE], energyAvailable)
 }
 
