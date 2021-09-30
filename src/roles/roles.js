@@ -31,8 +31,8 @@ var rr = {
     getRolePriorities: function(){
         const priorites = {}
         priorites[rF.name] = 0
-        priorites[rD.name] = 1
-        priorites[rT.name] = 2
+        priorites[rD.name] = 2
+        priorites[rT.name] = 1
         priorites[rM.name] = 3
         priorites[rR.name] = 4
         priorites[rU.name] = 5
