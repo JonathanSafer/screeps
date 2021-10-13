@@ -58,6 +58,6 @@ global.PCAssign = function(name, city, shard){
         Log.error("invalid PC name")
     }
     creep.memory.city = city
-    creep.memory.shard = shard || Game.shard
+    creep.memory.shard = shard || Game.shard.name
     Log.info(`${name} has been assigned to ${city} on ${creep.memory.shard}`)
 }
