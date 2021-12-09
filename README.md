@@ -5,7 +5,7 @@ Screeps AI
 Functional screeps AI.
 
 ## Instructions
-## Building and running
+### Building and running
 Use the following sequence of steps to build and run the code:
 1. Install nodejs (Node 12.x recommended)
 2. `npm ci` # install dependencies
