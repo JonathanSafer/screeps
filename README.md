@@ -5,6 +5,15 @@ Screeps AI
 Functional screeps AI.
 
 ## Instructions
+## Building and running
+Use the following sequence of steps to build and run the code:
+1. Install nodejs (Node 12.x recommended)
+2. `npm ci` # install dependencies
+3. `npm test` # run lint and tests
+4. `npm run coverage` # get code coverage report
+5. `npm run roll` # combine project into a single file to upload to screeps
+6. Upload the file to a screeps server. This can be done using `npm run push` if you have a screeps.yml file (https://github.com/screepers/node-screeps-api)
+
 ### Startup
 1. Place your spawn in a large open area. Name it <roomName>0, for example, if the room is called E12N14, the spawn should be E12N140. The spawn should have 6 open squares on each side (13 by 13 square with spawn in the middle).
 
