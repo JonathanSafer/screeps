@@ -216,6 +216,7 @@ var rBr = {
 
         // if nothing is in our path then return the target at the end of the path
         const targetPos = path.pop()
+        if(!targetPos) return false
         const targets = targetPos.lookFor(LOOK_STRUCTURES)
         const target = _(targets).min("hits")
         return target
