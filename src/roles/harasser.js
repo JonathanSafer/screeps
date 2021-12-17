@@ -72,7 +72,7 @@ var rH = {
             rH.aMove(creep, hostiles)
         }
         rH.shoot(creep, hostiles)
-        if(creep.memory.target && Game.getObjectById(creep.memory.target).structureType){
+        if(creep.memory.target && Game.getObjectById(creep.memory.target) && Game.getObjectById(creep.memory.target).structureType){
             creep.memory.target = null
         }
     },
