@@ -50,7 +50,7 @@ var rH = {
         rH.maybeHeal(creep, hostiles)
         if(!hostiles.length){
             if(Memory.flags[flagName] && creep.room.name == Memory.flags[flagName].roomName){
-                const hostileStructures = creep.room.find(FIND_HOSTILE_STRUCTURES)
+                const hostileStructures = u.findHostileStructures(creep.room)
                 if(hostileStructures.length){
                     if(!Game.getObjectById(creep.memory.target)){
                         creep.memory.target = hostileStructures[0].id
@@ -72,6 +72,9 @@ var rH = {
             rH.aMove(creep, hostiles)
         }
         rH.shoot(creep, hostiles)
+        if(Game.getObjectById(creep.memory.target).structureType){
+            creep.memory.target = null
+        }
     },
 
     shoot: function(creep, hostiles){
