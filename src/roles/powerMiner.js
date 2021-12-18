@@ -185,11 +185,14 @@ var rPM = {
             if(!lab){
                 continue
             }
-            if(lab.mineralType == boost){
+            const type = u.getTypeFromBoost(boost)
+            const unboosted = _.filter(creep.body, p => p.type == type && !p.boost).length
+            const boostNeeded = LAB_BOOST_MINERAL * unboosted
+            if(lab.mineralType == boost && lab.store[lab.mineralType] >= LAB_BOOST_MINERAL){
                 //boost self
                 if (lab.boostCreep(creep) === ERR_NOT_IN_RANGE) {
                     motion.newMove(creep, lab.pos, 1)
-                } else {
+                } else if(lab.store[lab.mineralType] >= boostNeeded){
                     creep.memory.boosted++
                 }
                 return

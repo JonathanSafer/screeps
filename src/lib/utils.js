@@ -529,6 +529,16 @@ var u = {
 
     unpackPos: function(pos, roomName){
         return new RoomPosition(Math.floor(pos/50), pos%50, roomName)
+    },
+
+    getTypeFromBoost(boost){
+        const types = Object.keys(BOOSTS)
+        for(let i = 0; i < types.length; i++){
+            if(BOOSTS[types[i]][boost]){
+                return types[i]
+            }
+        }
+        return null
     }
 }
 
