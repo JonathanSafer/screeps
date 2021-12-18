@@ -568,7 +568,6 @@ function updateTransporter(extensions, memory, creeps, structures, spawn) {
 
 function updateUpgrader(city, controller, memory, rcl8, creeps, rcl) {
     const room = Game.spawns[city].room
-    memory[rU.name] = 0//temp
     if (rcl8){
         const bucketThreshold = settings.bucket.upgrade + settings.bucket.range * cityFraction(room.name)
         const haveEnoughCpu = Game.cpu.bucket > bucketThreshold
@@ -577,16 +576,13 @@ function updateUpgrader(city, controller, memory, rcl8, creeps, rcl) {
             scheduleIfNeeded(rU.name, 1, true, Game.spawns[city], creeps)
         }
     } else {
+        if(!creeps.length) return
         var banks = u.getWithdrawLocations(creeps[0])
         //Log.info(banks);
         let money = _.sum(_.map(banks, bank => bank.store[RESOURCE_ENERGY]))
         if(room.find(FIND_MY_CONSTRUCTION_SITES).length) money -= 1000
         var capacity = _.sum(_.map(banks, bank => bank.store.getCapacity()))
         //Log.info('money: ' + money + ', ' + (100*money/capacity));
-        if(!room.storage && money/capacity < 0.5){
-            memory[rU.name] = 0
-            return
-        }
         if(money > (capacity * .28)){
             let needed = Math.floor((money/capacity) * 5)
             if(room.storage){
