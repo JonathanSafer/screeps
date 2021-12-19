@@ -61,3 +61,22 @@ global.PCAssign = function(name, city, shard){
     creep.memory.shard = shard || Game.shard.name
     Log.info(`${name} has been assigned to ${city} on ${creep.memory.shard}`)
 }
+global.RemoveJunk = function(city){//only to be used on cities with levelled factories
+    Log.info("Attempting to remove junk...")
+    const terminal = city.room.terminal
+    const coms = _.without(_.difference(Object.keys(COMMODITIES), Object.keys(REACTIONS)), RESOURCE_ENERGY)
+    const unleveledFactory = _.find(Game.structures, struct => struct.structureType == STRUCTURE_FACTORY
+             && struct.my && !struct.level && struct.room.terminal && struct.room.controller.level >= 7)
+    if (!unleveledFactory) {
+        Log.info("No destination found")
+        return
+    }
+    const destination = unleveledFactory.room.name
+    for(var i = 0; i < Object.keys(terminal.store).length; i++){
+        if(_.includes(coms, Object.keys(terminal.store)[i])){
+            //send com to a level 0 room
+            Log.info(`Removing: ${Object.keys(terminal.store)[i]}`)
+            Game.spawns[city].memory.ferryInfo.comSend.push([Object.keys(terminal.store)[i], terminal.store[Object.keys(terminal.store)[i]], destination])
+        }
+    }
+}
