@@ -63,7 +63,7 @@ global.PCAssign = function(name, city, shard){
 }
 global.RemoveJunk = function(city){//only to be used on cities with levelled factories
     Log.info("Attempting to remove junk...")
-    const terminal = city.room.terminal
+    const terminal = Game.spawns[city].room.terminal
     const coms = _.without(_.difference(Object.keys(COMMODITIES), Object.keys(REACTIONS)), RESOURCE_ENERGY)
     const unleveledFactory = _.find(Game.structures, struct => struct.structureType == STRUCTURE_FACTORY
              && struct.my && !struct.level && struct.room.terminal && struct.room.controller.level >= 7)
@@ -77,6 +77,49 @@ global.RemoveJunk = function(city){//only to be used on cities with levelled fac
             //send com to a level 0 room
             Log.info(`Removing: ${Object.keys(terminal.store)[i]}`)
             Game.spawns[city].memory.ferryInfo.comSend.push([Object.keys(terminal.store)[i], terminal.store[Object.keys(terminal.store)[i]], destination])
+        }
+    }
+}
+global.CleanCities = function(){
+    const u = require("./utils")
+    const cM = require("../managers/commodityManager")
+    const cities = _.filter(Game.rooms, room => room.controller && room.controller.my 
+        && _.find(room.find(FIND_MY_STRUCTURES), s => s.structureType == STRUCTURE_FACTORY))
+    Log.info(`Cities with a factory: ${cities}`)
+    const citiesByFactoryLevel = cM.groupByFactoryLevel(cities)
+    Log.info(JSON.stringify(citiesByFactoryLevel))
+    for(const level of Object.values(citiesByFactoryLevel)){
+        for(const city of level){
+            const factory = u.getFactory(city)
+            const memory = Game.spawns[city.memory.city].memory
+            if(memory.ferryInfo.factoryInfo.produce == "dormant"){
+                //empty factory (except for energy)
+                Log.info(`Emptying factory in ${city.name}...`)
+                for(const resource of Object.keys(factory.store)){
+                    if(resource != RESOURCE_ENERGY){
+                        Log.info(`Removing ${resource}`)
+                        memory.ferryInfo.factoryInfo.transfer.push([resource, 0, factory.store[resource]])
+                    }
+                }
+                if(factory.level){//only leveled factories need to send back components
+                    Log.info(`Cleaning Terminal in ${city.name}...`)
+                    for(const resource of Object.keys(city.terminal.store)){
+                        //send back components
+                        if(COMMODITIES[resource] 
+                            && !REACTIONS[resource] 
+                            && resource != RESOURCE_ENERGY 
+                            && COMMODITIES[resource].level != factory.level){
+                            const comLevel = COMMODITIES[resource].level || 0
+                            const receiver = citiesByFactoryLevel[comLevel][0].name
+                            Log.info(`Sending ${resource} to ${receiver}`)
+                            const amount = city.terminal.store[resource]
+                            const ferryInfo = u.getsetd(memory, "ferryInfo", {})
+                            const comSend = u.getsetd(ferryInfo, "comSend", [])
+                            comSend.push([resource, amount, receiver])
+                        }
+                    }
+                }
+            }
         }
     }
 }
