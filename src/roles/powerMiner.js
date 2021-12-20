@@ -179,6 +179,10 @@ var rPM = {
         if(creep.spawning){
             return
         }
+        if(!Game.spawns[creep.memory.city].memory.ferryInfo.labInfo){
+            creep.memory.boosted++
+            return
+        }
         const labs = Object.keys(Game.spawns[creep.memory.city].memory.ferryInfo.labInfo.receivers)
         for(const labId of labs){
             const lab = Game.getObjectById(labId)
