@@ -12,10 +12,10 @@ var rUC = {
 
     unclaim: function(creep) {
         const result = creep.attackController(creep.room.controller)
-        if(!creep.room.controller.level){
+        if(!creep.room.controller.level && !creep.room.controller.reservation){
             delete Memory.flags.unclaim
         }
-        if(result === OK){
+        if(result === OK && !creep.room.controller.reservation){
             Game.spawns[creep.memory.city].memory[rUC.name] = 0
             creep.suicide()
         }
