@@ -9,36 +9,44 @@ global.Cache = { roomData: {} }
 global.Log = {}
 Log.info = function(text) { console.log(`<p style="color:yellow">[INFO] ${Game.time}: ${text}</p>`) }
 Log.error = function(text) { console.log(`<p style="color:red">[ERROR] ${Game.time}: ${text}</p>`) }
+Log.warning = function(text) { console.log(`<p style="color:orange">[WARNING] ${Game.time}: ${text}</p>`) }
+Log.console = function(text) { `<p style="color:green">[CONSOLE] ${Game.time}: ${text}</p>` }
 
 // Function to buy sub token. Price in millions. BuyToken(3) will pay 3 million
-global.BuyToken = function(price) {
+global.BuyUnlock = function(price, amount) {
     Game.market.createOrder({
         type: ORDER_BUY,
-        resourceType: SUBSCRIPTION_TOKEN,
-        price: price * 1e6,
-        totalAmount: 1,
-        roomName: "E11S22"
+        resourceType: CPU_UNLOCK,
+        price: price,
+        totalAmount: amount,
     })
+    return Log.console(`Order created for ${amount} unlock(s) at ${price} apiece`)
 }
 global.SpawnQuad = function(city, boosted){
     military.spawnQuad(city, boosted)
+    return Log.console(`Spawning Quad from ${city}`)
 }
 global.SpawnBreaker = function(city, boosted){
     sq.initialize(Game.spawns[city])
     sq.schedule(Game.spawns[city], "medic", boosted)
     sq.schedule(Game.spawns[city], "breaker", boosted)
+    return Log.console(`Spawning Breaker and Medic from ${city}`)
 }
 global.SpawnRole = function(role, city, boosted){
     sq.initialize(Game.spawns[city])
     sq.schedule(Game.spawns[city], role, boosted)
+    return Log.console(`Spawning ${role} from ${city}`)
 }
 global.PlaceFlag = function(flagName, x, y, roomName, duration){
     Memory.flags[flagName] = new RoomPosition(x, y, roomName)
-    Memory.flags[flagName].removeTime = Game.time + (duration || 20000)
+    duration = duration || 20000
+    Memory.flags[flagName].removeTime = Game.time + duration
+    return Log.console(`${flagName} flag placed in ${roomName}, will decay in ${duration} ticks`)
 }
 
 global.DeployQuad = function(roomName, boosted) {
     military.deployQuad(roomName, boosted)
+    return Log.console(`Deploying Quad to ${roomName}`)
 }
 
 global.RoomWeights = function(roomName) {
@@ -59,7 +67,7 @@ global.PCAssign = function(name, city, shard){
     }
     creep.memory.city = city
     creep.memory.shard = shard || Game.shard.name
-    Log.info(`${name} has been assigned to ${city} on ${creep.memory.shard}`)
+    Log.console(`${name} has been assigned to ${city} on ${creep.memory.shard}`)
 }
 global.RemoveJunk = function(city){//only to be used on cities with levelled factories
     Log.info("Attempting to remove junk...")
