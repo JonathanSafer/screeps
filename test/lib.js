@@ -345,6 +345,8 @@ global.Store = class {
 
 global.Tmp = {}
 
+global.CPU_UNLOCK = "cpuUnlock"
+
 var id = 0
 function getID() {
     return id++
