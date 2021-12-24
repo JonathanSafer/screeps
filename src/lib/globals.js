@@ -21,7 +21,7 @@ global.BuyUnlock = function(price, amount) {
         totalAmount: amount,
     }) == OK)
         return Log.console(`Order created for ${amount} unlock(s) at ${price} apiece`)
-    return Log.console(`Order failed. Please use BuyUnlock (price, amount)`)
+    return Log.console("Order failed. Please use BuyUnlock (price, amount)")
 }
 global.SpawnQuad = function(city, boosted){
     military.spawnQuad(city, boosted)
