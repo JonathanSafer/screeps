@@ -10,7 +10,7 @@ global.Log = {}
 Log.info = function(text) { console.log(`<p style="color:yellow">[INFO] ${Game.time}: ${text}</p>`) }
 Log.error = function(text) { console.log(`<p style="color:red">[ERROR] ${Game.time}: ${text}</p>`) }
 Log.warning = function(text) { console.log(`<p style="color:orange">[WARNING] ${Game.time}: ${text}</p>`) }
-Log.console = function(text) { `<p style="color:green">[CONSOLE] ${Game.time}: ${text}</p>` }
+Log.console = function(text) { return `<p style="color:green">[CONSOLE] ${Game.time}: ${text}</p>` }
 
 // Function to buy sub token. Price in millions. BuyToken(3) will pay 3 million
 global.BuyUnlock = function(price, amount) {
