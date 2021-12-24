@@ -14,13 +14,14 @@ Log.console = function(text) { return `<p style="color:green">[CONSOLE] ${Game.t
 
 // Function to buy sub token. Price in millions. BuyToken(3) will pay 3 million
 global.BuyUnlock = function(price, amount) {
-    Game.market.createOrder({
+    if(Game.market.createOrder({
         type: ORDER_BUY,
         resourceType: CPU_UNLOCK,
         price: price,
         totalAmount: amount,
-    })
-    return Log.console(`Order created for ${amount} unlock(s) at ${price} apiece`)
+    }) == OK)
+        return Log.console(`Order created for ${amount} unlock(s) at ${price} apiece`)
+    return Log.console(`Order failed. Please use BuyUnlock (price, amount)`)
 }
 global.SpawnQuad = function(city, boosted){
     military.spawnQuad(city, boosted)
