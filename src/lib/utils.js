@@ -160,9 +160,10 @@ var u = {
     },
 
     silenceCreeps: function() {
-        if (Game.time % 50 == 0) {
+        if (Game.time % 10 == 0) {
             for (const creep of Object.values(Game.creeps)) {
-                creep.notifyWhenAttacked(false)
+                if(creep.ticksToLive < 1500 && creep.ticksToLive > 1489)
+                    creep.notifyWhenAttacked(false)
             }
         }
     },
