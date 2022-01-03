@@ -15,7 +15,6 @@ var cM = {
         //push all top tier resources into queue
 
         while(requestQueue.length){
-            console.log(requestQueue)
             const requestedProduct = requestQueue.shift()
             const quantities = cM.getOrderQuantities(requestedProduct)
             const clearedToShip = cM.getOrderStatus(quantities, levelCache)
@@ -37,7 +36,6 @@ var cM = {
     getTopTier: function(citiesByFactoryLevel){
         const levels = Object.keys(citiesByFactoryLevel)
         const topTier = _.max(levels)
-        console.log(topTier)
         return _.filter(Object.keys(COMMODITIES), c => COMMODITIES[c].level == topTier && cM.isCommodity(c))
     },
 

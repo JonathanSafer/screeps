@@ -254,7 +254,6 @@ function runTowers(city){
 
         const lowEnergy = spawn.room.storage && spawn.room.terminal && spawn.room.storage.store.energy < 40000
         if(hostiles.length > 0  && !lowEnergy){
-            Log.info("Towers up in " + city)
             spawn.memory.towersActive = true
             //identify target 
             target = t.chooseTarget(towers, hostiles, spawn.pos.roomName)

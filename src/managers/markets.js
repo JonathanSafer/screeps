@@ -171,7 +171,8 @@ var markets = {
                 }
                 if(x === senders.length && !Memory.rooms[myCity.name].termUsed){
                     const amount = 3000
-                    const goodPrice = PServ ? markets.getPrice(mineral) * 2 : markets.getPrice(mineral) * 1.2
+                    const pastPrice = markets.getPrice(mineral)
+                    const goodPrice = PServ ? pastPrice * 2 : pastPrice * 1.5
                     const sellOrders = markets.sortOrder(Game.market.getAllOrders(order => order.type == ORDER_SELL 
                         && order.resourceType == mineral 
                         && order.amount >= amount 
@@ -180,12 +181,6 @@ var markets = {
                         Game.market.deal(sellOrders[0].id, amount, myCity.name)
                         Game.spawns[city].memory.ferryInfo.mineralRequest = null
                         Memory.rooms[myCity.name].termUsed = true
-                    } else {
-                        const error = `Problem at distributeMinerals with ${mineral}.
-                            No sell orders found with amount greater than ${amount}, price 0.5.
-                            City ${myCity.name}, tick ${Game.time}`
-                        //Game.notify(error, 20)
-                        console.log(error)
                     }
                 }
             }
@@ -201,7 +196,7 @@ var markets = {
                 if (city.terminal && city.terminal.store.power > 2000 && !Memory.rooms[city.name].termUsed){
                     city.terminal.send(RESOURCE_POWER, 560, receiver)
                     Memory.rooms[city.name].termUsed = true
-                    Log.info("Sending power to " + receiver)
+                    //Log.info("Sending power to " + receiver)
                 }
             }
         }
