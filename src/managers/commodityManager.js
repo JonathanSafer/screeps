@@ -70,7 +70,7 @@ var cM = {
 
     getDestination: function(product, citiesByFactoryLevel){
         //return roomName. destination must have less than 2k of all commodities and correct factoryLevel.
-        console.log(product)
+        //console.log(product)
         const prodLvl = COMMODITIES[product].level
         const components = _.without(Object.keys(COMMODITIES[product].components), RESOURCE_ENERGY)
         const destinations = _.filter(citiesByFactoryLevel[prodLvl], city => 
