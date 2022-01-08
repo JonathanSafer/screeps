@@ -21,19 +21,38 @@ global.BuyUnlock = function(price, amount) {
         totalAmount: amount,
     }) == OK)
         return Log.console(`Order created for ${amount} unlock(s) at ${price} apiece`)
-    return Log.console("Order failed. Please use BuyUnlock (price, amount)")
+    Log.error("Order failed. Please use BuyUnlock (float price, int amount)")
+    return -1
 }
 global.SpawnQuad = function(city, boosted){
+    if(!Game.spawns[city]){
+        Log.error("Invalid city name. Use SpawnQuad(string city, bool boosted)")
+        return -1
+    }
     military.spawnQuad(city, boosted)
     return Log.console(`Spawning Quad from ${city}`)
 }
 global.SpawnBreaker = function(city, boosted){
+    if(!Game.spawns[city]){
+        Log.error("Invalid city name. Use SpawnBreaker(string city, bool boosted)")
+        return -1
+    }
     sq.initialize(Game.spawns[city])
     sq.schedule(Game.spawns[city], "medic", boosted)
     sq.schedule(Game.spawns[city], "breaker", boosted)
     return Log.console(`Spawning Breaker and Medic from ${city}`)
 }
 global.SpawnRole = function(role, city, boosted){
+    if(!Game.spawns[city]){
+        Log.error("Invalid city name. Use SpawnRole(string role, string city, bool boosted)")
+        return -1
+    }
+    const rr = require("../roles/roles")
+    const roles = rr.getRoles()
+    if(!roles.includes(role)){
+        Log.error("Invalid role name. Use SpawnRole(string role, string city, bool boosted)")
+        return -1
+    }
     sq.initialize(Game.spawns[city])
     sq.schedule(Game.spawns[city], role, boosted)
     return Log.console(`Spawning ${role} from ${city}`)

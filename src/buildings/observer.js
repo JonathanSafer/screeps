@@ -146,7 +146,7 @@ const ob = {
 
     placeMiningFlags: function(city) {
         const obs = ob.getObsForMining(city)
-        if (!obs || !Game.spawns[city].memory.powerRooms.length) return false
+        if (!obs || !Game.spawns[city].memory.powerRooms || !Game.spawns[city].memory.powerRooms.length) return false
 
         const roomNum = ob.timeToRoomNum(Game.time - 1, city)
         const roomName = Game.spawns[city].memory.powerRooms[roomNum]

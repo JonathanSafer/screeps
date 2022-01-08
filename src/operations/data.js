@@ -191,7 +191,7 @@ var data = {
     },
 
     makeVisuals: function(){
-        if(Game.cpu.bucket == 10000){
+        if(Game.cpu.bucket == 9800){
             //TODO: visuals should be its own file
             if(Cache.roomData){
                 for(const roomName of Object.keys(Cache.roomData)){
