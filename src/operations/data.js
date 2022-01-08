@@ -57,6 +57,7 @@ var data = {
         switch(Game.time - Memory.data.lastReset){
         case 0:
             //load first half of data
+            Log.info("Resetting cache...")
             RawMemory.setActiveSegments([s,s+1,s+2,s+3,s+4,s+5,s+6,s+7,s+8,s+9])
             break
         case 1:
@@ -104,6 +105,7 @@ var data = {
             Log.error(msg)
             Game.notify(msg)
         }
+        Log.info("Cache reset complete")
         delete Cache.dataString
     },
 
