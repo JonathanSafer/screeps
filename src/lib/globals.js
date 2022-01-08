@@ -47,12 +47,6 @@ global.SpawnRole = function(role, city, boosted){
         Log.error("Invalid city name. Use SpawnRole(string role, string city, bool boosted)")
         return -1
     }
-    const rr = require("../roles/roles")
-    const roles = rr.getRoles()
-    if(!roles.includes(role)){
-        Log.error("Invalid role name. Use SpawnRole(string role, string city, bool boosted)")
-        return -1
-    }
     sq.initialize(Game.spawns[city])
     sq.schedule(Game.spawns[city], role, boosted)
     return Log.console(`Spawning ${role} from ${city}`)
@@ -84,10 +78,15 @@ global.PCAssign = function(name, city, shard){
     const creep = Game.powerCreeps[name]
     if(!creep){
         Log.error("invalid PC name")
+        return -1
     }
-    creep.memory.city = city
+    if(!Game.spawns[city]){
+        Log.error("Invalid city name. Use PCAssign(string name, string city, string shard)")
+        return -2
+    }
+    creep.memory.city = Game.spawns[city].room.name
     creep.memory.shard = shard || Game.shard.name
-    Log.console(`${name} has been assigned to ${city} on ${creep.memory.shard}`)
+    return Log.console(`${name} has been assigned to ${city} on ${creep.memory.shard}`)
 }
 global.RemoveJunk = function(city){//only to be used on cities with levelled factories
     Log.info("Attempting to remove junk...")

@@ -123,7 +123,7 @@ var rPC = {
             const citiesWithoutAnyPC = _.filter(cities, city => city.controller.level == 8
                 && u.getFactory(city) && !u.getFactory(city).level
                 && !usedRooms.includes(city.name))
-            Log.info(`PowerCreep ${creep.name} is unassigned, please assign using PCAssign(name, city). Available cities on this shard are ${citiesWithoutAnyPC}`)
+            Log.warning(`PowerCreep ${creep.name} is unassigned, please assign using PCAssign(name, city). Available cities on this shard are ${citiesWithoutAnyPC}`)
         }
     },
 
