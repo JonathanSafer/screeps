@@ -85,6 +85,7 @@ var data = {
                 data.uploadData()
                 break
             }
+            Cache.dataString += segment
         }
         if(continuing && Cache.dataString){//auto upload if we're using exactly 20 segments
             data.uploadData()
@@ -137,11 +138,10 @@ var data = {
             }
             const breakPoint = data.getBreakPoint(dataString)
             RawMemory.segments[i] = dataString.substring(0, breakPoint)
+            Cache.dataString = dataString.substring(breakPoint)
             if(breakPoint == dataString.length) {
                 Memory.data.section = (Memory.data.section + 1) % 2
-                continue
             }
-            Cache.dataString = dataString.substring(breakPoint)
         }
     },
 
