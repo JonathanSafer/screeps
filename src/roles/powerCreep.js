@@ -114,7 +114,7 @@ var rPC = {
     },
 
     initializePowerCreep: function(creep) {
-        if(Game.time % 10 != 0) return
+        if(Game.time % 50 != 0) return
         if (!creep.memory.city) {
             const cities = u.getMyCities()
             const usedRooms = _(Game.powerCreeps)
