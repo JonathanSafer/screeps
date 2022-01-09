@@ -532,7 +532,7 @@ var u = {
         return new RoomPosition(Math.floor(pos/50), pos%50, roomName)
     },
 
-    getTypeFromBoost(boost){
+    getTypeFromBoost: function(boost){
         const types = Object.keys(BOOSTS)
         for(let i = 0; i < types.length; i++){
             if(BOOSTS[types[i]][boost]){
@@ -540,6 +540,13 @@ var u = {
             }
         }
         return null
+    },
+
+    getRangeTo: function(pos, targetPos){
+        if(pos.roomName == targetPos.roomName){
+            return pos.getRangeTo(targetPos)
+        }
+        //
     }
 }
 

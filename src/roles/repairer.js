@@ -9,6 +9,9 @@ var rRe = {
 
     /** @param {Creep} creep **/
     run: function(creep) {
+        if(!creep.memory.repPower){
+            creep.memory.repPower = REPAIR_POWER * creep.getActiveBodyparts(WORK)
+        }
         rB.decideWhetherToBuild(creep)
         if(creep.memory.building){
             if(!rRe.build(creep))
@@ -22,8 +25,10 @@ var rRe = {
         const needRepair = rRe.findRepair(creep)
         if (needRepair) {
             creep.memory.repair = needRepair.id
-            return a.repair(creep, needRepair)
-            //TODO if moving to target, check if road under creep needs repair
+            if(creep.repair(needRepair) == ERR_NOT_IN_RANGE){
+                motion.newMove(creep, needRepair.pos, 3)
+                rRe.closeRepair(creep)
+            }
         }
     },
 
@@ -41,7 +46,7 @@ var rRe = {
             if(site){
                 if(creep.build(site) === ERR_NOT_IN_RANGE){
                     motion.newMove(creep, site.pos, 3)
-                    //TODO see if there's something to repair under foot
+                    rRe.closeRepair(creep)
                 }
                 return true
             } else {
@@ -59,6 +64,13 @@ var rRe = {
             creep.memory.nextCheckTime = Game.time + 100
         }
         return false
+    },
+
+    closeRepair: function(creep){
+        const target = _.find(creep.pos.findInRange(FIND_STRUCTURES, 3), s => s.hits && s.hitsMax - s.hits > creep.memory.repPower)
+        if(target){
+            creep.repair(target)
+        }
     },
 
     findRepair: function(creep){
