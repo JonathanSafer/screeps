@@ -212,7 +212,7 @@ const p = {
         Memory.remotes[roomName] = 1
         const memory = Memory.spawns[homeName + "0"]
         const roomInfo = Cache.roomData[roomName]
-        for(const sourceId in Object.keys(roomInfo.src)){
+        for(const sourceId in roomInfo.src){
             return memory, sourceId
             //uncomment this to activate
             //memory.sources[sourceId] = u.unpackPos(roomInfo.src[sourceId], roomName)
@@ -286,12 +286,45 @@ const p = {
     },
 
     dropRemote: function(cities){
-        return cities//TODO
+        let remote = null
+        Log.info("CPU too high, dropping least profitable remote...")
+        if(!Memory.remotes) Memory.remotes = {}
+        for(const city of cities){
+            const result = p.findWorstRemote(city)
+            if(result && (!remote || result.score > remote.score))
+                remote = result
+        }//result object will have roomName, score, and homeName
+        if(remote){
+            p.removeRemote(remote.roomName, remote.homeName)
+            Log.info(`Remote ${remote.roomName} removed from ${remote.homeName}`)
+        } else {
+            Log.info("No remotes to remove")
+        }
+    },
+
+    removeRemote: function(roomName, city){
+        delete Memory.remotes[roomName]
+        const memory = Memory.spawns[city + "0"]
+        for(const sourceId in memory.sources){
+            if(memory.sources[sourceId].roomName)
+                delete memory.sources[sourceId]
+        }
     },
 
     findWorstRemote: function(city){
-        return city//TODO
-        //return null
+        let remote = null
+        const spawn = Game.spawns[city.name + "0"]
+        if(!spawn) return null
+        const remotes = Object.keys(_.countBy(spawn.memory.sources, s => s.roomName))
+        for(const roomName of remotes){
+            const roomInfo = Cache.roomData[roomName]
+            if(roomInfo.own == settings.username)
+                continue
+            const score = p.scoreRemoteRoom(roomName, spawn)
+            if(score > 0 && (!remote || score > remote.score))
+                remote = {roomName: roomName, homeName: city.name, score: score}
+        }
+        return remote
     },
 
     calcSpawnTimeNeeded: function(roomName, spawn){
@@ -350,7 +383,7 @@ const p = {
             totalCost += (minerCost/ (CREEP_LIFE_TIME - result.cost)) + (roadUpkeep * result.cost) + (runnersNeeded * runnerCost/CREEP_LIFE_TIME)
         }
 
-        const revenue = sourceEnergy * Object.keys(roomInfo.rcl).length/ENERGY_REGEN_TIME
+        const revenue = sourceEnergy * Object.keys(roomInfo.src).length/ENERGY_REGEN_TIME
         const profit = revenue - totalCost
         return {profit: profit, time: totalTime}
     },

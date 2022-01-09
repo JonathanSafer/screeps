@@ -52,11 +52,10 @@ var settings = {
         powerMine: 450000
     },
     max: {
-        upgraders: 6, // low rcl TODO: is this in use anymore?
-        runners: 6, // low rcl
-        builders: 3,
+        runners: 12, // low rcl
+        builders: 3, //TODO is this in use?
         transporters: 2,
-        miners: 1, // rcl8 TODO: this should'nt be in use anymore
+        miners: 1, // rcl8 TODO: this shouldn't be in use anymore
     },
     motion: {
         backRoadPenalty: 1.5
