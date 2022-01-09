@@ -82,7 +82,7 @@ var data = {
             Cache.dataString = ""
         for(let i = startSeg; i < startSeg + 10; i++){
             const segment = RawMemory.segments[i]
-            if(!segment.length){
+            if(!segment || !segment.length){
                 data.uploadData()
                 break
             }
