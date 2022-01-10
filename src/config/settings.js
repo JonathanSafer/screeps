@@ -30,6 +30,7 @@ var settings = {
     addRemote: 0.6,
     removeRemote: 0.8,
     spawnFreeTime: 0.3, //amount of spawn time to be left open for miscellaneous activity
+    spawnFreeTimeBuffer: 0.2,
     bucket: {//minimum bucket thresholds
         resourceMining: 1000,
         repair: 3000, //repairing walls in a room

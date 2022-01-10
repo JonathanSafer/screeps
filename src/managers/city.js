@@ -25,6 +25,7 @@ var link = require("../buildings/link")
 var e = require("../operations/error")
 var rMe = require("../roles/medic")
 const rQr = require("../roles/qrCode")
+const rp = require("./roomplan")
 
 
 function makeCreeps(role, city, unhealthyStore, creepWantsBoosts, flag = null) {
@@ -120,12 +121,11 @@ function runCity(city, creeps){
     })
     
     link.run(room)
-
-    //run powerSpawn
     runPowerSpawn(city)
     labsLib.run(city)
     fact.runFactory(city)
     checkNukes(room)
+    updateRemotes(city)
 }
 
 //updateCountsCity function
@@ -791,6 +791,19 @@ function updateSpawnStress(spawn){
     if(!memory.spawnAvailability) memory.spawnAvailability = 0
     const freeSpawns = _.filter(room.find(FIND_MY_SPAWNS), s => !s.spawning).length
     memory.spawnAvailability = (memory.spawnAvailability * .9993) + (freeSpawns * 0.0007)
+}
+
+function updateRemotes(city){
+    const spawn = Game.spawns[city]
+    const stress = spawn.memory.spawnAvailability
+    if(stress < settings.spawnFreeTime - settings.spawnFreeTimeBuffer && Game.time % 100 == 5){
+        //drop least profitable remote
+        const worstRemote = rp.findWorstRemote(spawn.room)
+        if(worstRemote){
+            rp.removeRemote(worstRemote, spawn.room.name)
+        }
+    }
+    //TODO Update DEFCON values for all remotes and take neccessary action
 }
 
 module.exports = {

@@ -302,18 +302,18 @@ const p = {
         }
     },
 
-    removeRemote: function(roomName, city){
+    removeRemote: function(roomName, room){
         delete Memory.remotes[roomName]
-        const memory = Memory.spawns[city + "0"]
+        const memory = Memory.spawns[room + "0"]
         for(const sourceId in memory.sources){
             if(memory.sources[sourceId].roomName)
                 delete memory.sources[sourceId]
         }
     },
 
-    findWorstRemote: function(city){
+    findWorstRemote: function(room){
         let remote = null
-        const spawn = Game.spawns[city.name + "0"]
+        const spawn = Game.spawns[room.name + "0"]
         if(!spawn) return null
         const remotes = Object.keys(_.countBy(spawn.memory.sources, s => s.roomName))
         for(const roomName of remotes){
@@ -322,7 +322,7 @@ const p = {
                 continue
             const score = p.scoreRemoteRoom(roomName, spawn)
             if(score > 0 && (!remote || score > remote.score))
-                remote = {roomName: roomName, homeName: city.name, score: score}
+                remote = {roomName: roomName, homeName: room.name, score: score}
         }
         return remote
     },
