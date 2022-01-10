@@ -1,7 +1,7 @@
-var a = require("../lib/actions")
 var u = require("../lib/utils")
 var motion = require("../lib/motion")
 const rB = require("./builder")
+const rR = require("./runner")
 
 var rRe = {
     name: "repairer",
@@ -17,7 +17,7 @@ var rRe = {
             if(!rRe.build(creep))
                 rRe.repair(creep)
         } else {
-            rRe.getEnergy(creep)
+            rR.pickup(creep)
         }
     },
 
@@ -29,14 +29,6 @@ var rRe = {
                 motion.newMove(creep, needRepair.pos, 3)
                 rRe.closeRepair(creep)
             }
-        }
-    },
-
-    getEnergy: function(creep) {
-        const location = u.getStorage(Game.spawns[creep.memory.city].room)
-        //TODO compile all energy depots and choose closest one (probably using runner's method)
-        if (a.withdraw(creep, location) == ERR_NOT_ENOUGH_RESOURCES) {
-            //TODO set location to null so that new one is found on next tick
         }
     },
 
@@ -64,7 +56,7 @@ var rRe = {
                 creep.memory.build = _.min(targets, s => u.getRangeTo(creep.pos, s.pos)).id
                 return true
             }
-            creep.memory.nextCheckTime = Game.time + 100
+            creep.memory.nextCheckTime = Game.time + 200
         }
         return false
     },
