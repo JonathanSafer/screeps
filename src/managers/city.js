@@ -794,13 +794,21 @@ function updateSpawnStress(spawn){
 }
 
 function updateRemotes(city){
+    if(Game.cpu.bucket < settings.bucket.mineralMining){
+        return
+    }
     const spawn = Game.spawns[city]
     const stress = spawn.memory.spawnAvailability
-    if(stress < settings.spawnFreeTime - settings.spawnFreeTimeBuffer && Game.time % 100 == 5){
+    const remotes = Object.keys(_.countBy(spawn.memory.sources, s => s.roomName))
+    if(remotes.length && stress < settings.spawnFreeTime - settings.spawnFreeTimeBuffer && Game.time % 20 == 5){
         //drop least profitable remote
+        Log.info(`Spawn pressure too high in ${spawn.room.name}, dropping least profitable remote...`)
         const worstRemote = rp.findWorstRemote(spawn.room)
         if(worstRemote){
+            Log.info(`Remote ${worstRemote} removed from ${spawn.room.name}`)
             rp.removeRemote(worstRemote, spawn.room.name)
+        } else {
+            Log.info("No remotes to remove")
         }
     }
     //TODO Update DEFCON values for all remotes and take neccessary action
