@@ -54,16 +54,14 @@ var rRe = {
             }
         }
         if(!creep.memory.nextCheckTime || creep.memory.nextCheckTime < Game.time){//occasionally scan for construction sites
-            //TODO, compile all source rooms that are safe and get all road sites
             const rooms = Object.keys(_.countBy(Game.spawns.memory.sources, s => s.pos.roomName))
             let targets = []
             for(let i = 0; i < rooms.length; i++){
                 if(Game.rooms[rooms[i]])
-                    targets = targets.concat(Game.rooms[rooms[i]].find(FIND_MY_CONSTRUCTION_SITES))
+                    targets = targets.concat(Game.rooms[rooms[i]].find(FIND_MY_CONSTRUCTION_SITES), s => s.structureType == STRUCTURE_ROAD)
             }
             if(targets.length){
-                //TODO sort targets by range (will need custom getRangeTo)
-                creep.memory.build = targets[0].id
+                creep.memory.build = _.min(targets, s => u.getRangeTo(creep.pos, s.pos)).id
                 return true
             }
             creep.memory.nextCheckTime = Game.time + 100
@@ -88,8 +86,11 @@ var rRe = {
         let targets = []
         for(let i = 0; i < rooms.length; i++)
             if(Game.rooms[rooms[i]])
-                targets = targets.concat(Game.rooms[rooms[i]].find(FIND_STRUCTURES, s => s.structureType != STRUCTURE_WALL && s.hits && s.hitsMax - s.hits > creep.memory.repPower))
-        //TODO find closest road in need of significant repair
+                targets = targets.concat(Game.rooms[rooms[i]].find(FIND_STRUCTURES, s => s.structureType != STRUCTURE_WALL && s.hits && s.hits/s.hitsMax < 0.3))
+        if(targets.length){
+            creep.memory.repair = _.min(targets, s => u.getRangeTo(creep.pos, s.pos)).id
+            return true
+        }
         return false
     }
 }
