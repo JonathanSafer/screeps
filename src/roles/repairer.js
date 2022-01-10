@@ -55,7 +55,12 @@ var rRe = {
         }
         if(!creep.memory.nextCheckTime || creep.memory.nextCheckTime < Game.time){//occasionally scan for construction sites
             //TODO, compile all source rooms that are safe and get all road sites
-            const targets = Game.spawns[creep.memory.city].room.find(FIND_MY_CONSTRUCTION_SITES)
+            const rooms = Object.keys(_.countBy(Game.spawns.memory.sources, s => s.pos.roomName))
+            let targets = []
+            for(let i = 0; i < rooms.length; i++){
+                if(Game.rooms[rooms[i]])
+                    targets = targets.concat(Game.rooms[rooms[i]].find(FIND_MY_CONSTRUCTION_SITES))
+            }
             if(targets.length){
                 //TODO sort targets by range (will need custom getRangeTo)
                 creep.memory.build = targets[0].id
@@ -79,6 +84,11 @@ var rRe = {
             if(target)
                 return target
         }
+        const rooms = Object.keys(_.countBy(Game.spawns.memory.sources, s => s.pos.roomName))
+        let targets = []
+        for(let i = 0; i < rooms.length; i++)
+            if(Game.rooms[rooms[i]])
+                targets = targets.concat(Game.rooms[rooms[i]].find(FIND_STRUCTURES, s => s.structureType != STRUCTURE_WALL && s.hits && s.hitsMax - s.hits > creep.memory.repPower))
         //TODO find closest road in need of significant repair
         return false
     }

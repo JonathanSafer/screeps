@@ -546,7 +546,16 @@ var u = {
         if(pos.roomName == targetPos.roomName){
             return pos.getRangeTo(targetPos)
         }
-        //
+        const worldPos = u.toWorldPosition(pos)
+        const targetWorldPos = u.toWorldPosition(targetPos)
+        return Math.max(Math.abs(worldPos.x - targetWorldPos.x), Math.abs(worldPos.y - targetWorldPos.y))
+        //convert to world position
+    },
+
+    toWorldPosition: function(pos) {//based off of theGeneral's WorldPosition from screeps-path
+        const kWorldSize = Game.map.getWorldSize()/2 - 1
+        const room = /^([WE])([0-9]+)([NS])([0-9]+)$/.exec(pos.roomName)
+        return {"x": pos.x + 50 * (kWorldSize + (room[1] === "W" ? -Number(room[2]) : Number(room[2]) + 1)), "y": pos.y + 50 * (kWorldSize + (room[3] === "N" ? -Number(room[4]) : Number(room[4]) + 1))}
     }
 }
 
