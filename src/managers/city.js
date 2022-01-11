@@ -820,7 +820,7 @@ function updateRemotes(city){
     const spawn = Game.spawns[city]
     const stress = spawn.memory.spawnAvailability
     const remotes = Object.keys(_.countBy(spawn.memory.sources, s => s.roomName))
-    if(remotes.length && stress < settings.spawnFreeTime - settings.spawnFreeTimeBuffer && Game.time % 20 == 5){
+    if(remotes.length && stress < settings.spawnFreeTime - settings.spawnFreeTimeBuffer && Game.time % 500 == 5){
         //drop least profitable remote
         Log.info(`Spawn pressure too high in ${spawn.room.name}, dropping least profitable remote...`)
         const worstRemote = rp.findWorstRemote(spawn.room)
