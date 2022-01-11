@@ -26,6 +26,7 @@ var e = require("../operations/error")
 var rMe = require("../roles/medic")
 const rQr = require("../roles/qrCode")
 const rp = require("./roomplan")
+const rRe = require("../roles/repairer")
 
 
 function makeCreeps(role, city, unhealthyStore, creepWantsBoosts, flag = null) {
@@ -154,6 +155,7 @@ function updateCountsCity(city, creeps, rooms, claimRoom, unclaimRoom) {
         updateFerry(spawn, memory, rcl)
         updateMiner(rooms, rcl8, memory, spawn)
         updateBuilder(rcl, memory, spawn)
+        updateRepairer(spawn, memory, creeps)
     
         if (Game.time % 500 === 0) {
             runNuker(city)
@@ -594,6 +596,24 @@ function updateUpgrader(city, controller, memory, rcl8, creeps, rcl) {
             sq.schedule(Game.spawns[city], rU.name, rcl >= 6)
         }
     }
+}
+
+function updateRepairer(spawn, memory, creeps){
+    const remotes = Object.keys(_.countBy(memory.sources, s => s.roomName))
+    let csites = 0
+    let damagedRoads = 0
+    for(let i = 0; i < remotes.length; i++){
+        if(Game.rooms[remotes[i]] && (!Game.rooms[remotes[i]].controller || !Game.rooms[remotes[i]].controller.owner)){
+            const room = Game.rooms[remotes[i]]
+            csites += room.find(FIND_MY_CONSTRUCTION_SITES).length
+            damagedRoads += room.find(FIND_STRUCTURES, s => s.structureType == STRUCTURE_ROAD && s.hits/s.hitsMax < 0.3)
+        }
+    }
+    let repairersNeeded = 0
+    if(csites > 0)
+        repairersNeeded++
+    repairersNeeded += Math.ceil(damagedRoads/20)
+    scheduleIfNeeded(rRe.name, repairersNeeded, false, spawn, creeps)
 }
 
 function updateBuilder(rcl, memory, spawn) {

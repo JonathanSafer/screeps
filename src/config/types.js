@@ -16,6 +16,7 @@ function getRecipe(type, energyAvailable, room, boosted, flagName){
     d.defender = defenderBody(energy, rcl, boosted)
     d.unclaimer = scalingBody([2, 1], [MOVE, CLAIM], energy)
     d.harasser = harasserBody(energy, boosted, rcl)
+    d.repairer = repairerBody(energy)
 
     // used at rcl 4+
     d.spawnBuilder = scalingBody([2, 3, 5], [WORK, CARRY, MOVE], energy)
@@ -306,6 +307,10 @@ function medicBody(energyAvailable, rcl, boosted){
     if(rcl == 8)
         return body([16, 24, 10], [TOUGH, HEAL, MOVE])
     return scalingBody([1, 3, 1], [TOUGH, HEAL, MOVE], energyAvailable)
+}
+
+function repairerBody(energyAvailable){
+    return scalingBody([2, 4, 3], [WORK, CARRY, MOVE], energyAvailable, 27)
 }
 
 /** TODO support for fractional scaling

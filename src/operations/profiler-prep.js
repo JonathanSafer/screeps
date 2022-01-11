@@ -37,6 +37,7 @@ const libx = require("../config/types")
 const liby = require("../roles/unclaimer")
 const libz = require("../roles/upgrader")
 const libA = require("../lib/utils")
+const libB = require("../roles/repairer")
 
 profiler.registerObject(lib0, "actions")
 profiler.registerObject(lib1, "breaker")
@@ -75,5 +76,6 @@ profiler.registerObject(libx, "types")
 profiler.registerObject(liby, "unclaimer")
 profiler.registerObject(libz, "upgrader")
 profiler.registerObject(libA, "utils")
+profiler.registerObject(libB, "repairer")
 
 module.exports = {}
