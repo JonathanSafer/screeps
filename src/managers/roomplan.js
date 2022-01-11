@@ -729,7 +729,7 @@ const p = {
             if(!source) continue
             const sourcePos = Game.getObjectById(sources[i]).pos
             const sourcePath = PathFinder.search(sourcePos, exits, {
-                plainCost: 4, swampCost: 5, maxRooms: 1, 
+                plainCost: 4, swampCost: 5, maxRooms: 5, 
                 roomCallback: function(roomName){
                     if(roomName == room.name)
                         return roadMatrix
@@ -847,9 +847,10 @@ const p = {
         if(csites.length){
             counter = csites.length
         }
+        const maxSites = Game.constructionSites / MAX_CONSTRUCTION_SITES > 0.5 ? 10 : 20
         for(let i = 0; i < roads.length; i++){
             new RoomVisual(roads[i].roomName).circle(roads[i], {fill: "#ff1111", radius: 0.1, stroke: "red"})
-            if(counter < 20){//doesn't update during the tick
+            if(counter < maxSites){//doesn't update during the tick
                 const look = room.lookForAt(LOOK_STRUCTURES, roads[i])
                 if(look.length){
                     if(look[0].structureType != STRUCTURE_RAMPART){
@@ -861,7 +862,6 @@ const p = {
                 }
             }
         }
-        //TODO: cut this function up, plan and build walls + ramparts, limit number of roads total using static or global, make this happen less frequently
     },
 
     clearAllStructures: function(room) {
