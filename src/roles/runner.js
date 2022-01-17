@@ -1,5 +1,7 @@
 var actions = require("../lib/actions")
 var u = require("../lib/utils")
+var roomU = require("../lib/roomUtils")
+var cU = require("../lib/creepUtils")
 var motion = require("../lib/motion")
 const settings = require("../config/settings")
 const rU = require("./upgrader")
@@ -47,7 +49,7 @@ var rR = {
     },
 
     flipTarget: function(creep) {
-        creep.memory.target = u.getNextLocation(creep.memory.target, u.getTransferLocations(creep))
+        creep.memory.target = cU.getNextLocation(creep.memory.target, roomU.getTransferLocations(creep))
     },
 
     checkForPullees: function(creep){
@@ -110,7 +112,7 @@ var rR = {
                 return true
             }
         }
-        const goodLoads = u.getGoodPickups(creep)
+        const goodLoads = cU.getGoodPickups(creep)
         if(!goodLoads.length)
             return false
         const newTarget = _.min(goodLoads, function(drop){
@@ -139,7 +141,7 @@ var rR = {
         if(creep.fatigue)
             return
         const destination = new RoomPosition(pullee.memory.destination.x, pullee.memory.destination.y, pullee.memory.destination.roomName)
-        if((u.isOnEdge(creep.pos) && u.isNearEdge(pullee.pos)) || (u.isOnEdge(pullee.pos) && u.isNearEdge(creep.pos))){
+        if((roomU.isOnEdge(creep.pos) && roomU.isNearEdge(pullee.pos)) || (roomU.isOnEdge(pullee.pos) && roomU.isNearEdge(creep.pos))){
             rR.runBorderTug(creep, pullee, destination)
             return
         }
@@ -163,7 +165,7 @@ var rR = {
     },
 
     runBorderTug: function(creep, pullee, destination){
-        if(u.isOnEdge(creep.pos) && !u.isOnEdge(pullee.pos)){
+        if(roomU.isOnEdge(creep.pos) && !roomU.isOnEdge(pullee.pos)){
             creep.move(pullee)
             creep.pull(pullee)
             pullee.move(creep)
@@ -183,7 +185,7 @@ var rR = {
             }
         })
         const nextRoom = Game.map.describeExits(creep.pos.roomName)[nextRoomDir]
-        if(u.isOnEdge(creep.pos) && u.isOnEdge(pullee.pos)){
+        if(roomU.isOnEdge(creep.pos) && roomU.isOnEdge(pullee.pos)){
             //_cp_
             //_pc_
             //_b__

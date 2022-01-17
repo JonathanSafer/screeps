@@ -23,10 +23,11 @@ describe("utils", function () {
         Memory.reset()
         global.Cache = {}
     })
-    var u = require("./testUtils.js")
+    var u = require("../src/lib/utils")
+    var rU = require("../src/lib/roomUtils")
     describe("#getFactory()", function () {
         it("should get the factory", function () {
-            const factory = u.getFactory(createBasicCity("test"))
+            const factory = rU.getFactory(createBasicCity("test"))
             assert.equal(1, factory.level)
         })
     })
@@ -63,16 +64,16 @@ describe("utils", function () {
 
     describe("#boostsAvailable", function () {
         it("should return true if boosts are available", function () {
-            createFactoryCity("1", {"XGH2O": 100000, "XLHO2": 10000}, 1)
+            const r1 = createFactoryCity("1", {"XGH2O": 100000, "XLHO2": 10000}, 1)
             createFactoryCity("2", {"XLHO2": 10000, "XUHO2": 30000}, 2)
             createFactoryCity("3", {"XKH2O": 40000}, 3)
             const noTermCity = new Room("4")
             new StructureController(noTermCity)
 
-            assert(u.boostsAvailable(require("../src/roles/upgrader")))
-            assert(!u.boostsAvailable(require("../src/roles/builder")))
-            assert(u.boostsAvailable(require("../src/roles/depositMiner")))
-            assert(!u.boostsAvailable(require("../src/roles/powerMiner")))
+            assert(u.boostsAvailable(require("../src/roles/upgrader"), r1))
+            assert(!u.boostsAvailable(require("../src/roles/builder"), r1))
+            //assert(u.boostsAvailable(require("../src/roles/depositMiner"), r1))
+            assert(!u.boostsAvailable(require("../src/roles/powerMiner"), r1))
         })
     })
 

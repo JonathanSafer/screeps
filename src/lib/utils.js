@@ -22,38 +22,6 @@ var u = {
         const labsCache = u.getsetd(Cache, "labs", {})
         return u.getsetd(labsCache, labId, {})
     },
-
-    getGoodPickups: function(creep) {
-        var city = creep.memory.city
-        var localCreeps = u.splitCreepsByCity()
-        var miners = _.filter(localCreeps[city], lcreep => lcreep.memory.role == "remoteMiner")
-        var drops = _.flatten(_.map(miners, miner => miner.room.find(FIND_DROPPED_RESOURCES)))
-        const runnersBySource = _.groupBy(_.filter(localCreeps[city]), c => c.memory.role == "runner", runner => runner.memory.targetId)
-        const containers = _.map(miners, miner => _.find(miner.pos.lookFor(LOOK_STRUCTURES), struct => struct.structureType == STRUCTURE_CONTAINER))
-        const goodContainers = _.filter(containers, 
-            function(container){
-                if(!container || container.store.getUsedCapacity() <= 0.5 * creep.store.getCapacity())
-                    return false
-                let store = container.store.getUsedCapacity()
-                if(!runnersBySource[container.id])
-                    return true
-                for(const runner of runnersBySource[container.id])
-                    store -= runner.store.getFreeCapacity()
-                return store >= 0.5 * creep.store.getCapacity()
-            })
-        const goodDrops = _.filter(drops, 
-            function(drop){
-                if(drop.amount <= 0.5 * creep.store.getCapacity())
-                    return false
-                let amount = drop.amount
-                if(!runnersBySource[drop.id])
-                    return true
-                for(const runner of runnersBySource[drop.id])
-                    amount -= runner.store.getFreeCapacity()
-                return amount >= 0.5 * creep.store.getCapacity()
-            }) 
-        return goodDrops.concat(goodContainers)
-    },
     
     iReservedOrOwn: function(roomName) {
         var room = Game.rooms[roomName]

@@ -1,4 +1,6 @@
 var u = require("../lib/utils")
+var rU = require("../lib/roomUtils")
+var cU = require("../lib/creepUtils")
 var settings = require("../config/settings")
 var rMe = require("./medic")
 var motion = require("../lib/motion")
@@ -16,7 +18,7 @@ var rBr = {
         if(creep.memory.needBoost && !creep.memory.boosted){
             return actions.getBoosted(creep)
         }
-        u.updateCheckpoints(creep)
+        cU.updateCheckpoints(creep)
         rBr.init(creep)
         const medic = Game.getObjectById(creep.memory.medic)
         if(!medic){
@@ -84,7 +86,7 @@ var rBr = {
 
     canMove: function(creep, medic){
         //can only move if both creeps are not fatigued OR one of the creeps is on a room edge
-        if((creep.pos.isNearTo(medic) && !creep.fatigue && !medic.fatigue) || u.isOnEdge(creep.pos) || u.isOnEdge(medic.pos)){
+        if((creep.pos.isNearTo(medic) && !creep.fatigue && !medic.fatigue) || rU.isOnEdge(creep.pos) || rU.isOnEdge(medic.pos)){
             return true
         } else {
             return false
@@ -132,12 +134,12 @@ var rBr = {
         for(const member of duo){
             for(const attacker of melee){
                 if(member.pos.isNearTo(attacker.pos) ||(member.pos.inRangeTo(attacker.pos, 2) && !attacker.fatigue)){
-                    damage += u.getCreepDamage(attacker, ATTACK)
+                    damage += cU.getCreepDamage(attacker, ATTACK)
                 }
             }
             for(const ranger of ranged){
                 if(member.pos.inRangeTo(ranger.pos, 3) ||(member.pos.inRangeTo(ranger.pos, 4) && !ranger.fatigue)){
-                    damage += u.getCreepDamage(ranger, RANGED_ATTACK)
+                    damage += cU.getCreepDamage(ranger, RANGED_ATTACK)
                 }
             }
         }

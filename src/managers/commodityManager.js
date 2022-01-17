@@ -1,5 +1,6 @@
 const fact = require("../buildings/factory")
 const u = require("../lib/utils")
+const rU = require("../lib/roomUtils")
 
 var cM = {
     runManager: function(cities){
@@ -133,9 +134,9 @@ var cM = {
     },
 
     groupByFactoryLevel: function(cities){
-        const citiesWithFactory = _.filter(cities, city => city.terminal && u.getFactory(city))
+        const citiesWithFactory = _.filter(cities, city => city.terminal && rU.getFactory(city))
         const citiesByFactoryLevel =
-            _.groupBy(citiesWithFactory, city => u.getFactory(city).level || 0)
+            _.groupBy(citiesWithFactory, city => rU.getFactory(city).level || 0)
         return citiesByFactoryLevel
     },
 
@@ -143,7 +144,7 @@ var cM = {
         const citiesByFactoryLevel = cM.groupByFactoryLevel(cities)
         for(const level of Object.values(citiesByFactoryLevel)){
             for(const city of level){
-                const factory = u.getFactory(city)
+                const factory = rU.getFactory(city)
                 const memory = Game.spawns[city.memory.city].memory
                 if(memory.ferryInfo.factoryInfo.produce == "dormant"){
                     //empty factory (except for energy)

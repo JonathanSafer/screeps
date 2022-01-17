@@ -1,4 +1,5 @@
 var u = require("./utils")
+var rU = require("./roomUtils")
 var settings = require("../config/settings")
 var template = require("../config/template")
 
@@ -195,7 +196,7 @@ var m = {
     findNoviceWallRooms: function(room){
         //return value will be an object, with lists as values for keys
         //check if current room even has novice walls
-        const walls = _.filter(room.find(FIND_STRUCTURES), s => s.structureType == STRUCTURE_WALL && u.isOnEdge(s.pos))
+        const walls = _.filter(room.find(FIND_STRUCTURES), s => s.structureType == STRUCTURE_WALL && rU.isOnEdge(s.pos))
         if(!walls.length){
             return {}
         }

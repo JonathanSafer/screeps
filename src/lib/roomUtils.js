@@ -1,4 +1,5 @@
 var settings = require("../config/settings")
+var u = require("./utils")
 
 var rU = {
     isOnEdge: function(pos){//determine if a roomPos is on a room edge

@@ -3,6 +3,7 @@ const motion = require("../lib/motion")
 const sq = require("../lib/spawnQueue")
 const a = require("../lib/actions")
 const u = require("../lib/utils")
+const cU = require("../lib/creepUtils")
 const military = require("../managers/military")
 
 var rH = {
@@ -82,7 +83,7 @@ var rH = {
         for(var i = 0; i < hostiles.length; i++){
             if(hostiles[i].pos.isNearTo(creep.pos)){
                 creep.rangedMassAttack()
-                u.logDamage(creep, creep.pos, true)
+                cU.logDamage(creep, creep.pos, true)
                 return
             }
         }
@@ -91,14 +92,14 @@ var rH = {
             const target = Game.getObjectById(creep.memory.target)
             if(target && target.pos.inRangeTo(creep.pos, 3)){
                 creep.rangedAttack(target)
-                u.logDamage(creep, target.pos)
+                cU.logDamage(creep, target.pos)
                 return
             }
         }
         const newTarget = creep.pos.findClosestByRange(hostiles)
         if(newTarget && newTarget.pos.getRangeTo(creep) <= 3){
             creep.rangedAttack(newTarget)
-            u.logDamage(creep, newTarget.pos)
+            cU.logDamage(creep, newTarget.pos)
         }
     },
 

@@ -1,5 +1,7 @@
 var a = require("../lib/actions")
 var u = require("../lib/utils")
+var roomU = require("../lib/roomUtils")
+var cU = require("../lib/creepUtils")
 var rU = require("./upgrader")
 var template = require("../config/template")
 var rD = require("./defender")
@@ -52,8 +54,8 @@ var rB = {
             return
         }
         if (a.withdraw(creep, location) == ERR_NOT_ENOUGH_RESOURCES) {
-            var targets = u.getWithdrawLocations(creep)
-            creep.memory.target = u.getNextLocation(creep.memory.target, targets)
+            var targets = roomU.getWithdrawLocations(creep)
+            creep.memory.target = cU.getNextLocation(creep.memory.target, targets)
         }
     },
 

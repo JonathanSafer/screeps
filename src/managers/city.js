@@ -17,6 +17,8 @@ var types = require("../config/types")
 var settings = require("../config/settings")
 var template = require("../config/template")
 var u = require("../lib/utils")
+var roomU = require("../lib/roomUtils")
+var cU = require("../lib/creepUtils")
 var sq = require("../lib/spawnQueue")
 var t = require("../buildings/tower")
 var labsLib = require("../buildings/labs")
@@ -44,7 +46,7 @@ function makeCreeps(role, city, unhealthyStore, creepWantsBoosts, flag = null) {
     if(!Memory.counter){
         Memory.counter = 0
     }
-    const name = u.generateCreepName(Memory.counter.toString(), role.name)
+    const name = cU.generateCreepName(Memory.counter.toString(), role.name)
     if (types.cost(recipe) > room.energyAvailable) return false
 
     const spawn = u.getAvailableSpawn(spawns)
@@ -578,7 +580,7 @@ function updateUpgrader(city, controller, memory, rcl8, creeps, rcl) {
         }
     } else {
         if(!creeps.length) return
-        var banks = u.getWithdrawLocations(creeps[0])
+        var banks = roomU.getWithdrawLocations(creeps[0])
         //Log.info(banks);
         let money = _.sum(_.map(banks, bank => bank.store[RESOURCE_ENERGY]))
         if(room.find(FIND_MY_CONSTRUCTION_SITES).length) money -= 1000

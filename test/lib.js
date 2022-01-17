@@ -47,6 +47,9 @@ const GGame = class {
         }
         this._objects = {}
         this._cpuUsed = 0
+        this.notify = function(){
+            return
+        }
     }
 
     reset() {

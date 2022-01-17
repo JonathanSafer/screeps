@@ -109,6 +109,7 @@ global.RemoveJunk = function(city){//only to be used on cities with levelled fac
 }
 global.CleanCities = function(){
     const u = require("./utils")
+    const rU = require("./roomUtils")
     const cM = require("../managers/commodityManager")
     const cities = _.filter(Game.rooms, room => room.controller && room.controller.my 
         && _.find(room.find(FIND_MY_STRUCTURES), s => s.structureType == STRUCTURE_FACTORY))
@@ -117,7 +118,7 @@ global.CleanCities = function(){
     Log.info(JSON.stringify(citiesByFactoryLevel))
     for(const level of Object.values(citiesByFactoryLevel)){
         for(const city of level){
-            const factory = u.getFactory(city)
+            const factory = rU.getFactory(city)
             const memory = Game.spawns[city.memory.city].memory
             if(memory.ferryInfo.factoryInfo.produce == "dormant"){
                 //empty factory (except for energy)

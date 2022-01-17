@@ -2,6 +2,7 @@ var motion = require("../lib/motion")
 var sq = require("../lib/spawnQueue")
 var rR = require("./runner")
 var u = require("../lib/utils")
+var cU = require("../lib/creepUtils")
 var rBr = require("./breaker")
 var settings = require("../config/settings")
 
@@ -12,7 +13,7 @@ var rPM = {
 
     /** @param {Creep} creep **/
     run: function(creep) {
-        u.checkRoom(creep)//check if in hostile room
+        cU.checkRoom(creep)//check if in hostile room
 
         if (!rPM.getBoosted(creep, rPM.boosts)){
             return

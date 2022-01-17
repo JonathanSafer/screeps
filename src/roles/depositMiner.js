@@ -2,6 +2,7 @@ var actions = require("../lib/actions")
 var settings = require("../config/settings")
 var motion = require("../lib/motion")
 var u = require("../lib/utils")
+var cU = require("../lib/creepUtils")
 const rPM = require("./powerMiner")
 
 var rDM = {
@@ -15,7 +16,7 @@ var rDM = {
 
     /** @param {Creep} creep **/
     run: function(creep) {
-        u.checkRoom(creep)
+        cU.checkRoom(creep)
         if (_.sum(creep.store) === 0 && creep.ticksToLive < 500){//if old and no store, suicide
             creep.suicide()
             return

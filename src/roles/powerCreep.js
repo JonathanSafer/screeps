@@ -1,5 +1,6 @@
 var a = require("../lib/actions")
 var u = require("../lib/utils")
+var roomU = require("../lib/roomUtils")
 var rU = require("./upgrader")
 
 var CreepState = {
@@ -121,7 +122,7 @@ var rPC = {
                 .map(pc => pc.memory.city)
                 .value()
             const citiesWithoutAnyPC = _.filter(cities, city => city.controller.level == 8
-                && u.getFactory(city) && !u.getFactory(city).level
+                && roomU.getFactory(city) && !roomU.getFactory(city).level
                 && !usedRooms.includes(city.name))
             Log.warning(`PowerCreep ${creep.name} is unassigned, please assign using PCAssign(name, city). Available cities on this shard are ${citiesWithoutAnyPC}`)
         }

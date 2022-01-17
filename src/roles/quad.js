@@ -1,5 +1,7 @@
 //const sq = require("./spawnQueue"); sq.initialize(Game.spawns['E8N60']); sq.schedule(Game.spawns['E8N60'], 'quad')
 const u = require("../lib/utils")
+const rU = require("../lib/roomUtils")
+const cU = require("../lib/creepUtils")
 const a = require("../lib/actions")
 const rH = require("./harasser")
 const T = require("../buildings/tower")
@@ -230,7 +232,7 @@ var rQ = {
                 const tower = _.find(everythingByRoom[rooms[i]].structures, struct => struct.structureType == STRUCTURE_TOWER)
                 if(tower) return false
             }
-            const hostile = _.find(everythingByRoom[rooms[i]].hostiles, h => (u.getCreepDamage(h, ATTACK) > 0 || u.getCreepDamage(h, RANGED_ATTACK) > 0) && 
+            const hostile = _.find(everythingByRoom[rooms[i]].hostiles, h => (cU.getCreepDamage(h, ATTACK) > 0 || cU.getCreepDamage(h, RANGED_ATTACK) > 0) && 
                 h.pos.inRangeTo(quad[0], 8) || h.pos.inRangeTo(quad[1], 8) || h.pos.inRangeTo(quad[2], 8) || h.pos.inRangeTo(quad[3], 8))
             if(hostile) return false
         }
@@ -259,11 +261,11 @@ var rQ = {
         }
 
         motion.newMove(quad[3], quad[2].pos, 0)
-        if(quad[2].pos.inRangeTo(quad[3].pos, 2) || u.isOnEdge(quad[2].pos))
+        if(quad[2].pos.inRangeTo(quad[3].pos, 2) || rU.isOnEdge(quad[2].pos))
             motion.newMove(quad[2], quad[1].pos, 0)
-        if(quad[1].pos.inRangeTo(quad[2].pos, 2) || u.isOnEdge(quad[1].pos))
+        if(quad[1].pos.inRangeTo(quad[2].pos, 2) || rU.isOnEdge(quad[1].pos))
             motion.newMove(quad[1], quad[0].pos, 0)
-        if(quad[0].pos.inRangeTo(quad[1].pos, 2) || u.isOnEdge(quad[0].pos))
+        if(quad[0].pos.inRangeTo(quad[1].pos, 2) || rU.isOnEdge(quad[0].pos))
             motion.newMove(quad[0], flagPos, 23)
     },
     
@@ -400,7 +402,7 @@ var rQ = {
                     if(costs.get(Math.max(0, i - 1), j) < posCost){//LEFT
                         costs.set(Math.max(0, i - 1), j, posCost)
                     }
-                    if(u.isOnEdge(new RoomPosition(i, j, roomName))){
+                    if(rU.isOnEdge(new RoomPosition(i, j, roomName))){
                         costs.set(i, j, posCost + 1)
                     }
                 }
@@ -468,7 +470,7 @@ var rQ = {
         const targets = []
         Object.keys(everythingByRoom).forEach(function (roomName) {
             if(everythingByRoom[roomName].hostiles){
-                const hostiles = _.filter(everythingByRoom[roomName].hostiles, h => !u.isOnEdge(h.pos)).concat(everythingByRoom[roomName].structures)
+                const hostiles = _.filter(everythingByRoom[roomName].hostiles, h => !rU.isOnEdge(h.pos)).concat(everythingByRoom[roomName].structures)
                 targets.push(everythingByRoom[roomName].creeps[0].pos.findClosestByPath(hostiles))
             }
         })
@@ -501,12 +503,12 @@ var rQ = {
             for(const member of roomName.creeps){
                 for(const attacker of melee){
                     if(member.pos.isNearTo(attacker.pos) ||(member.pos.inRangeTo(attacker.pos, 2) && !attacker.fatigue)){
-                        damage += u.getCreepDamage(attacker, ATTACK)
+                        damage += cU.getCreepDamage(attacker, ATTACK)
                     }
                 }
                 for(const ranger of ranged){
                     if(member.pos.inRangeTo(ranger.pos, 3) ||(member.pos.inRangeTo(ranger.pos, 4) && !ranger.fatigue)){
-                        damage += u.getCreepDamage(ranger, RANGED_ATTACK)
+                        damage += cU.getCreepDamage(ranger, RANGED_ATTACK)
                     }
                 }
             }
@@ -525,7 +527,7 @@ var rQ = {
         //if no viable target found, move to rally flag
         const flagName = quad[0].memory.city + "quadRally"
         const flag = Memory.flags[flagName]
-        if(target && u.isOnEdge(target.pos)){
+        if(target && rU.isOnEdge(target.pos)){
             target = null
         }
         if(!target){
@@ -713,30 +715,30 @@ var rQ = {
                 if(_.find(hostiles, h => h.pos.isNearTo(creep.pos)) 
                     || _.find(roomName.structures, s => s.owner && s.hits && s.pos.isNearTo(creep.pos))){
                     creep.rangedMassAttack()
-                    u.logDamage(creep, creep.pos, true)
+                    cU.logDamage(creep, creep.pos, true)
                     continue
                 }
                 const targetInRange = target && target.pos.inRangeTo(creep.pos, 3)
                 if(targetInRange && !target.structureType && !rQ.isUnderRampart(target)){
                     creep.rangedAttack(target)
-                    u.logDamage(creep, target.pos)
+                    cU.logDamage(creep, target.pos)
                     continue
                 }
                 const newTarget = _.find(hostiles, h => h.pos.inRangeTo(creep.pos, 3))
                 if(newTarget){
                     creep.rangedAttack(newTarget)
-                    u.logDamage(creep, newTarget.pos)
+                    cU.logDamage(creep, newTarget.pos)
                     continue
                 }
                 if(targetInRange && target.structureType){
                     creep.rangedAttack(target)
-                    u.logDamage(creep, target.pos)
+                    cU.logDamage(creep, target.pos)
                     continue
                 }
                 const structureTarget = _.find(roomName.structures, h => h.pos.inRangeTo(creep.pos, 3))
                 if(structureTarget){
                     creep.rangedAttack(structureTarget)
-                    u.logDamage(creep, structureTarget.pos)
+                    cU.logDamage(creep, structureTarget.pos)
                 }
             }
         }
@@ -899,7 +901,7 @@ var rQ = {
                     //if formation is on a roomEdge, and any of members is in a room but not on it's edge, we cannot move into that room
                     //unless they are all in that room
                     for(let i = 0; i < quad.length; i++){//save a little cpu by not using a room we can't move into anyway
-                        if(!status.sameRoom && status.leader.pos.roomName != roomName && quad[i].pos.roomName == roomName && !u.isOnEdge(quad[i].pos)){
+                        if(!status.sameRoom && status.leader.pos.roomName != roomName && quad[i].pos.roomName == roomName && !rU.isOnEdge(quad[i].pos)){
                             return false
                         }
                     }
@@ -933,7 +935,7 @@ var rQ = {
                         }
                         if(!quadNames.includes(creep.id)){
                             //quad cannot move to any pos that another creep is capable of moving to
-                            const attackThreat = u.getCreepDamage(creep, ATTACK) > rQ.getDamageTolerance(quad)
+                            const attackThreat = cU.getCreepDamage(creep, ATTACK) > rQ.getDamageTolerance(quad)
                             const offset = attackThreat && !creep.fatigue ? 3 :
                                 attackThreat ? 2 : 1
                             for(let i = Math.max(0 , creep.pos.x - offset); i < Math.min(50, creep.pos.x + offset); i++){
@@ -1019,7 +1021,7 @@ var rQ = {
         //determine roomEdge status
         let roomEdge = null //default is null, if we are not on an edge it should stay that way
         for(let i = 0; i < quad.length; i++){
-            if(u.isOnEdge(quad[i].pos)){//if a creep from the squad is on an edge, it can determine which edge we are on
+            if(rU.isOnEdge(quad[i].pos)){//if a creep from the squad is on an edge, it can determine which edge we are on
                 if(quad[i].pos.x == 49){
                     roomEdge = LEFT
                 } else if(quad[i].pos.x == 0){
