@@ -22,10 +22,6 @@ var u = {
         const labsCache = u.getsetd(Cache, "labs", {})
         return u.getsetd(labsCache, labId, {})
     },
-    
-    getNextLocation: function(current, locations) {
-        return (current + 1) % locations.length
-    },
 
     getGoodPickups: function(creep) {
         var city = creep.memory.city
@@ -114,21 +110,6 @@ var u = {
         if(!Tmp.myCities)
             Tmp.myCities = _.filter(Game.rooms, (room) => u.iOwn(room.name))
         return Tmp.myCities
-    },
-    
-    updateCheckpoints: function(creep) {
-        if (Game.time % 50 == 0  && !u.enemyOwned(creep.room)) {
-            if (creep.hits < creep.hitsMax) {
-                return
-            }
-            if (!creep.memory.checkpoints) {
-                creep.memory.checkpoints = []
-            }
-            creep.memory.checkpoints.push(creep.pos)
-            if (creep.memory.checkpoints.length > 2) {
-                creep.memory.checkpoints.shift()
-            }
-        }
     },
 
     highwayMoveSettings: function(maxOps, swampCost, startPos, endPos, avoidEnemies) {
@@ -322,66 +303,6 @@ var u = {
         const boostsAvailable = Cache.boostsAvailable || []
         return _(role.boosts).every(boost => boostsAvailable.includes(boost)) 
             || (room && room.terminal && _(role.boosts).every(boost => room.terminal.store[boost] >= LAB_MINERAL_CAPACITY))
-    },
-
-    checkRoom: function(creep){
-        if(creep.hits < creep.hitsMax*0.8){
-            //search for hostile towers. if there are towers, room is enemy
-            const tower = _.find(u.findHostileStructures(creep.room), s => s.structureType == STRUCTURE_TOWER)
-            if(tower){
-                if(!Cache[creep.room.name]){
-                    Cache[creep.room.name] = {}
-                }
-                Cache[creep.room.name].enemy = true
-            }
-        }
-    },
-
-    logDamage: function(creep, targetPos, rma = false){
-        u.getsetd(Tmp, creep.room.name,{})
-        u.getsetd(Tmp[creep.room.name], "attacks",[])
-        const ranged = creep.getActiveBodyparts(RANGED_ATTACK)
-        const damageMultiplier = creep.memory.boosted ? (ranged * 4) : ranged
-        if(rma){
-            for(let i = creep.pos.x - 3; i <= creep.pos.x + 3; i++){
-                for(let j = creep.pos.y - 3; j <= creep.pos.y + 3; j++){
-                    if(i >= 0 && i <= 49 && j >= 0 && j <= 49){
-                        const distance = Math.max(Math.abs(creep.pos.x - i),Math.abs(creep.pos.y - j))
-                        switch(distance){
-                        case 0: 
-                        case 1:
-                            Tmp[creep.room.name].attacks.push({x: i, y: j, damage: damageMultiplier * 10})
-                            break
-                        case 2:
-                            Tmp[creep.room.name].attacks.push({x: i, y: j, damage: damageMultiplier * 4})
-                            break
-                        case 3:
-                            Tmp[creep.room.name].attacks.push({x: i, y: j, damage: damageMultiplier})
-                            break
-                        }
-                    }
-                }
-            }
-        } else {
-            Tmp[creep.room.name].attacks.push({x: targetPos.x, y: targetPos.y, damage: damageMultiplier * RANGED_ATTACK_POWER})
-        }
-
-    },
-
-    getCreepDamage: function(creep, type){
-        const creepCache = u.getCreepCache(creep.id)
-        if(creepCache[type + "damage"])
-            return creepCache[type + "damage"]
-        const damageParts = creep.getActiveBodyparts(type)
-        const boostedPart = _.find(creep.body, part => part.type == type && part.boost)
-        const multiplier = boostedPart ? BOOSTS[type][boostedPart.boost][type] : 1
-        const powerConstant = type == RANGED_ATTACK ? RANGED_ATTACK_POWER : ATTACK_POWER
-        creepCache[type + "damage"] = powerConstant * multiplier * damageParts
-        return creepCache[type + "damage"]
-    },
-
-    generateCreepName: function(counter, role){
-        return role + "-" + counter
     },
 
     removeFlags: function(roomName){
