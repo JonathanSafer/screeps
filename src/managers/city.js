@@ -773,6 +773,10 @@ function setGameState(){
 
 function runEarlyGame(){
     const spawn = Object.values(Game.spawns)[0]
+    if(!spawn){
+        Memory.gameState++
+        return
+    }
     const room = spawn.room
     let role = null
     let budget = 0
