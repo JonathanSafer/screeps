@@ -81,7 +81,7 @@ function runCity(city, creeps){
     const emergencyRoles = rr.getEmergencyRoles()
     const allRoles = rr.getRoles()
 
-    const storage = u.getStorage(room)
+    const storage = roomU.getStorage(room)
     const halfCapacity = storage && storage.store.getCapacity() / 2
     const unhealthyStore = storage && storage.store[RESOURCE_ENERGY] < Math.min(5000, halfCapacity)
     var roles = (unhealthyStore) ? emergencyRoles : allRoles
