@@ -59,7 +59,7 @@ function makeCreeps(role, city, unhealthyStore, creepWantsBoosts, flag = null) {
         return false
     }
     if (boosted) {
-        u.requestBoosterFill(Game.spawns[city], role.boosts)
+        roomU.requestBoosterFill(Game.spawns[city], role.boosts)
     }
     Game.creeps[name].memory.role = role.name
     Game.creeps[name].memory.target = role.target
