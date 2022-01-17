@@ -49,7 +49,7 @@ var rB = {
     },
 
     getEnergy: function(creep) {
-        var location = u.getStorage(Game.spawns[creep.memory.city].room)
+        var location = roomU.getStorage(Game.spawns[creep.memory.city].room)
         if((location.store.energy < 300 && location.room.controller.level > 1) || (location.structureType != STRUCTURE_SPAWN && location.store.energy < 800)){
             return
         }
