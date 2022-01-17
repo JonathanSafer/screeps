@@ -31,3 +31,7 @@ servers:
     secure: true
     token: '$SEASON_TOKEN'
     path: /season
+  fileyfood500:
+    host: screeps.com
+    secure: true
+    token: $FILEY_FOOD_TOKEN

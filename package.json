@@ -15,6 +15,7 @@
     "splus2": "screeps-api upload dist/main.js --server splus2",
     "season": "screeps-api upload dist/main.js --server season",
     "ptr": "screeps-api upload dist/main.js --server ptr",
+    "fileyfood500": "screeps-api upload dist/main.js --server fileyfood500",
     "roll": "rollup -c"
   },
   "author": "",
