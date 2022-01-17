@@ -641,7 +641,7 @@ function updateBuilder(rcl, memory, spawn) {
     if(rcl >= 4 && Game.cpu.bucket > settings.bucket.repair + settings.bucket.range * cityFraction(room.name) && spawn.room.storage && spawn.room.storage.store[RESOURCE_ENERGY] > settings.energy.repair){
         const walls = _.filter(spawn.room.find(FIND_STRUCTURES), 
             struct => [STRUCTURE_RAMPART, STRUCTURE_WALL].includes(struct.structureType) 
-            && !u.isNukeRampart(struct.pos))
+            && !roomU.isNukeRampart(struct.pos))
         if(walls.length){//find lowest hits wall
             const minHits = _.min(walls, wall => wall.hits).hits
             if(minHits < settings.wallHeight[rcl - 1]){

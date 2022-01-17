@@ -124,7 +124,7 @@ var rB = {
                 creep.memory.repair = nukeRampart.id
                 return
             }
-            const walls = _.filter(buildings, struct => [STRUCTURE_RAMPART, STRUCTURE_WALL].includes(struct.structureType) && !u.isNukeRampart(struct.pos))
+            const walls = _.filter(buildings, struct => [STRUCTURE_RAMPART, STRUCTURE_WALL].includes(struct.structureType) && !roomU.isNukeRampart(struct.pos))
             if(walls.length){//find lowest hits wall
                 const minWall = _.min(walls, wall => wall.hits)
                 creep.memory.repair = minWall.id
@@ -139,7 +139,7 @@ var rB = {
         if(!nukes.length){
             return null
         }
-        const ramparts = _.filter(structures, s => s.structureType == STRUCTURE_RAMPART && u.isNukeRampart(s.pos))
+        const ramparts = _.filter(structures, s => s.structureType == STRUCTURE_RAMPART && roomU.isNukeRampart(s.pos))
         for(const rampart of ramparts){
             let hitsNeeded = 0
             for(const nuke of nukes){
