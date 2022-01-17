@@ -1,8 +1,8 @@
 ![Test & Deploy](https://github.com/jordansafer/screeps/workflows/Test%20&%20Deploy/badge.svg)
-# screeps
+# Piky
 Screeps AI
 
-Functional screeps AI.
+Functional Screeps AI.
 
 ## Instructions
 ### Building and running
