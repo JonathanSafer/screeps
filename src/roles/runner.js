@@ -83,7 +83,7 @@ var rR = {
             }
         } else {
             if (!creep.memory.location || !Game.getObjectById(creep.memory.location))
-                creep.memory.location =  u.getStorage(Game.spawns[creep.memory.city].room).id
+                creep.memory.location =  roomU.getStorage(Game.spawns[creep.memory.city].room).id
             const target = Game.getObjectById(creep.memory.location)
             actions.withdraw(creep, target)
         }
@@ -126,10 +126,10 @@ var rR = {
 
     deposit: function(creep){
         if (!creep.memory.location || !Game.getObjectById(creep.memory.location))
-            creep.memory.location =  u.getStorage(Game.spawns[creep.memory.city].room).id
+            creep.memory.location =  roomU.getStorage(Game.spawns[creep.memory.city].room).id
         const target = Game.getObjectById(creep.memory.location)
         if (actions.charge(creep, target) == ERR_FULL) 
-            creep.memory.location =  u.getStorage(Game.spawns[creep.memory.city].room).id
+            creep.memory.location =  roomU.getStorage(Game.spawns[creep.memory.city].room).id
     },
 
     runTug: function(creep){
