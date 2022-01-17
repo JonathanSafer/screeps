@@ -39,7 +39,7 @@ var rC = {
 
     claim: function(creep) {
         var newCity = creep.room.name + "0"
-        creep.signController(creep.room.controller, newCity)
+        creep.signController(creep.room.controller, "Piky")
         creep.room.memory.city = newCity
         if(creep.claimController(creep.room.controller) == ERR_INVALID_TARGET && !creep.room.controller.my){
             creep.attackController(creep.room.controller)
