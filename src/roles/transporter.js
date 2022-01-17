@@ -2,6 +2,7 @@ var actions = require("../lib/actions")
 var u = require("../lib/utils")
 var sq = require("../lib/spawnQueue")
 var motion = require("../lib/motion")
+var roomU = require("../lib/roomUtils")
 
 var rT = {
     name: "transporter",
@@ -163,10 +164,10 @@ var rT = {
             }
             result = actions.withdraw(creep, bucket)
             if (result == ERR_NOT_ENOUGH_RESOURCES || bucket.structureType == STRUCTURE_SPAWN){
-                creep.memory.location = u.getStorage(creep.room).id
+                creep.memory.location = roomU.getStorage(creep.room).id
             }
         } else {
-            const location = u.getStorage(creep.room)
+            const location = roomU.getStorage(creep.room)
             creep.memory.location = location.id
             if(creep.store.getUsedCapacity() > 0){
                 if(!creep.pos.isNearTo(location.pos)){
