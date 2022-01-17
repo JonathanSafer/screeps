@@ -30,7 +30,7 @@ const rRe = require("../roles/repairer")
 
 
 function makeCreeps(role, city, unhealthyStore, creepWantsBoosts, flag = null) {
-    if(Memory.gameState < 4) return false
+    if(Memory.gameState < 5) return false
     const room = Game.spawns[city].room
    
     var energyToSpend = unhealthyStore ? room.energyAvailable :
@@ -792,6 +792,10 @@ function runEarlyGame(){
     case 3:
         role = rU
         budget = 200
+        break
+    case 4:
+        role = rM
+        budget = 300
         break
     }
     const name = Memory.gameState + "a"

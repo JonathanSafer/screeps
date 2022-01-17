@@ -57,7 +57,7 @@ module.exports.loop = function () {
 
         if(!Memory.gameState)
             c.setGameState()
-        if(Memory.gameState < 4)
+        if(Memory.gameState < 5)
             c.runEarlyGame()
 
         // TODO add a setup function to validate memory etc
