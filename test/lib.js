@@ -266,6 +266,10 @@ global.StructureSpawn = class extends Structure {
         this.name = name
         this.memory = {}
         global.Memory.spawns[name] = this.memory
+        this.spawnCreep = function(recipe, name){
+            new Creep(this.room, name)
+            return 0
+        }
     }
 }
 
