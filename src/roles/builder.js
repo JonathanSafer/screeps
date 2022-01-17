@@ -1,5 +1,4 @@
 var a = require("../lib/actions")
-var u = require("../lib/utils")
 var roomU = require("../lib/roomUtils")
 var cU = require("../lib/creepUtils")
 var rU = require("./upgrader")
