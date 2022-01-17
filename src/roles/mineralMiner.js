@@ -1,5 +1,5 @@
 var a = require("../lib/actions")
-var u = require("../lib/utils")
+var roomU = require("../lib/roomUtils")
 
 var rMM = {
     name: "mineralMiner",
@@ -25,7 +25,7 @@ var rMM = {
         if (rMM.needEnergy(creep)){
             rMM.harvestTarget(creep)
         } else {
-            var bucket = u.getStorage(creep.room)
+            var bucket = roomU.getStorage(creep.room)
             a.charge(creep, bucket)
         }
     },
