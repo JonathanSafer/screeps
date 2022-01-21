@@ -79,7 +79,7 @@ var rL = {
     },
 
     getUpgradeLink: function(room) {
-        if (room.controller.level < 5) return false
+        if (!room.controller || room.controller.level < 5) return false
         const spawn = Game.spawns[room.memory.city]
         const linkPos = spawn.memory.upgradeLinkPos
         if(linkPos){
