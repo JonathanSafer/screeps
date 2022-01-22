@@ -15,7 +15,7 @@ var rRr = {
                     creep.reserveController(Game.rooms[targetRoom].controller)
                 }
             } else{
-                motion.newMove(creep, Game.rooms[targetRoom].controller, 1)
+                motion.newMove(creep, Game.rooms[targetRoom].controller.pos, 1)
             }
         } else {
             motion.newMove(creep, new RoomPosition(25, 25, targetRoom), 24)
