@@ -854,7 +854,7 @@ function updateRemotes(city){
             if(Game.rooms[remotes[i]] && Game.time % 100 == 3){
                 const reserverCost = 650
                 const controller = Game.rooms[remotes[i]].controller
-                if(spawn.room.energyCapacityAvailable >= reserverCost && controller && (!controller.reservation || controller.reservation.ticksToEnd < 1000 || controller.reservation.username != settings.username)){
+                if(spawn.room.energyCapacityAvailable >= reserverCost && controller && !controller.owner && (!controller.reservation || controller.reservation.ticksToEnd < 1000 || controller.reservation.username != settings.username)){
                     sq.schedule(spawn, rRr.name, false, remotes[i])
                 }
                 const myCreeps = u.splitCreepsByCity()[city]
