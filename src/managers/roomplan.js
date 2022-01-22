@@ -857,7 +857,7 @@ const p = {
                         continue
                     }
                 }
-                if(!roads[i].createConstructionSite(STRUCTURE_ROAD)){
+                if(Game.rooms[roads[i].roomName] && !roads[i].createConstructionSite(STRUCTURE_ROAD)){
                     counter++
                 }
             }
