@@ -98,7 +98,7 @@ var rH = {
         //if target and in range, shoot target, otherwise shoot anybody in range
         if(creep.memory.target){
             const target = Game.getObjectById(creep.memory.target)
-            if(target.my){
+            if(target && target.my){
                 if(target.hits < target.hitsMax){
                     creep.rangedHeal(target)
                 } else {
