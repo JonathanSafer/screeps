@@ -19,6 +19,7 @@ var rQ = require("./quad")
 var rS = require("./scout")
 var rRe = require("./repairer")
 const rQr = require("./qrCode")
+const rRr = require("./reserver")
 
 
 var rr = {
@@ -52,6 +53,7 @@ var rr = {
         priorities[rS.name] = 16
         priorities[rQr.name] = 17
         priorities[rRe.name] = 14
+        priorities[rRr.name] = 15
         return priorities
     },
 
