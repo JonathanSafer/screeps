@@ -20,6 +20,7 @@ var rS = require("./scout")
 var rRe = require("./repairer")
 const rQr = require("./qrCode")
 const rRr = require("./reserver")
+const rBk = require("./brick")
 
 
 var rr = {
@@ -27,7 +28,7 @@ var rr = {
     getRoles: function() {
         return [rF, rD, rT, rM, rR, rU, rB, rQ, rMM, rC, rUC,
             rSB, rH,rMe, rBr, rPM,
-            rRo, rDM, rS, rQr, rRe, rRr]
+            rRo, rDM, rS, rQr, rRe, rRr, rBk]
     },
 
     getRolePriorities: function(){
@@ -54,6 +55,7 @@ var rr = {
         priorities[rQr.name] = 17
         priorities[rRe.name] = 14
         priorities[rRr.name] = 15
+        priorities[rBk.name] = 15
         return priorities
     },
 
