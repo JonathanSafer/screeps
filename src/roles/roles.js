@@ -27,7 +27,7 @@ var rr = {
     getRoles: function() {
         return [rF, rD, rT, rM, rR, rU, rB, rQ, rMM, rC, rUC,
             rSB, rH,rMe, rBr, rPM,
-            rRo, rDM, rS, rQr, rRe]
+            rRo, rDM, rS, rQr, rRe, rRr]
     },
 
     getRolePriorities: function(){
