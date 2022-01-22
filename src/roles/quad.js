@@ -139,8 +139,9 @@ var rQ = {
             } else {
                 const matrix = rQ.getRoomMatrix(creep.pos.roomName)
                 let startPos = null
-                if(Memory.flags[creep.memory.city + "quadRally"]){
-                    const rallyExit = Game.map.findExit(creep.pos.roomName, Memory.flags[creep.memory.city + "quadRally"].roomName)
+                const flagName = creep.memory.flag || creep.memory.city + "quadRally"
+                if(Memory.flags[flagName]){
+                    const rallyExit = Game.map.findExit(creep.pos.roomName, Memory.flags[flagName].roomName)
                     startPos = _.find(creep.room.find(rallyExit), pos => matrix.get(pos.x,pos.y) == 2)
                 } else {
                     startPos = _.find(creep.room.find(FIND_EXIT), pos => matrix.get(pos.x,pos.y) == 2)
@@ -249,7 +250,7 @@ var rQ = {
         if(!info) return
         const quad = info[0]
         const everythingByRoom = info[1]
-        const flagName = quad[0].memory.city + "quadRally"
+        const flagName = quad[0].memory.flag || quad[0].memory.city + "quadRally"
         const flag = Memory.flags[flagName]
         const flagPos = new RoomPosition(flag.x, flag.y, flag.roomName)
 
@@ -279,7 +280,7 @@ var rQ = {
         if(!info) return
         const quad = info[0]
         const everythingByRoom = info[1]
-        const flagName = quad[0].memory.city + "quadRally"
+        const flagName = quad[0].memory.flag || quad[0].memory.city + "quadRally"
         const flag = Memory.flags[flagName]
 
         if(flag && (!creep.memory.safeTime || creep.memory.safeTime < Game.time) && rQ.isSafe(everythingByRoom, quad) && creep.room.name != flag.roomName){
