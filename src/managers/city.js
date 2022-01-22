@@ -29,6 +29,7 @@ var rMe = require("../roles/medic")
 const rQr = require("../roles/qrCode")
 const rp = require("./roomplan")
 const rRe = require("../roles/repairer")
+const rQ = require("../roles/quad")
 
 
 function makeCreeps(role, city, unhealthyStore, creepWantsBoosts, flag = null) {
@@ -830,7 +831,7 @@ function updateRemotes(city){
     const spawn = Game.spawns[city]
     const stress = spawn.memory.spawnAvailability
     const remotes = Object.keys(_.countBy(spawn.memory.sources, s => s.roomName))
-    if(remotes.length && stress < settings.spawnFreeTime - settings.spawnFreeTimeBuffer && Game.time % 500 == 5){
+    if(remotes.length > 1 && stress < settings.spawnFreeTime - settings.spawnFreeTimeBuffer && Game.time % 500 == 5){
         //drop least profitable remote
         Log.info(`Spawn pressure too high in ${spawn.room.name}, dropping least profitable remote...`)
         const worstRemote = rp.findWorstRemote(spawn.room)
@@ -841,7 +842,76 @@ function updateRemotes(city){
             Log.info("No remotes to remove")
         }
     }
-    //TODO Update DEFCON values for all remotes and take neccessary action
+    if(Game.time % 10 == 3){
+        const harasserRecipe = types.getRecipe(rH.type, Game.spawns[city].room.energyCapacityAvailable, Game.spawns[city].room)
+        const harasserSize = harasserRecipe.length
+        for(let i = 0; i < remotes.length; i++){
+            const defcon = updateDEFCON(remotes[i], harasserSize)
+            if(defcon >= 4){
+                rp.removeRemote(remotes[i], spawn.room.name)
+            }
+            if(Game.rooms[remotes[i]] && Game.time % 100 == 3){
+                const myCreeps = u.splitCreepsByCity()[city]
+                const defenders = _.filter(myCreeps, c => c.ticksToLive > 100 && c.memory.flag == remotes[i])
+                const harassers = _.filter(defenders, c => c.memory.role == rH.name).length
+                const quads = _.filter(defenders, c => c.memory.role == rQ.name).length
+                if(defcon == 2 && harassers < 1){
+                    sq.schedule(spawn, rH.name, false, remotes[i])
+                }
+                if(defcon == 3){
+                    if(harassers < 2){
+                        sq.schedule(spawn, rH.name, false, remotes[i])
+                        sq.schedule(spawn, rH.name, false, remotes[i])
+                    }
+                    if(quads < 4){
+                        for(let j = 0; j < 4; j++){
+                            sq.schedule(spawn, rQ.name, false, remotes[i])
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+}
+
+function updateDEFCON(remote, harasserSize){
+    //1: no threat
+    //2: one harasser guard for invaders
+    //3: 2 harassers and a quad TODO: dynamic defense
+    //4: abandon room
+    const roomInfo = u.getsetd(Cache, remote)
+    if(!roomInfo.d){
+        roomInfo.d = 2
+    }
+    if(Game.rooms[remote]){
+        if(Game.rooms[remote].controller){
+            if(Game.rooms[remote].controller.my){
+                roomInfo.d = 1
+                return roomInfo.d
+            } else if(Game.rooms[remote].controller.owner){
+                roomInfo.d = 4
+                return roomInfo.d
+            }
+        } else {
+            roomInfo.d = 3
+        }
+        const hostiles = u.findHostileCreeps(Game.rooms[remote])
+        let hostileParts = 0
+        for(let i = 0; i < hostiles.length; i++){
+            if(hostiles[i].body){
+                hostileParts += hostiles[i].body.length
+            }
+        }
+        if(hostileParts > harasserSize * 6){
+            roomInfo.d = 4
+        } else if(hostileParts > harasserSize){
+            roomInfo.d = 3
+        } else {
+            roomInfo.d = 2
+        }
+    }
+    return roomInfo.d
 }
 
 module.exports = {

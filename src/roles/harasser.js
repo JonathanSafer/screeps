@@ -19,6 +19,9 @@ var rH = {
             return
         }
         const flagName = creep.memory.flag || creep.memory.city + "harass"
+        if(Game.rooms[flagName] && !Memory.flags[flagName]){
+            u.placeFlag(flagName, new RoomPosition(25, 25, flagName))
+        }
         if(creep.hits < creep.hitsMax * 0.2 && !creep.memory.reinforced){
             creep.memory.reinforced = true
             sq.respawn(creep, true)
@@ -51,8 +54,13 @@ var rH = {
         rH.maybeHeal(creep, hostiles)
         if(!hostiles.length){
             if(Memory.flags[flagName] && creep.room.name == Memory.flags[flagName].roomName){
+                const injuredFriendlies = creep.room.find(FIND_MY_CREEPS, c => c.hits < c.hitsMax)
                 const hostileStructures = u.findHostileStructures(creep.room)
-                if(hostileStructures.length){
+                if(injuredFriendlies.length){
+                    if(!Game.getObjectById(creep.memory.target)){
+                        creep.memory.target = injuredFriendlies[0].id
+                    }
+                } else if(hostileStructures.length){
                     if(!Game.getObjectById(creep.memory.target)){
                         creep.memory.target = hostileStructures[0].id
                     }
@@ -90,6 +98,14 @@ var rH = {
         //if target and in range, shoot target, otherwise shoot anybody in range
         if(creep.memory.target){
             const target = Game.getObjectById(creep.memory.target)
+            if(target.my){
+                if(target.hits < target.hitsMax){
+                    creep.rangedHeal(target)
+                } else {
+                    creep.memory.target = null
+                }
+                return
+            }
             if(target && target.pos.inRangeTo(creep.pos, 3)){
                 creep.rangedAttack(target)
                 cU.logDamage(creep, target.pos)
