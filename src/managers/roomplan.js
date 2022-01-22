@@ -213,9 +213,9 @@ const p = {
         const memory = Memory.spawns[homeName + "0"]
         const roomInfo = Cache.roomData[roomName]
         for(const sourceId in roomInfo.src){
-            return memory, sourceId
+            //return memory, sourceId
             //uncomment this to activate
-            //memory.sources[sourceId] = u.unpackPos(roomInfo.src[sourceId], roomName)
+            memory.sources[sourceId] = u.unpackPos(roomInfo.src[sourceId], roomName)
         }
     },
 
