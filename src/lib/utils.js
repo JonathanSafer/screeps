@@ -158,7 +158,7 @@ var u = {
     },
 
     isFriendlyRoom: function(room){
-        if(room.controller 
+        if(Memory.remotes[room.name] || room.controller 
             && (room.controller.my
                 || (room.controller.owner 
                     && settings.allies.includes(room.controller.owner.username))
