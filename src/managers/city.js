@@ -893,11 +893,11 @@ function updateDEFCON(remote, harasserSize){
     if(Game.rooms[remote]){
         if(Game.rooms[remote].controller){
             if(Game.rooms[remote].controller.my){
-                roomInfo.d = 1
-                return roomInfo.d
+                Cache.roomData[remote].d = 1
+                return Cache.roomData[remote].d
             } else if(Game.rooms[remote].controller.owner){
-                roomInfo.d = 4
-                return roomInfo.d
+                Cache.roomData[remote].d = 4
+                return Cache.roomData[remote].d
             }
         } else {
             roomInfo.d = 3
@@ -917,6 +917,7 @@ function updateDEFCON(remote, harasserSize){
             roomInfo.d = 2
         }
     }
+    Cache.roomData[remote].d = roomInfo.d
     return roomInfo.d
 }
 
