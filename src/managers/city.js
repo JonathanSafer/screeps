@@ -30,6 +30,7 @@ const rQr = require("../roles/qrCode")
 const rp = require("./roomplan")
 const rRe = require("../roles/repairer")
 const rQ = require("../roles/quad")
+const rRr = require("../roles/reserver")
 
 
 function makeCreeps(role, city, unhealthyStore, creepWantsBoosts, flag = null) {
@@ -851,6 +852,11 @@ function updateRemotes(city){
                 rp.removeRemote(remotes[i], spawn.room.name)
             }
             if(Game.rooms[remotes[i]] && Game.time % 100 == 3){
+                const reserverCost = 650
+                const controller = Game.rooms[remotes[i]].controller
+                if(spawn.room.energyCapacityAvailable >= reserverCost && controller && (!controller.reservation || controller.reservation.ticksToEnd < 1000 || controller.reservation.username != settings.username)){
+                    sq.schedule(spawn, rRr.name, false, remotes[i])
+                }
                 const myCreeps = u.splitCreepsByCity()[city]
                 const defenders = _.filter(myCreeps, c => c.ticksToLive > 100 && c.memory.flag == remotes[i])
                 const harassers = _.filter(defenders, c => c.memory.role == rH.name).length
