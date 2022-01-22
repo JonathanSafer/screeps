@@ -886,7 +886,7 @@ function updateDEFCON(remote, harasserSize){
     //2: one harasser guard for invaders
     //3: 2 harassers and a quad TODO: dynamic defense
     //4: abandon room
-    const roomInfo = u.getsetd(Cache, remote)
+    const roomInfo = u.getsetd(Cache, remote, {})
     if(!roomInfo.d){
         roomInfo.d = 2
     }
