@@ -306,7 +306,7 @@ const p = {
         delete Memory.remotes[roomName]
         const memory = Memory.spawns[room + "0"]
         for(const sourceId in memory.sources){
-            if(memory.sources[sourceId].roomName)
+            if(memory.sources[sourceId].roomName == roomName)
                 delete memory.sources[sourceId]
         }
     },
