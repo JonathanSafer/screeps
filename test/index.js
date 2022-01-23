@@ -18,6 +18,8 @@ describe("#main", function () {
         new StructureTerminal(room)
         new StructureStorage(room)
         new Mineral(room, "X")
+        new Source(room, "Y")
+        new Source(room, "Z")
         const creep = new Creep(room, "7")
         creep.memory.role = "remoteMiner"
         creep.memory.city = city

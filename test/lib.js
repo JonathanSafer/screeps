@@ -320,8 +320,9 @@ global.StructureExtension = class extends Structure {
 }
 
 global.Source = class extends RoomObject {
-    constructor(room) {
+    constructor(room, id) {
         super(room, FIND_SOURCES)
+        this.id = id
     }
 }
 
