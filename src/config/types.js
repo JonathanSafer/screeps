@@ -11,7 +11,7 @@ function getRecipe(type, energyAvailable, room, boosted, flagName){
     d.scout = [MOVE]
     d.quad = quadBody(energy, rcl, room, boosted)
     d.runner = rcl == 1 ? scalingBody([1, 1], [CARRY, MOVE], energy) : scalingBody([2, 1], [CARRY, MOVE], energy)
-    d.miner = minerBody(energy, rcl)
+    d.miner = minerBody(energy, rcl, room, flagName)
     d.normal = upgraderBody(energy, rcl, room)
     d.transporter = scalingBody([2, 1], [CARRY, MOVE], energy, 30)
     d.builder = builderBody(energy, rcl)
@@ -172,11 +172,20 @@ function pMinerBody(boosted){
     return body([20, 20], [MOVE, ATTACK])
 }
 
-function minerBody(energyAvailable, rcl) {
+function minerBody(energyAvailable, rcl, room, flag) {
     // miners. at least 1 move. 5 works until we can afford 10
     let works = Math.floor((energyAvailable) / BODYPART_COST[WORK])
-    if (works >= 25 && rcl > 7 && !PServ) works = 25
-    else if (works > 10 && (!PServ || rcl >= 6)) works = 10
+    let pc = null
+    const source = Game.getObjectById(flag)
+    if(rcl == 8){
+        if(source && source.room.name == room.name){
+            pc = room.find(FIND_MY_POWER_CREEPS, c => c.powers[PWR_REGEN_SOURCE]).length
+            if(Game.cpu.bucket < 9500)
+                pc++
+        }
+    }
+    if (works >= 25 && pc && !PServ) works = 25
+    else if (works > 10 && (!PServ || rcl >= 5)) works = 10
     else if (works > 6) works = 6
     else works = Math.max(1, works)
     const energyAfterWorks = energyAvailable - works * BODYPART_COST[WORK]
@@ -191,7 +200,9 @@ function minerBody(energyAvailable, rcl) {
         .filter(c => loadsNeeded(c) < loadsNeeded(c - 1)) // more carries => fewer loads?
         .filter(c => c <= energyAfterMoves / BODYPART_COST[CARRY])  // how many can we afford?
         .filter(c => works + c + moves <= MAX_CREEP_SIZE)
-    const carries = rcl >= 6 ? Math.max(...storeChoices, minCarries) : minCarries
+    let carries = rcl >= 6 ? Math.max(...storeChoices, minCarries) : minCarries
+    if(source && source.room.name == room.name)
+        carries = 1
     return body([works, carries, moves], [WORK, CARRY, MOVE])
 }
 
