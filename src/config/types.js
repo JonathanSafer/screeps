@@ -7,7 +7,7 @@ function getRecipe(type, energyAvailable, room, boosted, flagName){
 
     // used at all rcls
     d.brick = scalingBody([1,1], [ATTACK, MOVE], energy, 20)
-    d.reserver = scalingBody([1,1], [CLAIM, MOVE], energy)
+    d.reserver = scalingBody([1,1], [CLAIM, MOVE], energy, 12)
     d.scout = [MOVE]
     d.quad = quadBody(energy, rcl, room, boosted)
     d.runner = rcl == 1 ? scalingBody([1, 1], [CARRY, MOVE], energy) : scalingBody([2, 1], [CARRY, MOVE], energy)
