@@ -54,7 +54,7 @@ var rH = {
         rH.maybeHeal(creep, hostiles)
         if(!hostiles.length){
             if(Memory.flags[flagName] && creep.room.name == Memory.flags[flagName].roomName){
-                const injuredFriendlies = creep.room.find(FIND_MY_CREEPS, c => c.hits < c.hitsMax)
+                const injuredFriendlies = _.filter(creep.room.find(FIND_MY_CREEPS), c => c.hits < c.hitsMax)
                 const hostileStructures = u.findHostileStructures(creep.room)
                 if(injuredFriendlies.length){
                     if(!Game.getObjectById(creep.memory.target)){
