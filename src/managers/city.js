@@ -676,7 +676,7 @@ function updateBuilder(rcl, memory, spawn) {
 }
 
 function updateRunner(creeps, spawn, extensions, memory, rcl, emergencyTime) {
-    if (rcl == 8 && !emergencyTime) {
+    if (rcl == 8 && !emergencyTime && Game.cpu.bucket < settings.mineralMining) {
         memory[rR.name] = 0
         return
     }
