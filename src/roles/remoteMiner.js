@@ -13,7 +13,7 @@ var rM = {
         if(creep.spawning){
             return
         }
-        if(creep.ticksToLive == creep.memory.spawnBuffer + (creep.body.length * CREEP_SPAWN_TIME) && Game.spawns[creep.memory.city].memory.remoteMiner > 0) {
+        if(creep.ticksToLive == creep.memory.spawnBuffer + (creep.body.length * CREEP_SPAWN_TIME)) {
             sq.respawn(creep)
         }
         if(creep.hits < creep.hitsMax && creep.pos.roomName == Game.spawns[creep.memory.city].pos.roomName){
@@ -225,20 +225,12 @@ var rM = {
 
     /** pick a target id for creep **/
     nextSource: function(creep) {
-        var city = creep.memory.city
-        var miners = _.filter(u.splitCreepsByCity()[city], c => c.memory.role === rM.name 
-            && c.ticksToLive > (c.memory.spawnBuffer || 50))
-        var occupied = []
-        _.each(miners, function(minerInfo){
-            occupied.push(minerInfo.memory.source)
-        })
-        const sourceMap = Game.spawns[city].memory.sources || {}
-        var sources = Object.keys(sourceMap)
-        var openSources = _.filter(sources, Id => !occupied.includes(Id))
-        
-        if (openSources.length){
-            creep.memory.source = openSources[0]
-            creep.memory.sourcePos = Game.spawns[city].memory.sources[openSources[0]]
+        if(creep.memory.flag){
+            creep.memory.source = creep.memory.flag
+            creep.memory.sourcePos = Game.spawns[creep.memory.city].memory.sources[creep.memory.source]
+            if(!sourcePos)
+                creep.suicide()
+            delete creep.memory.flag
         }
     }
 }
