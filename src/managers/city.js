@@ -157,7 +157,7 @@ function updateCountsCity(city, creeps, rooms, claimRoom, unclaimRoom) {
         const extensions = _.filter(structures, structure => structure.structureType == STRUCTURE_EXTENSION).length
         updateRunner(creeps, spawn, extensions, memory, rcl, emergencyTime)
         updateFerry(spawn, memory, rcl)
-        updateMiner(rooms, rcl8, memory, spawn)
+        updateMiner(creeps, rcl8, memory, spawn)
         updateBuilder(rcl, memory, spawn)
         updateRepairer(spawn, memory, creeps)
     
@@ -500,46 +500,38 @@ function cityFraction(cityName) {
     return _.indexOf(myCities, cityName) / myCities.length
 }
 
-function updateMiner(rooms, rcl8, memory, spawn){   
+function updateMiner(creeps, rcl8, memory, spawn){
     if (!memory.sources) memory.sources = {}
-    if (rcl8 && _.keys(memory.sources).length > 2) memory.sources = {}
-    let miners = 0
-    const miningRooms = rcl8 ? [spawn.room] : rooms
-    const sources = _.flatten(_.map(miningRooms, room => room.find(FIND_SOURCES)))
-
-    _.each(sources, function(sourceInfo){
-        const sourceId = sourceInfo.id
-        const sourcePos = sourceInfo.pos
-        if (!([sourceId] in memory.sources)){
-            memory.sources[sourceId] = sourcePos
-        }
-    })     
-    if(rcl8){
-        const powerCreeps = spawn.room.find(FIND_MY_POWER_CREEPS)
-        let bucketThreshold = settings.bucket.energyMining + settings.bucket.range * cityFraction(spawn.room.name) 
-        if(powerCreeps.length && powerCreeps[0].powers[PWR_REGEN_SOURCE] || spawn.room.storage.store[RESOURCE_ENERGY] < settings.energy.processPower){
-            bucketThreshold -= settings.bucket.range/2
-        }
-        if (Game.cpu.bucket < bucketThreshold) {
-            memory[rM.name] = 0
-            return
-        }
-
-        if(_.find(spawn.room.find(FIND_MY_CREEPS), c => c.memory.role == rD.name)){
-            memory[rM.name] = 0
-        } else {
-            memory[rM.name] = 2
-        }
-        return
-    }
-    _.each(memory.sources, () => miners++)
     const flag = Memory.flags.claim
     if(flag && flag.roomName === spawn.pos.roomName &&
         Game.rooms[flag.roomName].controller.level < 6){
         memory[rM.name] = 0
         return
     }
-    memory[rM.name] = miners
+    const localSources = spawn.room.find(FIND_SOURCES)
+
+    _.each(localSources, function(sourceInfo){
+        const sourceId = sourceInfo.id
+        const sourcePos = sourceInfo.pos
+        if (!([sourceId] in memory.sources)){
+            memory.sources[sourceId] = sourcePos
+        }
+    })
+
+    const powerCreep = spawn.room.find(FIND_MY_POWER_CREEPS, c => c.powers[PWR_REGEN_SOURCE]).length
+    let bucketThreshold = settings.bucket.energyMining + settings.bucket.range * cityFraction(spawn.room.name)
+    if(powerCreep || spawn.room.storage.store[RESOURCE_ENERGY] < settings.energy.processPower){
+        bucketThreshold -= settings.bucket.range/2
+    }
+    if (spawn.memory.towersActive || (Game.cpu.bucket < bucketThreshold && rcl8)) {
+        memory[rM.name] = 0
+        return
+    }
+    for(const sourceId in memory.sources){
+        if(!_.find(creeps, c => c.memory.source == sourceId) && !sq.countByInfo(spawn, rM.name, sourceId)){
+            sq.schedule(spawn, rM.name, false, sourceId)
+        }
+    }     
 }
 
 function updateMineralMiner(rcl, buildings, spawn, memory) {
