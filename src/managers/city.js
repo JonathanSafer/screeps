@@ -152,7 +152,7 @@ function updateCountsCity(city, creeps, rooms, claimRoom, unclaimRoom) {
     if(Game.time % 200 == 0){
         updateMilitary(city, memory, rooms, spawn, creeps)
     }
-    if (Game.time % logisticsTime == 0) {
+    if (Game.time % logisticsTime == 0 || Game.time < 10) {
         const structures = spawn.room.find(FIND_STRUCTURES)
         const extensions = _.filter(structures, structure => structure.structureType == STRUCTURE_EXTENSION).length
         updateRunner(creeps, spawn, extensions, memory, rcl, emergencyTime)
@@ -523,7 +523,7 @@ function updateMiner(creeps, rcl8, memory, spawn){
     if(powerCreep || spawn.room.storage.store[RESOURCE_ENERGY] < settings.energy.processPower){
         bucketThreshold -= settings.bucket.range/2
     }
-    if (spawn.memory.towersActive || (Game.cpu.bucket < bucketThreshold && rcl8)) {
+    if (spawn.memory.towersActive || (Game.cpu.bucket < bucketThreshold && rcl8) || Game.time < 500) {
         memory[rM.name] = 0
         return
     }
