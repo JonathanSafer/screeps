@@ -774,8 +774,10 @@ function runEarlyGame(){
         return
     }
     const room = spawn.room
+    const sources = spawn.room.find(FIND_SOURCES)
     let role = null
     let budget = 0
+    let source = 0
     switch(Memory.gameState){
     case 0:
         role = rR
@@ -796,6 +798,7 @@ function runEarlyGame(){
     case 4:
         role = rM
         budget = 300
+        source = 1
         break
     }
     const name = Memory.gameState + "a"
@@ -805,6 +808,7 @@ function runEarlyGame(){
         Game.creeps[name].memory.role = role.name
         Game.creeps[name].memory.target = role.target
         Game.creeps[name].memory.city = room.name + "0"
+        Game.creeps[name].memory.source = sources[source].id
         Memory.gameState++
     }
 }

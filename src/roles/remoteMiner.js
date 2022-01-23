@@ -1,7 +1,6 @@
 var a = require("../lib/actions")
 var sq = require("../lib/spawnQueue")
 var motion = require("../lib/motion")
-const u = require("../lib/utils")
 const settings = require("../config/settings")
 
 var rM = {
@@ -228,7 +227,7 @@ var rM = {
         if(creep.memory.flag){
             creep.memory.source = creep.memory.flag
             creep.memory.sourcePos = Game.spawns[creep.memory.city].memory.sources[creep.memory.source]
-            if(!sourcePos)
+            if(!creep.memory.sourcePos)
                 creep.suicide()
             delete creep.memory.flag
         }
