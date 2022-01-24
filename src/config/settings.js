@@ -15,7 +15,7 @@ var settings = {
     // market
     creditMin: 1000000, //min credits needed to start buying energy
     powerPrice: 8, // price we will pay for power
-    upgradeBoostPrice: 50,
+    upgradeBoostPrice: 500,
     powerBuyVolume: 5000, // amount of power we will buy at once
     processPower: true, //process power instead of selling it
     rcl8upgrade: true, //use excess energy to GCL pump at RCL8
