@@ -230,6 +230,8 @@ var rM = {
             if(!creep.memory.sourcePos)
                 creep.suicide()
             delete creep.memory.flag
+        } else {
+            creep.suicide()
         }
     }
 }
