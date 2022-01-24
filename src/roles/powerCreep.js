@@ -55,7 +55,9 @@ var rPC = {
             a.enablePower(creep)
             break
         case CS.WORK_SOURCE:
-            a.usePower(creep, Game.getObjectById(creep.memory.target), PWR_REGEN_SOURCE)
+            if(a.usePower(creep, Game.getObjectById(creep.memory.target), PWR_REGEN_SOURCE) == ERR_INVALID_ARGS){
+                creep.memory.state = CS.ENABLE_POWER
+            }
             break
         case CS.WORK_GENERATE_OPS:
             creep.usePower(PWR_GENERATE_OPS)
