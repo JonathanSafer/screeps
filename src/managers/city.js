@@ -529,6 +529,8 @@ function updateMiner(creeps, rcl8, memory, spawn){
     }
     for(const sourceId in memory.sources){
         if(!_.find(creeps, c => c.memory.source == sourceId) && !sq.countByInfo(spawn, rM.name, sourceId)){
+            if(spawn.room.storage && spawn.room.storage.store.energy < 5000 && spawn.room.name != memory.sources[sourceId].roomName)
+                continue
             sq.schedule(spawn, rM.name, false, sourceId)
         }
     }     
