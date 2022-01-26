@@ -18,18 +18,19 @@ jobs:
     - name: npm install
       run: |
         npm ci
-        npm test
     - name: eslint checks
       run: |
         npm run lint
     - name: npm test
       run: |
+        npx tsc
         npm test
     - name: Coverage test
       run: |
         npm run coverage
     - name: Build
       run: |
+        npx tsc
         npm run roll
     - name: Get API Keys
       uses: nowactions/envsubst@v1

@@ -30,7 +30,7 @@ describe("#main", function () {
         console.log("Loaded constants for test")
 
         // Load main
-        const main = require("../src/main.js")
+        const main = require("../built/main.js")
         console.log("Initialized main")
 
         // Loop main
