@@ -1,19 +1,19 @@
-var u = require("./lib/utils")
-var cM = require("./managers/commodityManager")
-var rPC = require("./roles/powerCreep")
-var c = require("./managers/city")
-var m = require("./managers/markets")
-var s = require("./operations/stats")
-var rp = require("./managers/roomplan")
-var er = require("./operations/error")
-var settings = require("./config/settings")
-const profiler = require("./operations/screeps-profiler")
-const b = require("./operations/bucket")
-const observer = require("./buildings/observer")
-require("./operations/profiler-prep")
-require("./lib/globals")
-var rr = require("./roles/roles")
-const data = require("./operations/data")
+import u = require("./lib/utils")
+import cM = require("./managers/commodityManager")
+import rPC = require("./roles/powerCreep")
+import c = require("./managers/city")
+import m = require("./managers/markets")
+import s = require("./operations/stats")
+import rp = require("./managers/roomplan")
+import er = require("./operations/error")
+import settings = require("./config/settings")
+import profiler = require("./operations/screeps-profiler")
+import b = require("./operations/bucket")
+import observer = require("./buildings/observer")
+import "./operations/profiler-prep";
+import "./lib/globals";
+import rr = require("./roles/roles")
+import data = require("./operations/data")
 
 //Code to manually profile:
 //Game.profiler.profile(1000);
@@ -34,7 +34,7 @@ const data = require("./operations/data")
 // Control => 50 control / CPU. 25 CR/CPU => 2 CR / control
 
 profiler.enable()
-module.exports.loop = function () {
+export function loop() {
     "use strict"
     profiler.wrap(function () {
         RawMemory.setActiveSegments([])
