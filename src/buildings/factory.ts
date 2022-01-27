@@ -39,7 +39,7 @@ var fact = {
         if(factory.level !== Game.spawns[city].memory.ferryInfo.factoryInfo.factoryLevel){
             if(!Game.spawns[city].memory.ferryInfo.factoryInfo.factoryLevel){
                 //schedule removal of all commodities
-                fact.removeJunk(city, Game.spawns[city].room.terminal, factory.level)
+                fact.removeJunk(city, Game.spawns[city].room.terminal)
             }
             Game.spawns[city].memory.ferryInfo.factoryInfo.factoryLevel = factory.level
         }
@@ -212,4 +212,4 @@ var fact = {
     }
 
 }
-module.exports = fact
+export = fact

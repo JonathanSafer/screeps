@@ -2,7 +2,7 @@ var assert = require("assert")
 const _ = require("lodash")
 require("./lib")
 
-var rT = require("../src/roles/transporter.js")
+var rT = require("../built/roles/transporter.js")
 
 describe("transporter", function () {
     var room, cntrl, ext, ext2, f

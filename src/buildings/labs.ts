@@ -1,5 +1,5 @@
-var settings = require("../config/settings")
-var u = require("../lib/utils")
+import settings = require("../config/settings")
+import u = require("../lib/utils")
 
 var labs = {
     //new labs:
@@ -46,8 +46,8 @@ var labs = {
             return
         }
         //if a reactor is missing, return
-        const reactor0 = Game.getObjectById(Object.keys(spawn.memory.ferryInfo.labInfo.reactors)[0])
-        const reactor1 = Game.getObjectById(Object.keys(spawn.memory.ferryInfo.labInfo.reactors)[1])
+        const reactor0: Mineral = Game.getObjectById(Object.keys(spawn.memory.ferryInfo.labInfo.reactors)[0])
+        const reactor1: Mineral = Game.getObjectById(Object.keys(spawn.memory.ferryInfo.labInfo.reactors)[1])
         if(!reactor0 || !reactor1 || !spawn.room.terminal){
             return
         }
@@ -81,7 +81,7 @@ var labs = {
         //if that is not the case, all receivers must be emptied
         let oldMineral = null
         for(let i = 0; i < Object.keys(spawn.memory.ferryInfo.labInfo.receivers).length; i++){
-            const receiver = Game.getObjectById(Object.keys(spawn.memory.ferryInfo.labInfo.receivers)[i])
+            const receiver: Mineral = Game.getObjectById(Object.keys(spawn.memory.ferryInfo.labInfo.receivers)[i])
             if(!spawn.memory.ferryInfo.labInfo.receivers[receiver.id].boost && receiver.mineralType){
                 //empty receivers if they are not boosters and have minerals
                 spawn.memory.ferryInfo.labInfo.receivers[receiver.id].fill = -1
@@ -105,10 +105,10 @@ var labs = {
         if (!minerals){
             return
         }
-        Object.values(spawn.memory.ferryInfo.labInfo.reactors)[0].mineral = minerals[0]
-        Object.values(spawn.memory.ferryInfo.labInfo.reactors)[1].mineral = minerals[1]
-        Object.values(spawn.memory.ferryInfo.labInfo.reactors)[0].fill = 3
-        Object.values(spawn.memory.ferryInfo.labInfo.reactors)[1].fill = 3
+        Object.values<any>(spawn.memory.ferryInfo.labInfo.reactors)[0].mineral = minerals[0]
+        Object.values<any>(spawn.memory.ferryInfo.labInfo.reactors)[1].mineral = minerals[1]
+        Object.values<any>(spawn.memory.ferryInfo.labInfo.reactors)[0].fill = 3
+        Object.values<any>(spawn.memory.ferryInfo.labInfo.reactors)[1].fill = 3
     },
 
     chooseBoost: function(currentBoost, spawn){
@@ -140,7 +140,7 @@ var labs = {
             if (Game.time % reactionTime === 4 && Game.cpu.bucket > 2000){
                 const receiverList = Object.keys(receivers)
                 for(let i = 0; i < receiverList.length; i++){
-                    const lab = Game.getObjectById(receiverList[i])
+                    const lab: StructureLab = Game.getObjectById(receiverList[i])
                     if(lab){
                         if(!receivers[receiverList[i]].boost){
                             lab.runReaction(reactor0, reactor1)
@@ -198,7 +198,7 @@ var labs = {
     },
 
     findIngredients: function(mineral){
-        let result = 0
+        let result = null
         _.forEach(Object.keys(REACTIONS), function(key){
             _.forEach(Object.keys(REACTIONS[key]), function(key2){
                 if (REACTIONS[key][key2] == mineral){
@@ -209,4 +209,4 @@ var labs = {
         return result
     }
 }
-module.exports = labs
+export = labs

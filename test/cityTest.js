@@ -13,10 +13,10 @@ describe("city", function () {
         Game.reset()
         Memory.reset()
     })
-    var c = require("../src/managers/city")
+    var c = require("../built/managers/city")
     describe("#scheduleIfNeeded()", function () {
-        const sq = require("../src/lib/spawnQueue")
-        const rT = require("../src/roles/transporter")
+        const sq = require("../built/lib/spawnQueue")
+        const rT = require("../built/roles/transporter")
         it("schedules as many as needed", function () {
             const room = new Room("test")
             const city = `${room.name}0`

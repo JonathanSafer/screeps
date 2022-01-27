@@ -4,7 +4,7 @@ var T = {
         if(!towers.length){
             return null
         }
-        const healMap = T.generateHealMap(hostiles, roomName)
+        const healMap = T.generateHealMap(hostiles)
         for(var i = 0; i < hostiles.length; i++){
             if(hostiles[i].pos.x == 49 || hostiles[i].pos.y == 49 || hostiles[i].pos.x == 0 || hostiles[i].pos.y == 49){
                 continue
@@ -123,4 +123,4 @@ var T = {
         return map
     }
 }
-module.exports = T
+export = T

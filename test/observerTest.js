@@ -8,7 +8,7 @@ describe("observer", function () {
         Tmp = {}
     })
 
-    var o = require("../src/buildings/observer.js")
+    var o = require("../built/buildings/observer.js")
 
     describe("#findRoomsForScan()", function () {
         it("should find 441 rooms", function () {

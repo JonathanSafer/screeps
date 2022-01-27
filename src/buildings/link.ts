@@ -9,9 +9,9 @@ var rL = {
     fixCacheIfInvalid: function(room) {
         const rN = room.name
         if (!Cache[rN]) Cache[rN] = {}
-        const links = Cache[rN].links || {}
-        let storageLink = Game.getObjectById(links.store)
-        let upgradeLink = Game.getObjectById(links.upgrade)
+        const links: LinksCache = Cache[rN].links || {}
+        let storageLink: StructureLink = Game.getObjectById(links.store)
+        let upgradeLink: StructureLink = Game.getObjectById(links.upgrade)
         let sourceLinks = _.map(links.source, src => Game.getObjectById(src))
         if(storageLink && Game.time % 10 != 0)
             return
@@ -55,8 +55,8 @@ var rL = {
         rL.fixCacheIfInvalid(room)
 
         const links = Cache[room.name].links
-        const storageLink = Game.getObjectById(links.store)
-        const upgradeLink = Game.getObjectById(links.upgrade)
+        const storageLink: StructureLink = Game.getObjectById(links.store)
+        const upgradeLink: StructureLink = Game.getObjectById(links.upgrade)
         const sourceLinks = _.map(links.source, src => Game.getObjectById(src))
 
         // Make transfers
@@ -97,4 +97,4 @@ var rL = {
     }
 }
 
-module.exports = rL
+export = rL

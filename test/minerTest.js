@@ -29,7 +29,7 @@ describe("remoteMiner", function () {
         Game.reset()
         Memory.reset()
     })
-    const rM = require("../src/roles/remoteMiner")
+    const rM = require("../built/roles/remoteMiner")
     describe("#run()", function () {
 
         // it("should move to the source", function () {

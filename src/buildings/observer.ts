@@ -1,5 +1,5 @@
-const settings = require("../config/settings")
-const u = require("../lib/utils")
+import settings = require("../config/settings")
+import u = require("../lib/utils")
 
 const ob = {
     run: function(city){
@@ -256,4 +256,4 @@ const ob = {
     }
 }
 
-module.exports = ob
+export = ob

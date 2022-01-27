@@ -6,7 +6,7 @@ describe("types", function () {
         Game.reset()
         Memory.reset()
     })
-    var t = require("../src/config/types.js")
+    var t = require("../built/config/types.js")
     describe("#depositMinerBody()", function () {
         it("source is barely harvested for boosted & unboosted", function () {
             const boostedBody = t.depositMinerBody(1000, 500, true, [1, 1, 1])

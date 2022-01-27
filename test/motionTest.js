@@ -6,7 +6,7 @@ describe("motion", function () {
         Game.reset()
         Memory.reset()
     })
-    var m = require("../src/lib/motion")
+    var m = require("../built/lib/motion")
     describe("#getBoundingBox()", function () {
         it("makes the expected box", function () {
             const room = new Room("test")
