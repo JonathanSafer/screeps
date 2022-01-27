@@ -70,7 +70,7 @@ const p = {
         if(Object.keys(candidates).length > 1) p.narrowBySourcePos(candidates, roomData, roomName)
 
         const center = Object.values(candidates)[0]
-        const centerPoint = parseInt(Object.keys(candidates.keys)[0])
+        const centerPoint = parseInt(Object.keys(candidates)[0])
 
         if(!center.sourceDistance){
             //TODO sources should be map from src
