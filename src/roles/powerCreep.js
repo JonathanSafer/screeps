@@ -23,7 +23,6 @@ var CS = CreepState
 
 var rPC = {
 
-    /** @param {Creep} creep **/
     run: function(creep) {
         if(creep.shard)
             creep.memory.shard = creep.shard

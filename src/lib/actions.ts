@@ -146,13 +146,13 @@ var actions = {
     },
     
     // Pick up stuff lying next to you as you pass by
-    notice: function(creep) {
+    notice: function(creep: Creep) {
         var tombstones = creep.room.find(FIND_TOMBSTONES)
         var closeStones = _.filter(tombstones, stone => stone.pos.isNearTo(creep.pos))
         if (closeStones.length) {
             //Log.info(closeStones);
             // we can only get one thing per turn, success is assumed since we're close
-            const result = creep.withdraw(closeStones[0], _.keys(closeStones[0])[0])
+            const result = creep.withdraw(closeStones[0], _.keys(closeStones[0])[0] as ResourceConstant)
             switch (result) {
             case ERR_FULL:
                 return
@@ -204,7 +204,7 @@ var actions = {
         return
     },
 
-    breakStuff: function(creep) {
+    breakStuff: function(creep: Creep) {
         var structures = creep.room.find(FIND_HOSTILE_STRUCTURES)
         var structGroups = _.groupBy(structures, structure => structure.structureType)
         var targetOrder = [STRUCTURE_SPAWN, STRUCTURE_TOWER, STRUCTURE_EXTENSION, STRUCTURE_LINK, STRUCTURE_POWER_SPAWN,

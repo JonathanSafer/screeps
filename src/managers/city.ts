@@ -1,39 +1,39 @@
-var rDM = require("../roles/depositMiner")
-var rH = require("../roles/harasser")
-var rSB = require("../roles/spawnBuilder")
-var rC = require("../roles/claimer")
-var rUC = require("../roles/unclaimer")
-var rF = require("../roles/ferry")
-var rMM = require("../roles/mineralMiner")
-var rU = require("../roles/upgrader")
-var rB = require("../roles/builder")
-var rR = require("../roles/runner")
-var rT = require("../roles/transporter")
-var rM = require("../roles/remoteMiner")
-var rD = require("../roles/defender")
-var rPM = require("../roles/powerMiner")
-var rr = require("../roles/roles")
-var types = require("../config/types")
-var settings = require("../config/settings")
-var template = require("../config/template")
-var u = require("../lib/utils")
-var roomU = require("../lib/roomUtils")
-var cU = require("../lib/creepUtils")
-var sq = require("../lib/spawnQueue")
-var t = require("../buildings/tower")
-var labsLib = require("../buildings/labs")
-var fact = require("../buildings/factory")
-var link = require("../buildings/link")
-var e = require("../operations/error")
-var rMe = require("../roles/medic")
-const rQr = require("../roles/qrCode")
-const rp = require("./roomplan")
-const rRe = require("../roles/repairer")
-const rQ = require("../roles/quad")
-const rRr = require("../roles/reserver")
+import rDM = require("../roles/depositMiner")
+import rH = require("../roles/harasser")
+import rSB = require("../roles/spawnBuilder")
+import rC = require("../roles/claimer")
+import rUC = require("../roles/unclaimer")
+import rF = require("../roles/ferry")
+import rMM = require("../roles/mineralMiner")
+import rU = require("../roles/upgrader")
+import rB = require("../roles/builder")
+import rR = require("../roles/runner")
+import rT = require("../roles/transporter")
+import rM = require("../roles/remoteMiner")
+import rD = require("../roles/defender")
+import rPM = require("../roles/powerMiner")
+import rr = require("../roles/roles")
+import types = require("../config/types")
+import settings = require("../config/settings")
+import template = require("../config/template")
+import u = require("../lib/utils")
+import roomU = require("../lib/roomUtils")
+import cU = require("../lib/creepUtils")
+import sq = require("../lib/spawnQueue")
+import t = require("../buildings/tower")
+import labsLib = require("../buildings/labs")
+import fact = require("../buildings/factory")
+import link = require("../buildings/link")
+import e = require("../operations/error")
+import rMe = require("../roles/medic")
+import rQr = require("../roles/qrCode")
+import rp = require("./roomplan")
+import rRe = require("../roles/repairer")
+import rQ = require("../roles/quad")
+import rRr = require("../roles/reserver")
 
 
-function makeCreeps(role, city, unhealthyStore, creepWantsBoosts, flag = null) {
+function makeCreeps(role, city: string, unhealthyStore=false, creepWantsBoosts=false, flag = null) {
     if(Memory.gameState < 5) return false
     const room = Game.spawns[city].room
    
@@ -72,7 +72,7 @@ function makeCreeps(role, city, unhealthyStore, creepWantsBoosts, flag = null) {
 }
 
 //runCity function
-function runCity(city, creeps){
+function runCity(city, creeps: Creep[]){
     const spawn = Game.spawns[city]
     if (!spawn) return false
     const room = spawn.room
@@ -83,7 +83,7 @@ function runCity(city, creeps){
     const emergencyRoles = rr.getEmergencyRoles()
     const allRoles = rr.getRoles()
 
-    const storage = roomU.getStorage(room)
+    const storage = roomU.getStorage(room) as StructureContainer | StructureStorage
     const halfCapacity = storage && storage.store.getCapacity() / 2
     const unhealthyStore = storage && storage.store[RESOURCE_ENERGY] < Math.min(5000, halfCapacity)
     var roles = (unhealthyStore) ? emergencyRoles : allRoles
@@ -184,7 +184,7 @@ function checkNukes(room){
     }
 }
 
-function makeEmergencyCreeps(extensions, creeps, city, rcl8, emergency) {
+function makeEmergencyCreeps(extensions, creeps: Creep[], city, rcl8, emergency) {
     const checkTime = rcl8 ? 200 : 50
     const memory = Game.spawns[city].memory
 
@@ -218,7 +218,7 @@ function updateQR(spawn, creeps){
 }
 
 // Run the tower function
-function runTowers(city){
+function runTowers(city: string){
     const spawn = Game.spawns[city]
     if (spawn){
         if(spawn.memory.towersActive == undefined){
@@ -228,15 +228,15 @@ function runTowers(city){
         if(spawn.memory.towersActive == false && Game.time % checkTime != 0){
             return
         }
-        var towers = _.filter(spawn.room.find(FIND_MY_STRUCTURES), (structure) => structure.structureType == STRUCTURE_TOWER)
+        var towers = _.filter(spawn.room.find(FIND_MY_STRUCTURES), (structure) => structure.structureType == STRUCTURE_TOWER) as StructureTower[]
         var hostileCreep = spawn.room.find(FIND_HOSTILE_CREEPS)
         var injuredCreep = spawn.room.find(FIND_MY_CREEPS, {filter: (injured) => { 
             return (injured) && injured.hits < injured.hitsMax
         }})
-        var injuredPower = spawn.room.find(FIND_MY_POWER_CREEPS, {filter: (injured) => { 
+        var injuredPower: Array<Creep | PowerCreep> = spawn.room.find(FIND_MY_POWER_CREEPS, {filter: (injured) => { 
             return (injured) && injured.hits < injured.hitsMax
         }})
-        var hostilePower = spawn.room.find(FIND_HOSTILE_POWER_CREEPS)
+        var hostilePower: Array<Creep | PowerCreep> = spawn.room.find(FIND_HOSTILE_POWER_CREEPS)
         var hostiles = _.filter(hostilePower.concat(hostileCreep), c => !settings.allies.includes(c.owner.username))
         var injured = injuredPower.concat(injuredCreep)
         let damaged = null
@@ -289,7 +289,7 @@ function runTowers(city){
     }
 }
 
-function maybeSafeMode(city, hostiles){
+function maybeSafeMode(city: string, hostiles: Array<Creep | PowerCreep>){
     const room = Game.spawns[city].room
     const plan = Memory.rooms[room.name].plan
     if(!plan) return
@@ -397,7 +397,7 @@ function checkLabs(city){
     }
 }
 
-function updateMilitary(city, memory, rooms, spawn, creeps) {
+function updateMilitary(city: string, memory, rooms, spawn, creeps) {
     const flags = ["harass", "powerMine", "deposit"]
     const roles = [rH.name, rPM.name, rDM.name]
     for (var i = 0; i < flags.length; i++) {
@@ -407,7 +407,7 @@ function updateMilitary(city, memory, rooms, spawn, creeps) {
     }
 }
 
-function chooseClosestRoom(myCities, flag){
+function chooseClosestRoom(myCities: Room[], flag){
     if(!flag){
         return 0
     }
@@ -462,7 +462,7 @@ function updateColonizers(city, memory, claimRoom, unclaimRoom) {
 }
 
 // Automated defender count for defense
-function updateDefender(spawn, rcl) {
+function updateDefender(spawn: StructureSpawn, rcl) {
     if (Game.time % 30 != 0) {
         return
     }
@@ -476,7 +476,7 @@ function updateDefender(spawn, rcl) {
         for(const hostile of hostiles){
             const hasTough = hostile.getActiveBodyparts(TOUGH) > 0
             const isBoosted = _(hostile.body).find(part => part.boost)
-            if (isBoosted && (hasTough || isBoosted.boost.includes("X") || rcl < 8)) {
+            if (isBoosted && (hasTough || isBoosted.boost.toString().includes("X") || rcl < 8)) {
                 //add a defender to spawn queue if we don't have enough
                 //make sure to count spawned defenders as well as queued
                 const spawns = room.find(FIND_MY_SPAWNS)
@@ -500,7 +500,7 @@ function cityFraction(cityName) {
     return _.indexOf(myCities, cityName) / myCities.length
 }
 
-function updateMiner(creeps, rcl8, memory, spawn){
+function updateMiner(creeps: Creep[], rcl8, memory: SpawnMemory, spawn){
     if (!memory.sources) memory.sources = {}
     const flag = Memory.flags.claim
     if(flag && flag.roomName === spawn.pos.roomName &&
@@ -508,12 +508,12 @@ function updateMiner(creeps, rcl8, memory, spawn){
         memory[rM.name] = 0
         return
     }
-    const localSources = spawn.room.find(FIND_SOURCES)
+    const localSources: Array<Source> = spawn.room.find(FIND_SOURCES)
 
-    _.each(localSources, function(sourceInfo){
+    _.each(localSources, function(sourceInfo: Source){
         const sourceId = sourceInfo.id
         const sourcePos = sourceInfo.pos
-        if (!([sourceId] in memory.sources)){
+        if (!(sourceId in memory.sources)){
             memory.sources[sourceId] = sourcePos
         }
     })
@@ -536,7 +536,7 @@ function updateMiner(creeps, rcl8, memory, spawn){
     }     
 }
 
-function updateMineralMiner(rcl, buildings, spawn, memory) {
+function updateMineralMiner(rcl, buildings: Structure[], spawn, memory) {
     memory[rMM.name] = 0
     if (rcl > 5){
         var extractor = _.find(buildings, structure => structure.structureType == STRUCTURE_EXTRACTOR)
@@ -552,7 +552,7 @@ function updateMineralMiner(rcl, buildings, spawn, memory) {
     }
 }
 
-function updateTransporter(extensions, memory, creeps, structures, spawn) {
+function updateTransporter(extensions, memory, creeps, structures: Structure[], spawn) {
     if (extensions < 1 && !_.find(structures, struct => struct.structureType == STRUCTURE_CONTAINER)){
         memory[rT.name] = 0
     } else if (extensions < 10){
@@ -596,7 +596,7 @@ function updateUpgrader(city, controller, memory, rcl8, creeps, rcl) {
     }
 }
 
-function updateRepairer(spawn, memory, creeps){
+function updateRepairer(spawn, memory: SpawnMemory, creeps){
     const remotes = Object.keys(_.countBy(memory.sources, s => s.roomName))
     let csites = 0
     let damagedRoads = 0
@@ -604,7 +604,7 @@ function updateRepairer(spawn, memory, creeps){
         if(Game.rooms[remotes[i]] && (!Game.rooms[remotes[i]].controller || !Game.rooms[remotes[i]].controller.owner)){
             const room = Game.rooms[remotes[i]]
             csites += room.find(FIND_MY_CONSTRUCTION_SITES).length
-            damagedRoads += room.find(FIND_STRUCTURES, s => s.structureType == STRUCTURE_ROAD && s.hits/s.hitsMax < 0.3)
+            damagedRoads += room.find(FIND_STRUCTURES, { filter: s => s.structureType == STRUCTURE_ROAD && s.hits/s.hitsMax < 0.3 }).length
         }
     }
     let repairersNeeded = 0
@@ -614,7 +614,7 @@ function updateRepairer(spawn, memory, creeps){
     scheduleIfNeeded(rRe.name, repairersNeeded, false, spawn, creeps)
 }
 
-function updateBuilder(rcl, memory, spawn) {
+function updateBuilder(rcl, memory, spawn: StructureSpawn) {
     const room = spawn.room
     const constructionSites = room.find(FIND_MY_CONSTRUCTION_SITES)
     let totalSites
@@ -636,7 +636,7 @@ function updateBuilder(rcl, memory, spawn) {
     }
     if(rcl >= 4 && Game.cpu.bucket > settings.bucket.repair + settings.bucket.range * cityFraction(room.name) && spawn.room.storage && spawn.room.storage.store[RESOURCE_ENERGY] > settings.energy.repair){
         const walls = _.filter(spawn.room.find(FIND_STRUCTURES), 
-            struct => [STRUCTURE_RAMPART, STRUCTURE_WALL].includes(struct.structureType) 
+            struct => ([STRUCTURE_RAMPART, STRUCTURE_WALL] as string[]).includes(struct.structureType) 
             && !roomU.isNukeRampart(struct.pos))
         if(walls.length){//find lowest hits wall
             const minHits = _.min(walls, wall => wall.hits).hits
@@ -651,7 +651,7 @@ function updateBuilder(rcl, memory, spawn) {
         }
         const nukes = spawn.room.find(FIND_NUKES)
         if(nukes.length){
-            const nukeStructures = _.filter(spawn.room.find(FIND_MY_STRUCTURES), struct => settings.nukeStructures.includes(struct.structureType))
+            const nukeStructures = _.filter(spawn.room.find(FIND_MY_STRUCTURES), struct => (settings.nukeStructures as string[]).includes(struct.structureType))
             for(const structure of nukeStructures){
                 let rampartHeightNeeded = 0
                 for(const nuke of nukes){
@@ -677,7 +677,7 @@ function updateBuilder(rcl, memory, spawn) {
     }
 }
 
-function updateRunner(creeps, spawn, extensions, memory, rcl, emergencyTime) {
+function updateRunner(creeps: Creep[], spawn, extensions, memory, rcl, emergencyTime) {
     if (rcl == 8 && !emergencyTime && Game.cpu.bucket < settings.mineralMining) {
         memory[rR.name] = 0
         return
@@ -707,7 +707,7 @@ function updateFerry(spawn, memory, rcl) {
     memory[rF.name] = 0
 }
 
-function updateStorageLink(spawn, memory, structures) {
+function updateStorageLink(spawn, memory, structures: Structure[]) {
     if(!structures.length || !Game.getObjectById(memory.storageLink)){
         memory.storageLink = null
     }
@@ -755,7 +755,7 @@ function runNuker(city){
     const flagName = city + "nuke"
     const flag = Memory.flags[flagName]
     if (flag){
-        const nuker = _.find(Game.spawns[city].room.find(FIND_MY_STRUCTURES), structure => structure.structureType === STRUCTURE_NUKER)
+        const nuker = _.find(Game.spawns[city].room.find(FIND_MY_STRUCTURES), structure => structure.structureType === STRUCTURE_NUKER) as StructureNuker
         nuker.launchNuke(new RoomPosition(flag.x, flag.y, flag.roomName))
         delete Memory.flags[flagName]
     }
@@ -815,7 +815,7 @@ function runEarlyGame(){
     }
 }
 
-function updateSpawnStress(spawn){
+function updateSpawnStress(spawn: StructureSpawn){
     const room = spawn.room
     const memory = spawn.memory
     if(!memory.spawnAvailability) memory.spawnAvailability = 0
@@ -903,8 +903,9 @@ function updateDEFCON(remote, harasserSize){
         const hostiles = u.findHostileCreeps(Game.rooms[remote])
         let hostileParts = 0
         for(let i = 0; i < hostiles.length; i++){
-            if(hostiles[i].body){
-                hostileParts += hostiles[i].body.length
+            const hostile = hostiles[i]
+            if(hostile instanceof Creep){
+                hostileParts += hostile.body.length
             }
         }
         if(hostileParts > harasserSize * 6){
@@ -919,7 +920,7 @@ function updateDEFCON(remote, harasserSize){
     return roomInfo.d
 }
 
-module.exports = {
+export = {
     chooseClosestRoom: chooseClosestRoom,
     runCity: runCity,
     updateCountsCity: updateCountsCity,

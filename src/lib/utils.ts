@@ -1,3 +1,4 @@
+import { Dictionary } from "lodash"
 import settings = require("../config/settings")
 
 var u = {
@@ -80,9 +81,8 @@ var u = {
         return Tmp.myCities
     },
 
-    highwayMoveSettings: function(maxOps, swampCost, startPos, endPos, avoidEnemies=false) {
+    highwayMoveSettings: function(maxOps, swampCost, startPos, endPos, avoidEnemies=false): PathFinderOpts {
         return {
-            range: 1,
             plainCost: 1,
             swampCost: swampCost,
             maxOps: maxOps,
@@ -99,7 +99,7 @@ var u = {
                 }
 
                 const costs = new PathFinder.CostMatrix()
-                return isHighway ? costs : _.map(costs, cost => cost * 3)
+                return costs
             }
         }
     },
@@ -170,11 +170,11 @@ var u = {
         }
     },
 
-    findHostileCreeps: function(room){
-        return _.filter(room.find(FIND_HOSTILE_CREEPS).concat(room.find(FIND_HOSTILE_POWER_CREEPS)), c => !settings.allies.includes(c.owner.username))
+    findHostileCreeps: function(room: Room){
+        return _.filter((room.find(FIND_HOSTILE_CREEPS) as Array<Creep|PowerCreep>).concat(room.find(FIND_HOSTILE_POWER_CREEPS)), c => !settings.allies.includes(c.owner.username))
     },
 
-    findHostileStructures: function(room){
+    findHostileStructures: function(room: Room){
         if(!u.isFriendlyRoom(room)){
             return _.filter(room.find(FIND_STRUCTURES), s => s.hits)
         }
@@ -251,7 +251,7 @@ var u = {
         return empireStore
     },
 
-    cacheBoostsAvailable: function(cities) {
+    cacheBoostsAvailable: function(cities: Room[]) {
         const empireStore = u.empireStore(cities)
         const cityCount = _.filter(cities, city => city.controller.level >= 7).length || 1
         const boosts = settings.civBoosts.concat(settings.militaryBoosts)

@@ -32,7 +32,7 @@ var fact = {
 
     findFactory: function(city){
         const structures = Game.spawns[city].room.find(FIND_MY_STRUCTURES)
-        const factory = _.find(structures, struct => struct.structureType === STRUCTURE_FACTORY)
+        const factory = _.find(structures, struct => struct.structureType === STRUCTURE_FACTORY) as StructureFactory
         if(!factory){
             return 0
         }
@@ -80,7 +80,7 @@ var fact = {
         }
     },
 
-    restock: function(factory, city, produce){
+    restock: function(factory: StructureFactory, city, produce){
         if(!Game.spawns[city].memory.ferryInfo.factoryInfo.transfer.length){
             if(factory.store[produce]){//factory just finished producing, must be emptied before choosing new produce, then getting filled
                 Game.spawns[city].memory.ferryInfo.factoryInfo.transfer.push([produce, 0, factory.store[produce]])
@@ -88,7 +88,7 @@ var fact = {
             }
             //don't choose new produce if ferry just deposited (ferry will be isNearTo and storeing stuff)
             const ferry = _.find(factory.room.find(FIND_MY_CREEPS), creep => creep.memory.role === "ferry")
-            if(ferry &&  _.sum(ferry.store) > 0 && ferry.pos.isNearTo(factory.pos)) {
+            if(ferry &&  _.sum(Object.values(ferry.store)) > 0 && ferry.pos.isNearTo(factory.pos)) {
                 return
             }
             fact.chooseProduce(factory, city)
@@ -159,7 +159,7 @@ var fact = {
             const rawComs = [RESOURCE_SILICON, RESOURCE_METAL, RESOURCE_BIOMASS, RESOURCE_MIST]
             for(let i = 0; i < baseComs.length; i++){
                 const components = _.without(Object.keys(COMMODITIES[baseComs[i]].components), RESOURCE_ENERGY)
-                const commodity = _.intersection(components, rawComs)
+                const commodity = _.intersection(components, rawComs)[0]
                 if(terminal.store[commodity] >= 1000){
                     //produce it
                     Game.spawns[city].memory.ferryInfo.factoryInfo.produce = baseComs[i]
@@ -197,7 +197,7 @@ var fact = {
 
     removeJunk: function(city, terminal){
         const coms = _.without(_.difference(Object.keys(COMMODITIES), Object.keys(REACTIONS)), RESOURCE_ENERGY)
-        const unleveledFactory = _.find(Game.structures, struct => struct.structureType == STRUCTURE_FACTORY
+        const unleveledFactory = _.find(Game.structures, struct => struct instanceof StructureFactory
                  && struct.my && !struct.level && struct.room.terminal && struct.room.controller.level >= 7)
         if (!unleveledFactory) {
             return

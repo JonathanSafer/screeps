@@ -1,10 +1,10 @@
-var u = require("../lib/utils")
-var settings = require("../config/settings")
-const cM = require("./commodityManager")
-const simpleAllies = require("./swcTrading")
+import u = require("../lib/utils")
+import settings = require("../config/settings")
+import cM = require("./commodityManager")
+import simpleAllies = require("./swcTrading")
 
 var markets = {
-    manageMarket: function(myCities){//this function is now in charge of all terminal acitivity
+    manageMarket: function(myCities: Room[]){//this function is now in charge of all terminal acitivity
         if(PServ) simpleAllies.checkAllies()
         if(Game.time % 10 != 0){
             return
@@ -53,12 +53,12 @@ var markets = {
         }
     },
     
-    distributeEnergy: function(myCities){
+    distributeEnergy: function(myCities: Array<Room>){
         var receiver = null
         var needEnergy = _.filter(myCities, city => city.storage && city.storage.store.energy < settings.energy.processPower - 250000 && city.terminal)
         if (needEnergy.length){
-            var sortedCities = _.sortBy(needEnergy, city => city.storage.store.energy)
-            receiver = sortedCities[0].name
+            var sortedCities = _.sortBy(needEnergy, city => (city as Room).storage.store.energy)
+            receiver = (sortedCities[0] as Room).name
             for (const city of myCities){
                 if (city.storage && city.storage.store.energy > Game.rooms[receiver].storage.store.energy + 150000){
                     const memory = Game.spawns[city.memory.city].memory
@@ -73,6 +73,7 @@ var markets = {
         }
         if(!_.find(myCities, city => city.controller.level == 8)){
             //focus first city to rcl8
+            
             const target = _.min(myCities, city => city.controller.progressTotal - city.controller.progress).name
             for (const city of myCities){
                 if (city.name != target && city.storage && city.storage.store.energy > Game.rooms[target].storage.store.energy - 80000){
@@ -88,7 +89,7 @@ var markets = {
         }
     },
 
-    relocateBaseMins: function(myCities){
+    relocateBaseMins: function(myCities: Room[]){
         //receivers are rooms with a lvl 0 factory
         const receivers = _.filter(myCities, city => city.terminal 
             && Game.spawns[city.memory.city].memory.ferryInfo
@@ -187,7 +188,7 @@ var markets = {
         }
     },
 
-    distributePower: function(myCities){
+    distributePower: function(myCities: Room[]){
         var receiver = null
         var needPower = _.filter(myCities, city => city.controller.level > 7 && city.terminal && city.terminal.store.power < 1)
         if (needPower.length){
@@ -202,7 +203,7 @@ var markets = {
         }
     },
 
-    distributeUpgrade: function(myCities){
+    distributeUpgrade: function(myCities: Room[]){
         var receiver = null
         var needUpgrade = _.filter(myCities, city => city.controller.level > 5 && city.terminal && city.terminal.store["XGH2O"] < 1000)
         if (needUpgrade.length){
@@ -218,7 +219,7 @@ var markets = {
         }
     },
 
-    distributeRepair: function(myCities){
+    distributeRepair: function(myCities: Room[]){
         var receiver = null
         var needRepair = _.filter(myCities, city => city.controller.level > 5 && city.terminal && city.terminal.store["XLH2O"] < 1000)
         if (needRepair.length){
@@ -234,7 +235,7 @@ var markets = {
         }
     },
 
-    distributeOps: function(myCities){
+    distributeOps: function(myCities: Room[]){
         var receiver = null
         var needOps = _.filter(myCities, city => city.controller.level == 8 && city.terminal && city.terminal.store[RESOURCE_OPS] < 300)
         if (needOps.length){
@@ -251,7 +252,6 @@ var markets = {
     },
 
     buyAndSell: function(termCities) {
-        global.PIXEL = "pixel"//for p-servs
         // cancel active orders
         for(let i = 0; i < Object.keys(Game.market.orders).length; i++){
             if(!Game.market.orders[Object.keys(Game.market.orders)[i]].active){
@@ -271,7 +271,7 @@ var markets = {
         const baseMins = [RESOURCE_HYDROGEN, RESOURCE_OXYGEN, RESOURCE_UTRIUM, RESOURCE_LEMERGIUM, RESOURCE_KEANIUM, RESOURCE_ZYNTHIUM, RESOURCE_CATALYST]
         const bars = [RESOURCE_UTRIUM_BAR, RESOURCE_LEMERGIUM_BAR, RESOURCE_ZYNTHIUM_BAR, RESOURCE_KEANIUM_BAR, RESOURCE_GHODIUM_MELT, 
             RESOURCE_OXIDANT, RESOURCE_REDUCTANT, RESOURCE_PURIFIER, RESOURCE_CELL, RESOURCE_WIRE, RESOURCE_ALLOY, RESOURCE_CONDENSATE]
-        const highTier = cM.getTopTier(cM.groupByFactoryLevel(termCities)).concat([PIXEL])
+        const highTier = cM.getTopTier(cM.groupByFactoryLevel(termCities)).concat(["pixel"])
         
         markets.updateSellPoint(highTier, termCities, buyOrders)
         //markets.sellPixels(buyOrders)
@@ -493,7 +493,7 @@ var markets = {
             if(store[products[i]]){
                 const orders = markets.sortOrder(buyOrders[products[i]]).reverse()
                 if(orders.length && orders[0].price > Memory.sellPoint[products[i]] * 0.9){
-                    if(Game.shard.name == "shard3" && Math.random < 0.2 && !Game.rooms["E11N14"]){
+                    if(Game.shard.name == "shard3" && Math.random() < 0.2 && !Game.rooms["E11N14"]){
                         city.terminal.send(products[i], Math.min(orders[0].remainingAmount, store[products[i]]), "E11N14")
                         return true
                     }
@@ -507,9 +507,9 @@ var markets = {
     },
 
     sellPixels: function(buyOrders){
-        const orders = markets.sortOrder(buyOrders[PIXEL]).reverse()
-        if(orders.length && orders[0].price > Memory.sellPoint[PIXEL]){
-            Game.market.deal(orders[0].id, Math.min(orders[0].remainingAmount, Game.resources[PIXEL]))
+        const orders = markets.sortOrder(buyOrders["pixel"]).reverse()
+        if(orders.length && orders[0].price > Memory.sellPoint["pixel"]){
+            Game.market.deal(orders[0].id, Math.min(orders[0].remainingAmount, Game.resources["pixel"]))
             Log.info("Sold pixels for: " + orders[0].price)
         }
     },
@@ -556,7 +556,7 @@ var markets = {
                 buyPrice = Math.min(buyPrice * 0.8, settings.upgradeBoostPrice)//start 20% below market value
                 Game.market.createOrder({
                     type: ORDER_BUY,
-                    resourceType: boost,
+                    resourceType: boost as MarketResourceConstant,
                     price: buyPrice,
                     totalAmount: amountNeeded,
                     roomName: city.name   
@@ -573,7 +573,7 @@ var markets = {
 
     //////////////// MARKET UTILS ////////////////////
     // Sort orders from low to high
-    sortOrder: function(orders) {
+    sortOrder: function(orders: Order[]) {
         const sortedOrders = _.sortBy(orders, order => order.price) 
         return sortedOrders
     },
@@ -597,4 +597,4 @@ var markets = {
         return price
     }
 }
-module.exports = markets
+export = markets

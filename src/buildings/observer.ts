@@ -61,7 +61,7 @@ const ob = {
         const skLairs = _.filter(room.find(FIND_HOSTILE_STRUCTURES), struct => struct.structureType == STRUCTURE_KEEPER_LAIR)
         if(skLairs && skLairs.length){
             roomData.skL = skLairs.map(lair => u.packPos(lair.pos))
-            const core = _.find(room.find(FIND_HOSTILE_STRUCTURES), struct => struct.structureType == STRUCTURE_INVADER_CORE)
+            const core = _.find(room.find(FIND_HOSTILE_STRUCTURES), struct => struct.structureType == STRUCTURE_INVADER_CORE) as StructureInvaderCore
             roomData.rcl = core ? core.level : 0
         }
         const scoutTime = room.controller ? settings.scouting.controllerRoom[roomData.rcl] :
@@ -133,8 +133,8 @@ const ob = {
         Cache["roomsToScan"] = roomsToScan
     },
     
-    observeNewRoomForMining: function(city) {
-        const obs = ob.getObsForMining(city)
+    observeNewRoomForMining: function(city: string) {
+        const obs = ob.getObsForMining(city) as StructureObserver
         if (!obs) return false
         ob.preparePowerRoomsList(city, settings.miningRange)
         const roomNum = ob.timeToRoomNum(Game.time, city)
@@ -198,8 +198,8 @@ const ob = {
         }
     },
 
-    flagPowerBanks: function(structures, city, roomName) {
-        const powerBank = _.find(structures, structure => structure.structureType === STRUCTURE_POWER_BANK)
+    flagPowerBanks: function(structures: Structure[], city, roomName) {
+        const powerBank = _.find(structures, structure => structure.structureType === STRUCTURE_POWER_BANK) as StructurePowerBank
         const flagName = u.generateFlagName(city + "powerMine")
         if (powerBank && powerBank.power > 1500 && powerBank.ticksToDecay > 2800 &&
                 structures.length < 30 && Game.spawns[city].room.storage.store.energy > settings.energy.powerMine){

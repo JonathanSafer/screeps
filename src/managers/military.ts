@@ -1,7 +1,7 @@
-const quad = require("../roles/quad")
-const sq = require("../lib/spawnQueue")
-const u = require("../lib/utils")
-const settings = require("../config/settings")
+import quad = require("../roles/quad")
+import sq = require("../lib/spawnQueue")
+import u = require("../lib/utils")
+import settings = require("../config/settings")
 
 const m = {
 
@@ -48,7 +48,7 @@ const m = {
             .value()
     },
 
-    deployQuad: function(roomName, boosted) {
+    deployQuad: function(roomName, boosted=false) {
         const flagPos = m.nonWallRoomPos(roomName)
 
         const closestRoomName = m.chooseClosestRoom(flagPos)
@@ -99,7 +99,7 @@ const m = {
             city.storage
     },
 
-    spawnQuad: function(city, boosted){
+    spawnQuad: function(city, boosted=false){
         sq.initialize(Game.spawns[city])
         for(let i = 0; i < 4; i++){
             sq.schedule(Game.spawns[city], quad.name, boosted)
@@ -107,4 +107,4 @@ const m = {
     }
 }
 
-module.exports = m
+export = m

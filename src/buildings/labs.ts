@@ -169,7 +169,7 @@ var labs = {
         return -1
     },
 
-    chooseMineral: function(mineral, spawn) {
+    chooseMineral: function(mineral, spawn: StructureSpawn) {
         //if requesting mineral, early return
         if (spawn.memory.ferryInfo.mineralRequest){
             if(Game.time % 50 == 26){
@@ -184,7 +184,7 @@ var labs = {
             return 0
         }
         const ferry = _.find(spawn.room.find(FIND_MY_CREEPS), creep => creep.memory.role === "ferry")
-        if(ferry && _.sum(ferry.store)){
+        if(ferry && _.sum(Object.values(ferry.store))){
             return
         }
         //if we don't have both ingredients find the one we don't have and find it's ingredients

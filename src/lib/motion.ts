@@ -143,7 +143,7 @@ var m = {
         }
         const moves = creep.getActiveBodyparts(MOVE)
         bodySize += creep.body.length
-        const carries = _.filter(creep.body, part => part == CARRY).length//can't use getActive bc inactive carry parts need to be weightless
+        const carries = _.filter(creep.body, part => part.type == CARRY).length//can't use getActive bc inactive carry parts need to be weightless
         const usedCarries = Math.ceil(creep.store.getUsedCapacity() / CARRY_CAPACITY)//used carries have weight
         const fatigues = bodySize - moves - carries + usedCarries
         return Math.max(fatigues, 0.001)/Math.max(moves, 0.001)
@@ -199,7 +199,7 @@ var m = {
         // |_______________|    |_______________|
     },
 
-    findNoviceWallRooms: function(room){
+    findNoviceWallRooms: function(room: Room){
         //return value will be an object, with lists as values for keys
         //check if current room even has novice walls
         const walls = _.filter(room.find(FIND_STRUCTURES), s => s.structureType == STRUCTURE_WALL && rU.isOnEdge(s.pos))
@@ -213,7 +213,7 @@ var m = {
             noviceWallRooms[exitRoomName] = []//establish keys as neighboring room names
 
             //find exit points to each room, and scan for walls on the exit
-            const exitName = Game.map.findExit(room.name, exitRoomName)
+            const exitName = Game.map.findExit(room.name, exitRoomName) as ExitConstant
             const exitPositions = room.find(exitName)//list of roomPos on that exit
             let found = 0
             for(let j = 0; j < exitPositions.length; j++){

@@ -1,6 +1,6 @@
-const fact = require("../buildings/factory")
-const u = require("../lib/utils")
-const rU = require("../lib/roomUtils")
+import fact = require("../buildings/factory")
+import u = require("../lib/utils")
+import rU = require("../lib/roomUtils")
 
 var cM = {
     runManager: function(cities){
@@ -48,11 +48,11 @@ var cM = {
                 && !REACTIONS[compComp]))
     },
 
-    getOrderQuantities: function(product) {
-        const compInfo = _.omit(COMMODITIES[product].components, RESOURCE_ENERGY)
+    getOrderQuantities: function(product: string) {
+        const compInfo: Map<string, number> = _.omit(COMMODITIES[product].components, RESOURCE_ENERGY)
         const components = Object.keys(compInfo)
         const rate = fact.findRateLimit(components, product) //find rate limit, and use that to find quantity of each resource needed 
-        return _(compInfo).mapValues(amount => amount * rate).value()
+        return _(compInfo).mapValues<number, number>(amount => amount * rate).value()
     },
 
     getOrderStatus: function(quantities, levelCache){
@@ -74,7 +74,7 @@ var cM = {
         //console.log(product)
         const prodLvl = COMMODITIES[product].level
         const components = _.without(Object.keys(COMMODITIES[product].components), RESOURCE_ENERGY)
-        const destinations = _.filter(citiesByFactoryLevel[prodLvl], city => 
+        const destinations = _.filter<Room>(citiesByFactoryLevel[prodLvl], city => 
             _.every(components, comp => !city.terminal.store[comp] || city.terminal.store[comp] < 2000))
         const destination = destinations.length ? _.sample(destinations).name : null
         return destination
@@ -94,12 +94,12 @@ var cM = {
         return missingComponents
     },
 
-    storeCacheByCity: function(cities) {
+    storeCacheByCity: function(cities: Room[]) {
         const termCities = _(cities).filter(city => city.terminal).value()
         return _(termCities)
             .map("name")
             .zipObject(termCities)
-            .mapValues(city => _.clone(city.terminal.store))
+            .mapValues<Room, StoreDefinition>(city => _.clone(city.terminal.store))
             .value()
     },
 
@@ -133,18 +133,23 @@ var cM = {
         }
     },
 
-    groupByFactoryLevel: function(cities){
+    groupByFactoryLevel: function(cities: Array<Room>){
         const citiesWithFactory = _.filter(cities, city => city.terminal && rU.getFactory(city))
         const citiesByFactoryLevel =
-            _.groupBy(citiesWithFactory, city => rU.getFactory(city).level || 0)
+            _.groupBy(citiesWithFactory, (city: Room) => {
+                    const factory = rU.getFactory(city)
+                    return factory ? factory.level || 0 : 0
+                })
         return citiesByFactoryLevel
     },
 
-    cleanCities: function(cities){
+    cleanCities: function(cities: Array<Room>){
         const citiesByFactoryLevel = cM.groupByFactoryLevel(cities)
         for(const level of Object.values(citiesByFactoryLevel)){
-            for(const city of level){
+            for(const c of level){
+                const city = c as Room
                 const factory = rU.getFactory(city)
+                if(!factory) continue
                 const memory = Game.spawns[city.memory.city].memory
                 if(memory.ferryInfo.factoryInfo.produce == "dormant"){
                     //empty factory (except for energy)
@@ -160,8 +165,9 @@ var cM = {
                                 && !REACTIONS[resource] 
                                 && resource != RESOURCE_ENERGY 
                                 && COMMODITIES[resource].level != factory.level){
-                                const comLevel = COMMODITIES[resource].level || 0
-                                const receiver = citiesByFactoryLevel[comLevel][0].name
+                                const comLevel: number = COMMODITIES[resource].level || 0
+                                const city = citiesByFactoryLevel[comLevel][0] as Room
+                                const receiver = city.name
 
                                 const amount = city.terminal.store[resource]
                                 const ferryInfo = u.getsetd(memory, "ferryInfo", {})
@@ -176,4 +182,4 @@ var cM = {
 
     }
 }
-module.exports = cM
+export = cM

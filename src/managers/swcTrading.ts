@@ -1,8 +1,8 @@
 //Borrowed from Sergey
 
 
-const settings = require("../config/settings")
-const u = require("../lib/utils")
+import settings = require("../config/settings")
+import u = require("../lib/utils")
 const segmentID = 98
 const allyList = settings.allies
 
@@ -127,4 +127,4 @@ var simpleAllies = {
         requestArray.push(request)
     }
 }
-module.exports = simpleAllies
+export = simpleAllies

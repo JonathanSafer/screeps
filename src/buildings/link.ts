@@ -6,7 +6,7 @@ var rL = {
     STORAGE: 1,
     LINK: 1,
 
-    fixCacheIfInvalid: function(room) {
+    fixCacheIfInvalid: function(room: Room) {
         const rN = room.name
         if (!Cache[rN]) Cache[rN] = {}
         const links: LinksCache = Cache[rN].links || {}
@@ -26,7 +26,7 @@ var rL = {
                 if(linkPos){
                     const look = room.lookForAt(LOOK_STRUCTURES, Math.floor(linkPos/50), linkPos%50)
                     for(const result of look){
-                        if(result.structureType == STRUCTURE_LINK)
+                        if(result instanceof StructureLink)
                             sourceLinks.push(result)
                     }
                 }
@@ -34,13 +34,13 @@ var rL = {
             if(memory.upgradeLinkPos){
                 const look = room.lookForAt(LOOK_STRUCTURES, Math.floor(memory.upgradeLinkPos/50), memory.upgradeLinkPos%50)
                 for(const result of look){
-                    if(result.structureType == STRUCTURE_LINK)
+                    if(result instanceof StructureLink)
                         upgradeLink = result
                 }
             }
             const structures = room.find(FIND_MY_STRUCTURES)
             storageLink = _.find(structures, struct => struct.structureType == STRUCTURE_LINK
-                && struct.pos.inRangeTo(room.storage, 2))
+                && struct.pos.inRangeTo(room.storage, 2)) as StructureLink
             links.store = storageLink ? storageLink.id : null
             links.upgrade = upgradeLink ? upgradeLink.id : null
             links.source = _.map(sourceLinks, link => link ? link.id : null)

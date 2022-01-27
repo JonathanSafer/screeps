@@ -16,7 +16,7 @@ var rU = {
         var structures = spawn.room.find(FIND_STRUCTURES)
         return _.filter(structures, structure => structure.structureType == STRUCTURE_CONTAINER ||
                                                  structure.structureType == STRUCTURE_STORAGE ||
-                                                 structure.structureType == STRUCTURE_TERMINAL)
+                                                 structure.structureType == STRUCTURE_TERMINAL) as Array<StructureContainer | StructureStorage | StructureTerminal>
     },
     
     getTransferLocations: function(creep) {
@@ -28,16 +28,16 @@ var rU = {
                                                 structure.structureType == STRUCTURE_CONTAINER)
     },
 
-    getFactory: function(room) {
+    getFactory: function(room: Room) {
         if (room.controller.level < 7) return false
 
         // check for existing
-        const roomCache = u.getsetd(Cache, room.name, {})
+        const roomCache: RoomCache = u.getsetd(Cache, room.name, {})
         const factory = Game.getObjectById(roomCache.factory)
         if (factory) return factory
 
         // look up uncached factory
-        const factories = room.find(FIND_STRUCTURES,{ 
+        const factories: Array<StructureFactory> = room.find(FIND_STRUCTURES,{ 
             filter: { structureType: STRUCTURE_FACTORY } 
         })
         if (factories.length) {
@@ -49,10 +49,10 @@ var rU = {
 
     // Get the room's storage location. Priority for storage:
     // 1. Storage 2. Container 3. Terminal 4. Spawn
-    getStorage: function(room) {
+    getStorage: function(room: Room) {
         // 1. Storage
         if (room.storage) return room.storage
-        const roomCache = u.getsetd(Cache, room.name, {})
+        const roomCache: RoomCache = u.getsetd(Cache, room.name, {})
 
         // 2. Container
         const container = Game.getObjectById(roomCache.container)
@@ -60,7 +60,7 @@ var rU = {
         const structures = room.find(FIND_STRUCTURES)
         const spawn = _.find(structures, struct => struct.structureType == STRUCTURE_SPAWN)
         const newContainer = spawn && _.find(structures, struct => struct.structureType == STRUCTURE_CONTAINER
-            && struct.pos.inRangeTo(spawn, 3))
+            && struct.pos.inRangeTo(spawn, 3)) as StructureContainer
         if (newContainer) {
             roomCache.container = newContainer.id
             return newContainer
@@ -74,7 +74,7 @@ var rU = {
         return false
     },
 
-    getAvailableSpawn: function(spawns) {
+    getAvailableSpawn: function(spawns: StructureSpawn[]) {
         var validSpawns = _.filter(spawns, spawn => !spawn.spawning)
         if (validSpawns.length > 0) {
             return validSpawns[0]
@@ -103,9 +103,9 @@ var rU = {
         }
     },
 
-    isNukeRampart: function(roomPos){
+    isNukeRampart: function(roomPos: RoomPosition){
         const structures = roomPos.lookFor(LOOK_STRUCTURES)
-        if(_.find(structures, struct => settings.nukeStructures.includes(struct.structureType))){
+        if(_.find(structures, struct => (settings.nukeStructures as string[]).includes(struct.structureType))){
             return true
         }
         return false

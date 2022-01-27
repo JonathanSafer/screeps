@@ -92,7 +92,7 @@ global.RemoveJunk = function(city){//only to be used on cities with levelled fac
     Log.info("Attempting to remove junk...")
     const terminal = Game.spawns[city].room.terminal
     const coms = _.without(_.difference(Object.keys(COMMODITIES), Object.keys(REACTIONS)), RESOURCE_ENERGY)
-    const unleveledFactory = _.find(Game.structures, struct => struct.structureType == STRUCTURE_FACTORY
+    const unleveledFactory = _.find(Game.structures, struct => struct instanceof StructureFactory
              && struct.my && !struct.level && struct.room.terminal && struct.room.controller.level >= 7)
     if (!unleveledFactory) {
         Log.info("No destination found")

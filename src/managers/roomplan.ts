@@ -1,12 +1,12 @@
-const u = require("../lib/utils")
-const template = require("../config/template")
-const rM = require("../roles/remoteMiner")
-const rU = require("../roles/upgrader")
-const rR = require("../roles/runner")
-const rH = require("../roles/harasser")
-const rQ = require("../roles/quad")
-const settings = require("../config/settings")
-const types = require("../config/types")
+import u = require("../lib/utils")
+import template = require("../config/template")
+import rM = require("../roles/remoteMiner")
+import rU = require("../roles/upgrader")
+import rR = require("../roles/runner")
+import rH = require("../roles/harasser")
+import rQ = require("../roles/quad")
+import settings = require("../config/settings")
+import types = require("../config/types")
 
 const p = {
     frequency: 2000,
@@ -23,7 +23,7 @@ const p = {
         return true
     },
 
-    scoreRoom: function(roomName){
+    scoreRoom: function(roomName: string){
         const roomData = Cache.roomData[roomName]
         if (Object.keys(roomData.src).length < 2){
             roomData.s = -1
@@ -58,7 +58,7 @@ const p = {
             roomData.s = -1
             return //template won't fit
         }
-        const candidates = {}
+        const candidates = {} as Map<number, CandidateData>
         for(let i = 0; i < 50; i++){
             for(let j = 0; j < 50; j++){
                 if(wallMap.get(i,j) >= levelNeeded){
@@ -70,7 +70,7 @@ const p = {
         if(Object.keys(candidates).length > 1) p.narrowBySourcePos(candidates, roomData, roomName)
 
         const center = Object.values(candidates)[0]
-        const centerPoint = Object.keys(candidates)[0]
+        const centerPoint = candidates.keys()[0]
 
         if(!center.sourceDistance){
             //TODO sources should be map from src
@@ -91,34 +91,34 @@ const p = {
         roomData.c = centerPoint
     },
 
-    narrowBySourcePos: function(candidates, roomData, roomName){
+    narrowBySourcePos: function(candidates: Map<number, CandidateData>, roomData, roomName){
         //TODO sources should be map from src
         const sources = [u.unpackPos(Object.values(roomData.src)[0], roomName), u.unpackPos(Object.values(roomData.src)[1], roomName)]
-        for(const pos of Object.keys(candidates)){
+        for(const pos of candidates.keys()){
             const realPos = new RoomPosition(Math.floor(pos/50), pos%50, roomName)
             candidates[pos].sourceDistance = PathFinder.search(realPos, {pos: sources[0], range: 1}, {plainCost: 1, swampCost: 1}).cost +
                 PathFinder.search(realPos, {pos: sources[1], range: 1}, {plainCost: 1, swampCost: 1}).cost
         }
-        const bestSourceDist = _.min(candidates, "sourceDistance").sourceDistance
+        const bestSourceDist = _.min(candidates as unknown as _.Dictionary<CandidateData>, "sourceDistance").sourceDistance
         for(const pos of Object.keys(candidates)){
             if(candidates[pos].sourceDistance > bestSourceDist)
                 delete candidates[pos]
         }
     },
 
-    narrowByControllerPos: function(candidates, roomData, roomName, levelNeeded){
+    narrowByControllerPos: function(candidates: Map<number, CandidateData>, roomData, roomName, levelNeeded){
         const controllerPos = u.unpackPos(roomData.ctrlP, roomName)
-        for(const pos of Object.keys(candidates)){
+        for(const pos of candidates.keys()){
             candidates[pos].controllerDistance = PathFinder.search(new RoomPosition(Math.floor(pos/50), pos%50, roomName), {pos: controllerPos, range: 1}, {plainCost: 1, swampCost: 1}).cost
         }
-        const topCandidates = _.filter(candidates, pos => pos.controllerDistance >= levelNeeded + template.wallDistance)
+        const topCandidates = _.filter(candidates as unknown as _.Dictionary<CandidateData>, pos => pos.controllerDistance >= levelNeeded + template.wallDistance)
         if(topCandidates.length){
             for(const pos of Object.keys(candidates)){
                 if(!topCandidates.includes(candidates[pos]))
                     delete candidates[pos]
             }
         }
-        const bestControllerDist = _.min(candidates, "controllerDistance").controllerDistance
+        const bestControllerDist = _.min(candidates as unknown as _.Dictionary<CandidateData>, "controllerDistance").controllerDistance
         for(const pos of Object.keys(candidates)){
             if(candidates[pos].controllerDistance > bestControllerDist)
                 delete candidates[pos]
@@ -464,7 +464,7 @@ const p = {
         }
     },
 
-    buildConstructionSite: function(room, structureType, pos, name) {
+    buildConstructionSite: function(room: Room, structureType, pos, name?: string) {
         //Log.info(room.lookAt(pos.x, pos.y)[0].type)
         if(structureType == STRUCTURE_FACTORY && PServ){
             return
@@ -481,8 +481,8 @@ const p = {
                 struct.structure.destroy()
             }
         }
-        const terrain = _.find(look, item => item.type == "terrain")
-        if (terrain & TERRAIN_MASK_WALL || _.find(look, item => item.type == "structure")) 
+        const terrain = _.find(look, item => item.type == LOOK_TERRAIN)
+        if (terrain && (terrain[0][LOOK_TERRAIN] == "wall") || _.find(look, item => item.type == "structure")) 
             return
         room.createConstructionSite(pos.x, pos.y, structureType, name)
     },
@@ -565,13 +565,13 @@ const p = {
             let wallNeeded = false
             const roomExits = Object.keys(Game.map.describeExits(room.name))
             const origin = new RoomPosition(wallSpots[i].x, wallSpots[i].y, room.name)
-            const searchSettings = {
+            const searchSettings: PathFinderOpts = {
                 plainCost: 1,
                 swampCost: 1,
                 maxOps: 1000,
                 maxRooms: 1,
-                roomCallback: function(roomName) {
-                    return Game.rooms[roomName].wallCosts
+                roomCallback: function(roomName: string) {
+                    return !!Game.rooms[roomName].wallCosts
                 }
             }
             for(const exitDirection of roomExits){
@@ -604,7 +604,7 @@ const p = {
         }
     },
 
-    buildControllerLink: function(room) {
+    buildControllerLink: function(room: Room) {
         const spawn = Game.spawns[room.name + "0"]
         if(spawn.memory.upgradeLinkPos){
             const pos = spawn.memory.upgradeLinkPos
@@ -643,7 +643,7 @@ const p = {
         }
     },
 
-    buildSourceLinks: function(room) {
+    buildSourceLinks: function(room: Room) {
         const sources = room.find(FIND_SOURCES)
         const spawn = Game.spawns[room.name + "0"]
         for(const source of sources){
@@ -721,13 +721,13 @@ const p = {
         return costs
     },
 
-    getSourcePaths: function(room, exits, roadMatrix){
+    getSourcePaths: function(room: Room, exits, roadMatrix){
         const sources = Object.keys(Game.spawns[room.memory.city].memory.sources).reverse()
         const sourcePaths = []
         for (let i = 0; i < sources.length; i++) {
-            const source = Game.getObjectById(sources[i])
+            const source: Source = Game.getObjectById(sources[i])
             if(!source) continue
-            const sourcePos = Game.getObjectById(sources[i]).pos
+            const sourcePos = source.pos
             const sourcePath = PathFinder.search(sourcePos, exits, {
                 plainCost: 4, swampCost: 5, maxRooms: 5, 
                 roomCallback: function(roomName){
@@ -745,7 +745,7 @@ const p = {
         return sourcePaths.reverse()
     },
 
-    getMineralPath: function(room, exits, roadMatrix){
+    getMineralPath: function(room: Room, exits, roadMatrix){
         const mineralPos = room.find(FIND_MINERALS)[0].pos
         const mineralPath = PathFinder.search(mineralPos, exits, {
             plainCost: 4, swampCost: 4, maxRooms: 1, 
@@ -754,7 +754,7 @@ const p = {
         return mineralPath.path.reverse()
     },
 
-    getControllerPath: function(room, exits, roadMatrix){
+    getControllerPath: function(room: Room, exits, roadMatrix){
         const path = []
         const structures = room.find(FIND_MY_STRUCTURES)
         const controller = _.find(structures, structure => structure.structureType === STRUCTURE_CONTROLLER)
@@ -847,7 +847,7 @@ const p = {
         if(csites.length){
             counter = csites.length
         }
-        const maxSites = Game.constructionSites / MAX_CONSTRUCTION_SITES > 0.5 ? 10 : 20
+        const maxSites = Object.keys(Game.constructionSites).length / MAX_CONSTRUCTION_SITES > 0.5 ? 10 : 20
         for(let i = 0; i < roads.length; i++){
             new RoomVisual(roads[i].roomName).circle(roads[i], {fill: "#ff1111", radius: 0.1, stroke: "red"})
             if(counter < maxSites){//doesn't update during the tick
@@ -978,4 +978,4 @@ const p = {
     }
 }
 
-module.exports = p
+export = p
