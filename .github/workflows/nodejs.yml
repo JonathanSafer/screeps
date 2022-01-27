@@ -49,7 +49,7 @@ jobs:
         npm run push
         npm run season
         npm run ptr
+        npm run fileyfood500
         npm run swc
         npm run botarena
         npm run splus2
-        npm run fileyfood500
