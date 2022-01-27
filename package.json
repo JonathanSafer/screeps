@@ -5,7 +5,7 @@
   "main": "main.js",
   "scripts": {
     "lint": "eslint src",
-    "test": "mocha",
+    "test": "npx tsc && mocha",
     "coverage": "nyc mocha",
     "pretest": "npm run lint",
     "postinstall": "cd ./node_modules/eslint-plugin-screeps && npm install",

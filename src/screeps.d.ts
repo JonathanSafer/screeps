@@ -2,8 +2,6 @@ import _ = require("lodash")
 
 // memory types for our memory structure
 declare global {
-    interface CostMatrix extends _.Dictionary<number> {}
-
     interface Room {
         wallCosts?: number
     }
