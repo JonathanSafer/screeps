@@ -1,4 +1,4 @@
-var u = require("./utils")
+import u = require("./utils")
 
 var cU = {    
     getNextLocation: function(current, locations) {
@@ -113,4 +113,4 @@ var cU = {
     }
 }
 
-module.exports = cU
+export = cU

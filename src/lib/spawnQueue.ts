@@ -38,4 +38,4 @@ var sq = {
     }
 
 }
-module.exports = sq
+export = sq

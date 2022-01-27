@@ -1,5 +1,5 @@
-var settings = require("../config/settings")
-var u = require("./utils")
+import settings = require("../config/settings")
+import u = require("./utils")
 
 var rU = {
     isOnEdge: function(pos){//determine if a roomPos is on a room edge
@@ -89,13 +89,13 @@ var rU = {
         }
         const receivers = spawn.memory.ferryInfo.labInfo.receivers
         for(const mineral of boosts){
-            let receiver = _.find(Object.keys(receivers), lab => receivers[lab].boost == mineral)
+            let receiver: string = _.find(Object.keys(receivers), lab => receivers[lab].boost == mineral)
             if(!receiver){
                 receiver = _.find(Object.keys(receivers), lab => !receivers[lab].boost)
             }
             if(receiver){
                 receivers[receiver].boost = mineral
-                const lab = Game.getObjectById(receiver)
+                const lab: StructureLab = Game.getObjectById(receiver)
                 if(lab){
                     receivers[receiver].fill = Math.ceil((LAB_MINERAL_CAPACITY - (lab.store[mineral] || 0))/1000)
                 }
@@ -112,4 +112,4 @@ var rU = {
     }
 }
 
-module.exports = rU
+export = rU

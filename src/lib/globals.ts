@@ -1,7 +1,7 @@
-const military = require("../managers/military")
-const sq = require("./spawnQueue")
-const rp = require("../managers/roomplan")
-const trading = require("../managers/swcTrading")
+import military = require("../managers/military")
+import sq = require("./spawnQueue")
+import rp = require("../managers/roomplan")
+import trading = require("../managers/swcTrading")
 
 global.Tmp = {}
 global.T = function() { return `Time: ${Game.time}` }
@@ -116,7 +116,7 @@ global.CleanCities = function(){
     Log.info(`Cities with a factory: ${cities}`)
     const citiesByFactoryLevel = cM.groupByFactoryLevel(cities)
     Log.info(JSON.stringify(citiesByFactoryLevel))
-    for(const level of Object.values(citiesByFactoryLevel)){
+    for(const level of Object.values<Array<Room>>(citiesByFactoryLevel)){
         for(const city of level){
             const factory = rU.getFactory(city)
             const memory = Game.spawns[city.memory.city].memory

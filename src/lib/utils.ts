@@ -1,4 +1,4 @@
-var settings = require("../config/settings")
+import settings = require("../config/settings")
 
 var u = {
     getsetd: function (object, prop, defaultValue) {
@@ -80,7 +80,7 @@ var u = {
         return Tmp.myCities
     },
 
-    highwayMoveSettings: function(maxOps, swampCost, startPos, endPos, avoidEnemies) {
+    highwayMoveSettings: function(maxOps, swampCost, startPos, endPos, avoidEnemies=false) {
         return {
             range: 1,
             plainCost: 1,
@@ -221,7 +221,7 @@ var u = {
         }
         const terrain = new Room.Terrain(roomName)
         for(let i = 0; i < 49; i++){
-            const newPos = {}
+            const newPos: Position = {}
             newPos[loopVar] = i
             newPos[constVar] = constSide
             if(!terrain.get(newPos.x, newPos.y)){//terrain is plain
@@ -232,7 +232,7 @@ var u = {
     },
 
     //combine store of all cities given
-    empireStore: function(cities){
+    empireStore: function(cities: Array<Room>){
         const empireStore = {}
         for (const resource of RESOURCES_ALL){
             if(!cities.length){
@@ -263,7 +263,7 @@ var u = {
         Cache.boostCheckTime = Game.time
     },
 
-    boostsAvailable: function(role, room) {
+    boostsAvailable: function(role, room: Room) {
         if (!Cache.boostsAvailable || Game.time - Cache.boostCheckTime > 1000) {
             const cities = u.getMyCities()
             u.cacheBoostsAvailable(cities)
@@ -273,7 +273,7 @@ var u = {
             || (room && room.terminal && _(role.boosts).every(boost => room.terminal.store[boost] >= LAB_MINERAL_CAPACITY))
     },
 
-    removeFlags: function(roomName){
+    removeFlags: function(roomName: string){
         for(const flagName of Object.keys(Memory.flags)){
             if(Memory.flags[flagName].roomName == roomName){
                 delete Memory.flags[flagName]
@@ -339,4 +339,4 @@ var u = {
     }
 }
 
-module.exports = u
+export = u

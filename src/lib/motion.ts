@@ -1,10 +1,15 @@
-var u = require("./utils")
-var rU = require("./roomUtils")
-var settings = require("../config/settings")
-var template = require("../config/template")
+import u = require("./utils")
+import rU = require("./roomUtils")
+import settings = require("../config/settings")
+import template = require("../config/template")
 
 var m = {
     BoundingBox: class {
+        top: number
+        left: number
+        bottom: number
+        right: number
+        thickness: number
         constructor(top, left, bottom, right, thickness = 2) {
             this.top = top // minY
             this.left = left // minX
@@ -126,14 +131,15 @@ var m = {
         }
     },
 
-    moveSpeed: function(creep){
+    moveSpeed: function(creep: Creep | PowerCreep){
         //if PC, movespeed = 0.1 aka above max
-        if(creep.level){
+        if(creep instanceof PowerCreep){
             return 0.001
         }
         let bodySize = 0
         if(creep.memory.tug && creep.memory.pullee){
-            bodySize = Game.getObjectById(creep.memory.pullee).body.length
+            const pullee: Creep = Game.getObjectById(creep.memory.pullee)
+            bodySize = pullee.body.length
         }
         const moves = creep.getActiveBodyparts(MOVE)
         bodySize += creep.body.length
@@ -177,7 +183,7 @@ var m = {
         }
 
         for(let i = loopStart; i < loopEnd; i++){
-            const newPos = {}
+            const newPos: Position = {}
             newPos[loopVar] = i
             newPos[constVar] = pos[constVar]
             wallSpots.push(new RoomPosition(newPos.x, newPos.y, roomName))
@@ -417,4 +423,4 @@ var m = {
     }
 }
 
-module.exports = m
+export = m

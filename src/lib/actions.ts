@@ -1,9 +1,9 @@
-const u = require("./utils")
-const motion = require("./motion")
+import u = require("./utils")
+import motion = require("./motion")
 
 
 var actions = {
-    interact: function(creep, location, fnToTry, range, logSuccess, local=false) {
+    interact: function(creep, location, fnToTry, range=undefined, logSuccess=false, local=false) {
         var result = fnToTry()
         switch (result) {
         case ERR_NOT_IN_RANGE: {
@@ -98,13 +98,13 @@ var actions = {
 
     // priorities: very damaged structures > construction > mildly damaged structures
     // stores repair id in memory so it will continue repairing till the structure is at max hp
-    build: function(creep) {
+    build: function(creep: Creep) {
         if(Game.time % 200 === 0){
             creep.memory.repair = null
             creep.memory.build = null
         }
         if (creep.memory.repair){
-            var target = Game.getObjectById(creep.memory.repair)
+            var target: Structure = Game.getObjectById(creep.memory.repair)
             if(target){
                 if (target.hits < target.hitsMax){
                     return actions.repair(creep, target)
@@ -186,7 +186,7 @@ var actions = {
                 const boost = boosts[type]
                 const labs = Object.keys(Game.spawns[creep.memory.city].memory.ferryInfo.labInfo.receivers)
                 for(const labId of labs){
-                    const lab = Game.getObjectById(labId)
+                    const lab: StructureLab = Game.getObjectById(labId)
                     if(lab.store[boost] >= LAB_BOOST_MINERAL){
                         if(!lab.store.energy){
                             return
@@ -234,4 +234,4 @@ var actions = {
     }
 }
 
-module.exports = actions
+export = actions
