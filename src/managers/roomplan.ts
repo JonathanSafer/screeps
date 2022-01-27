@@ -58,7 +58,7 @@ const p = {
             roomData.s = -1
             return //template won't fit
         }
-        const candidates = {} as Map<number, CandidateData>
+        const candidates = {} as _.Dictionary<CandidateData>
         for(let i = 0; i < 50; i++){
             for(let j = 0; j < 50; j++){
                 if(wallMap.get(i,j) >= levelNeeded){
@@ -70,7 +70,7 @@ const p = {
         if(Object.keys(candidates).length > 1) p.narrowBySourcePos(candidates, roomData, roomName)
 
         const center = Object.values(candidates)[0]
-        const centerPoint = candidates.keys()[0]
+        const centerPoint = parseInt(Object.keys(candidates.keys)[0])
 
         if(!center.sourceDistance){
             //TODO sources should be map from src
@@ -91,34 +91,36 @@ const p = {
         roomData.c = centerPoint
     },
 
-    narrowBySourcePos: function(candidates: Map<number, CandidateData>, roomData, roomName){
+    narrowBySourcePos: function(candidates: _.Dictionary<CandidateData>, roomData, roomName){
         //TODO sources should be map from src
         const sources = [u.unpackPos(Object.values(roomData.src)[0], roomName), u.unpackPos(Object.values(roomData.src)[1], roomName)]
-        for(const pos of candidates.keys()){
-            const realPos = new RoomPosition(Math.floor(pos/50), pos%50, roomName)
+        for(const pos of Object.keys(candidates)){
+            const intPos = parseInt(pos)
+            const realPos = new RoomPosition(Math.floor(intPos/50), intPos%50, roomName)
             candidates[pos].sourceDistance = PathFinder.search(realPos, {pos: sources[0], range: 1}, {plainCost: 1, swampCost: 1}).cost +
                 PathFinder.search(realPos, {pos: sources[1], range: 1}, {plainCost: 1, swampCost: 1}).cost
         }
-        const bestSourceDist = _.min(candidates as unknown as _.Dictionary<CandidateData>, "sourceDistance").sourceDistance
+        const bestSourceDist = _.min(candidates, "sourceDistance").sourceDistance
         for(const pos of Object.keys(candidates)){
             if(candidates[pos].sourceDistance > bestSourceDist)
                 delete candidates[pos]
         }
     },
 
-    narrowByControllerPos: function(candidates: Map<number, CandidateData>, roomData, roomName, levelNeeded){
+    narrowByControllerPos: function(candidates: _.Dictionary<CandidateData>, roomData, roomName, levelNeeded){
         const controllerPos = u.unpackPos(roomData.ctrlP, roomName)
-        for(const pos of candidates.keys()){
-            candidates[pos].controllerDistance = PathFinder.search(new RoomPosition(Math.floor(pos/50), pos%50, roomName), {pos: controllerPos, range: 1}, {plainCost: 1, swampCost: 1}).cost
+        for(const pos of Object.keys(candidates)){
+            const intPos = parseInt(pos)
+            candidates[pos].controllerDistance = PathFinder.search(new RoomPosition(Math.floor(intPos/50), intPos%50, roomName), {pos: controllerPos, range: 1}, {plainCost: 1, swampCost: 1}).cost
         }
-        const topCandidates = _.filter(candidates as unknown as _.Dictionary<CandidateData>, pos => pos.controllerDistance >= levelNeeded + template.wallDistance)
+        const topCandidates = _.filter(candidates, pos => pos.controllerDistance >= levelNeeded + template.wallDistance)
         if(topCandidates.length){
             for(const pos of Object.keys(candidates)){
                 if(!topCandidates.includes(candidates[pos]))
                     delete candidates[pos]
             }
         }
-        const bestControllerDist = _.min(candidates as unknown as _.Dictionary<CandidateData>, "controllerDistance").controllerDistance
+        const bestControllerDist = _.min(candidates, "controllerDistance").controllerDistance
         for(const pos of Object.keys(candidates)){
             if(candidates[pos].controllerDistance > bestControllerDist)
                 delete candidates[pos]
