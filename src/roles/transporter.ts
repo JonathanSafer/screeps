@@ -1,26 +1,26 @@
-var actions = require("../lib/actions")
-var u = require("../lib/utils")
-var sq = require("../lib/spawnQueue")
-var motion = require("../lib/motion")
-var roomU = require("../lib/roomUtils")
+import actions = require("../lib/actions")
+import u = require("../lib/utils")
+import sq = require("../lib/spawnQueue")
+import motion = require("../lib/motion")
+import roomU = require("../lib/roomUtils")
 
 var rT = {
     name: "transporter",
     type: "transporter",
 
     /** @param {Creep} creep **/
-    run: function(creep) {
+    run: function(creep: Creep) {
         if(rT.endLife(creep)){
             return
         }
         var city = creep.memory.city
-        if (creep.saying > 0 && creep.room.energyAvailable == creep.room.energyCapacityAvailable){
-            creep.say(creep.saying - 1)
+        if (parseInt(creep.saying) > 0 && creep.room.energyAvailable == creep.room.energyCapacityAvailable){
+            creep.say(String(parseInt(creep.saying) - 1))
             return
         }
         if (creep.store.energy == 0) {
             //refill on energy
-            if(rT.refill(creep, city) === 1){
+            if(rT.refill(creep) === 1){
                 //start moving to target
                 const target = rT.findTarget(creep, null)
                 rT.moveToTargetIfPresent(creep, target)
@@ -29,7 +29,7 @@ var rT = {
             const target = rT.findTarget(creep, null)
 
             if(!target){
-                creep.say(30)
+                creep.say(String(30))
                 return
             }
 
@@ -45,7 +45,7 @@ var rT = {
                         rT.moveToTargetIfPresent(creep, newTarget)
                     } else {
                         //start moving to storage already
-                        rT.refill(creep, city)
+                        rT.refill(creep)
                     }
                 }
             }
@@ -134,7 +134,7 @@ var rT = {
         }
     },
 
-    endLife: function(creep){
+    endLife: function(creep: Creep){
         if(creep.ticksToLive == 200){
             const transporters = _.filter(creep.room.find(FIND_MY_CREEPS), c => c.memory.role == "transporter")
             if(transporters.length < 2){
@@ -152,7 +152,7 @@ var rT = {
         return true
     },
 
-    refill: function(creep){
+    refill: function(creep: Creep){
         let result = 0
         if (Game.getObjectById(creep.memory.location)) {
             var bucket = Game.getObjectById(creep.memory.location)
@@ -164,10 +164,10 @@ var rT = {
             }
             result = actions.withdraw(creep, bucket)
             if (result == ERR_NOT_ENOUGH_RESOURCES || bucket.structureType == STRUCTURE_SPAWN){
-                creep.memory.location = roomU.getStorage(creep.room).id
+                creep.memory.location = (roomU.getStorage(creep.room) as AnyStoreStructure).id
             }
         } else {
-            const location = roomU.getStorage(creep.room)
+            const location = roomU.getStorage(creep.room) as AnyStoreStructure
             creep.memory.location = location.id
             if(creep.store.getUsedCapacity() > 0){
                 if(!creep.pos.isNearTo(location.pos)){
@@ -180,4 +180,4 @@ var rT = {
         return result
     }
 }
-module.exports = rT
+export = rT

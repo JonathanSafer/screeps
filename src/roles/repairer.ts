@@ -1,7 +1,7 @@
-var u = require("../lib/utils")
-var motion = require("../lib/motion")
-const rB = require("./builder")
-const rR = require("./runner")
+import u = require("../lib/utils")
+import motion = require("../lib/motion")
+import rB = require("./builder")
+import rR = require("./runner")
 
 var rRe = {
     name: "repairer",
@@ -21,7 +21,7 @@ var rRe = {
         }
     },
 
-    repair: function(creep){
+    repair: function(creep: Creep){
         const needRepair = rRe.findRepair(creep)
         if (needRepair) {
             creep.memory.repair = needRepair.id
@@ -32,7 +32,7 @@ var rRe = {
         }
     },
 
-    build: function(creep){
+    build: function(creep: Creep){
         if(creep.memory.build){
             const site = Game.getObjectById(creep.memory.build)
             if(site){
@@ -46,7 +46,7 @@ var rRe = {
             }
         }
         if(!creep.memory.nextCheckTime || creep.memory.nextCheckTime < Game.time){//occasionally scan for construction sites
-            const rooms = Object.keys(_.countBy(Game.spawns.memory.sources, s => s.pos.roomName))
+            const rooms = Object.keys(_.countBy(Game.spawns[creep.memory.city].memory.sources, s => s.roomName))
             let targets = []
             for(let i = 0; i < rooms.length; i++){
                 if(Game.rooms[rooms[i]])
@@ -61,29 +61,28 @@ var rRe = {
         return false
     },
 
-    closeRepair: function(creep){
+    closeRepair: function(creep: Creep){
         const target = _.find(creep.pos.findInRange(FIND_STRUCTURES, 3), s => s.hits && s.hitsMax - s.hits > creep.memory.repPower)
         if(target){
             creep.repair(target)
         }
     },
 
-    findRepair: function(creep){
+    findRepair: function(creep: Creep){
         if(creep.memory.repair){
             const target = Game.getObjectById(creep.memory.repair)
             if(target)
                 return target
         }
-        const rooms = Object.keys(_.countBy(Game.spawns.memory.sources, s => s.pos.roomName))
-        let targets = []
+        const rooms = Object.keys(_.countBy(Game.spawns[creep.memory.city].memory.sources, s => s.roomName))
+        let targets: Structure[] = []
         for(let i = 0; i < rooms.length; i++)
             if(Game.rooms[rooms[i]])
-                targets = targets.concat(Game.rooms[rooms[i]].find(FIND_STRUCTURES, s => s.structureType != STRUCTURE_WALL && s.hits && s.hits/s.hitsMax < 0.3))
+                targets = targets.concat(Game.rooms[rooms[i]].find(FIND_STRUCTURES, { filter : s => s.structureType != STRUCTURE_WALL && s.hits && s.hits/s.hitsMax < 0.3 }))
         if(targets.length){
-            creep.memory.repair = _.min(targets, s => u.getRangeTo(creep.pos, s.pos)).id
-            return true
+            return _.min(targets, s => u.getRangeTo(creep.pos, s.pos))
         }
         return false
     }
 }
-module.exports = rRe
+export = rRe

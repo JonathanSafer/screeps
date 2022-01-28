@@ -1,11 +1,11 @@
-const motion = require("../lib/motion")
-const settings = require("../config/settings")
+import motion = require("../lib/motion")
+import settings = require("../config/settings")
 
 var rRr = {
     name: "reserver",
     type: "reserver",
    
-    run: function(creep) {
+    run: function(creep: Creep) {
         const targetRoom = creep.memory.flag
         if(Game.rooms[targetRoom]){
             if(Game.rooms[targetRoom].controller.pos.isNearTo(creep.pos)){
@@ -22,4 +22,4 @@ var rRr = {
         }
     }
 }
-module.exports = rRr
+export = rRr

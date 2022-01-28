@@ -1,14 +1,13 @@
-var a = require("../lib/actions")
-var sq = require("../lib/spawnQueue")
-var motion = require("../lib/motion")
-const settings = require("../config/settings")
+import a = require("../lib/actions")
+import sq = require("../lib/spawnQueue")
+import motion = require("../lib/motion")
+import settings = require("../config/settings")
 
 var rM = {
     name: "remoteMiner",
     type: "miner",
 
-    /** @param {Creep} creep **/
-    run: function(creep) {
+    run: function(creep: Creep) {
         if(creep.spawning){
             return
         }
@@ -24,7 +23,7 @@ var rM = {
             rM.nextSource(creep)
             return
         }
-        const source = Game.getObjectById(creep.memory.source)
+        const source = Game.getObjectById(creep.memory.source) as Source
         rM.setMoveStatus(creep)
         rM.maybeMove(creep, source)
         if(!source)
@@ -171,14 +170,14 @@ var rM = {
         }
     },
 
-    findStruct: function(creep, source, structureType, construction = false){
+    findStruct: function(creep: Creep, source: Source, structureType, construction = false){
         const type = construction ? LOOK_CONSTRUCTION_SITES : LOOK_STRUCTURES
         const memory = Game.spawns[creep.memory.city].memory
         const structPos = memory.sources[source.id][structureType + "Pos"]
         if(structPos){
             const realPos = new RoomPosition(Math.floor(structPos/50), structPos%50, source.pos.roomName)
             const look = realPos.lookFor(type)
-            const structure = _.find(look, struct => struct.structureType == structureType && (!struct.owner || struct.my))
+            const structure = _.find(look, struct => struct.structureType == structureType && (!(struct instanceof OwnedStructure) || struct.my))
             if(structure)
                 return structure
         }
@@ -207,7 +206,7 @@ var rM = {
         return creep.getActiveBodyparts(CARRY) > 0
     },
 
-    harvestTarget: function(creep) {
+    harvestTarget: function(creep: Creep) {
         var source = Game.getObjectById(creep.memory.source)
         if(!creep.pos.inRangeTo(source, 2)){
             motion.newMove(creep, source.pos, 2)
@@ -223,9 +222,9 @@ var rM = {
     },
 
     /** pick a target id for creep **/
-    nextSource: function(creep) {
+    nextSource: function(creep: Creep) {
         if(creep.memory.flag){
-            creep.memory.source = creep.memory.flag
+            creep.memory.source = creep.memory.flag as Id<Source>
             creep.memory.sourcePos = Game.spawns[creep.memory.city].memory.sources[creep.memory.source]
             if(!creep.memory.sourcePos)
                 creep.suicide()
@@ -235,4 +234,4 @@ var rM = {
         }
     }
 }
-module.exports = rM
+export = rM

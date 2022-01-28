@@ -1,10 +1,10 @@
-var a = require("../lib/actions")
-var roomU = require("../lib/roomUtils")
-var cU = require("../lib/creepUtils")
-var rU = require("./upgrader")
-var template = require("../config/template")
-var rD = require("./defender")
-var motion = require("../lib/motion")
+import a = require("../lib/actions")
+import roomU = require("../lib/roomUtils")
+import cU = require("../lib/creepUtils")
+import rU = require("./upgrader")
+import template = require("../config/template")
+import rD = require("./defender")
+import motion = require("../lib/motion")
 
 var rB = {
     name: "builder",
@@ -36,7 +36,7 @@ var rB = {
         }
     },
 
-    repair: function(creep){
+    repair: function(creep: Creep){
         const needRepair = _.find(creep.room.find(FIND_STRUCTURES), structure => (structure.hits < (0.4*structure.hitsMax)) && (structure.structureType != STRUCTURE_WALL) && (structure.structureType != STRUCTURE_RAMPART))
         if (needRepair) {
             creep.memory.repair = needRepair.id
@@ -47,18 +47,18 @@ var rB = {
         }
     },
 
-    getEnergy: function(creep) {
-        var location = roomU.getStorage(Game.spawns[creep.memory.city].room)
-        if((location.store.energy < 300 && location.room.controller.level > 1) || (location.structureType != STRUCTURE_SPAWN && location.store.energy < 800)){
+    getEnergy: function(creep: Creep) {
+        var location = roomU.getStorage(Game.spawns[creep.memory.city].room) as StructureStorage | StructureContainer | StructureSpawn
+        if(!location || (location.store.energy < 300 && location.room.controller.level > 1) || (location.structureType != STRUCTURE_SPAWN && location.store.energy < 800)){
             return
         }
         if (a.withdraw(creep, location) == ERR_NOT_ENOUGH_RESOURCES) {
             var targets = roomU.getWithdrawLocations(creep)
-            creep.memory.target = cU.getNextLocation(creep.memory.target, targets)
+            creep.memory.target = targets[0].id
         }
     },
 
-    build: function(creep){
+    build: function(creep: Creep){
         if(creep.memory.build){//check for site and build
             const site = Game.getObjectById(creep.memory.build)
             if(site){//if there is a build site, build it, else set build to null
@@ -95,7 +95,7 @@ var rB = {
         return false
     },
 
-    repWalls: function(creep){
+    repWalls: function(creep: Creep){
         const lookTime = 5
         if(creep.memory.repair){//check for target and repair
             const target = Game.getObjectById(creep.memory.repair)
@@ -123,7 +123,7 @@ var rB = {
                 creep.memory.repair = nukeRampart.id
                 return
             }
-            const walls = _.filter(buildings, struct => [STRUCTURE_RAMPART, STRUCTURE_WALL].includes(struct.structureType) && !roomU.isNukeRampart(struct.pos))
+            const walls = _.filter(buildings, struct => ([STRUCTURE_RAMPART, STRUCTURE_WALL] as string[]).includes(struct.structureType) && !roomU.isNukeRampart(struct.pos))
             if(walls.length){//find lowest hits wall
                 const minWall = _.min(walls, wall => wall.hits)
                 creep.memory.repair = minWall.id
@@ -133,7 +133,7 @@ var rB = {
         return
     },
 
-    getNukeRampart: function(structures, room){
+    getNukeRampart: function(structures: Structure[], room: Room){
         const nukes = room.find(FIND_NUKES)
         if(!nukes.length){
             return null
@@ -165,4 +165,4 @@ var rB = {
         }
     }
 }
-module.exports = rB
+export = rB

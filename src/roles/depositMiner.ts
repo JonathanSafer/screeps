@@ -1,9 +1,9 @@
-var actions = require("../lib/actions")
-var settings = require("../config/settings")
-var motion = require("../lib/motion")
-var u = require("../lib/utils")
-var cU = require("../lib/creepUtils")
-const rPM = require("./powerMiner")
+import actions = require("../lib/actions")
+import settings = require("../config/settings")
+import motion = require("../lib/motion")
+import u = require("../lib/utils")
+import cU = require("../lib/creepUtils")
+import rPM = require("./powerMiner")
 
 var rDM = {
     name: "depositMiner",
@@ -14,10 +14,9 @@ var rDM = {
     // Keep track of how much is mined for stats. Stat object will clear this when it's recorded
     mined: 0,
 
-    /** @param {Creep} creep **/
-    run: function(creep) {
+    run: function(creep: Creep) {
         cU.checkRoom(creep)
-        if (_.sum(creep.store) === 0 && creep.ticksToLive < 500){//if old and no store, suicide
+        if (_.sum(Object.values(creep.store)) === 0 && creep.ticksToLive < 500){//if old and no store, suicide
             creep.suicide()
             return
         }
@@ -26,12 +25,12 @@ var rDM = {
             return
         }
 
-        if(creep.memory.target === 0){
-            if(_.sum(creep.store) === creep.store.getCapacity()){
-                creep.memory.target = 1
+        if(creep.memory.mode === 0){
+            if(_.sum(Object.values(creep.store)) === creep.store.getCapacity()){
+                creep.memory.mode = 1
             }
         }
-        switch(creep.memory.target){
+        switch(creep.memory.mode){
         case 0: {
             //newly spawned or empty store
             const flagName = creep.memory.flag
@@ -54,7 +53,7 @@ var rDM = {
                 delete Memory.flags[flagName]
                 return
             }
-            if(_.sum(creep.store) === 0 && (deposit[0].lastCooldown > 25 && Game.cpu.bucket < settings.bucket.resourceMining)){
+            if(_.sum(Object.values(creep.store)) === 0 && (deposit[0].lastCooldown > 25 && Game.cpu.bucket < settings.bucket.resourceMining)){
                 delete Memory.flags[flagName]
                 return
             }
@@ -84,16 +83,15 @@ var rDM = {
         }
         case 1:
             //store is full
-            if(_.sum(creep.store) === 0){
-                creep.memory.target = 0
+            if(_.sum(Object.values(creep.store)) === 0){
+                creep.memory.mode = 0
                 return
             }
             actions.charge(creep, Game.spawns[creep.memory.city].room.storage)
-
         }
     },
 
-    checkEnemies: function(creep, deposit){
+    checkEnemies: function(creep: Creep, deposit){
         if(Game.time % 5 == 0 || creep.hits < creep.hitsMax){
             //scan room for hostiles
             const hostiles = creep.room.find(FIND_HOSTILE_CREEPS)
@@ -118,7 +116,7 @@ var rDM = {
         }
     },
 
-    checkAllies: function(creep, hostiles){
+    checkAllies: function(creep: Creep, hostiles: Creep[]){
         const owners = _.map(hostiles, hostile => hostile.owner.username)
         const ally = _.find(owners, owner => {
             Cache.enemies = Cache.enemies || {}
@@ -133,7 +131,7 @@ var rDM = {
             for(const friendly of allies){
                 if(friendly.getActiveBodyparts(WORK) > 0 && friendly.pos.isNearTo(flag.x, flag.y)){
                     delete Memory.flags[creep.memory.flag]
-                    creep.memory.target = 1
+                    creep.memory.mode = 1
                     return true
                 }
             }
@@ -141,4 +139,4 @@ var rDM = {
         return false
     }
 }
-module.exports = rDM
+export = rDM

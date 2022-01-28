@@ -1,13 +1,13 @@
-var actions = require("../lib/actions")
-var motion = require("../lib/motion")
-var sq = require("../lib/spawnQueue")
+import actions = require("../lib/actions")
+import motion = require("../lib/motion")
+import sq = require("../lib/spawnQueue")
 
 var rRo = {
     name: "robber",
     type: "robber",
 
     /** @param {Creep} creep **/
-    run: function(creep) {
+    run: function(creep: Creep) {
         const flagName = "steal"
         const flag = Memory.flags[flagName]
 
@@ -27,18 +27,19 @@ var rRo = {
             //pick up more stuff
             const flagPos = new RoomPosition(flag.x, flag.y, flag.roomName)
             if(!creep.memory.flagDistance){
-                creep.memory.flagDistance = motion.getRoute(Game.spawns[creep.memory.city].pos.roomName, flag.roomName, true).length * 50
+                const route = motion.getRoute(Game.spawns[creep.memory.city].pos.roomName, flag.roomName, true)
+                creep.memory.flagDistance = route != -2 ? route.length * 50 : Log.error(`Invalid route for creep ${creep.name}`)
             }
             if(Game.rooms[flag.roomName]){
                 if(creep.memory.target){
-                    const target = Game.getObjectById(creep.memory.target)
+                    const target = Game.getObjectById(creep.memory.target) as StructureStorage
                     if(!target.store[creep.memory.resource]){
                         creep.memory.target = null
                         creep.memory.resource = null
                     }
                 }
                 if(!creep.memory.target){
-                    const structs = _.filter(flagPos.lookFor(LOOK_STRUCTURES).concat(flagPos.lookFor(LOOK_RUINS)), s => s.store)
+                    const structs = _.filter((flagPos.lookFor(LOOK_STRUCTURES) as Array<AnyStoreStructure | Ruin>).concat(flagPos.lookFor(LOOK_RUINS)), s => s.store)
                     for(const struct of structs){
                         const valuables = _.filter(Object.keys(struct.store), k => k != RESOURCE_ENERGY)
                         if (valuables.length){
@@ -61,4 +62,4 @@ var rRo = {
         }
     }  
 }
-module.exports = rRo
+export = rRo

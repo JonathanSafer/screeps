@@ -1,12 +1,12 @@
 //const sq = require("./spawnQueue"); sq.initialize(Game.spawns['E8N60']); sq.schedule(Game.spawns['E8N60'], 'quad')
-const u = require("../lib/utils")
-const rU = require("../lib/roomUtils")
-const cU = require("../lib/creepUtils")
-const a = require("../lib/actions")
-const rH = require("./harasser")
-const T = require("../buildings/tower")
-const settings = require("../config/settings")
-const motion = require("../lib/motion")
+import u = require("../lib/utils")
+import rU = require("../lib/roomUtils")
+import cU = require("../lib/creepUtils")
+import a = require("../lib/actions")
+import rH = require("./harasser")
+import T = require("../buildings/tower")
+import settings = require("../config/settings")
+import motion = require("../lib/motion")
 
 var CreepState = {
     START: 1,
@@ -26,7 +26,7 @@ var rQ = {
         RESOURCE_CATALYZED_LEMERGIUM_ALKALIDE, RESOURCE_CATALYZED_KEANIUM_ALKALIDE],
 
     /** @param {Creep} creep **/
-    run: function(creep) {
+    run: function(creep: Creep) {
         rQ.init(creep)
         switch(creep.memory.state){
         case CS.START:
@@ -78,7 +78,7 @@ var rQ = {
         }
     },
 
-    reform: function(quad, creep){
+    reform: function(quad, creep: Creep){
         const matrix = rQ.getRoomMatrix(creep.pos.roomName)
         let formPoint = null
         let range = 0
@@ -117,14 +117,14 @@ var rQ = {
                 jimmyPos.x++
                 break
             }
-            new RoomVisual(creep.room.name).text(i,jimmyPos)
+            new RoomVisual(creep.room.name).text(String(i),jimmyPos)
             if(!quad[i].pos.isEqualTo(jimmyPos))
                 motion.newMove(quad[i], jimmyPos)
         }
         quad[0].memory.reform = Game.time + 5
     },
 
-    formUp: function(creep){
+    formUp: function(creep: Creep){
         //maybe creeps could make sure that their entire squad is spawned until determining a captain and forming up, until then
         //they would renew themselves (has to be done before boosting though)
         
@@ -141,7 +141,7 @@ var rQ = {
                 let startPos = null
                 const flagName = creep.memory.flag || creep.memory.city + "quadRally"
                 if(Memory.flags[flagName]){
-                    const rallyExit = Game.map.findExit(creep.pos.roomName, Memory.flags[flagName].roomName)
+                    const rallyExit = Game.map.findExit(creep.pos.roomName, Memory.flags[flagName].roomName) as ExitConstant
                     startPos = _.find(creep.room.find(rallyExit), pos => matrix.get(pos.x,pos.y) == 2)
                 } else {
                     startPos = _.find(creep.room.find(FIND_EXIT), pos => matrix.get(pos.x,pos.y) == 2)
@@ -173,8 +173,8 @@ var rQ = {
                     jimmyPos.y++
                     break
                 }
-                new RoomVisual(creep.room.name).text(i,jimmyPos)
-                const jimmy = Game.getObjectById(creep.memory.jimmys[i])
+                new RoomVisual(creep.room.name).text(String(i),jimmyPos)
+                const jimmy = Game.getObjectById(creep.memory.jimmys[i]) as RoomObject
                 if(!jimmy){
                     continue
                 }
@@ -202,7 +202,7 @@ var rQ = {
         }
     },
 
-    update: function(creep){
+    update: function(creep: Creep){
         //generic info gathering at tick start
         const quad = [creep, Game.getObjectById(creep.memory.jimmys[0]),
             Game.getObjectById(creep.memory.jimmys[1]),
@@ -222,7 +222,7 @@ var rQ = {
         return [quad, everythingByRoom]
     },
 
-    isSafe: function(everythingByRoom, quad/*, destination*/){
+    isSafe: function(everythingByRoom: _.Dictionary<AllRoomStuff>, quad: Creep[]/*, destination*/){
         for(let i = 0; i < quad.length; i++){
             if(quad[i].hits < quad[i].hitsMax) return false
         }
@@ -233,7 +233,7 @@ var rQ = {
                 const tower = _.find(everythingByRoom[rooms[i]].structures, struct => struct.structureType == STRUCTURE_TOWER)
                 if(tower) return false
             }
-            const hostile = _.find(everythingByRoom[rooms[i]].hostiles, h => (cU.getCreepDamage(h, ATTACK) > 0 || cU.getCreepDamage(h, RANGED_ATTACK) > 0) && 
+            const hostile = _.find(everythingByRoom[rooms[i]].hostiles, h => (cU.getCreepDamage(h as Creep, ATTACK) > 0 || cU.getCreepDamage(h as Creep, RANGED_ATTACK) > 0) && 
                 h.pos.inRangeTo(quad[0], 8) || h.pos.inRangeTo(quad[1], 8) || h.pos.inRangeTo(quad[2], 8) || h.pos.inRangeTo(quad[3], 8))
             if(hostile) return false
         }
@@ -244,12 +244,12 @@ var rQ = {
         return true
     },
 
-    rally: function(creep){
+    rally: function(creep: Creep){
         //move in snake-mode
         const info = rQ.update(creep)
         if(!info) return
-        const quad = info[0]
-        const everythingByRoom = info[1]
+        const quad = info[0] as Creep[]
+        const everythingByRoom = info[1] as _.Dictionary<AllRoomStuff>
         const flagName = quad[0].memory.flag || quad[0].memory.city + "quadRally"
         const flag = Memory.flags[flagName]
         const flagPos = new RoomPosition(flag.x, flag.y, flag.roomName)
@@ -271,15 +271,15 @@ var rQ = {
     },
     
 
-    engage: function(creep){
+    engage: function(creep: Creep){
         //TODO: check formation status. If formation is broken up, reform
         //if a member has died, go into YOLO mode
         //captain should preemptively send everybody in YOLO mode if it is at 1 ttl
 
         const info = rQ.update(creep)
         if(!info) return
-        const quad = info[0]
-        const everythingByRoom = info[1]
+        const quad = info[0] as Creep[]
+        const everythingByRoom = info[1] as _.Dictionary<AllRoomStuff>
         const flagName = quad[0].memory.flag || quad[0].memory.city + "quadRally"
         const flag = Memory.flags[flagName]
 
@@ -441,7 +441,7 @@ var rQ = {
         return true
     },
 
-    splitEverythingByRoom: function(quad){
+    splitEverythingByRoom: function(quad: Creep[]): _.Dictionary<AllRoomStuff> {
         const everythingByRoom = {}
         const creepsByRoom = _.groupBy(quad, c => c.pos.roomName)
         for(let i = 0; i < Object.keys(creepsByRoom).length; i++){
@@ -467,11 +467,11 @@ var rQ = {
         }
     },
 
-    findClosestByPath: function(everythingByRoom){
+    findClosestByPath: function(everythingByRoom: _.Dictionary<AllRoomStuff>){
         const targets = []
         Object.keys(everythingByRoom).forEach(function (roomName) {
             if(everythingByRoom[roomName].hostiles){
-                const hostiles = _.filter(everythingByRoom[roomName].hostiles, h => !rU.isOnEdge(h.pos)).concat(everythingByRoom[roomName].structures)
+                const hostiles = (_.filter(everythingByRoom[roomName].hostiles, h => !rU.isOnEdge(h.pos)) as RoomObject[]).concat(everythingByRoom[roomName].structures)
                 targets.push(everythingByRoom[roomName].creeps[0].pos.findClosestByPath(hostiles))
             }
         })
@@ -484,7 +484,7 @@ var rQ = {
         }
     },
 
-    getDamageTolerance: function(quad){
+    getDamageTolerance: function(quad: Creep[]){
         if(!quad[0].memory.tolerance){
             const heals = quad[0].getActiveBodyparts(HEAL)
             const boostedPart = _.find(quad[0].body, part => part.type == HEAL && part.boost)
@@ -494,13 +494,13 @@ var rQ = {
         return quad[0].memory.tolerance
     },
 
-    checkDamage: function(quad, everythingByRoom){//bool
+    checkDamage: function(quad: Creep[], everythingByRoom: _.Dictionary<AllRoomStuff>){//bool
         //return true if there is a melee creep adjacent to any of the quad members
         let damage = rQ.getTowerDamage(quad)
         const tolerance = rQ.getDamageTolerance(quad)
         for(const roomName of Object.values(everythingByRoom)){
-            const melee = _.filter(roomName.hostiles, c => !c.level && c.getActiveBodyparts(ATTACK))
-            const ranged = _.filter(roomName.hostiles, c => !c.level &&c.getActiveBodyparts(RANGED_ATTACK))
+            const melee = _.filter(roomName.hostiles, c => c instanceof Creep && c.getActiveBodyparts(ATTACK)) as Creep[]
+            const ranged = _.filter(roomName.hostiles, c => c instanceof Creep &&c.getActiveBodyparts(RANGED_ATTACK)) as Creep[]
             for(const member of roomName.creeps){
                 for(const attacker of melee){
                     if(member.pos.isNearTo(attacker.pos) ||(member.pos.inRangeTo(attacker.pos, 2) && !attacker.fatigue)){
@@ -584,7 +584,7 @@ var rQ = {
     },
 
     // Find an attack vector to a building based on the lowest hits required
-    getTarget: function(creep, valuableStructures, structures) {
+    getTarget: function(creep: Creep, valuableStructures: Structure[], structures: Structure[]) {
         const result = PathFinder.search(creep.pos, _.map(valuableStructures, function(e) {
             return { pos: e.pos, range: 0 }}), {
             plainCost: 1,
@@ -644,29 +644,29 @@ var rQ = {
 
         // if nothing is in our path then return the target at the end of the path
         const targetPos = path.pop()
-        const targets = targetPos.lookFor(LOOK_CREEPS).concat(targetPos.lookFor(LOOK_STRUCTURES))
+        const targets = (targetPos.lookFor(LOOK_CREEPS) as RoomObject[]).concat(targetPos.lookFor(LOOK_STRUCTURES))
         const target = _(targets).min("hits")
         return target
     },
 
     // Find the first wall in our path and select it
-    getWallInQuadPath: function(room, path) {
+    getWallInQuadPath: function(room: Room, path) {
         if(u.isFriendlyRoom(room))
             return null
-        const blockingStructures = [STRUCTURE_WALL, STRUCTURE_RAMPART]
+        const blockingStructures: string[] = [STRUCTURE_WALL, STRUCTURE_RAMPART]
         return _(path)
             .map(pos => rQ.getOverlappingStructures(room, pos))
-            .flatten()
+            .flatten<Structure>()
             .find(structure => blockingStructures.includes(structure.structureType))
     },
 
-    getOverlappingStructures: function(room, pos) {
+    getOverlappingStructures: function(room: Room, pos) {
         const quadPoses = [[0, 0], [0, 1], [1, 0], [1, 1]]
         return _(quadPoses)
             .map(quadPos => room.lookForAt(LOOK_STRUCTURES, 
                 Math.min(pos.x + quadPos[0], 49), 
                 Math.min(pos.y + quadPos[1], 49)))
-            .flatten()
+            .flatten<Structure>()
             .value()
     },
 
@@ -685,7 +685,7 @@ var rQ = {
         return 0
     },
 
-    attemptRetreat: function(quad, everythingByRoom, status){//bool
+    attemptRetreat: function(quad: Creep[], everythingByRoom: _.Dictionary<AllRoomStuff>, status: QuadStatus){//bool
         //retreat may fail if there is nothing to retreat from
         //although it might be smart to move to a checkpoint if there is nothing to retreat from
         let allHostiles = []
@@ -705,7 +705,7 @@ var rQ = {
         return true
     },
 
-    shoot: function(everythingByRoom, target){
+    shoot: function(everythingByRoom: _.Dictionary<AllRoomStuff>, target: RoomObject){
         //prioritize creeps if the target is a structure
         //ignore creeps that are under a ramp
         //and don't forget to RMA when at melee
@@ -714,14 +714,14 @@ var rQ = {
             const hostiles = _.filter(roomName.hostiles, hostile => !rQ.isUnderRampart(hostile))
             for(const creep of roomName.creeps){
                 if(_.find(hostiles, h => h.pos.isNearTo(creep.pos)) 
-                    || _.find(roomName.structures, s => s.owner && s.hits && s.pos.isNearTo(creep.pos))){
+                    || _.find(roomName.structures, s => s instanceof OwnedStructure && s.hits && s.pos.isNearTo(creep.pos))){
                     creep.rangedMassAttack()
                     cU.logDamage(creep, creep.pos, true)
                     continue
                 }
                 const targetInRange = target && target.pos.inRangeTo(creep.pos, 3)
-                if(targetInRange && !target.structureType && !rQ.isUnderRampart(target)){
-                    creep.rangedAttack(target)
+                if(targetInRange && !(target instanceof Structure) && !rQ.isUnderRampart(target)){
+                    creep.rangedAttack(target as Structure)
                     cU.logDamage(creep, target.pos)
                     continue
                 }
@@ -731,7 +731,7 @@ var rQ = {
                     cU.logDamage(creep, newTarget.pos)
                     continue
                 }
-                if(targetInRange && target.structureType){
+                if(targetInRange && target instanceof Structure){
                     creep.rangedAttack(target)
                     cU.logDamage(creep, target.pos)
                     continue
@@ -757,7 +757,7 @@ var rQ = {
         return false
     },
 
-    heal: function(quad, everythingByRoom){//bool, TODO: preheal based on positioning/intelligence
+    heal: function(quad: Creep[], everythingByRoom: _.Dictionary<AllRoomStuff>){//bool, TODO: preheal based on positioning/intelligence
         //return true if a retreat is needed
         let hostiles = []
         for(const roomName of Object.values(everythingByRoom)){
@@ -779,7 +779,7 @@ var rQ = {
         return false
     },
 
-    moveByPath: function(leader, quad, path, status){
+    moveByPath: function(leader, quad: Creep[], path, status){
         for(let i = 0; i < quad.length; i++){
             if(quad[i].fatigue || !quad[i].getActiveBodyparts(MOVE)){
                 return
@@ -816,7 +816,7 @@ var rQ = {
         }
     },
 
-    longRangeToLocal: function(quad, leader, target){
+    longRangeToLocal: function(quad: Creep[], leader, target){
         const route = Game.map.findRoute(leader.pos.roomName, target.roomName, {
             routeCallback(roomName) {
                 let returnValue = 2
@@ -824,8 +824,8 @@ var rQ = {
                     returnValue = Infinity
                 } else {
                     const parsed = /^[WE]([0-9]+)[NS]([0-9]+)$/.exec(roomName)
-                    const isHighway = (parsed[1] % 10 === 0) || 
-                                    (parsed[2] % 10 === 0)
+                    const isHighway = (parseInt(parsed[1]) % 10 === 0) || 
+                                    (parseInt(parsed[2]) % 10 === 0)
                     const isMyRoom = Game.rooms[roomName] &&
                         Game.rooms[roomName].controller &&
                         Game.rooms[roomName].controller.my
@@ -843,7 +843,7 @@ var rQ = {
                 return returnValue
             }
         })
-        if(!route.length){
+        if(route == -2){
             return null
         }
         for(let i = 0; i < route.length; i++){
@@ -865,7 +865,7 @@ var rQ = {
         }
     },
 
-    move: function(quad, target, status, range, retreat = false){
+    move: function(quad: Creep[], target, status, range, retreat = false){
         if(!range){
             range = 0
         }
@@ -1046,13 +1046,13 @@ var rQ = {
             return null
         }
 
-        const result = {}
+        const result: QuadStatus = {}
 
         result.leader = leader
         result.roomEdge = roomEdge
         //if all of the creeps in the squad are in the highest room, they must all be in the same room
-        result.sameRoom = highRoom.length < quad.length ? false : true
+        result.sameRoom = highRoom.length >= quad.length
         return result
     }    
 }
-module.exports = rQ
+export = rQ

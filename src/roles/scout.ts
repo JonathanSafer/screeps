@@ -1,11 +1,11 @@
-const motion = require("../lib/motion")
-const u = require("../lib/utils")
+import motion = require("../lib/motion")
+import u = require("../lib/utils")
 
 var rS = {
     name: "scout",
     type: "scout",
    
-    run: function(creep) {
+    run: function(creep: Creep) {
         const targetRoom = Memory.creeps[creep.name].targetRoom
         if(!targetRoom || creep.room.name == targetRoom 
             || (Cache.roomData && Cache.roomData[targetRoom] && Cache.roomData[targetRoom].sct > Game.time))
@@ -24,4 +24,4 @@ var rS = {
         creep.suicide()
     }
 }
-module.exports = rS
+export = rS

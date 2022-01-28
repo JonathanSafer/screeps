@@ -1,10 +1,10 @@
-var a = require("../lib/actions")
-var sq = require("../lib/spawnQueue")
-var rU = require("./upgrader")
-var s = require("../config/settings")
-var rBr = require("./breaker")
-var motion = require("../lib/motion")
-var u = require("../lib/utils")
+import a = require("../lib/actions")
+import sq = require("../lib/spawnQueue")
+import rU = require("./upgrader")
+import s = require("../config/settings")
+import rBr = require("./breaker")
+import motion = require("../lib/motion")
+import u = require("../lib/utils")
 
 var rSB = {
     name: "spawnBuilder",
@@ -12,7 +12,7 @@ var rSB = {
     target: 0,
 
     /** @param {Creep} creep **/
-    run: function(creep) {
+    run: function(creep: Creep) {
         // Use the spawn queue to set respawn
         if(creep.ticksToLive == 500 && Memory.flags.claim) {
             sq.respawn(creep)
@@ -100,13 +100,13 @@ var rSB = {
         }
     },
 
-    jobDone: function(creep) {
+    jobDone: function(creep: Creep) {
         const extensions = _.filter(creep.room.find(FIND_MY_STRUCTURES), structure => structure.structureType == STRUCTURE_EXTENSION)
         const cSites = creep.room.find(FIND_MY_CONSTRUCTION_SITES)
         return (extensions.length > 4 && !cSites.length)
     },
     
-    build: function(creep) {
+    build: function(creep: Creep) {
         if(creep.room.controller && creep.room.controller.level < 2 
             || creep.room.controller.ticksToDowngrade < CONTROLLER_DOWNGRADE[creep.room.controller.level] - 5000
             || (creep.room.controller.ticksToDowngrade < CONTROLLER_DOWNGRADE[creep.room.controller.level] - 1000 && creep.pos.inRangeTo(creep.room.controller.pos, 3))){
@@ -144,7 +144,7 @@ var rSB = {
         }  
     },
     
-    harvest: function(creep) {
+    harvest: function(creep: Creep) {
         const terminal = creep.room.terminal
         if(terminal && terminal.store[RESOURCE_ENERGY] >= creep.store.getCapacity()){
             a.withdraw(creep, terminal, RESOURCE_ENERGY)
@@ -163,14 +163,14 @@ var rSB = {
             }
             return
         }
-        const result = creep.harvest(sources[creep.memory.target])
+        const result = creep.harvest(sources[creep.memory.mode])
         if(result == ERR_NOT_IN_RANGE) {
-            if(creep.moveTo(sources[creep.memory.target], {reusePath: 15, range: 1}) == ERR_NO_PATH){
-                creep.memory.target = (creep.memory.target + 1) % 2
+            if(creep.moveTo(sources[creep.memory.mode], {reusePath: 15, range: 1}) == ERR_NO_PATH){
+                creep.memory.mode = (creep.memory.mode + 1) % 2
             }
         } else if (result == ERR_NOT_ENOUGH_RESOURCES){
-            creep.memory.target = (creep.memory.target + 1) % 2
+            creep.memory.mode = (creep.memory.mode + 1) % 2
         }
     }
 }
-module.exports = rSB
+export = rSB

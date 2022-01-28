@@ -1,7 +1,7 @@
-var a = require("../lib/actions")
-var motion = require("../lib/motion")
-var rH = require("./harasser")
-var settings = require("../config/settings")
+import a = require("../lib/actions")
+import motion = require("../lib/motion")
+import rH = require("./harasser")
+import settings = require("../config/settings")
 var CreepState = {
     START: 1,
     BOOST: 2,
@@ -105,4 +105,4 @@ var rD = {
         return (room && room.controller && room.controller.my)
     }
 }
-module.exports = rD
+export = rD

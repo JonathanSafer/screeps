@@ -1,4 +1,4 @@
-const rC = require("./claimer")
+import rC = require("./claimer")
 
 var rUC = {
     name: "unclaimer",
@@ -10,7 +10,7 @@ var rUC = {
                 rC.runClaimer(creep, Memory.flags.unclaim, rUC.unclaim)
     },
 
-    unclaim: function(creep) {
+    unclaim: function(creep: Creep) {
         const result = creep.attackController(creep.room.controller)
         if(!creep.room.controller.level && !creep.room.controller.reservation){
             delete Memory.flags.unclaim
@@ -21,4 +21,4 @@ var rUC = {
         }
     }    
 }
-module.exports = rUC
+export = rUC

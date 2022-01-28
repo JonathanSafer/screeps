@@ -24,7 +24,7 @@ var sq = {
         return _.filter(spawn.memory.sq, creep => creep.role == role && creep.flag == flag).length
     },
 
-    respawn: function(creep: Creep, boosted: boolean) {
+    respawn: function(creep: Creep, boosted: boolean=false) {
         const spawn = Game.spawns[creep.memory.city]
         if(!spawn) return
         sq.initialize(spawn)

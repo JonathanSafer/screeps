@@ -1,10 +1,10 @@
-const settings = require("../config/settings")
-const motion = require("../lib/motion")
-const sq = require("../lib/spawnQueue")
-const a = require("../lib/actions")
-const u = require("../lib/utils")
-const cU = require("../lib/creepUtils")
-const military = require("../managers/military")
+import settings = require("../config/settings")
+import motion = require("../lib/motion")
+import sq = require("../lib/spawnQueue")
+import a = require("../lib/actions")
+import u = require("../lib/utils")
+import cU = require("../lib/creepUtils")
+import military = require("../managers/military")
 
 var rH = {
     name: "harasser",
@@ -12,8 +12,7 @@ var rH = {
     boosts: [RESOURCE_CATALYZED_GHODIUM_ALKALIDE, RESOURCE_CATALYZED_ZYNTHIUM_ALKALIDE,
         RESOURCE_CATALYZED_LEMERGIUM_ALKALIDE, RESOURCE_CATALYZED_KEANIUM_ALKALIDE],
 
-    /** @param {Creep} creep **/
-    run: function(creep) {
+    run: function(creep: Creep) {
         if(creep.memory.needBoost && !creep.memory.boosted){
             a.getBoosted(creep)
             return
@@ -35,7 +34,7 @@ var rH = {
             rH.removeFlag(creep, flagName)
             if(Memory.flags[flagName] && !creep.memory.respawnTime){
                 const route = motion.getRoute(Memory.flags[flagName].roomName, Game.spawns[creep.memory.city].room.name, true)
-                if(route && route.length){
+                if(route != -2 && route.length){
                     creep.memory.respawnTime = (route.length * 50) + (creep.body.length * CREEP_SPAWN_TIME)
                 }
             }
@@ -81,12 +80,12 @@ var rH = {
             rH.aMove(creep, hostiles)
         }
         rH.shoot(creep, hostiles)
-        if(creep.memory.target && Game.getObjectById(creep.memory.target) && Game.getObjectById(creep.memory.target).structureType){
+        if(creep.memory.target && Game.getObjectById(creep.memory.target) && Game.getObjectById(creep.memory.target) instanceof Structure){
             creep.memory.target = null
         }
     },
 
-    shoot: function(creep, hostiles){
+    shoot: function(creep: Creep, hostiles: Creep[]){
         //RMA if anybody is touching
         for(var i = 0; i < hostiles.length; i++){
             if(hostiles[i].pos.isNearTo(creep.pos)){
@@ -97,7 +96,7 @@ var rH = {
         }
         //if target and in range, shoot target, otherwise shoot anybody in range
         if(creep.memory.target){
-            const target = Game.getObjectById(creep.memory.target)
+            const target = Game.getObjectById(creep.memory.target) as Creep
             if(target && target.my){
                 if(target.hits < target.hitsMax){
                     creep.rangedHeal(target)
@@ -128,7 +127,7 @@ var rH = {
         return false
     },
 
-    maybeRetreat: function(creep, hostiles) {
+    maybeRetreat: function(creep: Creep, hostiles: Creep[]) {
         const attacker = _.find(hostiles, h => h.getActiveBodyparts(ATTACK) > 0
                 && (h.fatigue === 0 || h.pos.isNearTo(creep.pos))
                 && h.pos.inRangeTo(creep.pos, 2))
@@ -143,7 +142,7 @@ var rH = {
                 return { pos: d.pos, range: 8 }
             })
             const retreatPath = PathFinder.search(creep.pos, goals, {maxOps: 200, flee: true, maxRooms: 1,
-                roomCallBack: function(roomName){
+                roomCallback: function(roomName){
                     const room = Game.rooms[roomName]
                     const costs = new PathFinder.CostMatrix
                     room.find(FIND_CREEPS).forEach(function(c) {
@@ -159,7 +158,7 @@ var rH = {
         return false
     },
 
-    aMove: function(creep, hostiles){
+    aMove: function(creep: Creep, hostiles: Creep[]){
         const attacker = _.find(hostiles, h => h.getActiveBodyparts(ATTACK) > 0
                 && (h.fatigue === 0 || h.pos.isNearTo(creep.pos))
                 && h.pos.inRangeTo(creep.pos, 3))
@@ -216,7 +215,7 @@ var rH = {
         }
     },
 
-    maybeHeal: function(creep, hostiles){
+    maybeHeal: function(creep: Creep, hostiles: Creep[]){
         const damager = _.find(hostiles, c => c.getActiveBodyparts(ATTACK) > 0 || c.getActiveBodyparts(RANGED_ATTACK) > 0)
         if(creep.hits < creep.hitsMax || damager){
             creep.heal(creep)
@@ -243,4 +242,4 @@ var rH = {
     }
    
 }
-module.exports = rH
+export = rH

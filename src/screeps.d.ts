@@ -2,6 +2,25 @@ import _ = require("lodash")
 
 // memory types for our memory structure
 declare global {
+    interface CreepRole {
+        type?: string
+        name?: string
+        boosts?: string
+        target?: number
+    }
+
+    interface QuadStatus {
+        leader?: string
+        roomEdge?: string
+        sameRoom?: boolean
+    }
+
+    interface AllRoomStuff {
+        creeps?: Creep[]
+        hostiles?: Array<Creep | PowerCreep>
+        structures?: Structure[]
+    }
+
     interface Room {
         wallCosts?: number
     }
@@ -15,6 +34,9 @@ declare global {
     type ScreepsCache = RoomDictionary & { 
         boostCheckTime?: number
         boostsAvailable?: Array<string>
+        enemies: {
+            [key: string]: number
+        }
     }
     
     interface RoomDictionary {
@@ -39,6 +61,30 @@ declare global {
     interface CreepMemory {
         repair?: Id<Structure>
         pullee?: Id<Creep>
+        target?: Id<RoomObject> // overused
+        mode?: number // replaces target for some creeps
+        build?: Id<ConstructionSite>
+        flag?: string
+        mined?: number
+        city?: string
+        lab?: Id<StructureLab | StructureFactory> // overused
+        source?: Id<Mineral | Source> // overused
+        medic?: Id<Creep>
+        boosted?: number | boolean // overused
+        needBoost?: boolean
+        bankInfo?: {
+            summonHits?: number
+            runnersNeeded?: number
+            runnersSummoned?: boolean
+        }
+        jimmys?: Id<Creep>[]
+        container?: Id<StructureContainer>
+        targetId?: Id<Structure | Resource | Tombstone>
+        targetRoom?: string
+        flagRoom?: string
+        location?: Id<AnyStoreStructure>
+        upgradeLink?: Id<StructureLink>
+        role?: string
         [name: string]: any 
     }
     interface PowerCreepMemory { [name: string]: any }
@@ -48,6 +94,29 @@ declare global {
         sq?: QueuedCreep[]
         sources?: {
             [name: Id<Source>]: RoomPosition
+        }
+        storageLink?: Id<StructureLink>
+        ferryInfo?: {
+            labInfo?: {
+                reactors?: {
+                    [name: Id<StructureLab>]: {
+                        fill?: number
+                        mineral?: ResourceConstant
+                    }
+                }
+                receivers?: {
+                    [name: Id<StructureLab>]: {
+                        fill?: number
+                        boost?: MineralCompoundConstant | MineralConstant
+                    }
+                }
+            }
+            factoryInfo?: {
+                transfer?: Array<MineralConstant | MineralCompoundConstant | number>[]
+                produce?: string
+            }
+            needPower?: boolean
+            mineralRequest?: MineralCompoundConstant | MineralConstant
         }
         [name: string]: any 
     }

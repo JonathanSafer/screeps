@@ -1,4 +1,4 @@
-const actions = require("../lib/actions")
+import actions = require("../lib/actions")
 
 var rMe = {
     name: "medic",
@@ -40,4 +40,4 @@ var rMe = {
 
    
 }
-module.exports = rMe
+export = rMe

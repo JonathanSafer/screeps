@@ -1,18 +1,17 @@
-var motion = require("../lib/motion")
-var sq = require("../lib/spawnQueue")
-var rR = require("./runner")
-var u = require("../lib/utils")
-var cU = require("../lib/creepUtils")
-var rBr = require("./breaker")
-var settings = require("../config/settings")
+import motion = require("../lib/motion")
+import sq = require("../lib/spawnQueue")
+import rR = require("./runner")
+import u = require("../lib/utils")
+import cU = require("../lib/creepUtils")
+import rBr = require("./breaker")
+import settings = require("../config/settings")
 
 var rPM = {
     name: "powerMiner",
     type: "powerMiner",
     boosts: [RESOURCE_CATALYZED_GHODIUM_ALKALIDE, RESOURCE_CATALYZED_UTRIUM_ACID],
 
-    /** @param {Creep} creep **/
-    run: function(creep) {
+    run: function(creep: Creep) {
         cU.checkRoom(creep)//check if in hostile room
 
         if (!rPM.getBoosted(creep, rPM.boosts)){
@@ -94,14 +93,14 @@ var rPM = {
         rPM.summonRunners(creep, bank)
     },
 
-    retreat: function(creep, medic, flagName){
-        if(creep.pos.inRangeTo(new RoomPosition(Memory.flags[flagName].x, Memory.flags[flagName].y, Memory.flags[flagName].roomName, 4))){
+    retreat: function(creep: Creep, medic, flagName){
+        if(creep.pos.inRangeTo(new RoomPosition(Memory.flags[flagName].x, Memory.flags[flagName].y, Memory.flags[flagName].roomName), 4)){
             rBr.medicMove(medic, creep)
             motion.newMove(medic, new RoomPosition(25, 25, creep.pos.roomName), 5)
         }
     },
 
-    summonRunners: function(creep, bank){
+    summonRunners: function(creep: Creep, bank: StructurePowerBank){
         if(!bank){
             return
         }
@@ -112,7 +111,8 @@ var rPM = {
                 damage = damage * BOOSTS[ATTACK][RESOURCE_CATALYZED_UTRIUM_ACID][ATTACK]
             }
             const runnersNeeded = Math.ceil(bank.power/1600)
-            const distance  = motion.getRoute(Game.spawns[creep.memory.city].pos.roomName, bank.pos.roomName, true).length * 50
+            const route = motion.getRoute(Game.spawns[creep.memory.city].pos.roomName, bank.pos.roomName, true)
+            const distance  = route != -2 ? route.length * 50 : Log.error(`PowerMiner ${creep.name} unable to find route`)
             const summonTime = distance + (Math.ceil(runnersNeeded/CONTROLLER_STRUCTURES[STRUCTURE_SPAWN][8]) * MAX_CREEP_SIZE * CREEP_SPAWN_TIME)
             creep.memory.bankInfo.summonHits = summonTime * damage
             creep.memory.bankInfo.runnersNeeded = runnersNeeded
@@ -146,7 +146,7 @@ var rPM = {
         return null
     },
 
-    roomScan: function(creep){//not in use. Will be used for self defense / harasser summon
+    roomScan: function(creep: Creep){//not in use. Will be used for self defense / harasser summon
         if(!creep.memory.aware && Game.time % 5 != 0){
             return null
         }
@@ -167,7 +167,7 @@ var rPM = {
             return
     },
 
-    getBoosted: function(creep, boosts){
+    getBoosted: function(creep: Creep, boosts: string[]){
         const alreadyBoosted = creep.memory.boosted && creep.memory.boosted >= boosts.length
         if (!creep.memory.needBoost || alreadyBoosted) {
             return true
@@ -184,7 +184,7 @@ var rPM = {
             creep.memory.boosted++
             return
         }
-        const labs = Object.keys(Game.spawns[creep.memory.city].memory.ferryInfo.labInfo.receivers)
+        const labs = Object.keys(Game.spawns[creep.memory.city].memory.ferryInfo.labInfo.receivers) as Id<StructureLab>[]
         for(const labId of labs){
             const lab = Game.getObjectById(labId)
             if(!lab){
@@ -205,4 +205,4 @@ var rPM = {
         }
     }
 }
-module.exports = rPM
+export = rPM

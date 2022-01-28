@@ -33,7 +33,7 @@ import rQ = require("../roles/quad")
 import rRr = require("../roles/reserver")
 
 
-function makeCreeps(role, city: string, unhealthyStore=false, creepWantsBoosts=false, flag = null) {
+function makeCreeps(role: CreepRole, city: string, unhealthyStore=false, creepWantsBoosts=false, flag = null) {
     if(Memory.gameState < 5) return false
     const room = Game.spawns[city].room
    
@@ -64,7 +64,8 @@ function makeCreeps(role, city: string, unhealthyStore=false, creepWantsBoosts=f
         roomU.requestBoosterFill(Game.spawns[city], role.boosts)
     }
     Game.creeps[name].memory.role = role.name
-    Game.creeps[name].memory.target = role.target
+    Game.creeps[name].memory.mode = role.target
+    Game.creeps[name].memory.target = role.target as unknown as Id<RoomObject>
     Game.creeps[name].memory.city = city
     Game.creeps[name].memory.needBoost = boosted
     Game.creeps[name].memory.flag = flag
@@ -189,7 +190,7 @@ function makeEmergencyCreeps(extensions, creeps: Creep[], city, rcl8, emergency)
     const memory = Game.spawns[city].memory
 
     if (emergency || Game.time % checkTime == 0 && extensions >= 1) {
-        if (_.filter(creeps, creep => creep.memory.role == rM.name).length < 1 && memory[rM.role] > 0){
+        if (_.filter(creeps, creep => creep.memory.role == rM.name).length < 1 && memory[rM.name] > 0){
             Log.info(`Making Emergency Miner in ${city}`)
             makeCreeps(rM, city, true)
         }
@@ -200,7 +201,7 @@ function makeEmergencyCreeps(extensions, creeps: Creep[], city, rcl8, emergency)
         }
 
         // TODO disable if links are present (not rcl8!! links may be missing for rcl8)
-        if ((emergency || !rcl8) && _.filter(creeps, creep => creep.memory.role == rR.name ).length < 1 && memory.runner > 0) {
+        if ((emergency || !rcl8) && _.filter(creeps, creep => creep.memory.role == rR.name).length < 1 && memory[rR.name] > 0) {
             Log.info(`Making Emergency Runner in ${city}`)
             makeCreeps(rR, city, true)
         }

@@ -1,7 +1,7 @@
-var a = require("../lib/actions")
-var u = require("../lib/utils")
-var roomU = require("../lib/roomUtils")
-var rU = require("./upgrader")
+import a = require("../lib/actions")
+import u = require("../lib/utils")
+import roomU = require("../lib/roomUtils")
+import rU = require("./upgrader")
 
 var CreepState = {
     START: 1,
@@ -23,7 +23,7 @@ var CS = CreepState
 
 var rPC = {
 
-    run: function(creep) {
+    run: function(creep: PowerCreep) {
         if(creep.shard)
             creep.memory.shard = creep.shard
         if(creep.memory.shard && creep.memory.shard != Game.shard.name){
@@ -123,7 +123,7 @@ var rPC = {
                 .map(pc => pc.memory.city)
                 .value()
             const citiesWithoutAnyPC = _.filter(cities, city => city.controller.level == 8
-                && roomU.getFactory(city) && !roomU.getFactory(city).level
+                && roomU.getFactory(city) && !(roomU.getFactory(city) as StructureFactory).level
                 && !usedRooms.includes(city.name))
             Log.warning(`PowerCreep ${creep.name} is unassigned, please assign using PCAssign(name, city). Available cities on this shard are ${citiesWithoutAnyPC}`)
         }
@@ -215,7 +215,7 @@ var rPC = {
         if(!creep.powers[PWR_REGEN_SOURCE]){
             return false
         }
-        const sourceIds = Object.keys(Game.spawns[creep.memory.city + "0"].memory.sources)
+        const sourceIds = Object.keys(Game.spawns[creep.memory.city + "0"].memory.sources) as Id<Source>[]
         for (const sourceId of sourceIds) {
             const source = Game.getObjectById(sourceId)
             if (source && (!source.effects || source.effects.length == 0 ||
@@ -227,8 +227,8 @@ var rPC = {
         return false
     },
 
-    canOperateFactory: function(creep) {
-        const factory = _.find(creep.room.find(FIND_MY_STRUCTURES), struct => struct.structureType == STRUCTURE_FACTORY)
+    canOperateFactory: function(creep: Creep) {
+        const factory = _.find(creep.room.find(FIND_MY_STRUCTURES), struct => struct.structureType == STRUCTURE_FACTORY) as StructureFactory
         const city = creep.memory.city + "0"
         const spawn = Game.spawns[city]
         const isRunning = spawn && spawn.memory.ferryInfo.factoryInfo.produce !== "dormant"
@@ -237,17 +237,17 @@ var rPC = {
         return rPC.canOperate(creep, factory, PWR_OPERATE_FACTORY, needsBoost)
     },
 
-    canOperateObserver: function(creep) {
+    canOperateObserver: function(creep: Creep) {
         const observer = _.find(creep.room.find(FIND_MY_STRUCTURES), struct => struct.structureType == STRUCTURE_OBSERVER)
         return rPC.canOperate(creep, observer, PWR_OPERATE_OBSERVER, true)
     },
 
-    canOperateExtension: function(creep) {
+    canOperateExtension: function(creep: Creep) {
         return rPC.canOperate(creep, creep.room.storage, PWR_OPERATE_EXTENSION,
             creep.room.energyAvailable < 0.8 * creep.room.energyCapacityAvailable)
     },
 
-    canOperateSpawn: function(creep) {
+    canOperateSpawn: function(creep: Creep) {
         const spawn = Game.spawns[creep.memory.city + "0"]
         const spawns = spawn && spawn.room.find(FIND_MY_SPAWNS) || []
         if(_.every(spawns, s => s.spawning)){
@@ -287,4 +287,4 @@ var rPC = {
             jobState : CS.WORK_BALANCE_OPS
     }
 }
-module.exports = rPC
+export = rPC

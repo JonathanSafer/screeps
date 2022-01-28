@@ -1,7 +1,7 @@
 import u = require("./utils")
 
 var cU = {    
-    getNextLocation: function(current, locations) {
+    getNextLocation: function(current: number, locations) {
         return (current + 1) % locations.length
     },
     

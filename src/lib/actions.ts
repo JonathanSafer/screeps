@@ -3,7 +3,7 @@ import motion = require("./motion")
 
 
 var actions = {
-    interact: function(creep, location, fnToTry, range=undefined, logSuccess=false, local=false) {
+    interact: function(creep: Creep, location, fnToTry, range=undefined, logSuccess=false, local=false) {
         var result = fnToTry()
         switch (result) {
         case ERR_NOT_IN_RANGE: {
@@ -44,7 +44,7 @@ var actions = {
         return actions.interact(creep, target, () => creep.dismantle(target), 1)
     },
     
-    attack: function(creep, target){
+    attack: function(creep: Creep, target){
         return actions.interact(creep, target, () => creep.attack(target), 1)
     },
 
@@ -62,7 +62,7 @@ var actions = {
         return actions.interact(creep, target, () => creep.renew(target), 1)
     },
      
-    withdraw: function(creep, location, mineral, amount) {
+    withdraw: function(creep, location, mineral?, amount?) {
         if (mineral == undefined){
             if (!location || !location.store.getUsedCapacity(RESOURCE_ENERGY)) return ERR_NOT_ENOUGH_RESOURCES
             return actions.interact(creep, location, () => creep.withdraw(location, RESOURCE_ENERGY), 1)

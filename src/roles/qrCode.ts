@@ -1,13 +1,13 @@
-const motion = require("../lib/motion")
-const u = require("../lib/utils")
-const template = require("../config/template")
+import motion = require("../lib/motion")
+import u = require("../lib/utils")
+import template = require("../config/template")
 
 const rQr = {
     name: "qrCode",
     type: "scout",
     target: 0,
    
-    run: function(creep) {
+    run: function(creep: Creep) {
         const flag = Memory.flags[creep.memory.flag]
         if(!flag)
             return
@@ -16,7 +16,7 @@ const rQr = {
         if(creep.memory.row === undefined){
             let freeRow = null
             for(let i = 0; i < template.qrCoords.length; i++){
-                if(!_.find(qrs, c => c.memory.row == i && c.memory.target == 0)){
+                if(!_.find(qrs, c => c.memory.row == i && c.memory.mode == 0)){
                     freeRow = i
                     break
                 }
@@ -30,9 +30,9 @@ const rQr = {
             creep.memory.row = freeRow
         }
         const row = creep.memory.row
-        while(creep.memory.target < template.qrCoords[row].length - 1 
+        while(creep.memory.mode < template.qrCoords[row].length - 1 
             && !_.find(qrs, c => c.memory.row == row && c.memory.target == creep.memory.target + 1)){
-            creep.memory.target++
+            creep.memory.mode++
         }
         const target = template.qrCoords[row][creep.memory.target]
         const targetPos = new RoomPosition(target.x + flag.x, target.y + flag.y, flag.roomName)
@@ -40,4 +40,4 @@ const rQr = {
             motion.newMove(creep, targetPos)
     }
 }
-module.exports = rQr
+export = rQr

@@ -1,10 +1,11 @@
-var actions = require("../lib/actions")
-var u = require("../lib/utils")
-var roomU = require("../lib/roomUtils")
-var cU = require("../lib/creepUtils")
-var motion = require("../lib/motion")
-const settings = require("../config/settings")
-const rU = require("./upgrader")
+import actions = require("../lib/actions")
+import u = require("../lib/utils")
+import roomU = require("../lib/roomUtils")
+import cU = require("../lib/creepUtils")
+import motion = require("../lib/motion")
+import settings = require("../config/settings")
+import rU = require("./upgrader")
+import { has } from "lodash"
 
 var rR = {
     name: "runner",
@@ -52,7 +53,7 @@ var rR = {
         creep.memory.target = cU.getNextLocation(creep.memory.target, roomU.getTransferLocations(creep))
     },
 
-    checkForPullees: function(creep){
+    checkForPullees: function(creep: Creep){
         const pullee = _.find(creep.room.find(FIND_MY_CREEPS), c => c.memory.destination && !c.memory.paired)
         if(pullee){
             creep.memory.tug = true
@@ -61,7 +62,7 @@ var rR = {
         }
     },
 
-    runController: function(creep){
+    runController: function(creep: Creep){
         if(creep.saying == "*" && creep.store.energy == 0){
             creep.memory.juicer = false
             return false
@@ -83,23 +84,24 @@ var rR = {
             }
         } else {
             if (!creep.memory.location || !Game.getObjectById(creep.memory.location))
-                creep.memory.location =  roomU.getStorage(Game.spawns[creep.memory.city].room).id
+                creep.memory.location =  (roomU.getStorage(Game.spawns[creep.memory.city].room) as StructureStorage).id
             const target = Game.getObjectById(creep.memory.location)
             actions.withdraw(creep, target)
         }
         return true
     },
 
-    pickup: function(creep) {
+    pickup: function(creep: Creep) {
         if(creep.memory.targetId) {
             const target = Game.getObjectById(creep.memory.targetId)
             if(target){
-                if(target.store){
+                if(_.has(target, "store")){
+                    const storeTarget = target as StructureStorage
                     let max = 0
                     let maxResource = null
-                    for(const resource in target.store){
-                        if(target.store[resource] > max){
-                            max = target.store[resource]
+                    for(const resource in storeTarget.store){
+                        if(storeTarget.store[resource] > max){
+                            max = storeTarget.store[resource]
                             maxResource = resource
                         }
                     }
@@ -115,24 +117,24 @@ var rR = {
         const goodLoads = cU.getGoodPickups(creep)
         if(!goodLoads.length)
             return false
-        const newTarget = _.min(goodLoads, function(drop){
+        const newTarget = _.min(goodLoads, function(drop: Resource | Tombstone){
             const distance = PathFinder.search(creep.pos, drop.pos).cost
-            const amount = drop.amount || drop.store.getUsedCapacity()
+            const amount = (drop as Resource).amount || (drop as Tombstone).store.getUsedCapacity()
             return distance/amount
         })
-        creep.memory.targetId = newTarget.id
+        creep.memory.targetId = (newTarget as Resource | Tombstone).id
         return rR.pickup(creep)
     },
 
-    deposit: function(creep){
+    deposit: function(creep: Creep){
         if (!creep.memory.location || !Game.getObjectById(creep.memory.location))
-            creep.memory.location =  roomU.getStorage(Game.spawns[creep.memory.city].room).id
+            creep.memory.location =  (roomU.getStorage(Game.spawns[creep.memory.city].room) as StructureStorage).id
         const target = Game.getObjectById(creep.memory.location)
         if (actions.charge(creep, target) == ERR_FULL) 
-            creep.memory.location =  roomU.getStorage(Game.spawns[creep.memory.city].room).id
+            creep.memory.location =  (roomU.getStorage(Game.spawns[creep.memory.city].room) as StructureStorage).id
     },
 
-    runTug: function(creep){
+    runTug: function(creep: Creep){
         const pullee = Game.getObjectById(creep.memory.pullee)
         if(!pullee){
             creep.memory.tug = false
@@ -288,4 +290,4 @@ var rR = {
     }
     
 }
-module.exports = rR
+export = rR

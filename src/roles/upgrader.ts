@@ -1,7 +1,7 @@
-var actions = require("../lib/actions")
-var linkLib = require("../buildings/link")
-var motion = require("../lib/motion")
-var rB = require("./builder")
+import actions = require("../lib/actions")
+import linkLib = require("../buildings/link")
+import motion = require("../lib/motion")
+import rB = require("./builder")
 
 
 var rU = {
@@ -11,7 +11,7 @@ var rU = {
     boosts: [RESOURCE_CATALYZED_GHODIUM_ACID],
 
     /** @param {Creep} creep **/
-    run: function(creep) {
+    run: function(creep: Creep) {
         if(creep.memory.needBoost && !creep.memory.boosted){
             rU.getBoosted(creep, rU.boosts[0])
             return
@@ -40,9 +40,9 @@ var rU = {
         rB.getEnergy(creep)
     },
     // Get the upgrade link. Check creep memory, then lib. May return null
-    getUpgradeLink: function(creep) {
+    getUpgradeLink: function(creep: Creep) {
         var link = Game.getObjectById(creep.memory.upgradeLink)
-        link = link || linkLib.getUpgradeLink(creep.room)
+        link = link || linkLib.getUpgradeLink(creep.room) as StructureLink
         if (link) {
             creep.memory.upgradeLink = link.id
             return link
@@ -51,11 +51,11 @@ var rU = {
         }
     },
 
-    getBoosted: function(creep, boost){
+    getBoosted: function(creep: Creep, boost){
         if(creep.spawning){
             return
         }
-        const labs = Object.keys(Game.spawns[creep.memory.city].memory.ferryInfo.labInfo.receivers)
+        const labs = Object.keys(Game.spawns[creep.memory.city].memory.ferryInfo.labInfo.receivers) as Id<StructureLab>[]
         for(const labId of labs){
             const lab = Game.getObjectById(labId)
             if(!lab){
@@ -74,4 +74,4 @@ var rU = {
         creep.memory.boosted = true
     }
 }
-module.exports = rU
+export = rU

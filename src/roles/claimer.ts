@@ -1,4 +1,4 @@
-const motion = require("../lib/motion")
+import motion = require("../lib/motion")
 
 var rC = {
     name: "claimer",
@@ -46,4 +46,4 @@ var rC = {
         }
     }    
 }
-module.exports = rC
+export = rC

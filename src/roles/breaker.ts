@@ -1,11 +1,11 @@
-var u = require("../lib/utils")
-var rU = require("../lib/roomUtils")
-var cU = require("../lib/creepUtils")
-var settings = require("../config/settings")
-var rMe = require("./medic")
-var motion = require("../lib/motion")
-var actions = require("../lib/actions")
-var rQ = require("./quad")
+import u = require("../lib/utils")
+import rU = require("../lib/roomUtils")
+import cU = require("../lib/creepUtils")
+import settings = require("../config/settings")
+import rMe = require("./medic")
+import motion = require("../lib/motion")
+import actions = require("../lib/actions")
+import rQ = require("./quad")
 
 var rBr = {
     name: "breaker",
@@ -129,8 +129,8 @@ var rBr = {
         const duo = [creep, medic]
 
 
-        const melee = _.filter(hostiles, c => !c.level && c.getActiveBodyparts(ATTACK))
-        const ranged = _.filter(hostiles, c => !c.level && c.getActiveBodyparts(RANGED_ATTACK))
+        const melee = _.filter(hostiles, c => c instanceof Creep && c.getActiveBodyparts(ATTACK)) as Creep[]
+        const ranged = _.filter(hostiles, c => c instanceof Creep && c.getActiveBodyparts(RANGED_ATTACK)) as Creep[]
         for(const member of duo){
             for(const attacker of melee){
                 if(member.pos.isNearTo(attacker.pos) ||(member.pos.inRangeTo(attacker.pos, 2) && !attacker.fatigue)){
@@ -178,7 +178,7 @@ var rBr = {
         // clear a path to every exit before continuing the rally
     },
 
-    getTarget: function(creep, valuableStructures, structures){
+    getTarget: function(creep, valuableStructures: Structure[], structures: Structure[]){
         const result = PathFinder.search(creep.pos, _.map(valuableStructures, function(e) {
             return { pos: e.pos, range: 0 }}), {
             plainCost: 1,
@@ -211,7 +211,7 @@ var rBr = {
 
         const path = result.path
 
-        const wallInPath = rBr.getWallInPath(creep.room, path)
+        const wallInPath = rBr.getWallInPath(path)
         if (wallInPath) {
             return wallInPath
         }
@@ -224,28 +224,31 @@ var rBr = {
         return target
     },
 
-    getWallInPath: function(room, path) {
+    getWallInPath: function(path: RoomPosition[]) {
         const blockingStructures = [STRUCTURE_WALL, STRUCTURE_RAMPART]
         return _(path)
-            .map(pos => pos.lookFor(LOOK_STRUCTURES))
-            .flatten()
-            .find(structure => blockingStructures.includes(structure.structureType))
+            .map<Structure[]>(pos => pos.lookFor(LOOK_STRUCTURES))
+            .flatten<Structure>()
+            .find(structure => (blockingStructures as string[]).includes(structure.structureType))
     },
 
-    findTarget: function(creep, medic){
+    findTarget: function(creep: Creep, medic){
         const flag = creep.memory.city + "break"
         const structures = creep.room.find(FIND_STRUCTURES, {
-            filter: structure => structure.hits && (!structure.owner || !settings.allies.includes(structure.owner.username))
+            filter: structure => structure.hits && 
+            (!(structure instanceof OwnedStructure) || !settings.allies.includes(structure.owner.username))
         })
         if(!Memory.flags[flag] || creep.pos.roomName == Memory.flags[flag].roomName){
             //we are in destination room, target "valuable" structures
             const valuableStructures = rQ.getValuableStructures(structures)
             if (valuableStructures.length) {
-                creep.memory.target = rBr.getTarget(creep, valuableStructures, structures).id
+                const target = rBr.getTarget(creep, valuableStructures, structures)
+                creep.memory.target = target ? target.id : Log.error(`Error target not found ${creep.name}`)
                 return
             }
             if (structures.length) {
-                creep.memory.target = rBr.getTarget(creep, structures, structures).id
+                const target = rBr.getTarget(creep, structures, structures)
+                creep.memory.target = target ? target.id : Log.error(`Error target not found ${creep.name}`)
                 return
             }
         }
@@ -296,4 +299,4 @@ var rBr = {
         }
     }
 }
-module.exports = rBr
+export = rBr
