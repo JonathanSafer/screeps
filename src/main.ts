@@ -84,9 +84,9 @@ export function loop() {
                 if (rcl < 8 && Game.cpu.bucket < rclLimit && Game.gcl.level > 1) {
                     continue // skip this city
                 }
-                c.runCity(city, localCreeps[city])
                 c.updateCountsCity(city, localCreeps[city] || [], localRooms[city], 
                     claimRoom, unclaimRoom)
+                c.runCity(city, localCreeps[city])
                 c.runTowers(city)
                 // TODO: obs runs in dead cities
                 observer.run(city)
