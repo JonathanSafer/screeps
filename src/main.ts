@@ -111,7 +111,7 @@ export function loop() {
                 }
                 if(!creep.memory.city){
                     creep.memory.city = "homeless"
-                    creep.memory.target = 0
+                    creep.memory.mode = 0
                 }
             })
         }

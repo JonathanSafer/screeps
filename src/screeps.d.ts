@@ -34,7 +34,7 @@ declare global {
     type ScreepsCache = RoomDictionary & { 
         boostCheckTime?: number
         boostsAvailable?: Array<string>
-        enemies: {
+        enemies?: {
             [key: string]: number
         }
     }
@@ -110,11 +110,14 @@ declare global {
                         boost?: MineralCompoundConstant | MineralConstant
                     }
                 }
+                boost?: string
             }
             factoryInfo?: {
                 transfer?: Array<MineralConstant | MineralCompoundConstant | number>[]
                 produce?: string
+                factoryLevel?: number
             }
+            comSend?: (string | number)[][]
             needPower?: boolean
             mineralRequest?: MineralCompoundConstant | MineralConstant
         }

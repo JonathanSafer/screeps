@@ -176,12 +176,12 @@ var rPM = {
         if(!creep.memory.boosted){
             creep.memory.boosted = 0
         }
-        const boost = boosts[creep.memory.boosted]
+        const boost = boosts[(creep.memory.boosted as number)]
         if(creep.spawning){
             return
         }
         if(!Game.spawns[creep.memory.city].memory.ferryInfo.labInfo){
-            creep.memory.boosted++
+            (creep.memory.boosted as number)++
             return
         }
         const labs = Object.keys(Game.spawns[creep.memory.city].memory.ferryInfo.labInfo.receivers) as Id<StructureLab>[]
@@ -198,7 +198,7 @@ var rPM = {
                 if (lab.boostCreep(creep) === ERR_NOT_IN_RANGE) {
                     motion.newMove(creep, lab.pos, 1)
                 } else if(lab.store[lab.mineralType] >= boostNeeded){
-                    creep.memory.boosted++
+                    (creep.memory.boosted as number)++
                 }
                 return
             }
