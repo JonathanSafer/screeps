@@ -501,7 +501,7 @@ function cityFraction(cityName) {
     return _.indexOf(myCities, cityName) / myCities.length
 }
 
-function updateMiner(creeps: Creep[], rcl8, memory: SpawnMemory, spawn){
+function updateMiner(creeps: Creep[], rcl8, memory: SpawnMemory, spawn: StructureSpawn){
     if (!memory.sources) memory.sources = {}
     const flag = Memory.flags.claim
     if(flag && flag.roomName === spawn.pos.roomName &&
@@ -519,9 +519,9 @@ function updateMiner(creeps: Creep[], rcl8, memory: SpawnMemory, spawn){
         }
     })
 
-    const powerCreep = spawn.room.find(FIND_MY_POWER_CREEPS, c => c.powers[PWR_REGEN_SOURCE]).length
+    const powerCreep = spawn.room.find(FIND_MY_POWER_CREEPS, { filter: c => c.powers[PWR_REGEN_SOURCE] }).length
     let bucketThreshold = settings.bucket.energyMining + settings.bucket.range * cityFraction(spawn.room.name)
-    if(powerCreep || spawn.room.storage.store[RESOURCE_ENERGY] < settings.energy.processPower){
+    if(powerCreep || (spawn.room.storage && spawn.room.storage.store[RESOURCE_ENERGY] < settings.energy.processPower)){
         bucketThreshold -= settings.bucket.range/2
     }
     if (spawn.memory.towersActive || (Game.cpu.bucket < bucketThreshold && rcl8) || Game.time < 500) {
