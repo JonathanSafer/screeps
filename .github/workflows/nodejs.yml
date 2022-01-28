@@ -43,7 +43,7 @@ jobs:
         SCREEPS_USER: ${{ secrets.SCREEPS_USER }}
         PTR_TOKEN:  ${{ secrets.MMO_TOKEN }}
         SEASON_TOKEN: ${{ secrets.MMO_TOKEN }}
-        FILEY_FOOD_TOKEN: $${{ secrets.FILEY_FOOD_TOKEN }}
+        FILEY_FOOD_TOKEN: ${{ secrets.FILEY_FOOD_TOKEN }}
     - name: Deploy
       run: |
         npm run push
