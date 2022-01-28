@@ -228,7 +228,6 @@ var rM = {
             creep.memory.sourcePos = Game.spawns[creep.memory.city].memory.sources[creep.memory.source]
             if(!creep.memory.sourcePos)
                 creep.suicide()
-            delete creep.memory.flag
         } else {
             creep.suicide()
         }
