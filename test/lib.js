@@ -29,7 +29,8 @@ const GGame = class {
             getUsed: function() {
                 this._cpuUsed += 0.1
                 return this._cpuUsed
-            }
+            },
+            bucket: 5000
         }
         this.map = {
             describeExits: function(){
