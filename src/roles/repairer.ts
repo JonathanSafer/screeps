@@ -47,10 +47,10 @@ var rRe = {
         }
         if(!creep.memory.nextCheckTime || creep.memory.nextCheckTime < Game.time){//occasionally scan for construction sites
             const rooms = Object.keys(_.countBy(Game.spawns[creep.memory.city].memory.sources, s => s.roomName))
-            let targets = []
+            let targets: ConstructionSite[] = []
             for(let i = 0; i < rooms.length; i++){
                 if(Game.rooms[rooms[i]])
-                    targets = targets.concat(Game.rooms[rooms[i]].find(FIND_MY_CONSTRUCTION_SITES), s => s.structureType == STRUCTURE_ROAD)
+                    targets = targets.concat(Game.rooms[rooms[i]].find(FIND_MY_CONSTRUCTION_SITES, { filter: s => s.structureType == STRUCTURE_ROAD} ))
             }
             if(targets.length){
                 creep.memory.build = _.min(targets, s => u.getRangeTo(creep.pos, s.pos)).id

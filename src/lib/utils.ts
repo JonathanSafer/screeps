@@ -322,7 +322,7 @@ var u = {
         return null
     },
 
-    getRangeTo: function(pos, targetPos){
+    getRangeTo: function(pos: RoomPosition, targetPos: RoomPosition){
         if(pos.roomName == targetPos.roomName){
             return pos.getRangeTo(targetPos)
         }
