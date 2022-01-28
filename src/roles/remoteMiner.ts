@@ -19,7 +19,7 @@ var rM = {
             motion.newMove(creep, Game.spawns[creep.memory.city].pos, 7)
             return
         }
-        if(!creep.memory.source) {
+        if(!creep.memory.source || !creep.memory.sourcePos) {
             rM.nextSource(creep)
             return
         }
@@ -102,7 +102,7 @@ var rM = {
         return true
     },
 
-    maybeMove: function(creep, source){
+    maybeMove: function(creep: Creep, source: Source){
         if(creep.memory.moveStatus == "static"){
             if(!source){
                 creep.memory.destination = creep.memory.sourcePos

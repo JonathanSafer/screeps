@@ -85,6 +85,8 @@ declare global {
         location?: Id<AnyStoreStructure>
         upgradeLink?: Id<StructureLink>
         role?: string
+        destination?: RoomPosition
+        sourcePos?: RoomPosition
         [name: string]: any 
     }
     interface PowerCreepMemory { [name: string]: any }
