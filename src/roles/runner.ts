@@ -5,7 +5,6 @@ import cU = require("../lib/creepUtils")
 import motion = require("../lib/motion")
 import settings = require("../config/settings")
 import rU = require("./upgrader")
-import { has } from "lodash"
 
 var rR = {
     name: "runner",
@@ -13,7 +12,7 @@ var rR = {
     target: 0,
 
     /** @param {Creep} creep **/
-    run: function(creep) {
+    run: function(creep: Creep) {
         if (creep.memory.flag && creep.memory.flag.includes("powerMine")){
             rR.runPower(creep)
             return
@@ -29,18 +28,18 @@ var rR = {
         if (Game.cpu.bucket > 9500 || Game.time % 2) {
             actions.notice(creep) // cost: 15% when running, so 7% now
         }
-        if(creep.memory.target == 1 && creep.store.getUsedCapacity() == 0)
-            creep.memory.target = 0
-        if(creep.memory.target == 0 && creep.store.getFreeCapacity() < 0.5 * creep.store.getCapacity()){
-            creep.memory.target = 1
+        if(creep.memory.mode == 1 && creep.store.getUsedCapacity() == 0)
+            creep.memory.mode = 0
+        if(creep.memory.mode == 0 && creep.store.getFreeCapacity() < 0.5 * creep.store.getCapacity()){
+            creep.memory.mode = 1
             creep.memory.targetId = null
         }
-        if(creep.memory.target == 0 && !creep.memory.targetId){
+        if(creep.memory.mode == 0 && !creep.memory.targetId){
             rR.checkForPullees(creep)
         }
         // if there's room for more energy, go find some more
         // else find storage
-        if (creep.memory.target == 0 && !creep.memory.tug) {
+        if (creep.memory.mode == 0 && !creep.memory.tug) {
             if(!rR.pickup(creep) && Game.cpu.bucket > 9500){
                 rR.runController(creep)
             }
@@ -49,8 +48,8 @@ var rR = {
         }
     },
 
-    flipTarget: function(creep) {
-        creep.memory.target = cU.getNextLocation(creep.memory.target, roomU.getTransferLocations(creep))
+    flipTarget: function(creep: Creep) {
+        creep.memory.mode = cU.getNextLocation(creep.memory.mode, roomU.getTransferLocations(creep))
     },
 
     checkForPullees: function(creep: Creep){
@@ -98,7 +97,7 @@ var rR = {
                 if(_.has(target, "store")){
                     const storeTarget = target as StructureStorage
                     let max = 0
-                    let maxResource = null
+                    let maxResource: string = null
                     for(const resource in storeTarget.store){
                         if(storeTarget.store[resource] > max){
                             max = storeTarget.store[resource]

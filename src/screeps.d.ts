@@ -87,6 +87,8 @@ declare global {
         role?: string
         destination?: RoomPosition
         sourcePos?: RoomPosition
+        tug?: boolean
+        juicer?: boolean
         [name: string]: any 
     }
     interface PowerCreepMemory { [name: string]: any }

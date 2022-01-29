@@ -3,12 +3,13 @@ import motion = require("./motion")
 
 
 var actions = {
-    interact: function(creep: Creep, location, fnToTry, range=undefined, logSuccess=false, local=false) {
+    interact: function(creep: Creep, location, fnToTry: () => ScreepsReturnCode, range=undefined, logSuccess=false, local=false): ScreepsReturnCode | 1 {
         var result = fnToTry()
         switch (result) {
         case ERR_NOT_IN_RANGE: {
             const box = local ? motion.getBoundingBox(creep.room) : null
-            return motion.newMove(creep, location.pos, range, true, box)
+            motion.newMove(creep, location.pos, range, true, box)
+            return null
         }
         case OK:
             if (logSuccess) {
@@ -23,7 +24,7 @@ var actions = {
             creep.memory.path = null
             return result
         default:
-            Log.info(creep.memory.role + " at " + creep.pos + ": " + result.toString())
+            Log.info(`${creep.memory.role} at ${creep.pos} operating on ${location}: ${result.toString()}`)
             return result
         }
     },
