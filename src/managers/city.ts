@@ -566,7 +566,7 @@ function updateTransporter(extensions, memory, creeps, structures: Structure[], 
     scheduleIfNeeded(rT.name, memory[rT.name], false, spawn, creeps)
 }
 
-function updateUpgrader(city, controller, memory, rcl8, creeps, rcl) {
+function updateUpgrader(city: string, controller: StructureController, memory: SpawnMemory, rcl8: boolean, creeps: Creep[], rcl: number) {
     const room = Game.spawns[city].room
     if (rcl8){
         const bucketThreshold = settings.bucket.upgrade + settings.bucket.range * cityFraction(room.name)
@@ -581,14 +581,14 @@ function updateUpgrader(city, controller, memory, rcl8, creeps, rcl) {
         //Log.info(banks);
         let money = _.sum(_.map(banks, bank => bank.store[RESOURCE_ENERGY]))
         if(room.find(FIND_MY_CONSTRUCTION_SITES).length) money -= 1000
-        var capacity = _.sum(_.map(banks, bank => bank.store.getCapacity()))
+        var capacity = _.sum(_.map(banks, bank => bank.store.getCapacity(RESOURCE_ENERGY)))
         //Log.info('money: ' + money + ', ' + (100*money/capacity));
         if(money > (capacity * .28)){
             let needed = Math.floor((money/capacity) * 5)
             if(room.storage){
                 needed = Math.floor(Math.pow((money/capacity) * 4, 2))
             }
-            for(let i = 0; i < needed; i++){
+            for(let i = 0; i < Math.min(needed, 7); i++){
                 sq.schedule(Game.spawns[city], rU.name, rcl >= 6)
             }
         } else if (controller.ticksToDowngrade < CONTROLLER_DOWNGRADE[rcl]/2){

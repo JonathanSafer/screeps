@@ -2,24 +2,25 @@ import settings = require("../config/settings")
 import u = require("./utils")
 
 var rU = {
-    isOnEdge: function(pos){//determine if a roomPos is on a room edge
+    isOnEdge: function(pos: RoomPosition){//determine if a roomPos is on a room edge
         return pos.x == 0 || pos.x == 49 || pos.y == 0 || pos.y == 49
     },
 
-    isNearEdge: function(pos){
+    isNearEdge: function(pos: RoomPosition){
         return pos.x <= 1 || pos.x >= 48 || pos.y <= 1 || pos.y >= 48
     },
 
-    getWithdrawLocations: function(creep) {
+    getWithdrawLocations: function(creep: Creep) {
         var city = creep.memory.city
         var spawn = Game.spawns[city]
         var structures = spawn.room.find(FIND_STRUCTURES)
         return _.filter(structures, structure => structure.structureType == STRUCTURE_CONTAINER ||
                                                  structure.structureType == STRUCTURE_STORAGE ||
-                                                 structure.structureType == STRUCTURE_TERMINAL) as Array<StructureContainer | StructureStorage | StructureTerminal>
+                                                 structure.structureType == STRUCTURE_TERMINAL ||
+                                                 structure.structureType == STRUCTURE_SPAWN) as Array<StructureContainer | StructureStorage | StructureTerminal | StructureSpawn>
     },
     
-    getTransferLocations: function(creep) {
+    getTransferLocations: function(creep: Creep) {
         var city = creep.memory.city
         var spawn = Game.spawns[city]
         var structures = spawn.room.find(FIND_STRUCTURES)
