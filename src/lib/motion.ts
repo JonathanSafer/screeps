@@ -73,7 +73,7 @@ var m = {
 
             }
         } else {
-            Log.info(`Pathing failure at ${creep.pos}`)
+            Log.info(`Pathing failure at ${creep.pos}. Target: ${endPos}. Range: ${range}`)
             if(ccache.pathFail){
                 ccache.pathFail++
                 return
@@ -83,7 +83,7 @@ var m = {
     },
 
     //bool, returns success of pathfinding ops
-    getRouteAndPath: function(creep, endPos, avoidEnemies, range, boundingBox){
+    getRouteAndPath: function(creep: Creep, endPos, avoidEnemies, range, boundingBox){
         const ccache = u.getCreepCache(creep.id)
 
         //if creep is in same room as target, path to target. Otherwise, path to nearest exit in the right direction
