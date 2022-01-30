@@ -14,6 +14,7 @@ import "./operations/profiler-prep";
 import "./lib/globals";
 import rr = require("./roles/roles")
 import data = require("./operations/data")
+import rU = require("./lib/roomUtils")
 
 //Code to manually profile:
 //Game.profiler.profile(1000);
@@ -165,6 +166,11 @@ export function loop() {
 
         // disable emailing
         u.silenceCreeps()
+
+        // clean room memory
+        if (Game.time % 50 === 0) {
+            rU.removeOldRoomMemory()
+        }
 
         s.collectStats(myCities)
         

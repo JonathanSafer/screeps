@@ -2,6 +2,18 @@ import settings = require("../config/settings")
 import u = require("./utils")
 
 var rU = {
+    // Delete Spawn memory for spawns that no longer exist
+    removeOldRoomMemory: function() {
+        const actualSpawnNames = Object.keys(Game.spawns)
+        const memorySpawnNames = Object.keys(Memory.spawns)
+
+        for (const spawnName in memorySpawnNames) {
+            if (!actualSpawnNames.includes(spawnName)) {
+                delete Memory.spawns[spawnName]
+            }
+        }
+    },
+
     isOnEdge: function(pos: RoomPosition){//determine if a roomPos is on a room edge
         return pos.x == 0 || pos.x == 49 || pos.y == 0 || pos.y == 49
     },
