@@ -1,5 +1,5 @@
 var sq = {
-    schedule: function(spawn: StructureSpawn, role, boosted = false, flag = null) {
+    schedule: function(spawn: StructureSpawn, role: string, boosted = false, flag = null) {
         sq.initialize(spawn)
         spawn.memory.sq.push({role: role, boosted: boosted, flag: flag})
     },

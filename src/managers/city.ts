@@ -732,7 +732,7 @@ function updateHighwayCreep(flagName, spawn, creeps, role) {
     }
 }
 
-function scheduleIfNeeded(role, count, boosted, spawn, currentCreeps, flag = null) {
+function scheduleIfNeeded(role, count: number, boosted, spawn: StructureSpawn, currentCreeps: Creep[], flag: string = null) {
     const creepsInField = getCreepsByRole(currentCreeps, role)
     const creepsOnOperation = _.filter(creepsInField, creep => creep.memory.flag == flag).length
     const queued = sq.countByInfo(spawn, role, flag)
@@ -746,7 +746,7 @@ function scheduleIfNeeded(role, count, boosted, spawn, currentCreeps, flag = nul
     }
 }
 
-function getCreepsByRole(creeps, role) {
+function getCreepsByRole(creeps: Creep[], role) {
     return _(creeps)
         .filter(creep => creep.memory.role == role)
         .value()
@@ -824,7 +824,7 @@ function updateSpawnStress(spawn: StructureSpawn){
     memory.spawnAvailability = (memory.spawnAvailability * .9993) + (freeSpawns * 0.0007)
 }
 
-function updateRemotes(city){
+function updateRemotes(city: string){
     if(Game.cpu.bucket < settings.bucket.mineralMining){
         return
     }
@@ -860,13 +860,14 @@ function updateRemotes(city){
                 const defenders = _.filter(myCreeps, c => c.ticksToLive > 100 && c.memory.flag == remotes[i])
                 const harassers = _.filter(defenders, c => c.memory.role == rH.name).length
                 const quads = _.filter(defenders, c => c.memory.role == rQ.name).length
-                if(defcon == 2 && harassers < 1){
+                let harasserQueueCount = sq.getCounts(spawn)[rH.name]
+                if(defcon == 2 && harassers + harasserQueueCount < 1){
                     sq.schedule(spawn, rH.name, false, remotes[i])
                 }
                 if(defcon == 3){
-                    if(harassers < 2){
+                    while(harassers + harasserQueueCount < 2) {
                         sq.schedule(spawn, rH.name, false, remotes[i])
-                        sq.schedule(spawn, rH.name, false, remotes[i])
+                        harasserQueueCount++
                     }
                     if(quads < 4){
                         for(let j = 0; j < 4; j++){
@@ -877,7 +878,6 @@ function updateRemotes(city){
             }
         }
     }
-
 }
 
 function updateDEFCON(remote, harasserSize){
