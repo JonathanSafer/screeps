@@ -1,8 +1,9 @@
 import a = require("../lib/actions")
 import roomU = require("../lib/roomUtils")
+import cU = require("../lib/creepUtils")
 
 var rMM = {
-    name: "mineralMiner",
+    name: cU.MINERAL_MINER_NAME,
     type: "mineralMiner",
 
     run: function(creep: Creep) {

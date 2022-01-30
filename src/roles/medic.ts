@@ -1,7 +1,8 @@
 import actions = require("../lib/actions")
+import cU = require("../lib/creepUtils")
 
 var rMe = {
-    name: "medic",
+    name: cU.MEDIC_NAME,
     type: "medic",
     boosts: [RESOURCE_CATALYZED_GHODIUM_ALKALIDE, 
         RESOURCE_CATALYZED_ZYNTHIUM_ALKALIDE, RESOURCE_CATALYZED_LEMERGIUM_ALKALIDE],

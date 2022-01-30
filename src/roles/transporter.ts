@@ -3,9 +3,10 @@ import u = require("../lib/utils")
 import sq = require("../lib/spawnQueue")
 import motion = require("../lib/motion")
 import roomU = require("../lib/roomUtils")
+import cU = require("../lib/creepUtils")
 
 var rT = {
-    name: "transporter",
+    name: cU.TRANSPORTER_NAME,
     type: "transporter",
 
     /** @param {Creep} creep **/

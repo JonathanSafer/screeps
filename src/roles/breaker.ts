@@ -8,7 +8,7 @@ import actions = require("../lib/actions")
 import rQ = require("./quad")
 
 var rBr = {
-    name: "breaker",
+    name: cU.BREAKER_NAME,
     type: "breaker",
     boosts: [RESOURCE_CATALYZED_GHODIUM_ALKALIDE,
         RESOURCE_CATALYZED_ZYNTHIUM_ALKALIDE, RESOURCE_CATALYZED_ZYNTHIUM_ACID],

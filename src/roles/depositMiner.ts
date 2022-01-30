@@ -6,7 +6,7 @@ import cU = require("../lib/creepUtils")
 import rPM = require("./powerMiner")
 
 var rDM = {
-    name: "depositMiner",
+    name: cU.DEPOSIT_MINER_NAME,
     type: "depositMiner",
     target: 0,
     boosts: [RESOURCE_CATALYZED_UTRIUM_ALKALIDE, RESOURCE_CATALYZED_KEANIUM_ACID],

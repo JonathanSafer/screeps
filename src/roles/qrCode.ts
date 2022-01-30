@@ -1,9 +1,10 @@
 import motion = require("../lib/motion")
 import u = require("../lib/utils")
 import template = require("../config/template")
+import cU = require("../lib/creepUtils")
 
 const rQr = {
-    name: "qrCode",
+    name: cU.QR_CODE_NAME,
     type: "scout",
     target: 0,
    

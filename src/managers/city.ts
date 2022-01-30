@@ -213,7 +213,7 @@ function updateQR(spawn, creeps){
         const flag = spawn.name + "qrCode"
         if(Memory.flags[flag]){
             const creepsNeeded = _.sum(template.qrCoords, elem => elem.length)
-            scheduleIfNeeded(rQr.name, creepsNeeded, false, spawn, creeps, flag)
+            cU.scheduleIfNeeded(rQr.name, creepsNeeded, false, spawn, creeps, flag)
         }
     }
 }
@@ -563,7 +563,7 @@ function updateTransporter(extensions, memory, creeps, structures: Structure[], 
     } else {
         memory[rT.name] = 1
     }
-    scheduleIfNeeded(rT.name, memory[rT.name], false, spawn, creeps)
+    cU.scheduleIfNeeded(rT.name, memory[rT.name], false, spawn, creeps)
 }
 
 function updateUpgrader(city: string, controller: StructureController, memory: SpawnMemory, rcl8: boolean, creeps: Creep[], rcl: number) {
@@ -573,7 +573,7 @@ function updateUpgrader(city: string, controller: StructureController, memory: S
         const haveEnoughCpu = Game.cpu.bucket > bucketThreshold
         if (controller.ticksToDowngrade < CONTROLLER_DOWNGRADE[rcl]/2 
             || (controller.room.storage.store.energy > settings.energy.rcl8upgrade && haveEnoughCpu && settings.rcl8upgrade)){
-            scheduleIfNeeded(rU.name, 1, true, Game.spawns[city], creeps)
+            cU.scheduleIfNeeded(rU.name, 1, true, Game.spawns[city], creeps)
         }
     } else {
         if(!creeps.length) return
@@ -612,7 +612,7 @@ function updateRepairer(spawn, memory: SpawnMemory, creeps){
     if(csites > 0)
         repairersNeeded++
     repairersNeeded += Math.ceil(damagedRoads/20)
-    scheduleIfNeeded(rRe.name, repairersNeeded, false, spawn, creeps)
+    cU.scheduleIfNeeded(rRe.name, repairersNeeded, false, spawn, creeps)
 }
 
 function updateBuilder(rcl, memory, spawn: StructureSpawn) {
@@ -697,7 +697,7 @@ function updateRunner(creeps: Creep[], spawn, extensions, memory, rcl, emergency
         const bonusRunners = Math.floor(upgraders/3)
         memory[rR.name] += bonusRunners
     }
-    scheduleIfNeeded(rR.name, memory[rR.name], false, spawn, creeps)
+    cU.scheduleIfNeeded(rR.name, memory[rR.name], false, spawn, creeps)
 }
 
 function updateFerry(spawn, memory, rcl) {
@@ -728,28 +728,8 @@ function updateHighwayCreep(flagName, spawn, creeps, role) {
     const flagNames = _.filter(Object.keys(Memory.flags), flag => flag.includes(flagName))
     for(const flag of flagNames){
         const boosted = role != rH.name || Memory.flags[flag].boosted
-        scheduleIfNeeded(role, 1, boosted, spawn, creeps, flag)
+        cU.scheduleIfNeeded(role, 1, boosted, spawn, creeps, flag)
     }
-}
-
-function scheduleIfNeeded(role, count: number, boosted, spawn: StructureSpawn, currentCreeps: Creep[], flag: string = null) {
-    const creepsInField = getCreepsByRole(currentCreeps, role)
-    const creepsOnOperation = _.filter(creepsInField, creep => creep.memory.flag == flag).length
-    const queued = sq.countByInfo(spawn, role, flag)
-    let creepsNeeded = count - queued - creepsOnOperation
-    while (creepsNeeded > 0) {
-        sq.schedule(spawn, role, boosted, flag)
-        if(role == rPM.name){
-            sq.schedule(spawn, rMe.name)
-        }
-        creepsNeeded--
-    }
-}
-
-function getCreepsByRole(creeps: Creep[], role) {
-    return _(creeps)
-        .filter(creep => creep.memory.role == role)
-        .value()
 }
 
 function runNuker(city){
@@ -927,7 +907,6 @@ export = {
     updateCountsCity: updateCountsCity,
     runTowers: runTowers,
     runPowerSpawn: runPowerSpawn,
-    scheduleIfNeeded: scheduleIfNeeded,
     setGameState: setGameState,
     runEarlyGame: runEarlyGame,
 }

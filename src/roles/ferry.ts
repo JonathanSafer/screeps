@@ -1,8 +1,9 @@
 import actions = require("../lib/actions")
 import sq = require("../lib/spawnQueue")
+import cU = require("../lib/creepUtils")
 
 var rF = {
-    name: "ferry",
+    name: cU.FERRY_NAME,
     type: "ferry",
     target: 0,
     TERMINAL_MAX_MINERAL_AMOUNT: 9000,

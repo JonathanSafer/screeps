@@ -2,10 +2,11 @@ import actions = require("../lib/actions")
 import linkLib = require("../buildings/link")
 import motion = require("../lib/motion")
 import rB = require("./builder")
+import cU = require("../lib/creepUtils")
 
 
 var rU = {
-    name: "upgrader",
+    name: cU.UPGRADER_NAME,
     type: "normal",
     target: 0,
     boosts: [RESOURCE_CATALYZED_GHODIUM_ACID],

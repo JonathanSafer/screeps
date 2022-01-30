@@ -7,7 +7,7 @@ import settings = require("../config/settings")
 import rU = require("./upgrader")
 
 var rR = {
-    name: "runner",
+    name: cU.RUNNER_NAME,
     type: "runner",
     target: 0,
 

@@ -7,7 +7,7 @@ import rD = require("./defender")
 import motion = require("../lib/motion")
 
 var rB = {
-    name: "builder",
+    name: cU.BUILDER_NAME,
     type: "builder",
     boosts: [RESOURCE_CATALYZED_LEMERGIUM_ACID],
 

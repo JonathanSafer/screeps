@@ -7,7 +7,7 @@ import rBr = require("./breaker")
 import settings = require("../config/settings")
 
 var rPM = {
-    name: "powerMiner",
+    name: cU.POWER_MINER_NAME,
     type: "powerMiner",
     boosts: [RESOURCE_CATALYZED_GHODIUM_ALKALIDE, RESOURCE_CATALYZED_UTRIUM_ACID],
 

@@ -4,12 +4,9 @@ import u = require("./utils")
 var rU = {
     // Delete Spawn memory for spawns that no longer exist
     removeOldRoomMemory: function() {
-        const actualSpawnNames = Object.keys(Game.spawns)
-        const memorySpawnNames = Object.keys(Memory.spawns)
-
-        for (const spawnName in memorySpawnNames) {
-            if (!actualSpawnNames.includes(spawnName)) {
-                delete Memory.spawns[spawnName]
+        for (const spawnName in Memory.spawns) {
+            if (!Game.spawns[spawnName]) {
+                delete Memory.spawns[spawnName];
             }
         }
     },

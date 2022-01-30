@@ -2,18 +2,19 @@ import a = require("../lib/actions")
 import sq = require("../lib/spawnQueue")
 import motion = require("../lib/motion")
 import settings = require("../config/settings")
+import cU = require("../lib/creepUtils")
+import u = require("../lib/utils")
 
 var rM = {
-    name: "remoteMiner",
+    name: cU.REMOTE_MINER_NAME,
     type: "miner",
 
     run: function(creep: Creep) {
         if(creep.spawning){
             return
         }
-        if(creep.ticksToLive == creep.memory.spawnBuffer + (creep.body.length * CREEP_SPAWN_TIME)) {
-            sq.respawn(creep)
-        }
+        rM.checkRespawn(creep)
+
         if(creep.hits < creep.hitsMax && creep.pos.roomName == Game.spawns[creep.memory.city].pos.roomName){
             Game.spawns[creep.memory.city].memory.towersActive = true
             motion.newMove(creep, Game.spawns[creep.memory.city].pos, 7)
@@ -69,6 +70,16 @@ var rM = {
             rM.getDestination(creep, source)
             if(!creep.memory.link && !creep.memory.container && !creep.memory.construction && creep.body.length > 5)
                 rM.placeContainer(creep, source)
+        }
+    },
+
+    checkRespawn: function(creep: Creep) {
+        if(creep.ticksToLive == creep.memory.spawnBuffer + (creep.body.length * CREEP_SPAWN_TIME)) {
+            const spawn = Game.spawns[creep.memory.city]
+            const creeps = u.splitCreepsByCity()[creep.memory.city]
+
+            // 2 creeps needed, because one is still alive
+            cU.scheduleIfNeeded(rM.name, 2, false, spawn, creeps, creep.memory.flag)
         }
     },
 

@@ -20,7 +20,7 @@ var CreepState = {
 var CS = CreepState
 
 var rQ = {
-    name: "quad",
+    name: cU.QUAD_NAME,
     type: "quad",
     boosts: [RESOURCE_CATALYZED_GHODIUM_ALKALIDE, RESOURCE_CATALYZED_ZYNTHIUM_ALKALIDE,
         RESOURCE_CATALYZED_LEMERGIUM_ALKALIDE, RESOURCE_CATALYZED_KEANIUM_ALKALIDE],

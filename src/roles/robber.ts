@@ -1,9 +1,10 @@
 import actions = require("../lib/actions")
 import motion = require("../lib/motion")
 import sq = require("../lib/spawnQueue")
+import cU = require("../lib/creepUtils")
 
 var rRo = {
-    name: "robber",
+    name: cU.ROBBER_NAME,
     type: "robber",
 
     /** @param {Creep} creep **/
