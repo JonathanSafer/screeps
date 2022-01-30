@@ -94,7 +94,7 @@ var rR = {
         if(creep.memory.targetId) {
             const target = Game.getObjectById(creep.memory.targetId)
             if(target){
-                if(_.has(target, "store")){
+                if(!(target instanceof Resource)) {
                     const storeTarget = target as StructureStorage
                     let max = 0
                     let maxResource: string = null
