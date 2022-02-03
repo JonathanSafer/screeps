@@ -1,5 +1,6 @@
 import u = require("./utils")
 import rU = require("./roomUtils")
+import cU = require("./creepUtils")
 import settings = require("../config/settings")
 import template = require("../config/template")
 
@@ -260,7 +261,7 @@ var m = {
                 }
                 const costs = new PathFinder.CostMatrix
                 if(roomData.skL && roomData.skL.length){
-                    if(!Memory.remotes[roomName] && avoidEnemies && creep.memory.role != "scout") return false
+                    if(!Memory.remotes[roomName] && avoidEnemies && creep.memory.role != cU.SCOUT_NAME) return false
                     const terrain = Game.map.getRoomTerrain(roomName)
                     for(const lairPos of roomData.skL){
                         const lair = u.unpackPos(lairPos, roomName)

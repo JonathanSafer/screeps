@@ -2,8 +2,7 @@ const settings = require("../config/settings")
 const observer = require("../buildings/observer")
 const u = require("../lib/utils")
 const rp = require("../managers/roomplan")
-const sq = require("../lib/spawnQueue")
-const rS = require("../roles/scout")
+const cU = require("../lib/creepUtils")
 
 const b = {
     SIZE: 10000, // 10K constant cpu bucket size
@@ -66,7 +65,7 @@ const b = {
                 if(targets.length){
                     const spawn = Game.spawns[city.memory.city]
                     if(spawn)
-                        sq.schedule(spawn, rS.name)
+                        cU.scheduleIfNeeded(cU.SCOUT_NAME, 1, false, spawn, u.splitCreepsByCity()[city.name])
                 }
             }
         }

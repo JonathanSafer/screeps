@@ -831,29 +831,19 @@ function updateRemotes(city: string){
                 rp.removeRemote(remotes[i], spawn.room.name)
             }
             if(Game.rooms[remotes[i]] && Game.time % 100 == 3){
+                const myCreeps = u.splitCreepsByCity()[city]
                 const reserverCost = 650
                 const controller = Game.rooms[remotes[i]].controller
                 if(spawn.room.energyCapacityAvailable >= reserverCost && controller && !controller.owner && (!controller.reservation || controller.reservation.ticksToEnd < 1000 || controller.reservation.username != settings.username)){
-                    sq.schedule(spawn, rRr.name, false, remotes[i])
+                    cU.scheduleIfNeeded(cU.RESERVER_NAME, 1, false, spawn, myCreeps, remotes[i])
                 }
-                const myCreeps = u.splitCreepsByCity()[city]
                 const defenders = _.filter(myCreeps, c => c.ticksToLive > 100 && c.memory.flag == remotes[i])
-                const harassers = _.filter(defenders, c => c.memory.role == rH.name).length
-                const quads = _.filter(defenders, c => c.memory.role == rQ.name).length
-                let harasserQueueCount = sq.getCounts(spawn)[rH.name]
-                if(defcon == 2 && harassers + harasserQueueCount < 1){
-                    sq.schedule(spawn, rH.name, false, remotes[i])
+                if(defcon == 2){
+                    cU.scheduleIfNeeded(cU.HARASSER_NAME, 1, false, spawn, defenders, remotes[i])
                 }
                 if(defcon == 3){
-                    while(harassers + harasserQueueCount < 2) {
-                        sq.schedule(spawn, rH.name, false, remotes[i])
-                        harasserQueueCount++
-                    }
-                    if(quads < 4){
-                        for(let j = 0; j < 4; j++){
-                            sq.schedule(spawn, rQ.name, false, remotes[i])
-                        }
-                    }
+                    cU.scheduleIfNeeded(cU.HARASSER_NAME, 2, false, spawn, defenders, remotes[i])
+                    cU.scheduleIfNeeded(cU.QUAD_NAME, 4, false, spawn, defenders, remotes[i])
                 }
             }
         }
