@@ -1,5 +1,6 @@
 import u = require("./utils")
 import sq = require("./spawnQueue")
+import { filter } from "lodash"
 
 const cU = {
     FERRY_NAME: "ferry",
@@ -107,38 +108,36 @@ const cU = {
     },
 
     getGoodPickups: function(creep: Creep) {
-        var city = creep.memory.city
-        var localCreeps = u.splitCreepsByCity()
-        var miners = _.filter(localCreeps[city], lcreep => lcreep.memory.role == "remoteMiner")
-        var drops = _.flatten(_.map(miners, miner => miner.room.find(FIND_DROPPED_RESOURCES)))
-        const runnersBySource = _.groupBy(_.filter(localCreeps[city]), c => c.memory.role == "runner", runner => runner.memory.targetId)
+        const city = creep.memory.city
+        const localCreeps = u.splitCreepsByCity()
+        const miners = _.filter(localCreeps[city], lcreep => lcreep.memory.role == "remoteMiner")
+        const drops: (AnyStoreStructure | Resource)[] = _.flatten(_.map(miners, miner => miner.room.find(FIND_DROPPED_RESOURCES)))
         const containers = _.map(miners, miner => _.find(miner.pos.lookFor(LOOK_STRUCTURES), struct => struct.structureType == STRUCTURE_CONTAINER)) as StructureContainer[]
+        let hostileStorageStructures = []
+        
+        // Only check these occasionally because runners only need to draw them down once
+        if (Game.time % 50 == 0)
+            hostileStorageStructures = _.flatten(_.map(miners, miner => miner.room.find(FIND_HOSTILE_STRUCTURES, { filter: s => "store" in s }))) as AnyStoreStructure[]
+        
+        const runnersBySource = _.groupBy(_.filter(localCreeps[city]), c => c.memory.role == "runner", runner => runner.memory.targetId)
+        const pickups = drops.concat(containers).concat(hostileStorageStructures)
+        return _.filter(pickups, pickup => cU.isGoodPickup(creep, pickup, runnersBySource))
+    },
+
+    isGoodPickup: function(creep: Creep, pickup: Resource | Tombstone | AnyStoreStructure, runnersBySource: _.Dictionary<Creep[]>) {
+        let amountToPickup = !pickup ? 0 : (pickup instanceof Resource ? pickup.amount : pickup.store.getUsedCapacity())
+
+        // 1. Check it's not storage. Don't want to withdraw from the storage
         const storageId = creep.memory.location
-        const goodContainers = _.filter(containers, 
-            function(container){
-                if(!container || container.store.getUsedCapacity() <= 0.5 * creep.store.getCapacity())
-                    return false
-                if (container.id == storageId) // Don't withdraw from storage container
-                    return false
-                let store = container.store.getUsedCapacity()
-                if(!runnersBySource[container.id])
-                    return true
-                for(const runner of runnersBySource[container.id])
-                    store -= runner.store.getFreeCapacity()
-                return store >= 0.5 * creep.store.getCapacity()
-            })
-        const goodDrops: RoomObject[] = _.filter(drops, 
-            function(drop){
-                if(drop.amount <= 0.5 * creep.store.getCapacity())
-                    return false
-                let amount = drop.amount
-                if(!runnersBySource[drop.id])
-                    return true
-                for(const runner of runnersBySource[drop.id])
-                    amount -= runner.store.getFreeCapacity()
-                return amount >= 0.5 * creep.store.getCapacity()
-            }) 
-        return goodDrops.concat(goodContainers)
+        if (pickup.id == storageId)
+            return false
+        
+        // 2. Subtract energy from nearby runners
+        for (const runner of runnersBySource[pickup.id])
+            amountToPickup -= runner.store.getFreeCapacity()
+       
+        // 3. If it is greater than half the creep's capacity, return true
+        return amountToPickup >= 0.5 * creep.store.getCapacity()
     },
 
     getCreepsByRole: function(creeps: Creep[], role: string) {
