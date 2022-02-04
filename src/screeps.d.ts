@@ -132,7 +132,7 @@ declare global {
         [name: string]: any 
     }
     interface QueuedCreep {
-        role?: string
+        role: string
         boosted?: boolean
         flag?: string
     }

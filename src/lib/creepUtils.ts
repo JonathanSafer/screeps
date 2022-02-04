@@ -138,7 +138,7 @@ const cU = {
             .value()
     },
     
-    scheduleIfNeeded: function(role: string, count: number, boosted, spawn: StructureSpawn, currentCreeps: Creep[], flag: string = null) {
+    scheduleIfNeeded: function(role: string, count: number, boosted: boolean, spawn: StructureSpawn, currentCreeps: Creep[], flag: string = null) {
         const creepsInField = cU.getCreepsByRole(currentCreeps, role)
         const creepsOnOperation = _.filter(creepsInField, creep => creep.memory.flag == flag).length
         const queued = sq.countByInfo(spawn, role, flag)

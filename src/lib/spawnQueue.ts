@@ -1,3 +1,5 @@
+import { spawn } from "child_process"
+
 var sq = {
     schedule: function(spawn: StructureSpawn, role: string, boosted = false, flag = null) {
         sq.initialize(spawn)
@@ -35,7 +37,12 @@ var sq = {
         if (!spawn.memory.sq) {
             spawn.memory.sq = []
         }
-    }
+    },
 
+    sortBy: function(spawn: StructureSpawn, sortFn: (item: QueuedCreep) => number) {
+        if (spawn.memory.sq.length > 0) {
+            spawn.memory.sq = _.sortBy(spawn.memory.sq, sortFn)
+        }
+    }
 }
 export = sq

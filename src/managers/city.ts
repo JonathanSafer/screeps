@@ -100,13 +100,13 @@ function runCity(city, creeps: Creep[]){
         counts[role.name] = liveCount + queueCount
     })
 
-    if(Game.time % 50 == 0 && spawn.memory.sq.length){
+    if(Game.time % 50 == 0){
         const priorities = rr.getRolePriorities()
-        spawn.memory.sq = _.sortBy(spawn.memory.sq, item => priorities[item.role])
+        sq.sortBy(spawn, item => priorities[item.role])
     }
     
     let usedQueue = true
-    const nextRoleInfo = sq.peekNextRole(spawn) || {}
+    const nextRoleInfo = sq.peekNextRole(spawn) || {} as QueuedCreep
     const spawnQueueRoleName = nextRoleInfo.role
     let nextRole = spawnQueueRoleName ? nameToRole[spawnQueueRoleName][0] : undefined
 
@@ -627,7 +627,7 @@ function updateBuilder(rcl, memory, spawn: StructureSpawn) {
         totalSites = constructionSites.length
     }
     if (totalSites > 0){
-        // If room is full of energy and there is contruction, make a builder
+        // If room is full of energy and there is construction, make a builder
         if (room.energyAvailable == room.energyCapacityAvailable && Game.time % 500 == 0) {
             sq.schedule(spawn, rB.name)
         }
