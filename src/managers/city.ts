@@ -724,7 +724,7 @@ function updateStorageLink(spawn, memory, structures: Structure[]) {
     }
 }
 
-function updateHighwayCreep(flagName, spawn, creeps, role) {
+function updateHighwayCreep(flagName: string, spawn: StructureSpawn, creeps: Creep[], role: string) {
     const flagNames = _.filter(Object.keys(Memory.flags), flag => flag.includes(flagName))
     for(const flag of flagNames){
         const boosted = role != rH.name || Memory.flags[flag].boosted
