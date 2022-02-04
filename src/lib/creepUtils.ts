@@ -122,8 +122,11 @@ const cU = {
             return false
         
         // 2. Subtract energy from nearby runners
-        for (const runner of runnersBySource[pickup.id])
-            amountToPickup -= runner.store.getFreeCapacity()
+        if (runnersBySource[pickup.id]) {
+            for (const runner of runnersBySource[pickup.id]) {
+                amountToPickup -= runner.store.getFreeCapacity()
+            }
+        }
        
         // 3. If it is greater than half the creep's capacity, return true
         return amountToPickup >= 0.5 * creep.store.getCapacity()
