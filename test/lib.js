@@ -245,6 +245,7 @@ global.Creep = class extends RoomObject {
     notifyWhenAttacked() {}
     getActiveBodyparts(type) {return}
     harvest() { return 0 }
+    suicide() { return }
 }
 
 class Structure extends RoomObject {
