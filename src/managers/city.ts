@@ -590,11 +590,9 @@ function updateUpgrader(city: string, controller: StructureController, memory: S
             if(room.storage){
                 needed = Math.floor(Math.pow((money/capacity) * 4, 2))
             }
-            for(let i = 0; i < Math.min(needed, 7); i++){
-                sq.schedule(Game.spawns[city], rU.name, rcl >= 6)
-            }
+            cU.scheduleIfNeeded(cN.UPGRADER_NAME, Math.min(needed, 7), rcl >= 6, Game.spawns[city], creeps)
         } else if (controller.ticksToDowngrade < CONTROLLER_DOWNGRADE[rcl]/2){
-            sq.schedule(Game.spawns[city], rU.name, rcl >= 6)
+            cU.scheduleIfNeeded(cN.UPGRADER_NAME, 1, rcl >= 6, Game.spawns[city], creeps)
         }
     }
 }
