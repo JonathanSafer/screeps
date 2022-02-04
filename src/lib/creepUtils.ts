@@ -118,7 +118,7 @@ const cU = {
 
         // 1. Check it's not storage. Don't want to withdraw from the storage
         const storageId = creep.memory.location
-        if (pickup.id == storageId)
+        if (!pickup || pickup.id == storageId)
             return false
         
         // 2. Subtract energy from nearby runners

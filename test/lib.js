@@ -44,6 +44,9 @@ const GGame = class {
             },
             getRoomStatus: function(){
                 return {status: "normal"}
+            },
+            findRoute: function(){
+                return []
             }
         }
         this._objects = {}
@@ -65,6 +68,8 @@ const GGame = class {
     getObjectById(id) {
         return this._objects[id]
     }
+
+
 }
 
 const MMemory = class {
@@ -114,6 +119,11 @@ global.PathFinder = {
         return {path: [], cost: 0}
     }
 }
+global.PowerCreep = class {
+    constructor(name) {
+        this.name = name
+    }
+}
 
 global.RawMemory = {
     setActiveSegments: function() {
@@ -150,6 +160,14 @@ const RoomPosition = class {
 
     createConstructionSite() {
         return 0
+    }
+
+    findClosestByRange() {
+        return Object.values(Game.spawns)[0]
+    }
+
+    inRangeTo() {
+        return true
     }
 }
 
@@ -233,7 +251,7 @@ class RoomObject {
 }
 
 global.Creep = class extends RoomObject {
-    constructor(room, name) {
+    constructor(room, name, store) {
         super(room, FIND_CREEPS)
         global.Game.creeps[name] = this
         this.name = name
@@ -241,11 +259,15 @@ global.Creep = class extends RoomObject {
         global.Memory.creeps[name] = this.memory
         this.owner = {username: "Yoner"}
         this.body = []
+        this.store = new Store(store || {}, 100)
     }
     notifyWhenAttacked() {}
     getActiveBodyparts(type) {return}
     harvest() { return 0 }
     suicide() { return }
+    say() { return }
+    transfer() { return OK }
+    moveByPath() { return ERR_INVALID_TARGET }
 }
 
 class Structure extends RoomObject {
@@ -265,14 +287,15 @@ global.Mineral = class extends RoomObject {
 }
 
 global.StructureSpawn = class extends Structure {
-    constructor(room, name) {
+    constructor(room, name, store) {
         super(room, STRUCTURE_SPAWN)
         global.Game.spawns[name] = this
         this.name = name
         this.memory = {}
+        this.store = new Store(store || {}, SPAWN_ENERGY_CAPACITY)
         global.Memory.spawns[name] = this.memory
-        this.spawnCreep = function(recipe, name){
-            new Creep(this.room, name)
+        this.spawnCreep = function(recipe, creepName){
+            new Creep(this.room, creepName)
             return 0
         }
     }

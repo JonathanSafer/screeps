@@ -122,6 +122,7 @@ function runCity(city, creeps: Creep[]){
         }
     }
 
+
     // Run all the creeps in this city
     _.forEach(creeps, (creep) => {
         nameToRole[creep.memory.role][0].run(creep)
