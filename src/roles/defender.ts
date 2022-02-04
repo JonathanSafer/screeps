@@ -2,7 +2,7 @@ import a = require("../lib/actions")
 import motion = require("../lib/motion")
 import rH = require("./harasser")
 import settings = require("../config/settings")
-import cU = require("../lib/creepUtils")
+import cN = require("../lib/creepNames")
 
 var CreepState = {
     START: 1,
@@ -13,7 +13,7 @@ var CreepState = {
 var CS = CreepState
 
 var rD = {
-    name: cU.DEFENDER_NAME,
+    name: cN.DEFENDER_NAME,
     type: "defender",
     boosts: [RESOURCE_CATALYZED_GHODIUM_ALKALIDE,
         RESOURCE_CATALYZED_ZYNTHIUM_ALKALIDE, RESOURCE_CATALYZED_LEMERGIUM_ALKALIDE, 

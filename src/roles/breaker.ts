@@ -6,9 +6,10 @@ import rMe = require("./medic")
 import motion = require("../lib/motion")
 import actions = require("../lib/actions")
 import rQ = require("./quad")
+import cN = require("../lib/creepNames")
 
 var rBr = {
-    name: cU.BREAKER_NAME,
+    name: cN.BREAKER_NAME,
     type: "breaker",
     boosts: [RESOURCE_CATALYZED_GHODIUM_ALKALIDE,
         RESOURCE_CATALYZED_ZYNTHIUM_ALKALIDE, RESOURCE_CATALYZED_ZYNTHIUM_ACID],

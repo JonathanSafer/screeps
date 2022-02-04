@@ -1,9 +1,9 @@
 import motion = require("../lib/motion")
 import u = require("../lib/utils")
-import cU = require("../lib/creepUtils")
+import cN = require("../lib/creepNames")
 
 var rS = {
-    name: cU.SCOUT_NAME,
+    name: cN.SCOUT_NAME,
     type: "scout",
    
     run: function(creep: Creep) {

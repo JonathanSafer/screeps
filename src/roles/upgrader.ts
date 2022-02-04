@@ -1,12 +1,12 @@
 import actions = require("../lib/actions")
 import linkLib = require("../buildings/link")
 import motion = require("../lib/motion")
-import rB = require("./builder")
 import cU = require("../lib/creepUtils")
+import cN = require("../lib/creepNames")
 
 
 var rU = {
-    name: cU.UPGRADER_NAME,
+    name: cN.UPGRADER_NAME,
     type: "normal",
     target: 0,
     boosts: [RESOURCE_CATALYZED_GHODIUM_ACID],
@@ -27,7 +27,7 @@ var rU = {
         if(!creep.memory.boosted){
             if(creep.room.find(FIND_MY_CONSTRUCTION_SITES).length 
                 && creep.room.controller.ticksToDowngrade > 3000){
-                creep.memory.role = rB.name
+                creep.memory.role = cN.BUILDER_NAME
             }
         }
     },
@@ -38,7 +38,7 @@ var rU = {
             actions.withdraw(creep, link)
             return
         }
-        rB.getEnergy(creep)
+        cU.getEnergy(creep)
     },
     // Get the upgrade link. Check creep memory, then lib. May return null
     getUpgradeLink: function(creep: Creep) {

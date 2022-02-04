@@ -1,8 +1,8 @@
 import rC = require("./claimer")
-import cU = require("../lib/creepUtils")
+import cN = require("../lib/creepNames")
 
 var rUC = {
-    name: cU.UNCLAIMER_NAME,
+    name: cN.UNCLAIMER_NAME,
     type: "unclaimer",
 
     /** @param {Creep} creep **/

@@ -3,10 +3,10 @@ import u = require("../lib/utils")
 import rU = require("../lib/roomUtils")
 import cU = require("../lib/creepUtils")
 import a = require("../lib/actions")
-import rH = require("./harasser")
 import T = require("../buildings/tower")
 import settings = require("../config/settings")
 import motion = require("../lib/motion")
+import cN = require("../lib/creepNames")
 
 var CreepState = {
     START: 1,
@@ -20,7 +20,7 @@ var CreepState = {
 var CS = CreepState
 
 var rQ = {
-    name: cU.QUAD_NAME,
+    name: cN.QUAD_NAME,
     type: "quad",
     boosts: [RESOURCE_CATALYZED_GHODIUM_ALKALIDE, RESOURCE_CATALYZED_ZYNTHIUM_ALKALIDE,
         RESOURCE_CATALYZED_LEMERGIUM_ALKALIDE, RESOURCE_CATALYZED_KEANIUM_ALKALIDE],
@@ -427,7 +427,7 @@ var rQ = {
         for(let i = 0; i < quad.length; i++){
             if(quad[i]){
                 quad[i].memory.reinforced = true//keeps quad members from trying to call in a boosted harasser
-                quad[i].memory.role = rH.name
+                quad[i].memory.role = cN.HARASSER_NAME
             }
         }
     },

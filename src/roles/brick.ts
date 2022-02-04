@@ -1,9 +1,9 @@
 import motion = require("../lib/motion")
 import a = require("../lib/actions")
-import cU = require("../lib/creepUtils")
+import cN = require("../lib/creepNames")
 
 var rBk = {
-    name: cU.BRICK_NAME,
+    name: cN.BRICK_NAME,
     type: "brick",
    
     run: function(creep: Creep) {

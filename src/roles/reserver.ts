@@ -1,9 +1,9 @@
 import motion = require("../lib/motion")
 import settings = require("../config/settings")
-import cU = require("../lib/creepUtils")
+import cN = require("../lib/creepNames")
 
 var rRr = {
-    name: cU.RESERVER_NAME,
+    name: cN.RESERVER_NAME,
     type: "reserver",
    
     run: function(creep: Creep) {

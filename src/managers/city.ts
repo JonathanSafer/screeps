@@ -31,6 +31,7 @@ import rp = require("./roomplan")
 import rRe = require("../roles/repairer")
 import rQ = require("../roles/quad")
 import rRr = require("../roles/reserver")
+import cN = require("../lib/creepNames")
 
 
 function makeCreeps(role: CreepRole, city: string, unhealthyStore=false, creepWantsBoosts=false, flag = null) {
@@ -835,15 +836,15 @@ function updateRemotes(city: string){
                 const reserverCost = 650
                 const controller = Game.rooms[remotes[i]].controller
                 if(spawn.room.energyCapacityAvailable >= reserverCost && controller && !controller.owner && (!controller.reservation || controller.reservation.ticksToEnd < 1000 || controller.reservation.username != settings.username)){
-                    cU.scheduleIfNeeded(cU.RESERVER_NAME, 1, false, spawn, myCreeps, remotes[i])
+                    cU.scheduleIfNeeded(cN.RESERVER_NAME, 1, false, spawn, myCreeps, remotes[i])
                 }
                 const defenders = _.filter(myCreeps, c => c.ticksToLive > 100 && c.memory.flag == remotes[i])
                 if(defcon == 2){
-                    cU.scheduleIfNeeded(cU.HARASSER_NAME, 1, false, spawn, defenders, remotes[i])
+                    cU.scheduleIfNeeded(cN.HARASSER_NAME, 1, false, spawn, defenders, remotes[i])
                 }
                 if(defcon == 3){
-                    cU.scheduleIfNeeded(cU.HARASSER_NAME, 2, false, spawn, defenders, remotes[i])
-                    cU.scheduleIfNeeded(cU.QUAD_NAME, 4, false, spawn, defenders, remotes[i])
+                    cU.scheduleIfNeeded(cN.HARASSER_NAME, 2, false, spawn, defenders, remotes[i])
+                    cU.scheduleIfNeeded(cN.QUAD_NAME, 4, false, spawn, defenders, remotes[i])
                 }
             }
         }

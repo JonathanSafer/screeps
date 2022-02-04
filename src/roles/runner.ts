@@ -5,9 +5,10 @@ import cU = require("../lib/creepUtils")
 import motion = require("../lib/motion")
 import settings = require("../config/settings")
 import rU = require("./upgrader")
+import cN = require("../lib/creepNames")
 
 var rR = {
-    name: cU.RUNNER_NAME,
+    name: cN.RUNNER_NAME,
     type: "runner",
     target: 0,
 

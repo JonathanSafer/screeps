@@ -5,9 +5,10 @@ import rU = require("./upgrader")
 import template = require("../config/template")
 import rD = require("./defender")
 import motion = require("../lib/motion")
+import cN = require("../lib/creepNames")
 
 var rB = {
-    name: cU.BUILDER_NAME,
+    name: cN.BUILDER_NAME,
     type: "builder",
     boosts: [RESOURCE_CATALYZED_LEMERGIUM_ACID],
 
@@ -32,7 +33,7 @@ var rB = {
                 }
             }
         } else {
-            rB.getEnergy(creep)
+            cU.getEnergy(creep)
         }
     },
 
@@ -43,18 +44,7 @@ var rB = {
             return a.repair(creep, needRepair)
         } else if(Game.time % 100 == 0 
             && !Game.spawns[creep.memory.city].room.find(FIND_MY_CONSTRUCTION_SITES).length ){
-            creep.memory.role = rU.name
-        }
-    },
-
-    getEnergy: function(creep: Creep) {
-        var location = roomU.getStorage(Game.spawns[creep.memory.city].room) as StructureStorage | StructureContainer | StructureSpawn
-        if(!location || (location.store.energy < 300 && location.room.controller.level > 1) || (location.structureType != STRUCTURE_SPAWN && location.store.energy < 800)){
-            return
-        }
-        if (a.withdraw(creep, location) == ERR_NOT_ENOUGH_RESOURCES) {
-            var targets = roomU.getWithdrawLocations(creep)
-            creep.memory.target = targets[0].id
+            creep.memory.role = cN.UPGRADER_NAME
         }
     },
 

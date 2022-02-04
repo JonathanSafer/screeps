@@ -5,9 +5,10 @@ import u = require("../lib/utils")
 import cU = require("../lib/creepUtils")
 import rBr = require("./breaker")
 import settings = require("../config/settings")
+import cN = require("../lib/creepNames")
 
 var rPM = {
-    name: cU.POWER_MINER_NAME,
+    name: cN.POWER_MINER_NAME,
     type: "powerMiner",
     boosts: [RESOURCE_CATALYZED_GHODIUM_ALKALIDE, RESOURCE_CATALYZED_UTRIUM_ACID],
 

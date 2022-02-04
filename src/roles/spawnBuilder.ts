@@ -5,10 +5,10 @@ import s = require("../config/settings")
 import rBr = require("./breaker")
 import motion = require("../lib/motion")
 import u = require("../lib/utils")
-import cU = require("../lib/creepUtils")
+import cN = require("../lib/creepNames")
 
 var rSB = {
-    name: cU.SPAWN_BUILDER_NAME,
+    name: cN.SPAWN_BUILDER_NAME,
     type: "spawnBuilder",
     target: 0,
 

@@ -4,7 +4,8 @@ export default {
       input: 'built/main.js',
       output: {
               dir: 'dist',
-              format: 'cjs'
+              format: 'cjs',
+              exports: 'named'
             },
       plugins: [commonjs({
         ignoreGlobal: false,

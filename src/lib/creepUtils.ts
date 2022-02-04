@@ -1,32 +1,10 @@
 import u = require("./utils")
 import sq = require("./spawnQueue")
-import { filter } from "lodash"
+import rU = require("./roomUtils")
+import a = require("./actions")
+import cN = require("./creepNames")
 
 const cU = {
-    FERRY_NAME: "ferry",
-    DEFENDER_NAME: "defender",
-    TRANSPORTER_NAME: "transporter",
-    REMOTE_MINER_NAME: "remoteMiner",
-    RUNNER_NAME: "runner",
-    UPGRADER_NAME: "upgrader",
-    BUILDER_NAME: "builder",
-    QUAD_NAME: "quad",
-    MINERAL_MINER_NAME: "mineralMiner",
-    CLAIMER_NAME: "claimer",
-    UNCLAIMER_NAME: "unclaimer",
-    SPAWN_BUILDER_NAME: "spawnBuilder",
-    HARASSER_NAME: "harasser",
-    MEDIC_NAME: "medic",
-    BREAKER_NAME: "breaker",
-    POWER_MINER_NAME: "powerMiner",
-    ROBBER_NAME: "robber",
-    DEPOSIT_MINER_NAME: "depositMiner",
-    SCOUT_NAME: "scout",
-    QR_CODE_NAME: "qrCode",
-    REPAIRER_NAME: "repairer",
-    RESERVER_NAME: "reserver",
-    BRICK_NAME: "brick",
-    
 
     getNextLocation: function(current: number, locations) {
         return (current + 1) % locations.length
@@ -44,6 +22,17 @@ const cU = {
             if (creep.memory.checkpoints.length > 2) {
                 creep.memory.checkpoints.shift()
             }
+        }
+    },
+
+    getEnergy: function(creep: Creep) {
+        var location = rU.getStorage(Game.spawns[creep.memory.city].room) as StructureStorage | StructureContainer | StructureSpawn
+        if(!location || (location.store.energy < 300 && location.room.controller.level > 1) || (location.structureType != STRUCTURE_SPAWN && location.store.energy < 800)){
+            return
+        }
+        if (a.withdraw(creep, location) == ERR_NOT_ENOUGH_RESOURCES) {
+            var targets = rU.getWithdrawLocations(creep)
+            creep.memory.target = targets[0].id
         }
     },
 
@@ -153,8 +142,8 @@ const cU = {
         let creepsNeeded = count - queued - creepsOnOperation
         while (creepsNeeded > 0) {
             sq.schedule(spawn, role, boosted, flag)
-            if(role == cU.POWER_MINER_NAME){
-                sq.schedule(spawn, cU.MEDIC_NAME)
+            if(role == cN.POWER_MINER_NAME){
+                sq.schedule(spawn, cN.MEDIC_NAME)
             }
             creepsNeeded--
         }

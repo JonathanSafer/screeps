@@ -4,9 +4,10 @@ import motion = require("../lib/motion")
 import settings = require("../config/settings")
 import cU = require("../lib/creepUtils")
 import u = require("../lib/utils")
+import cN = require("../lib/creepNames")
 
 var rM = {
-    name: cU.REMOTE_MINER_NAME,
+    name: cN.REMOTE_MINER_NAME,
     type: "miner",
 
     run: function(creep: Creep) {

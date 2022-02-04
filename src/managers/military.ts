@@ -1,7 +1,7 @@
-import quad = require("../roles/quad")
 import sq = require("../lib/spawnQueue")
 import u = require("../lib/utils")
 import settings = require("../config/settings")
+import cN = require("../lib/creepNames")
 
 const m = {
 
@@ -88,7 +88,7 @@ const m = {
         const nearestCity = goodCities[i]
 
         if(lengths[i] > CREEP_LIFE_TIME) {
-            Log.info(`No valid rooms in range for ${quad.name} in ${flagPos.roomName}`)
+            Log.info(`No valid rooms in range for ${cN.QUAD_NAME} in ${flagPos.roomName}`)
         }
         return nearestCity.name
     },
@@ -102,7 +102,7 @@ const m = {
     spawnQuad: function(city, boosted=false){
         sq.initialize(Game.spawns[city])
         for(let i = 0; i < 4; i++){
-            sq.schedule(Game.spawns[city], quad.name, boosted)
+            sq.schedule(Game.spawns[city], cN.QUAD_NAME, boosted)
         }
     }
 }

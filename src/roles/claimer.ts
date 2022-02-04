@@ -1,8 +1,8 @@
 import motion = require("../lib/motion")
-import cU = require("../lib/creepUtils")
+import cN = require("../lib/creepNames")
 
 var rC = {
-    name: cU.CLAIMER_NAME,
+    name: cN.CLAIMER_NAME,
     type: "claimer",
 
     /** @param {Creep} creep **/

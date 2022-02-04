@@ -2,10 +2,10 @@ import u = require("../lib/utils")
 import motion = require("../lib/motion")
 import rB = require("./builder")
 import rR = require("./runner")
-import cU = require("../lib/creepUtils")
+import cN = require("../lib/creepNames")
 
 var rRe = {
-    name: cU.REPAIRER_NAME,
+    name: cN.REPAIRER_NAME,
     type: "repairer",
 
     /** @param {Creep} creep **/

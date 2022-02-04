@@ -5,9 +5,10 @@ import a = require("../lib/actions")
 import u = require("../lib/utils")
 import cU = require("../lib/creepUtils")
 import military = require("../managers/military")
+import cN = require("../lib/creepNames")
 
 var rH = {
-    name: cU.HARASSER_NAME,
+    name: cN.HARASSER_NAME,
     type: "harasser",
     boosts: [RESOURCE_CATALYZED_GHODIUM_ALKALIDE, RESOURCE_CATALYZED_ZYNTHIUM_ALKALIDE,
         RESOURCE_CATALYZED_LEMERGIUM_ALKALIDE, RESOURCE_CATALYZED_KEANIUM_ALKALIDE],
