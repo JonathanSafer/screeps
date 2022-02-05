@@ -94,6 +94,7 @@ declare global {
     interface PowerCreepMemory { [name: string]: any }
     interface FlagMemory { 
         boosted?: boolean
+        roomName?: string
         [name: string]: any 
     }
     interface SpawnMemory {

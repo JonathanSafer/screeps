@@ -80,7 +80,7 @@ var rM = {
             const creeps = u.splitCreepsByCity()[creep.memory.city]
 
             // 2 creeps needed, because one is still alive
-            cU.scheduleIfNeeded(rM.name, 2, false, spawn, creeps, creep.memory.flag)
+            cU.scheduleIfNeeded(cN.REMOTE_MINER_NAME, 2, false, spawn, creeps, creep.memory.flag)
         }
     },
 

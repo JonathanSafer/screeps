@@ -503,7 +503,7 @@ function cityFraction(cityName) {
     return _.indexOf(myCities, cityName) / myCities.length
 }
 
-function updateMiner(creeps: Creep[], rcl8, memory: SpawnMemory, spawn: StructureSpawn){
+function updateMiner(creeps: Creep[], rcl8: boolean, memory: SpawnMemory, spawn: StructureSpawn){
     if (!memory.sources) memory.sources = {}
     const flag = Memory.flags.claim
     if(flag && flag.roomName === spawn.pos.roomName &&
@@ -531,11 +531,7 @@ function updateMiner(creeps: Creep[], rcl8, memory: SpawnMemory, spawn: Structur
         return
     }
     for(const sourceId in memory.sources){
-        if(!_.find(creeps, c => c.memory.source == sourceId) && !sq.countByInfo(spawn, rM.name, sourceId)){
-            if(spawn.room.storage && spawn.room.storage.store.energy < 5000 && spawn.room.name != memory.sources[sourceId].roomName)
-                continue
-            sq.schedule(spawn, rM.name, false, sourceId)
-        }
+        cU.scheduleIfNeeded(cN.REMOTE_MINER_NAME, 1, false, spawn, creeps, sourceId)
     }     
 }
 
