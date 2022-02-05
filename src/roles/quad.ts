@@ -8,7 +8,7 @@ import settings = require("../config/settings")
 import motion = require("../lib/motion")
 import cN = require("../lib/creepNames")
 
-var CreepState = {
+const CreepState = {
     START: 1,
     BOOST: 2,
     FORM: 3,
@@ -17,9 +17,9 @@ var CreepState = {
     DORMANT: 6,
     PRIVATE: 7
 }
-var CS = CreepState
+const CS = CreepState
 
-var rQ = {
+const rQ = {
     name: cN.QUAD_NAME,
     type: "quad",
     boosts: [RESOURCE_CATALYZED_GHODIUM_ALKALIDE, RESOURCE_CATALYZED_ZYNTHIUM_ALKALIDE,

@@ -2,7 +2,7 @@ import motion = require("../lib/motion")
 import a = require("../lib/actions")
 import cN = require("../lib/creepNames")
 
-var rBk = {
+const rBk = {
     name: cN.BRICK_NAME,
     type: "brick",
    

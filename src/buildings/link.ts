@@ -1,4 +1,4 @@
-var rL = {
+const rL = {
 
     // range needed to use these
     UPGRADE: 3,

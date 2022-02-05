@@ -2,7 +2,7 @@ import a = require("../lib/actions")
 import roomU = require("../lib/roomUtils")
 import cN = require("../lib/creepNames")
 
-var rMM = {
+const rMM = {
     name: cN.MINERAL_MINER_NAME,
     type: "mineralMiner",
 
@@ -19,13 +19,13 @@ var rMM = {
             creep.suicide()
         }
         if (!creep.memory.source){
-            var sources = creep.room.find(FIND_MINERALS)
+            const sources = creep.room.find(FIND_MINERALS)
             creep.memory.source = sources[0].id
         }
         if (rMM.needEnergy(creep)){
             rMM.harvestTarget(creep)
         } else {
-            var bucket = roomU.getStorage(creep.room)
+            const bucket = roomU.getStorage(creep.room)
             a.charge(creep, bucket)
         }
     },
@@ -36,7 +36,7 @@ var rMM = {
     },
 
     harvestTarget: function(creep: Creep) {
-        var source = Game.getObjectById(creep.memory.source)
+        const source = Game.getObjectById(creep.memory.source)
         const harvestResult = a.harvest(creep, source)
         if (harvestResult == ERR_NO_PATH) {
             Log.info("no path for mining :/")

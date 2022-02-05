@@ -158,7 +158,7 @@ const ob = {
             return
         }
         const structures = Game.rooms[roomName].find(FIND_STRUCTURES)
-        var modifier = (Math.random() ** (1/4)) * settings.bucket.range
+        const modifier = (Math.random() ** (1/4)) * settings.bucket.range
         if (Game.map.getRoomLinearDistance(Game.spawns[city].room.name, roomName) <= settings.powerMiningRange && Game.cpu.bucket >= settings.bucket.powerMining + modifier - (settings.bucket.range/2)) {
             ob.flagPowerBanks(structures, city, roomName)
         }

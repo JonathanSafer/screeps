@@ -5,16 +5,15 @@ import motion = require("../lib/motion")
 import roomU = require("../lib/roomUtils")
 import cN = require("../lib/creepNames")
 
-var rT = {
+const rT = {
     name: cN.TRANSPORTER_NAME,
-    type: "transporter",
+    type: BodyType.transporter,
 
     /** @param {Creep} creep **/
     run: function(creep: Creep) {
         if(rT.endLife(creep)){
             return
         }
-        var city = creep.memory.city
         if (parseInt(creep.saying) > 0 && creep.room.energyAvailable == creep.room.energyCapacityAvailable){
             creep.say(String(parseInt(creep.saying) - 1))
             return
@@ -156,7 +155,7 @@ var rT = {
     refill: function(creep: Creep){
         let result = 0
         if (Game.getObjectById(creep.memory.location)) {
-            var bucket = Game.getObjectById(creep.memory.location)
+            const bucket = Game.getObjectById(creep.memory.location)
             if(creep.store.getUsedCapacity() > 0){
                 if(!creep.pos.isNearTo(bucket.pos)){
                     motion.newMove(creep, bucket.pos, 1)

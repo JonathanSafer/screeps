@@ -7,7 +7,7 @@ import settings = require("../config/settings")
 import rU = require("./upgrader")
 import cN = require("../lib/creepNames")
 
-var rR = {
+const rR = {
     name: cN.RUNNER_NAME,
     type: "runner",
     target: 0,

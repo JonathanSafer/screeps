@@ -6,7 +6,7 @@ import cU = require("../lib/creepUtils")
 import rPM = require("./powerMiner")
 import cN = require("../lib/creepNames")
 
-var rDM = {
+const rDM = {
     name: cN.DEPOSIT_MINER_NAME,
     type: "depositMiner",
     target: 0,

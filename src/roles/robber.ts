@@ -3,7 +3,7 @@ import motion = require("../lib/motion")
 import sq = require("../lib/spawnQueue")
 import cN = require("../lib/creepNames")
 
-var rRo = {
+const rRo = {
     name: cN.ROBBER_NAME,
     type: "robber",
 

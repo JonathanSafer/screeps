@@ -4,7 +4,7 @@ import settings = require("../config/settings")
 import template = require("../config/template")
 import cN = require("./creepNames")
 
-var m = {
+const m = {
     BoundingBox: class {
         top: number
         left: number

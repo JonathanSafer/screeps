@@ -2,7 +2,7 @@ import motion = require("../lib/motion")
 import u = require("../lib/utils")
 import cN = require("../lib/creepNames")
 
-var rS = {
+const rS = {
     name: cN.SCOUT_NAME,
     type: "scout",
    

@@ -1,4 +1,4 @@
-var error = {
+const error = {
     errorThisTick: false,
     exception: null,
 
@@ -21,4 +21,4 @@ var error = {
     }
 }
 
-module.exports = error
+export = error

@@ -2,7 +2,7 @@ import motion = require("../lib/motion")
 import settings = require("../config/settings")
 import cN = require("../lib/creepNames")
 
-var rRr = {
+const rRr = {
     name: cN.RESERVER_NAME,
     type: "reserver",
    

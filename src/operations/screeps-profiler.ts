@@ -22,7 +22,7 @@ function setupProfiler() {
         restart() {
             if (Profiler.isProfiling()) {
                 const filter = Memory.profiler.filter
-                let duration = false
+                let duration: boolean | number = false
                 if (Memory.profiler.disableTick) {
                     // Calculate the original duration, profile is enabled on the tick after the first call,
                     // so add 1.
@@ -62,6 +62,7 @@ function overloadCPUCalc() {
     if (Game.rooms.sim) {
         usedOnStart = 0 // This needs to be reset, but only in the sim.
         Game.cpu.getUsed = function getUsed() {
+            // performance is only defined in the sim world
             return performance.now() - usedOnStart
         }
     }
@@ -135,7 +136,10 @@ function profileObjectFunctions(object, label) {
                 return
             }
 
-            const profileDescriptor = {}
+            const profileDescriptor = {
+                get: function() { return 0 },
+                set: function() { return 0 }
+            }
 
             if (descriptor.get) {
                 const extendedLabelGet = `${extendedLabel}:get`
@@ -174,7 +178,9 @@ function profileFunction(fn, functionName) {
 }
 
 const Profiler = {
-    results: {},
+    results: {
+        stats: Array
+    },
 
     printProfile() {
         // Log.info(Profiler.output())
@@ -185,7 +191,7 @@ const Profiler = {
         Game.notify(Profiler.output(1000))
     },
 
-    output(passedOutputLengthLimit) {
+    output(passedOutputLengthLimit?: number) {
         const outputLengthLimit = passedOutputLengthLimit || 1000
         if (!Memory.profiler || !Memory.profiler.enabledTick) {
             return "Profiler not active."
@@ -307,7 +313,7 @@ const Profiler = {
     },
 }
 
-module.exports = {
+export = {
     wrap(callback) {
         if (enabled) {
             setupProfiler()

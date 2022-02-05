@@ -18,10 +18,10 @@ const requestTypes = {
     EXECUTE: 3,
     HATE: 4
 }
-var requestArray
+let requestArray
 
 
-var simpleAllies = {
+const simpleAllies = {
     // This sets foreign segments. Maybe you set them yourself for some other reason
     // Up to you to fix that.
     checkAllies() {
@@ -37,7 +37,7 @@ var simpleAllies = {
             if(!allyRequests){
                 return
             }
-            for (var request of allyRequests) {
+            for (const request of allyRequests) {
                 //const priority = Math.max(0, Math.min(1, request.priority))
                 switch (request.requestType) {
                 case requestTypes.ATTACK:

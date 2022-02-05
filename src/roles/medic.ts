@@ -1,7 +1,7 @@
 import actions = require("../lib/actions")
 import cN = require("../lib/creepNames")
 
-var rMe = {
+const rMe = {
     name: cN.MEDIC_NAME,
     type: "medic",
     boosts: [RESOURCE_CATALYZED_GHODIUM_ALKALIDE, 

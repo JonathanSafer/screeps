@@ -1,11 +1,11 @@
-var T = {
+const T = {
 
     chooseTarget: function(towers, hostiles, roomName) {
         if(!towers.length){
             return null
         }
         const healMap = T.generateHealMap(hostiles)
-        for(var i = 0; i < hostiles.length; i++){
+        for(let i = 0; i < hostiles.length; i++){
             if(hostiles[i].pos.x == 49 || hostiles[i].pos.y == 49 || hostiles[i].pos.x == 0 || hostiles[i].pos.y == 49){
                 continue
             }
@@ -64,7 +64,7 @@ var T = {
             return 0
         }
         let boosted = false
-        for(var i = 0; i < creep.body.length; i++){
+        for(let i = 0; i < creep.body.length; i++){
             if(creep.body[i].type === TOUGH){
                 if(creep.body[i].boost){
                     boosted = true
@@ -111,8 +111,8 @@ var T = {
                 }
             }
             const heal = heals * HEAL_POWER * boostMultiplier
-            for(var j = hostiles[i].pos.x - 3; j <= hostiles[i].pos.x + 3; j++){
-                for(var k = hostiles[i].pos.y - 3; k <= hostiles[i].pos.y + 3; k++){
+            for(let j = hostiles[i].pos.x - 3; j <= hostiles[i].pos.x + 3; j++){
+                for(let k = hostiles[i].pos.y - 3; k <= hostiles[i].pos.y + 3; k++){
                     const range = Math.abs(j - hostiles[i].pos.x) <= 1 && Math.abs(k - hostiles[i].pos.y) <= 1 ? 1 : 3
                     if(j >= 0 && j <= 49 && k >= 0 && k <= 49){
                         map[j][k] += (heal/range)

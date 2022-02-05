@@ -5,7 +5,7 @@ import cU = require("../lib/creepUtils")
 import cN = require("../lib/creepNames")
 
 
-var rU = {
+const rU = {
     name: cN.UPGRADER_NAME,
     type: "normal",
     target: 0,
@@ -42,7 +42,7 @@ var rU = {
     },
     // Get the upgrade link. Check creep memory, then lib. May return null
     getUpgradeLink: function(creep: Creep) {
-        var link = Game.getObjectById(creep.memory.upgradeLink)
+        let link = Game.getObjectById(creep.memory.upgradeLink)
         link = link || linkLib.getUpgradeLink(creep.room) as StructureLink
         if (link) {
             creep.memory.upgradeLink = link.id

@@ -23,7 +23,7 @@ import rRr = require("./reserver")
 import rBk = require("./brick")
 
 
-var rr = {
+const rr = {
     // order roles for priority. TODO powercreep?
     getRoles: function() {
         return [rF, rD, rT, rM, rR, rU, rB, rQ, rMM, rC, rUC,

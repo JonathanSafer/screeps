@@ -10,8 +10,8 @@ import settings = require("./config/settings")
 import profiler = require("./operations/screeps-profiler")
 import b = require("./operations/bucket")
 import observer = require("./buildings/observer")
-import "./operations/profiler-prep";
-import "./lib/globals";
+import "./operations/profiler-prep"
+import "./lib/globals"
 import rr = require("./roles/roles")
 import data = require("./operations/data")
 import rU = require("./lib/roomUtils")
@@ -51,9 +51,9 @@ export function loop() {
         if(Game.shard.name == "shard1" && Game.cpu.bucket == 10000){
             Game.cpu.generatePixel()
         }
-        var localRooms = u.splitRoomsByCity() // only used for remote mining?
-        var localCreeps = u.splitCreepsByCity()
-        var myCities = u.getMyCities()
+        const localRooms = u.splitRoomsByCity() // only used for remote mining?
+        const localCreeps = u.splitCreepsByCity()
+        const myCities = u.getMyCities()
         let claimRoom, unclaimRoom
 
         if(!Memory.gameState)
@@ -72,13 +72,13 @@ export function loop() {
             //em.expand() // grow the empire!
         }
         //run cities
-        var prevCpu = Game.cpu.getUsed()
+        let prevCpu = Game.cpu.getUsed()
         for (let i = 0; i < myCities.length; i += 1) {
             try {
                 if(Game.cpu.bucket - prevCpu < 10){
                     return
                 }
-                var city = u.getsetd(myCities[i].memory, "city", myCities[i].name + "0")
+                const city = u.getsetd(myCities[i].memory, "city", myCities[i].name + "0")
                 const rcl = myCities[i].controller.level
                 const rclLimit =
                     settings.bucket.colony - rcl * settings.bucket.rclMultiplier

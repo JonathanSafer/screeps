@@ -2,7 +2,7 @@ import actions = require("../lib/actions")
 import sq = require("../lib/spawnQueue")
 import cN = require("../lib/creepNames")
 
-var rF = {
+const rF = {
     name: cN.FERRY_NAME,
     type: "ferry",
     target: 0,

@@ -1,7 +1,7 @@
 import motion = require("../lib/motion")
 import cN = require("../lib/creepNames")
 
-var rC = {
+const rC = {
     name: cN.CLAIMER_NAME,
     type: "claimer",
 
@@ -39,7 +39,7 @@ var rC = {
     },
 
     claim: function(creep) {
-        var newCity = creep.room.name + "0"
+        const newCity = creep.room.name + "0"
         creep.signController(creep.room.controller, "Piky")
         creep.room.memory.city = newCity
         if(creep.claimController(creep.room.controller) == ERR_INVALID_TARGET && !creep.room.controller.my){

@@ -22,10 +22,10 @@ NOTE: all positions stored as packed postions. Use utils.unPackPos to get a room
 
 */
 
-const u = require("../lib/utils")
-const settings = require("../config/settings")
+import u = require("../lib/utils")
+import settings = require("../config/settings")
 
-var data = {
+const data = {
     updateData: function(){
         if(!Memory.data){
             Memory.data = {
@@ -219,4 +219,4 @@ var data = {
     }
 }
 
-module.exports = data
+export = data

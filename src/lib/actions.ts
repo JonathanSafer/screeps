@@ -2,9 +2,9 @@ import u = require("./utils")
 import motion = require("./motion")
 
 
-var actions = {
+const actions = {
     interact: function(creep: Creep, location, fnToTry: () => ScreepsReturnCode, range=undefined, logSuccess=false, local=false): ScreepsReturnCode | 1 {
-        var result = fnToTry()
+        const result = fnToTry()
         switch (result) {
         case ERR_NOT_IN_RANGE: {
             const box = local ? motion.getBoundingBox(creep.room) : null
@@ -30,7 +30,7 @@ var actions = {
     },
     
     reserve: function(creep, target){
-        var city = creep.memory.city
+        const city = creep.memory.city
         if (Game.time % 2000 == 0){
             return actions.interact(creep, target, () => creep.signController(target, city))
         }
@@ -105,7 +105,7 @@ var actions = {
             creep.memory.build = null
         }
         if (creep.memory.repair){
-            var target: Structure = Game.getObjectById(creep.memory.repair)
+            const target: Structure = Game.getObjectById(creep.memory.repair)
             if(target){
                 if (target.hits < target.hitsMax){
                     return actions.repair(creep, target)
@@ -123,12 +123,12 @@ var actions = {
             return actions.repair(creep, needRepair[0])
             //actions.interact(creep, needRepair[0], () => creep.repair(needRepair[0]));
         } else {
-            var targets = _.flatten(_.map(myRooms[city], room => room.find(FIND_MY_CONSTRUCTION_SITES)))
+            const targets = _.flatten(_.map(myRooms[city], room => room.find(FIND_MY_CONSTRUCTION_SITES)))
             //var targets = creep.room.find(FIND_CONSTRUCTION_SITES);
             if(targets.length) {
                 return actions.interact(creep, targets[0], () => creep.build(targets[0]), 3)
             } else {
-                var damagedStructures = _.filter(buildings, structure => (structure.hits < (0.4*structure.hitsMax)) && (structure.structureType != STRUCTURE_WALL) && (structure.structureType != STRUCTURE_RAMPART))
+                const damagedStructures = _.filter(buildings, structure => (structure.hits < (0.4*structure.hitsMax)) && (structure.structureType != STRUCTURE_WALL) && (structure.structureType != STRUCTURE_RAMPART))
                 if (damagedStructures.length) {
                     creep.memory.repair = damagedStructures[0].id
                     return actions.repair(creep, damagedStructures[0])
@@ -148,8 +148,8 @@ var actions = {
     
     // Pick up stuff lying next to you as you pass by
     notice: function(creep: Creep) {
-        var tombstones = creep.room.find(FIND_TOMBSTONES)
-        var closeStones = _.filter(tombstones, stone => stone.pos.isNearTo(creep.pos))
+        const tombstones = creep.room.find(FIND_TOMBSTONES)
+        const closeStones = _.filter(tombstones, stone => stone.pos.isNearTo(creep.pos))
         if (closeStones.length) {
             //Log.info(closeStones);
             // we can only get one thing per turn, success is assumed since we're close
@@ -164,8 +164,8 @@ var actions = {
                 return result
             }
         }
-        var resources = creep.room.find(FIND_DROPPED_RESOURCES)
-        var closeStuff = _.filter(resources, thing => thing.pos.isNearTo(creep.pos))
+        const resources = creep.room.find(FIND_DROPPED_RESOURCES)
+        const closeStuff = _.filter(resources, thing => thing.pos.isNearTo(creep.pos))
         if (closeStuff.length) {
             // we can only get one thing per turn, success is assumed since we're close
             return creep.pickup(closeStuff[0])
@@ -206,15 +206,15 @@ var actions = {
     },
 
     breakStuff: function(creep: Creep) {
-        var structures = creep.room.find(FIND_HOSTILE_STRUCTURES)
-        var structGroups = _.groupBy(structures, structure => structure.structureType)
-        var targetOrder = [STRUCTURE_SPAWN, STRUCTURE_TOWER, STRUCTURE_EXTENSION, STRUCTURE_LINK, STRUCTURE_POWER_SPAWN,
+        const structures = creep.room.find(FIND_HOSTILE_STRUCTURES)
+        const structGroups = _.groupBy(structures, structure => structure.structureType)
+        const targetOrder = [STRUCTURE_SPAWN, STRUCTURE_TOWER, STRUCTURE_EXTENSION, STRUCTURE_LINK, STRUCTURE_POWER_SPAWN,
             STRUCTURE_EXTRACTOR, STRUCTURE_LAB, STRUCTURE_TERMINAL, STRUCTURE_OBSERVER, STRUCTURE_NUKER, STRUCTURE_STORAGE, 
             STRUCTURE_RAMPART]
  
-        for (var i = 0; i < targetOrder.length; i++) {
-            var type = targetOrder[i]
-            var breakThese = structGroups[type]
+        for (let i = 0; i < targetOrder.length; i++) {
+            const type = targetOrder[i]
+            const breakThese = structGroups[type]
             if (breakThese) {
                 creep.memory.target = breakThese[0].id
                 return actions.dismantle(creep, breakThese[0]) // TODO break things in your way

@@ -434,13 +434,13 @@ const p = {
                 p.clearAllStructures(room)
             }
             if (room.memory.plan) {
-                var plan = room.memory.plan
-                var spawnCount = 0
+                const plan = room.memory.plan
+                const spawnCount = 0
                 _.forEach(template.buildings, function(locations, structureType) {
                     locations.pos.forEach(location => {
-                        var pos = {"x": plan.x + location.x - template.offset.x, 
+                        const pos = {"x": plan.x + location.x - template.offset.x, 
                             "y": plan.y + location.y - template.offset.y}
-                        var name = roomName + spawnCount
+                        const name = roomName + spawnCount
                         spawnCount = structureType == STRUCTURE_SPAWN ? spawnCount + 1 : spawnCount
                         if (Game.cpu.getUsed() + 20 > Game.cpu.tickLimit) {
                             return
@@ -693,7 +693,7 @@ const p = {
         if(plan){
             _.forEach(template.buildings, function(locations, structureType) {//don't make roads anywhere that a structure needs to go
                 locations.pos.forEach(location => {
-                    var pos = {"x": plan.x + location.x - template.offset.x, 
+                    const pos = {"x": plan.x + location.x - template.offset.x, 
                         "y": plan.y + location.y - template.offset.y}
                     if(structureType !== STRUCTURE_ROAD){
                         costs.set(pos.x, pos.y, 0xff)
@@ -740,7 +740,7 @@ const p = {
                     }
                 }
             })
-            for(var j = 0; j < sourcePath.path.length; j++){
+            for(let j = 0; j < sourcePath.path.length; j++){
                 sourcePaths.push(sourcePath.path[j])
             }
         }
@@ -765,7 +765,7 @@ const p = {
             plainCost: 4, swampCost: 4, maxRooms: 1, 
             roomCallback: () => roadMatrix
         })
-        for(var i = 2; i < controllerPath.path.length; i++){// don't include first two paths (not needed)
+        for(let i = 2; i < controllerPath.path.length; i++){// don't include first two paths (not needed)
             path.push(controllerPath.path[i])
         } 
         return path.reverse()

@@ -25,12 +25,9 @@ import labsLib = require("../buildings/labs")
 import fact = require("../buildings/factory")
 import link = require("../buildings/link")
 import e = require("../operations/error")
-import rMe = require("../roles/medic")
 import rQr = require("../roles/qrCode")
 import rp = require("./roomplan")
 import rRe = require("../roles/repairer")
-import rQ = require("../roles/quad")
-import rRr = require("../roles/reserver")
 import cN = require("../lib/creepNames")
 
 
@@ -38,7 +35,7 @@ function makeCreeps(role: CreepRole, city: string, unhealthyStore=false, creepWa
     if(Memory.gameState < 5) return false
     const room = Game.spawns[city].room
    
-    var energyToSpend = unhealthyStore ? room.energyAvailable :
+    const energyToSpend = unhealthyStore ? room.energyAvailable :
         room.energyCapacityAvailable
 
     const weHaveBoosts = u.boostsAvailable(role, room)
@@ -88,11 +85,11 @@ function runCity(city, creeps: Creep[]){
     const storage = roomU.getStorage(room) as StructureContainer | StructureStorage
     const halfCapacity = storage && storage.store.getCapacity() / 2
     const unhealthyStore = storage && storage.store[RESOURCE_ENERGY] < Math.min(5000, halfCapacity)
-    var roles = (unhealthyStore) ? emergencyRoles : allRoles
+    const roles = (unhealthyStore) ? emergencyRoles : allRoles
 
     // Get counts for roles by looking at all living and queued creeps
-    var nameToRole = _.groupBy(allRoles, role => role.name) // map from names to roles
-    var counts = _.countBy(creeps, creep => creep.memory.role) // lookup table from role to count
+    const nameToRole = _.groupBy(allRoles, role => role.name) // map from names to roles
+    const counts = _.countBy(creeps, creep => creep.memory.role) // lookup table from role to count
     const queuedCounts = sq.getCounts(spawn)
     _.forEach(roles, role => {
         const liveCount = counts[role.name] || 0
@@ -231,17 +228,17 @@ function runTowers(city: string){
         if(spawn.memory.towersActive == false && Game.time % checkTime != 0){
             return
         }
-        var towers = _.filter(spawn.room.find(FIND_MY_STRUCTURES), (structure) => structure.structureType == STRUCTURE_TOWER) as StructureTower[]
-        var hostileCreep = spawn.room.find(FIND_HOSTILE_CREEPS)
-        var injuredCreep = spawn.room.find(FIND_MY_CREEPS, {filter: (injured) => { 
+        const towers = _.filter(spawn.room.find(FIND_MY_STRUCTURES), (structure) => structure.structureType == STRUCTURE_TOWER) as StructureTower[]
+        const hostileCreep = spawn.room.find(FIND_HOSTILE_CREEPS)
+        const injuredCreep = spawn.room.find(FIND_MY_CREEPS, {filter: (injured) => { 
             return (injured) && injured.hits < injured.hitsMax
         }})
-        var injuredPower: Array<Creep | PowerCreep> = spawn.room.find(FIND_MY_POWER_CREEPS, {filter: (injured) => { 
+        const injuredPower: Array<Creep | PowerCreep> = spawn.room.find(FIND_MY_POWER_CREEPS, {filter: (injured) => { 
             return (injured) && injured.hits < injured.hitsMax
         }})
-        var hostilePower: Array<Creep | PowerCreep> = spawn.room.find(FIND_HOSTILE_POWER_CREEPS)
-        var hostiles = _.filter(hostilePower.concat(hostileCreep), c => !settings.allies.includes(c.owner.username))
-        var injured = injuredPower.concat(injuredCreep)
+        const hostilePower: Array<Creep | PowerCreep> = spawn.room.find(FIND_HOSTILE_POWER_CREEPS)
+        const hostiles = _.filter(hostilePower.concat(hostileCreep), c => !settings.allies.includes(c.owner.username))
+        const injured = injuredPower.concat(injuredCreep)
         let damaged = null
         let repair = 0
         let target = null
@@ -316,7 +313,7 @@ function runPowerSpawn(city){
         if (!Game.spawns[city].memory.powerSpawn){
             return
         }
-        var powerSpawn = Game.getObjectById(Game.spawns[city].memory.powerSpawn)
+        const powerSpawn = Game.getObjectById(Game.spawns[city].memory.powerSpawn)
         if (Game.time % 20 === 0){
             if (!Game.spawns[city].memory.ferryInfo){
                 Game.spawns[city].memory.ferryInfo = {}
@@ -403,7 +400,7 @@ function checkLabs(city){
 function updateMilitary(city: string, memory, rooms, spawn, creeps) {
     const flags = ["harass", "powerMine", "deposit"]
     const roles = [rH.name, rPM.name, rDM.name]
-    for (var i = 0; i < flags.length; i++) {
+    for (let i = 0; i < flags.length; i++) {
         const flagName = city + flags[i]
         const role = roles[i]
         updateHighwayCreep(flagName, spawn, creeps, role)
@@ -538,11 +535,11 @@ function updateMiner(creeps: Creep[], rcl8: boolean, memory: SpawnMemory, spawn:
 function updateMineralMiner(rcl, buildings: Structure[], spawn, memory) {
     memory[rMM.name] = 0
     if (rcl > 5){
-        var extractor = _.find(buildings, structure => structure.structureType == STRUCTURE_EXTRACTOR)
+        const extractor = _.find(buildings, structure => structure.structureType == STRUCTURE_EXTRACTOR)
         //Log.info(extractor)
         if(extractor) {
-            var cityObject = spawn.room
-            var minerals = cityObject.find(FIND_MINERALS)
+            const cityObject = spawn.room
+            const minerals = cityObject.find(FIND_MINERALS)
             if(spawn.room.terminal && (spawn.room.terminal.store[minerals[0].mineralType] < 6000 
                 || (Game.cpu.bucket > settings.bucket.mineralMining && spawn.room.storage && spawn.room.storage.store[minerals[0].mineralType] < 50000))){
                 memory[rMM.name] = (minerals[0].mineralAmount < 1) ? 0 : 1
@@ -575,11 +572,11 @@ function updateUpgrader(city: string, controller: StructureController, memory: S
         }
     } else {
         if(!creeps.length) return
-        var banks = roomU.getWithdrawLocations(creeps[0])
+        const banks = roomU.getWithdrawLocations(creeps[0])
         //Log.info(banks);
         let money = _.sum(_.map(banks, bank => bank.store[RESOURCE_ENERGY]))
         if(room.find(FIND_MY_CONSTRUCTION_SITES).length) money -= 1000
-        var capacity = _.sum(_.map(banks, bank => bank.store.getCapacity(RESOURCE_ENERGY)))
+        const capacity = _.sum(_.map(banks, bank => bank.store.getCapacity(RESOURCE_ENERGY)))
         //Log.info('money: ' + money + ', ' + (100*money/capacity));
         if(money > (capacity * .28)){
             let needed = Math.floor((money/capacity) * 5)
@@ -679,14 +676,14 @@ function updateRunner(creeps: Creep[], spawn, extensions, memory, rcl, emergency
         memory[rR.name] = 0
         return
     }
-    var miners = _.filter(creeps, creep => creep.memory.role == rM.name && !creep.memory.link)
+    const miners = _.filter(creeps, creep => creep.memory.role == rM.name && !creep.memory.link)
     const minRunners = rcl < 7 ? 2 : 0
-    var distances = _.map(miners, miner => PathFinder.search(spawn.pos, miner.pos).cost)
+    const distances = _.map(miners, miner => PathFinder.search(spawn.pos, miner.pos).cost)
     let totalDistance = _.sum(distances)
     if(extensions < 10 && Game.gcl.level == 1) totalDistance = totalDistance * 1.5//for when there are no roads
-    var minerEnergyPerTick = SOURCE_ENERGY_CAPACITY/ENERGY_REGEN_TIME
-    var energyProduced = 2 * totalDistance * minerEnergyPerTick
-    var energyCarried = types.store(types.getRecipe("runner", spawn.room.energyCapacityAvailable, spawn.room))
+    const minerEnergyPerTick = SOURCE_ENERGY_CAPACITY/ENERGY_REGEN_TIME
+    const energyProduced = 2 * totalDistance * minerEnergyPerTick
+    const energyCarried = types.store(types.getRecipe("runner", spawn.room.energyCapacityAvailable, spawn.room))
     memory[rR.name] = Math.min(settings.max.runners, Math.max(Math.ceil(energyProduced / energyCarried), minRunners))
     if(rcl >= 5){
         const upgraders = _.filter(creeps, creep => creep.memory.role == rU.name).length

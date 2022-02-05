@@ -1,14 +1,14 @@
-const rDM = require("../roles/depositMiner")
-const rMM = require("../roles/mineralMiner")
-const u = require("../lib/utils")
-const rr = require("../roles/roles")
-const settings = require("../config/settings")
-const profiler = require("./screeps-profiler")
+import rDM = require("../roles/depositMiner")
+import rMM = require("../roles/mineralMiner")
+import u = require("../lib/utils")
+import rr = require("../roles/roles")
+import settings = require("../config/settings")
+import profiler = require("./screeps-profiler")
 
-var statsLib = {
+const statsLib = {
     cityCpuMap: {},
 
-    collectStats: function(myCities) {
+    collectStats: function(myCities: Room[]) {
         for (const creep of Object.values(Game.creeps)) {
             const ccache = u.getCreepCache(creep.id)
             const rcache = u.getRoomCache(creep.room.name)
@@ -39,7 +39,7 @@ var statsLib = {
             const heapStats = Game.cpu.getHeapStatistics()
             stats["heap.available"] = heapStats["total_available_size"]
 
-            var cities = []
+            const cities = []
             _.forEach(Object.keys(Game.rooms), function(roomName){
                 const room = Game.rooms[roomName]
                 const city = Game.rooms[roomName].memory.city
@@ -55,7 +55,7 @@ var statsLib = {
 
                     if(room.storage){
                         stats["cities." + city + ".storage.energy"] = room.storage.store.energy
-                        const factory = _.find(room.find(FIND_MY_STRUCTURES), s => s.structureType == STRUCTURE_FACTORY)
+                        const factory = _.find(room.find(FIND_MY_STRUCTURES), s => s.structureType == STRUCTURE_FACTORY) as StructureFactory
                         if(factory){
                             stats["cities." + city + ".factory.level"] = factory.level
                             stats["cities." + city + ".factory.cooldown"] = factory.cooldown
@@ -80,9 +80,9 @@ var statsLib = {
                 stats[`rooms.${roomName}.attacks`] = rcache.attacks
                 rcache.attacks = 0
             })
-            var counts = _.countBy(Game.creeps, creep => creep.memory.role)
-            var creepsByRole = _.groupBy(Game.creeps, creep => creep.memory.role)
-            var roles = rr.getRoles()
+            const counts = _.countBy(Game.creeps, creep => creep.memory.role)
+            const creepsByRole = _.groupBy(Game.creeps, creep => creep.memory.role)
+            const roles = rr.getRoles()
             _.forEach(roles, function(role){
                 if (counts[role.name]){
                     stats[`creeps.${role.name}.count`] = counts[role.name]
@@ -100,7 +100,7 @@ var statsLib = {
             })
 
             // City level stats
-            var cityCounts = _.countBy(Game.creeps, creep => creep.memory.city)
+            const cityCounts = _.countBy(Game.creeps, creep => creep.memory.city)
             _.forEach(cities, function(city){
                 if (!city) {
                     return
@@ -140,7 +140,7 @@ var statsLib = {
             if (profiler.results && profiler.results.stats) {
                 const pstats = profiler.results.stats
                 const profileSize = Math.min(settings.profileResultsLength, pstats.length)
-                for (var i = 0; i < profileSize; i++) {
+                for (let i = 0; i < profileSize; i++) {
                     const result = pstats[i]
                     stats[`profiler.${result.name}.calls`] = result.calls
                     stats[`profiler.${result.name}.time`] = result.totalTime.toFixed(1)
@@ -172,4 +172,4 @@ var statsLib = {
     }
 }
 
-module.exports = statsLib
+export = statsLib

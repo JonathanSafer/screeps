@@ -7,7 +7,7 @@ import motion = require("../lib/motion")
 import u = require("../lib/utils")
 import cN = require("../lib/creepNames")
 
-var rSB = {
+const rSB = {
     name: cN.SPAWN_BUILDER_NAME,
     type: "spawnBuilder",
     target: 0,
@@ -23,7 +23,7 @@ var rSB = {
             return
         }
 
-        var city = creep.memory.city
+        const city = creep.memory.city
         if(creep.memory.needBoost && !creep.memory.boosted){
             const boost = "XLH2O"
             rU.getBoosted(creep, boost)
@@ -116,14 +116,14 @@ var rSB = {
             }
             return
         }
-        var targets = creep.room.find(FIND_MY_CONSTRUCTION_SITES)
-        var spawn = _.find(targets, site => site.structureType == STRUCTURE_SPAWN)
-        var extensions = _.find(targets, site => site.structureType == STRUCTURE_EXTENSION)
-        var storage = _.find(targets, site => site.structureType == STRUCTURE_STORAGE)
-        var terminal = _.find(targets, site => site.structureType == STRUCTURE_TERMINAL)
-        var tower = _.find(targets, site => site.structureType == STRUCTURE_TOWER)
+        const targets = creep.room.find(FIND_MY_CONSTRUCTION_SITES)
+        const spawn = _.find(targets, site => site.structureType == STRUCTURE_SPAWN)
+        const extensions = _.find(targets, site => site.structureType == STRUCTURE_EXTENSION)
+        const storage = _.find(targets, site => site.structureType == STRUCTURE_STORAGE)
+        const terminal = _.find(targets, site => site.structureType == STRUCTURE_TERMINAL)
+        const tower = _.find(targets, site => site.structureType == STRUCTURE_TOWER)
         if(targets.length) {
-            var target = targets[0]
+            let target = targets[0]
             if (terminal){
                 target = terminal
             } else if (spawn){
@@ -156,7 +156,7 @@ var rSB = {
             a.pick(creep, dropped)
             return
         }
-        var sources =  creep.room.find(FIND_SOURCES)
+        const sources =  creep.room.find(FIND_SOURCES)
         if (sources.length == 1){
             const result = creep.harvest(sources[0])
             if(result == ERR_NOT_IN_RANGE) {

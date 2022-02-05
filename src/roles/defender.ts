@@ -4,15 +4,15 @@ import rH = require("./harasser")
 import settings = require("../config/settings")
 import cN = require("../lib/creepNames")
 
-var CreepState = {
+const CreepState = {
     START: 1,
     BOOST: 2,
     ENGAGE: 3,
     DORMANT: 4,
 }
-var CS = CreepState
+const CS = CreepState
 
-var rD = {
+const rD = {
     name: cN.DEFENDER_NAME,
     type: "defender",
     boosts: [RESOURCE_CATALYZED_GHODIUM_ALKALIDE,
@@ -103,7 +103,7 @@ var rD = {
     },
 
     iOwn: function(roomName) {
-        var room = Game.rooms[roomName]
+        const room = Game.rooms[roomName]
         return (room && room.controller && room.controller.my)
     }
 }

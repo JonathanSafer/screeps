@@ -1,5 +1,5 @@
 //http://screeps.dissi.me/
-module.exports = {
+export = {
     "wallDistance": 4,
     "dimensions": {"x":13, "y":11},
     "centerOffset": {"x":6, "y":5},

@@ -26,12 +26,12 @@ const cU = {
     },
 
     getEnergy: function(creep: Creep) {
-        var location = rU.getStorage(Game.spawns[creep.memory.city].room) as StructureStorage | StructureContainer | StructureSpawn
+        const location = rU.getStorage(Game.spawns[creep.memory.city].room) as StructureStorage | StructureContainer | StructureSpawn
         if(!location || (location.store.energy < 300 && location.room.controller.level > 1) || (location.structureType != STRUCTURE_SPAWN && location.store.energy < 800)){
             return
         }
         if (a.withdraw(creep, location) == ERR_NOT_ENOUGH_RESOURCES) {
-            var targets = rU.getWithdrawLocations(creep)
+            const targets = rU.getWithdrawLocations(creep)
             creep.memory.target = targets[0].id
         }
     },

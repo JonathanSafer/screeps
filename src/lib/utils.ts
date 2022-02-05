@@ -1,7 +1,6 @@
-import { Dictionary } from "lodash"
 import settings = require("../config/settings")
 
-var u = {
+const u = {
     getsetd: function (object, prop, defaultValue) {
         if (object[prop] === undefined) {
             object[prop] = defaultValue
@@ -25,20 +24,20 @@ var u = {
     },
     
     iReservedOrOwn: function(roomName) {
-        var room = Game.rooms[roomName]
-        var hasController = room && room.controller
+        const room = Game.rooms[roomName]
+        const hasController = room && room.controller
         return hasController && (room.controller.my || ((room.controller.reservation) && (room.controller.reservation.username == settings.username)))
     },
     
     iReserved: function(roomName) {
-        var room = Game.rooms[roomName]
-        var hasController = room && room.controller
+        const room = Game.rooms[roomName]
+        const hasController = room && room.controller
         return hasController && ((room.controller.reservation) && (room.controller.reservation.username == settings.username))
     },
 
     iOwn: function(roomName) {
-        var room = Game.rooms[roomName]
-        var hasController = room && room.controller
+        const room = Game.rooms[roomName]
+        const hasController = room && room.controller
         return hasController && room.controller.my
     },
     
@@ -47,8 +46,8 @@ var u = {
     },
     
     getDropTotals: function() {
-        var rooms = Game.rooms
-        var drops = _.flatten(_.map(rooms, room => room.find(FIND_DROPPED_RESOURCES)))
+        const rooms = Game.rooms
+        const drops = _.flatten(_.map(rooms, room => room.find(FIND_DROPPED_RESOURCES)))
         return _.sum(_.map(drops, drop => drop.amount))
     },
 

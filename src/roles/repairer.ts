@@ -4,7 +4,7 @@ import rB = require("./builder")
 import rR = require("./runner")
 import cN = require("../lib/creepNames")
 
-var rRe = {
+const rRe = {
     name: cN.REPAIRER_NAME,
     type: "repairer",
 

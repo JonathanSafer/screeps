@@ -1,7 +1,7 @@
 import settings = require("../config/settings")
 import u = require("../lib/utils")
 
-var labs = {
+const labs = {
     //new labs:
     //all 10 labs in one cluster. reactors built first and identified based on position relative to other lab SITES
     //receivers are identified and begin use as soon as they are built
@@ -65,7 +65,7 @@ var labs = {
         }
     },
 
-    updateLabs: function(reactor0, reactor1, spawn){
+    updateLabs: function(reactor0, reactor1, spawn: StructureSpawn){
         if(spawn.memory.ferryInfo.labInfo.reactors[reactor0.id].fill || spawn.memory.ferryInfo.labInfo.reactors[reactor1.id].fill){
             if(Game.time % 200000 == 0){
                 spawn.memory.ferryInfo.labInfo.reactors[reactor0.id].fill = -1
@@ -105,10 +105,10 @@ var labs = {
         if (!minerals){
             return
         }
-        Object.values<any>(spawn.memory.ferryInfo.labInfo.reactors)[0].mineral = minerals[0]
-        Object.values<any>(spawn.memory.ferryInfo.labInfo.reactors)[1].mineral = minerals[1]
-        Object.values<any>(spawn.memory.ferryInfo.labInfo.reactors)[0].fill = 3
-        Object.values<any>(spawn.memory.ferryInfo.labInfo.reactors)[1].fill = 3
+        Object.values<Reactor>(spawn.memory.ferryInfo.labInfo.reactors)[0].mineral = minerals[0]
+        Object.values<Reactor>(spawn.memory.ferryInfo.labInfo.reactors)[1].mineral = minerals[1]
+        Object.values<Reactor>(spawn.memory.ferryInfo.labInfo.reactors)[0].fill = 3
+        Object.values<Reactor>(spawn.memory.ferryInfo.labInfo.reactors)[1].fill = 3
     },
 
     chooseBoost: function(currentBoost, spawn){

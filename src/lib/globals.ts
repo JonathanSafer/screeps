@@ -99,7 +99,7 @@ global.RemoveJunk = function(city){//only to be used on cities with levelled fac
         return
     }
     const destination = unleveledFactory.room.name
-    for(var i = 0; i < Object.keys(terminal.store).length; i++){
+    for(let i = 0; i < Object.keys(terminal.store).length; i++){
         if(_.includes(coms, Object.keys(terminal.store)[i])){
             //send com to a level 0 room
             Log.info(`Removing: ${Object.keys(terminal.store)[i]}`)

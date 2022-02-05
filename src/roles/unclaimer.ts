@@ -1,7 +1,7 @@
 import rC = require("./claimer")
 import cN = require("../lib/creepNames")
 
-var rUC = {
+const rUC = {
     name: cN.UNCLAIMER_NAME,
     type: "unclaimer",
 

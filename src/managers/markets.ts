@@ -3,7 +3,7 @@ import settings = require("../config/settings")
 import cM = require("./commodityManager")
 import simpleAllies = require("./swcTrading")
 
-var markets = {
+const markets = {
     manageMarket: function(myCities: Room[]){//this function is now in charge of all terminal acitivity
         if(PServ) simpleAllies.checkAllies()
         if(Game.time % 10 != 0){
@@ -54,10 +54,10 @@ var markets = {
     },
     
     distributeEnergy: function(myCities: Array<Room>){
-        var receiver = null
-        var needEnergy = _.filter(myCities, city => city.storage && city.storage.store.energy < settings.energy.processPower - 250000 && city.terminal)
+        let receiver = null
+        const needEnergy = _.filter(myCities, city => city.storage && city.storage.store.energy < settings.energy.processPower - 250000 && city.terminal)
         if (needEnergy.length){
-            var sortedCities = _.sortBy(needEnergy, city => (city as Room).storage.store.energy)
+            const sortedCities = _.sortBy(needEnergy, city => (city as Room).storage.store.energy)
             receiver = (sortedCities[0] as Room).name
             for (const city of myCities){
                 if (city.storage && city.storage.store.energy > Game.rooms[receiver].storage.store.energy + 150000){
@@ -189,8 +189,8 @@ var markets = {
     },
 
     distributePower: function(myCities: Room[]){
-        var receiver = null
-        var needPower = _.filter(myCities, city => city.controller.level > 7 && city.terminal && city.terminal.store.power < 1)
+        let receiver = null
+        const needPower = _.filter(myCities, city => city.controller.level > 7 && city.terminal && city.terminal.store.power < 1)
         if (needPower.length){
             receiver = needPower[0].name
             for (const city of myCities){
@@ -204,8 +204,8 @@ var markets = {
     },
 
     distributeUpgrade: function(myCities: Room[]){
-        var receiver = null
-        var needUpgrade = _.filter(myCities, city => city.controller.level > 5 && city.terminal && city.terminal.store["XGH2O"] < 1000)
+        let receiver = null
+        const needUpgrade = _.filter(myCities, city => city.controller.level > 5 && city.terminal && city.terminal.store["XGH2O"] < 1000)
         if (needUpgrade.length){
             receiver = needUpgrade[0].name
             for (const city of myCities){
@@ -220,8 +220,8 @@ var markets = {
     },
 
     distributeRepair: function(myCities: Room[]){
-        var receiver = null
-        var needRepair = _.filter(myCities, city => city.controller.level > 5 && city.terminal && city.terminal.store["XLH2O"] < 1000)
+        let receiver = null
+        const needRepair = _.filter(myCities, city => city.controller.level > 5 && city.terminal && city.terminal.store["XLH2O"] < 1000)
         if (needRepair.length){
             receiver = needRepair[0].name
             for (const city of myCities){
@@ -236,8 +236,8 @@ var markets = {
     },
 
     distributeOps: function(myCities: Room[]){
-        var receiver = null
-        var needOps = _.filter(myCities, city => city.controller.level == 8 && city.terminal && city.terminal.store[RESOURCE_OPS] < 300)
+        let receiver = null
+        const needOps = _.filter(myCities, city => city.controller.level == 8 && city.terminal && city.terminal.store[RESOURCE_OPS] < 300)
         if (needOps.length){
             receiver = needOps[0].name
             for (const city of myCities){
@@ -334,7 +334,7 @@ var markets = {
             Memory.sellPoint = {}
         }
         const empireStore = u.empireStore(cities)
-        for(var i = 0; i < resources.length; i++){
+        for(let i = 0; i < resources.length; i++){
             if(!Memory.sellPoint[resources[i]]){
                 Memory.sellPoint[resources[i]] === 0
             }
@@ -353,7 +353,7 @@ var markets = {
     sellOps: function(city, buyOrders){
         const storage = city.storage
         if (storage.store[RESOURCE_OPS] > 20000){
-            var goodOrders = markets.sortOrder(buyOrders[RESOURCE_OPS])
+            const goodOrders = markets.sortOrder(buyOrders[RESOURCE_OPS])
             if (goodOrders.length){
                 Game.market.deal(goodOrders[goodOrders.length - 1].id, Math.min(goodOrders[goodOrders.length - 1].remainingAmount,  Math.max(0, storage.store[RESOURCE_OPS] - 20000)), city.name)
                 Log.info(Math.min(goodOrders[goodOrders.length - 1].remainingAmount,  Math.max(0, storage.store[RESOURCE_OPS] - 20000)) + " " + "ops" + " sold for " + goodOrders[goodOrders.length - 1].price)
@@ -380,7 +380,7 @@ var markets = {
 
     buyMins: function(city, minerals){
         const terminal = city.terminal
-        for(var i = 0; i < minerals.length; i++){
+        for(const i = 0; i < minerals.length; i++){
             const mineralAmount = terminal.store[minerals[i]]
             if(mineralAmount < 8000){
                 const amountNeeded = 8000 - mineralAmount
@@ -473,7 +473,7 @@ var markets = {
         }
         if(!termUsed){//don't deal to rooms we have vision of
             if(storage.store[RESOURCE_ENERGY] > 800000){
-                for(var i = 0; i < energyOrders.length; i++){
+                for(let i = 0; i < energyOrders.length; i++){
                     if(!Game.rooms[energyOrders[i].roomName]){
                         Game.market.deal(energyOrders[i].id, Math.min(energyOrders[i].remainingAmount, terminal.store.energy / 2), city.name)
                         return true
@@ -489,7 +489,7 @@ var markets = {
             return termUsed
         }
         const store = city.terminal.store
-        for(var i = 0; i < products.length; i++){
+        for(let i = 0; i < products.length; i++){
             if(store[products[i]]){
                 const orders = markets.sortOrder(buyOrders[products[i]]).reverse()
                 if(orders.length && orders[0].price > Memory.sellPoint[products[i]] * 0.9){
@@ -589,7 +589,7 @@ var markets = {
         if(!history){
             return .001//min price
         }
-        for(var i = 0; i < history.length; i++){
+        for(let i = 0; i < history.length; i++){
             totalVol = totalVol + history[i].volume
             totalPrice = totalPrice + (history[i].volume * history[i].avgPrice)
         }

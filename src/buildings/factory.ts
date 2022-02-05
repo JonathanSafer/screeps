@@ -1,4 +1,4 @@
-var fact = {
+const fact = {
 
     runFactory: function(city) {
         fact.initFactoryMem(city)
@@ -98,11 +98,11 @@ var fact = {
 
     checkTerminal: function(factory, city){
         const products = _.filter(Object.keys(COMMODITIES), key => COMMODITIES[key].level === factory.level)
-        for (var i = 0; i < products.length; i++) {
+        for (let i = 0; i < products.length; i++) {
             const components = _.without(Object.keys(COMMODITIES[products[i]].components), RESOURCE_ENERGY)
             const rate = fact.findRateLimit(components, products[i])
             let go = true
-            for (var j = 0; j < components.length; j++) {
+            for (let j = 0; j < components.length; j++) {
                 const room = Game.spawns[city].room
                 if((COMMODITIES[products[i]].components[components[j]] * rate) > room.terminal.store[components[j]]){
                     go = false
@@ -203,7 +203,7 @@ var fact = {
             return
         }
         const destination = unleveledFactory.room.name
-        for(var i = 0; i < Object.keys(terminal.store).length; i++){
+        for(let i = 0; i < Object.keys(terminal.store).length; i++){
             if(_.includes(coms, Object.keys(terminal.store)[i])){
                 //send com to a level 0 room
                 Game.spawns[city].memory.ferryInfo.comSend.push([Object.keys(terminal.store)[i], terminal.store[Object.keys(terminal.store)[i]], destination])

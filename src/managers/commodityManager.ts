@@ -2,7 +2,7 @@ import fact = require("../buildings/factory")
 import u = require("../lib/utils")
 import rU = require("../lib/roomUtils")
 
-var cM = {
+const cM = {
     runManager: function(cities){
         // cache boosts
         u.cacheBoostsAvailable(cities)
@@ -137,9 +137,9 @@ var cM = {
         const citiesWithFactory = _.filter(cities, city => city.terminal && rU.getFactory(city))
         const citiesByFactoryLevel =
             _.groupBy(citiesWithFactory, (city: Room) => {
-                    const factory = rU.getFactory(city)
-                    return factory ? factory.level || 0 : 0
-                })
+                const factory = rU.getFactory(city)
+                return factory ? factory.level || 0 : 0
+            })
         return citiesByFactoryLevel
     },
 
@@ -147,10 +147,10 @@ var cM = {
         const citiesByFactoryLevel = cM.groupByFactoryLevel(cities)
         for(const level of Object.values(citiesByFactoryLevel)){
             for(const c of level){
-                const city = c as Room
-                const factory = rU.getFactory(city)
+                const factoryCity = c as Room
+                const factory = rU.getFactory(factoryCity)
                 if(!factory) continue
-                const memory = Game.spawns[city.memory.city].memory
+                const memory = Game.spawns[factoryCity.memory.city].memory
                 if(memory.ferryInfo.factoryInfo.produce == "dormant"){
                     //empty factory (except for energy)
                     for(const resource of Object.keys(factory.store)){
@@ -159,17 +159,17 @@ var cM = {
                         }
                     }
                     if(factory.level){//only leveled factories need to send back components
-                        for(const resource of Object.keys(city.terminal.store)){
+                        for(const resource of Object.keys(factoryCity.terminal.store)){
                             //send back components
                             if(COMMODITIES[resource] 
                                 && !REACTIONS[resource] 
                                 && resource != RESOURCE_ENERGY 
                                 && COMMODITIES[resource].level != factory.level){
                                 const comLevel: number = COMMODITIES[resource].level || 0
-                                const city = citiesByFactoryLevel[comLevel][0] as Room
-                                const receiver = city.name
+                                const receiverCity = citiesByFactoryLevel[comLevel][0] as Room
+                                const receiver = receiverCity.name
 
-                                const amount = city.terminal.store[resource]
+                                const amount = receiverCity.terminal.store[resource]
                                 const ferryInfo = u.getsetd(memory, "ferryInfo", {})
                                 const comSend = u.getsetd(ferryInfo, "comSend", [])
                                 comSend.push([resource, amount, receiver])

@@ -1,14 +1,13 @@
 import a = require("../lib/actions")
-import sq = require("../lib/spawnQueue")
 import motion = require("../lib/motion")
 import settings = require("../config/settings")
 import cU = require("../lib/creepUtils")
 import u = require("../lib/utils")
 import cN = require("../lib/creepNames")
 
-var rM = {
+const rM = {
     name: cN.REMOTE_MINER_NAME,
-    type: "miner",
+    type: BodyType.miner,
 
     run: function(creep: Creep) {
         if(creep.spawning){
@@ -219,7 +218,7 @@ var rM = {
     },
 
     harvestTarget: function(creep: Creep) {
-        var source = Game.getObjectById(creep.memory.source)
+        const source = Game.getObjectById(creep.memory.source)
         if(!creep.pos.inRangeTo(source, 2)){
             motion.newMove(creep, source.pos, 2)
             return

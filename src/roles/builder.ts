@@ -7,7 +7,7 @@ import rD = require("./defender")
 import motion = require("../lib/motion")
 import cN = require("../lib/creepNames")
 
-var rB = {
+const rB = {
     name: cN.BUILDER_NAME,
     type: "builder",
     boosts: [RESOURCE_CATALYZED_LEMERGIUM_ACID],
@@ -64,8 +64,8 @@ var rB = {
         if(!creep.memory.nextCheckTime || creep.memory.nextCheckTime < Game.time){//occasionally scan for construction sites
             //if room is under siege (determined by presence of a defender),
             // ignore any construction sites outside of wall limits
-            var targets = Game.spawns[creep.memory.city].room.find(FIND_MY_CONSTRUCTION_SITES)
-            var siege = _.find(creep.room.find(FIND_MY_CREEPS), c => c.memory.role == rD.name) 
+            let targets = Game.spawns[creep.memory.city].room.find(FIND_MY_CONSTRUCTION_SITES)
+            const siege = _.find(creep.room.find(FIND_MY_CREEPS), c => c.memory.role == rD.name) 
                 && !Game.spawns[creep.memory.city].room.controller.safeMode
             if(siege){
                 const plan = creep.room.memory.plan
@@ -76,7 +76,7 @@ var rB = {
                         && !(site.structureType == STRUCTURE_RAMPART || site.structureType == STRUCTURE_WALL))
             }
             if(targets.length){
-                var targetsByCost = _.sortBy(targets, target => target.progressTotal)
+                const targetsByCost = _.sortBy(targets, target => target.progressTotal)
                 creep.memory.build = targetsByCost[0].id
                 return true
             }

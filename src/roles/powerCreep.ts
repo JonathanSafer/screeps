@@ -3,7 +3,7 @@ import u = require("../lib/utils")
 import roomU = require("../lib/roomUtils")
 import rU = require("./upgrader")
 
-var CreepState = {
+const CreepState = {
     START: 1,
     SPAWN: 2,
     ENABLE_POWER: 3,
@@ -19,9 +19,9 @@ var CreepState = {
     WORK_SPAWN: 13,
     WORK_CONTROLLER: 14,
 }
-var CS = CreepState
+const CS = CreepState
 
-var rPC = {
+const rPC = {
 
     run: function(creep: PowerCreep) {
         if(creep.shard)
@@ -152,8 +152,8 @@ var rPC = {
     },
 
     atTarget: function(creep) {
-        var target
-        var distance = 1
+        let target
+        let distance = 1
         switch (creep.memory.state) {
         case CS.WORK_SOURCE:
         case CS.WORK_FACTORY:

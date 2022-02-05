@@ -7,7 +7,7 @@ import cU = require("../lib/creepUtils")
 import military = require("../managers/military")
 import cN = require("../lib/creepNames")
 
-var rH = {
+const rH = {
     name: cN.HARASSER_NAME,
     type: "harasser",
     boosts: [RESOURCE_CATALYZED_GHODIUM_ALKALIDE, RESOURCE_CATALYZED_ZYNTHIUM_ALKALIDE,
@@ -88,7 +88,7 @@ var rH = {
 
     shoot: function(creep: Creep, hostiles: Creep[]){
         //RMA if anybody is touching
-        for(var i = 0; i < hostiles.length; i++){
+        for(let i = 0; i < hostiles.length; i++){
             if(hostiles[i].pos.isNearTo(creep.pos)){
                 creep.rangedMassAttack()
                 cU.logDamage(creep, creep.pos, true)
@@ -198,7 +198,7 @@ var rH = {
         }
         if(creep.pos.roomName == Memory.flags[flagName].roomName){
             const flags = Object.keys(Memory.flags)
-            for(var i = 0; i < flags.length; i++){
+            for(let i = 0; i < flags.length; i++){
                 if(!flags[i].includes("harass") && Memory.flags[flags[i]].roomName == creep.pos.roomName){
                     return
                 }

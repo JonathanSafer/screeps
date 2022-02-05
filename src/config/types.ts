@@ -1,36 +1,36 @@
-var motion = require("../lib/motion")
+import motion = require("../lib/motion")
 
-function getRecipe(type, energyAvailable, room, boosted, flagName){
+function getRecipe(type: BodyType, energyAvailable: number, room: Room, boosted, flagName: string){
     const energy = energyAvailable || 0
-    const d = {}
+    const d: BodyDictionary = {}
     const rcl = room.controller.level
 
     // used at all rcls
-    d.brick = scalingBody([1,1], [ATTACK, MOVE], energy, 20)
-    d.reserver = scalingBody([1,1], [CLAIM, MOVE], energy, 12)
-    d.scout = [MOVE]
-    d.quad = quadBody(energy, rcl, room, boosted)
-    d.runner = rcl == 1 ? scalingBody([1, 1], [CARRY, MOVE], energy) : scalingBody([2, 1], [CARRY, MOVE], energy)
-    d.miner = minerBody(energy, rcl, room, flagName)
-    d.normal = upgraderBody(energy, rcl, room)
-    d.transporter = scalingBody([2, 1], [CARRY, MOVE], energy, 30)
-    d.builder = builderBody(energy, rcl)
-    d.defender = defenderBody(energy, rcl, boosted)
-    d.unclaimer = scalingBody([2, 1], [MOVE, CLAIM], energy)
-    d.harasser = harasserBody(energy, boosted, rcl)
-    d.repairer = repairerBody(energy)
+    d[BodyType.brick] = scalingBody([1,1], [ATTACK, MOVE], energy, 20)
+    d[BodyType.reserver] = scalingBody([1,1], [CLAIM, MOVE], energy, 12)
+    d[BodyType.scout] = [MOVE]
+    d[BodyType.quad] = quadBody(energy, rcl, room, boosted)
+    d[BodyType.runner] = rcl == 1 ? scalingBody([1, 1], [CARRY, MOVE], energy) : scalingBody([2, 1], [CARRY, MOVE], energy)
+    d[BodyType.miner] = minerBody(energy, rcl, room, flagName as Id<Source>)
+    d[BodyType.normal] = upgraderBody(energy, rcl, room)
+    d[BodyType.transporter] = scalingBody([2, 1], [CARRY, MOVE], energy, 30)
+    d[BodyType.builder] = builderBody(energy, rcl)
+    d[BodyType.defender] = defenderBody(energy, rcl, boosted)
+    d[BodyType.unclaimer] = scalingBody([2, 1], [MOVE, CLAIM], energy)
+    d[BodyType.harasser] = harasserBody(energy, boosted, rcl)
+    d[BodyType.repairer] = repairerBody(energy)
 
     // used at rcl 4+
-    d.spawnBuilder = scalingBody([2, 3, 5], [WORK, CARRY, MOVE], energy)
-    d.trooper = scalingBody([1, 1], [RANGED_ATTACK, MOVE], energy)
+    d[BodyType.spawnBuilder] = scalingBody([2, 3, 5], [WORK, CARRY, MOVE], energy)
+    d[BodyType.trooper] = scalingBody([1, 1], [RANGED_ATTACK, MOVE], energy)
 
     // used at rcl 5+
-    d.ferry = scalingBody([2, 1], [CARRY, MOVE], energy, 30)
-    d.breaker = breakerBody(energy, rcl, boosted)
-    d.medic = medicBody(energy, rcl, boosted)
+    d[BodyType.ferry] = scalingBody([2, 1], [CARRY, MOVE], energy, 30)
+    d[BodyType.breaker] = breakerBody(energy, rcl, boosted)
+    d[BodyType.medic] = medicBody(energy, rcl, boosted)
 
     // rcl 8 only
-    d.powerMiner = pMinerBody(boosted)
+    d[BodyType.powerMiner] = pMinerBody(boosted)
 
     switch (rcl) {
     case 4:
@@ -38,55 +38,55 @@ function getRecipe(type, energyAvailable, room, boosted, flagName){
         break
     case 5:
         //lvl 5 recipes
-        d["robber"] = body([15, 15], [CARRY, MOVE]) 
+        d[BodyType.robber] = body([15, 15], [CARRY, MOVE]) 
         break
     case 6:
         // lvl 6 recipes
-        d["mineralMiner"] = body([12, 6, 9], [WORK, CARRY, MOVE])
-        d["robber"] = body([20, 20], [CARRY, MOVE])
+        d[BodyType.mineralMiner] = body([12, 6, 9], [WORK, CARRY, MOVE])
+        d[BodyType.robber] = body([20, 20], [CARRY, MOVE])
         break
     case 7:
         // lvl 7 recipes
-        d["mineralMiner"] = body([22, 10, 16], [WORK, CARRY, MOVE])
-        d["robber"] = body([25, 25], [CARRY, MOVE])
+        d[BodyType.mineralMiner] = body([22, 10, 16], [WORK, CARRY, MOVE])
+        d[BodyType.robber] = body([25, 25], [CARRY, MOVE])
         break
     case 8:
         // lvl 8 recipes
-        d["mineralMiner"] = body([22, 10, 16], [WORK, CARRY, MOVE])
-        d["robber"] = body([25, 25], [CARRY, MOVE])
+        d[BodyType.mineralMiner] = body([22, 10, 16], [WORK, CARRY, MOVE])
+        d[BodyType.robber] = body([25, 25], [CARRY, MOVE])
         break
     default:
         break
     }
 
-    d.basic = body([1,1,1],[WORK, CARRY, MOVE])
-    d.lightMiner = body([2, 2], [MOVE, WORK])
-    d.erunner = body([2, 1], [CARRY, MOVE])
-    d.claimer = body([5, 1], [MOVE, CLAIM])
-    if (type === "depositMiner"){
+    d[BodyType.basic] = body([1,1,1],[WORK, CARRY, MOVE])
+    d[BodyType.lightMiner] = body([2, 2], [MOVE, WORK])
+    d[BodyType.erunner] = body([2, 1], [CARRY, MOVE])
+    d[BodyType.claimer] = body([5, 1], [MOVE, CLAIM])
+    if (type === BodyType.depositMiner){
         const dMinerCounts = dMinerCalc(room, boosted, flagName)
-        d["depositMiner"] = body(dMinerCounts, [WORK, CARRY, MOVE])
+        d[BodyType.depositMiner] = body(dMinerCounts, [WORK, CARRY, MOVE])
     }
     if (d[type] == null) {
         return [WORK, CARRY, MOVE]
     }
     return d[type]//recipe
 }
-function body(counts, order) { // order is list of types from move, work, attack, store, heal, ranged, tough, claim
+function body(counts: number[], order: BodyPartConstant[]) { // order is list of types from move, work, attack, store, heal, ranged, tough, claim
     // assert counts.length == order.length
-    const nestedPartsLists = _.map(counts, (count, index) => Array(count).fill(order[index]))
+    const nestedPartsLists: BodyPartConstant[][] = _.map(counts, (count, index) => Array(count).fill(order[index]))
     return _.flatten(nestedPartsLists)
 }
 
 //cost and store functions
-function cost(recipe){
-    var costList = _.map(recipe, part => BODYPART_COST[part])
+function cost(recipe: BodyPartConstant[]){
+    const costList = _.map(recipe, part => BODYPART_COST[part])
     return _.sum(costList)
 }
 function store(recipe){
     return _.filter(recipe, part => part == CARRY).length * CARRY_CAPACITY
 }
-function dMinerCalc(room, boosted, flagName){
+function dMinerCalc(room: Room, boosted: boolean, flagName: string){
     const city = room.memory.city
     const spawn = Game.spawns[city]
     const baseBody = [1, 1, 1]
@@ -99,7 +99,8 @@ function dMinerCalc(room, boosted, flagName){
         harvested = 0
     }
     //distance calculated using method of travel for consistency
-    const distance = motion.getRoute(spawn.pos.roomName, flag.roomName, true).length * 50
+    const route = motion.getRoute(spawn.pos.roomName, flag.roomName, true)
+    const distance = route != -2 ? route.length * 50 : Log.error(`Invalid route from ${spawn.pos.roomName} to ${flag.roomName} for depositMiner`)
     const workTime = CREEP_LIFE_TIME - (distance * 3)//distance x 3 since it'll take 2x as long on return
     
     const result = depositMinerBody(workTime, harvested, boosted, baseBody)
@@ -117,7 +118,7 @@ function depositMinerBody(workTime, harvested, boosted, baseBody) {
     }
     if(carries > 10){
         //body is impossible so we have to decrease works
-        for(var i = 0; i < 2; i++){
+        for(let i = 0; i < 2; i++){
             works = works/2
             carries = getCarriesFromWorks(works, workTime, harvested, boosted)
             const moves = Math.max(Math.ceil((works + carries)/2), works)
@@ -172,14 +173,14 @@ function pMinerBody(boosted){
     return body([20, 20], [MOVE, ATTACK])
 }
 
-function minerBody(energyAvailable, rcl, room, flag) {
+function minerBody(energyAvailable: number, rcl: number, room: Room, flag: Id<Source>) {
     // miners. at least 1 move. 5 works until we can afford 10
     let works = Math.floor((energyAvailable) / BODYPART_COST[WORK])
     let pc = null
     const source = Game.getObjectById(flag)
     if(rcl == 8){
         if(source && source.room.name == room.name){
-            pc = room.find(FIND_MY_POWER_CREEPS, c => c.powers[PWR_REGEN_SOURCE]).length
+            pc = room.find(FIND_MY_POWER_CREEPS, { filter: c => c.powers[PWR_REGEN_SOURCE] }).length
             if(Game.cpu.bucket < 9500)
                 pc++
         }
@@ -335,7 +336,7 @@ function repairerBody(energyAvailable){
  * energyAvailable: energy to use on this creep
  * maxOverride: (optional) max number of body parts to use on this creep
  */
-function scalingBody(ratio, types, energyAvailable, maxOverride) {
+function scalingBody(ratio, types, energyAvailable, maxOverride?: number) {
     const baseCost = cost(body(ratio, types))
     const maxSize = maxOverride || MAX_CREEP_SIZE
     const energy = energyAvailable || 0
@@ -343,7 +344,7 @@ function scalingBody(ratio, types, energyAvailable, maxOverride) {
     return body(ratio.map(x => x * scale), types)
 }
 
-module.exports = {
+export = {
     getRecipe: getRecipe,
     cost: cost,
     store: store,

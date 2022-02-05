@@ -1,8 +1,9 @@
-const settings = require("../config/settings")
-const observer = require("../buildings/observer")
-const u = require("../lib/utils")
-const rp = require("../managers/roomplan")
-const cU = require("../lib/creepUtils")
+import settings = require("../config/settings")
+import observer = require("../buildings/observer")
+import u = require("../lib/utils")
+import rp = require("../managers/roomplan")
+import cU = require("../lib/creepUtils")
+import cN = require("../lib/creepNames")
 
 const b = {
     SIZE: 10000, // 10K constant cpu bucket size
@@ -11,7 +12,7 @@ const b = {
         Memory.avgCpu = Memory.avgCpu ? (Memory.avgCpu * .999) + (Game.cpu.getUsed() * .001): 0
         if(Game.time % 1000 == 2){
             const cities = u.getMyCities()
-            if(Memory.avgCpu/Game.cpu.limit > settings.dropRemote)
+            if(Memory.avgCpu/Game.cpu.limit > settings.removeRemote)
                 rp.dropRemote(cities)
             if(Memory.avgCpu/Game.cpu.limit < settings.addRemote)
                 rp.searchForRemote(cities)
@@ -65,10 +66,10 @@ const b = {
                 if(targets.length){
                     const spawn = Game.spawns[city.memory.city]
                     if(spawn)
-                        cU.scheduleIfNeeded(cU.SCOUT_NAME, 1, false, spawn, u.splitCreepsByCity()[city.name])
+                        cU.scheduleIfNeeded(cN.SCOUT_NAME, 1, false, spawn, u.splitCreepsByCity()[city.name])
                 }
             }
         }
     }
 }
-module.exports = b
+export = b

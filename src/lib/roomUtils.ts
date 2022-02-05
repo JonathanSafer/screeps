@@ -1,12 +1,12 @@
 import settings = require("../config/settings")
 import u = require("./utils")
 
-var rU = {
+const rU = {
     // Delete Spawn memory for spawns that no longer exist
     removeOldRoomMemory: function() {
         for (const spawnName in Memory.spawns) {
             if (!Game.spawns[spawnName]) {
-                delete Memory.spawns[spawnName];
+                delete Memory.spawns[spawnName]
             }
         }
     },
@@ -20,9 +20,9 @@ var rU = {
     },
 
     getWithdrawLocations: function(creep: Creep) {
-        var city = creep.memory.city
-        var spawn = Game.spawns[city]
-        var structures = spawn.room.find(FIND_STRUCTURES)
+        const city = creep.memory.city
+        const spawn = Game.spawns[city]
+        const structures = spawn.room.find(FIND_STRUCTURES)
         return _.filter(structures, structure => structure.structureType == STRUCTURE_CONTAINER ||
                                                  structure.structureType == STRUCTURE_STORAGE ||
                                                  structure.structureType == STRUCTURE_TERMINAL ||
@@ -30,9 +30,9 @@ var rU = {
     },
     
     getTransferLocations: function(creep: Creep) {
-        var city = creep.memory.city
-        var spawn = Game.spawns[city]
-        var structures = spawn.room.find(FIND_STRUCTURES)
+        const city = creep.memory.city
+        const spawn = Game.spawns[city]
+        const structures = spawn.room.find(FIND_STRUCTURES)
         return _.filter(structures, structure => structure.structureType == STRUCTURE_STORAGE ||
         //mineral miner error when in use                                        structure.structureType == STRUCTURE_SPAWN ||
                                                 structure.structureType == STRUCTURE_CONTAINER)
@@ -85,7 +85,7 @@ var rU = {
     },
 
     getAvailableSpawn: function(spawns: StructureSpawn[]) {
-        var validSpawns = _.filter(spawns, spawn => !spawn.spawning)
+        const validSpawns = _.filter(spawns, spawn => !spawn.spawning)
         if (validSpawns.length > 0) {
             return validSpawns[0]
         } else {

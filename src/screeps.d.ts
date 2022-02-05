@@ -1,3 +1,4 @@
+/* eslint-disable no-shadow */
 import _ = require("lodash")
 
 // memory types for our memory structure
@@ -30,8 +31,10 @@ declare global {
         controllerDistance?: number
     }
 
-    var Cache: ScreepsCache
+    const Cache: ScreepsCache
     type ScreepsCache = RoomDictionary & { 
+        time?: number
+        dataString?: string
         boostCheckTime?: number
         boostsAvailable?: Array<string>
         enemies?: {
@@ -47,7 +50,6 @@ declare global {
         links?: LinksCache
         factory?: Id<StructureFactory>
         container?: Id<StructureContainer>
-        [name: string]: any
     }
     
     interface LinksCache {
@@ -55,9 +57,42 @@ declare global {
         upgrade?: Id<StructureLink>
         source?: Array<Id<StructureLink>>
     }
+
+    type BodyDictionary = {
+        [key in BodyType]: BodyPartConstant[]
+    }
+
+    enum BodyType {
+        brick,
+        reserver,
+        scout,
+        quad,
+        runner,
+        miner,
+        normal,
+        transporter,
+        builder,
+        defender,
+        unclaimer,
+        harasser,
+        repairer,
+        spawnBuilder,
+        trooper,
+        ferry,
+        breaker,
+        medic,
+        powerMiner,
+        basic,
+        lightMiner,
+        erunner,
+        claimer,
+        robber,
+        mineralMiner,
+        depositMiner
+    }
     
     // screeps updated memory map types
-    interface Memory { [key: string]: any }
+    interface Memory { [key: string]: string }
     interface CreepMemory {
         repair?: Id<Structure>
         pullee?: Id<Creep>
@@ -89,13 +124,11 @@ declare global {
         sourcePos?: RoomPosition
         tug?: boolean
         juicer?: boolean
-        [name: string]: any 
     }
-    interface PowerCreepMemory { [name: string]: any }
+    interface PowerCreepMemory { [name: string]: string }
     interface FlagMemory { 
         boosted?: boolean
         roomName?: string
-        [name: string]: any 
     }
     interface SpawnMemory {
         powerSpawn?: Id<StructurePowerSpawn>
@@ -107,16 +140,10 @@ declare global {
         ferryInfo?: {
             labInfo?: {
                 reactors?: {
-                    [name: Id<StructureLab>]: {
-                        fill?: number
-                        mineral?: ResourceConstant
-                    }
+                    [name: Id<StructureLab>]: Reactor
                 }
                 receivers?: {
-                    [name: Id<StructureLab>]: {
-                        fill?: number
-                        boost?: MineralCompoundConstant | MineralConstant
-                    }
+                    [name: Id<StructureLab>]: Receiver
                 }
                 boost?: string
             }
@@ -129,11 +156,17 @@ declare global {
             needPower?: boolean
             mineralRequest?: MineralCompoundConstant | MineralConstant
         }
-        [name: string]: any 
+    }
+    interface Reactor {
+        fill?: number
+        mineral?: ResourceConstant
+    }
+    interface Receiver {
+        fill?: number
+        boost?: MineralCompoundConstant | MineralConstant
     }
     interface RoomMemory { 
         city?: string
-        [name: string]: any 
     }
     interface QueuedCreep {
         role: string
@@ -144,21 +177,29 @@ declare global {
         roomName?: string
     }
     
-    interface Game { [key: string]: any }
+    interface Game { [key: string]: string }
     
-    var PServ: boolean
-    var Tmp: Tmp
-    var Log: Log
-    interface Tmp { 
+    const PServ: boolean
+    const Tmp: Tmp
+    const Log: Log
+    type Tmp = TmpDict & { 
         roomsByCity?: _.Dictionary<Room[]>
         creepsByCity?: _.Dictionary<Creep[]>
         myCities?: Room[]
-        [name: string]: any 
     }
-    interface Log { [name: string]: any }
+    interface TmpDict {
+        [name: string]: string 
+    }
+
+    interface Log { [name: string]: string }
     interface Position {
         x?: number
         y?: number
+    }
+    // Only defined in screeps sim
+    const performance: Performance
+    interface Performance {
+        now: () => number
     }
 }
 

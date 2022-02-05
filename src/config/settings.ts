@@ -1,6 +1,13 @@
 
-const username = Object.values(Game.structures).concat(Object.values(Game.creeps), Object.values(Game.powerCreeps), Object.values(Game.constructionSites))[0].owner.username
-var settings = {
+const username = getUsername()
+
+function getUsername() {
+    const roomObject = Object.values<RoomObject>(Game.structures).concat(Object.values(Game.creeps), Object.values(Game.powerCreeps), Object.values(Game.constructionSites))[0]
+    const hasOwner = roomObject instanceof Creep || roomObject instanceof PowerCreep || roomObject instanceof OwnedStructure || roomObject instanceof ConstructionSite
+    return hasOwner && roomObject.my ? roomObject.owner.username : ""
+}
+
+const settings = {
     username: username,
     allies: ["Atanner", "slowmotionghost", "Timendainum", "FeTiD", username],
     nukeStructures: [STRUCTURE_SPAWN, STRUCTURE_LAB, STRUCTURE_STORAGE, STRUCTURE_FACTORY,
@@ -90,4 +97,4 @@ if(!Game.shard.name.includes("shard") || Game.shard.name == "shardSeason"){
     settings.allies = ["Modus", "slowmotionghost", "Robalian", "Shibdib", username]
 }
 
-module.exports = settings
+export = settings

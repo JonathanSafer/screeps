@@ -8,7 +8,7 @@ import actions = require("../lib/actions")
 import rQ = require("./quad")
 import cN = require("../lib/creepNames")
 
-var rBr = {
+const rBr = {
     name: cN.BREAKER_NAME,
     type: "breaker",
     boosts: [RESOURCE_CATALYZED_GHODIUM_ALKALIDE,

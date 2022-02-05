@@ -1,6 +1,5 @@
-import { spawn } from "child_process"
 
-var sq = {
+const sq = {
     schedule: function(spawn: StructureSpawn, role: string, boosted = false, flag = null) {
         sq.initialize(spawn)
         spawn.memory.sq.push({role: role, boosted: boosted, flag: flag})
@@ -26,7 +25,7 @@ var sq = {
         return _.filter(spawn.memory.sq, creep => creep.role == role && creep.flag == flag).length
     },
 
-    respawn: function(creep: Creep, boosted: boolean=false) {
+    respawn: function(creep: Creep, boosted=false) {
         const spawn = Game.spawns[creep.memory.city]
         if(!spawn) return
         sq.initialize(spawn)
