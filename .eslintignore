@@ -1,2 +1,4 @@
 
 src/lib/globals.ts
+src/operations/screeps-profiler.ts
+src/screeps.d.ts

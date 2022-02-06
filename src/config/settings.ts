@@ -3,8 +3,8 @@ const username = getUsername()
 
 function getUsername() {
     const roomObject = Object.values<RoomObject>(Game.structures).concat(Object.values(Game.creeps), Object.values(Game.powerCreeps), Object.values(Game.constructionSites))[0]
-    const hasOwner = roomObject instanceof Creep || roomObject instanceof PowerCreep || roomObject instanceof OwnedStructure || roomObject instanceof ConstructionSite
-    return hasOwner && roomObject.my ? roomObject.owner.username : ""
+    const ownableObject = roomObject as Creep
+    return ownableObject.my ? ownableObject.owner.username : ""
 }
 
 const settings = {

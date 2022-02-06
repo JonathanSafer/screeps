@@ -1,11 +1,11 @@
 import motion = require("../lib/motion")
 import u = require("../lib/utils")
 import template = require("../config/template")
-import cN = require("../lib/creepNames")
+import { cN, BodyType } from "../lib/creepNames"
 
 const rQr = {
     name: cN.QR_CODE_NAME,
-    type: "scout",
+    type: BodyType.scout,
     target: 0,
    
     run: function(creep: Creep) {

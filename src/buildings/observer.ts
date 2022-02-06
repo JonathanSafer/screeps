@@ -30,10 +30,10 @@ const ob = {
         }
         const roomDataCache = u.getsetd(Cache, "roomData", {})
         for(const room in Game.rooms){
-            if(roomsToScan.has(room)){
+            if(room in roomsToScan){
                 const roomData = u.getsetd(roomDataCache, room, {})
                 ob.recordData(room, roomData)
-                roomsToScan.delete(room)
+                delete roomsToScan[room]
             }
         }
     },
@@ -130,7 +130,7 @@ const ob = {
             const targets = u.getsetd(rcache, "scannerTargets", [])
             targets.push(roomName)
         }
-        Cache["roomsToScan"] = roomsToScan
+        Cache.roomsToScan = roomsToScan
     },
     
     observeNewRoomForMining: function(city: string) {

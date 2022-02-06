@@ -1,10 +1,10 @@
 import motion = require("../lib/motion")
 import u = require("../lib/utils")
-import cN = require("../lib/creepNames")
+import { cN, BodyType } from "../lib/creepNames"
 
 const rS = {
     name: cN.SCOUT_NAME,
-    type: "scout",
+    type: BodyType.scout,
    
     run: function(creep: Creep) {
         const targetRoom = Memory.creeps[creep.name].targetRoom

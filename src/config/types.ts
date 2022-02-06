@@ -1,6 +1,7 @@
 import motion = require("../lib/motion")
+import { BodyType } from "../screeps"
 
-function getRecipe(type: BodyType, energyAvailable: number, room: Room, boosted, flagName: string){
+function getRecipe(type: BodyType, energyAvailable: number, room: Room, boosted = false, flagName?: string){
     const energy = energyAvailable || 0
     const d: BodyDictionary = {}
     const rcl = room.controller.level
@@ -100,7 +101,8 @@ function dMinerCalc(room: Room, boosted: boolean, flagName: string){
     }
     //distance calculated using method of travel for consistency
     const route = motion.getRoute(spawn.pos.roomName, flag.roomName, true)
-    const distance = route != -2 ? route.length * 50 : Log.error(`Invalid route from ${spawn.pos.roomName} to ${flag.roomName} for depositMiner`)
+    if (route == -2) throw Error(`Invalid route from ${spawn.pos.roomName} to ${flag.roomName} for depositMiner`)
+    const distance = route.length * 50
     const workTime = CREEP_LIFE_TIME - (distance * 3)//distance x 3 since it'll take 2x as long on return
     
     const result = depositMinerBody(workTime, harvested, boosted, baseBody)

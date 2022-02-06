@@ -1,11 +1,11 @@
 import actions = require("../lib/actions")
 import motion = require("../lib/motion")
 import sq = require("../lib/spawnQueue")
-import cN = require("../lib/creepNames")
+import { cN, BodyType } from "../lib/creepNames"
 
 const rRo = {
     name: cN.ROBBER_NAME,
-    type: "robber",
+    type: BodyType.robber,
 
     /** @param {Creep} creep **/
     run: function(creep: Creep) {
@@ -29,7 +29,8 @@ const rRo = {
             const flagPos = new RoomPosition(flag.x, flag.y, flag.roomName)
             if(!creep.memory.flagDistance){
                 const route = motion.getRoute(Game.spawns[creep.memory.city].pos.roomName, flag.roomName, true)
-                creep.memory.flagDistance = route != -2 ? route.length * 50 : Log.error(`Invalid route for creep ${creep.name}`)
+                if (route == -2) throw Error(`Invalid route for creep ${creep.name}`)
+                creep.memory.flagDistance = route.length * 50
             }
             if(Game.rooms[flag.roomName]){
                 if(creep.memory.target){
@@ -45,7 +46,7 @@ const rRo = {
                         const valuables = _.filter(Object.keys(struct.store), k => k != RESOURCE_ENERGY)
                         if (valuables.length){
                             creep.memory.target = struct.id
-                            creep.memory.resource = valuables[0]
+                            creep.memory.resource = valuables[0] as ResourceConstant
                             break
                         }
                     }

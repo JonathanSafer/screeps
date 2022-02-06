@@ -5,11 +5,11 @@ import s = require("../config/settings")
 import rBr = require("./breaker")
 import motion = require("../lib/motion")
 import u = require("../lib/utils")
-import cN = require("../lib/creepNames")
+import { cN, BodyType } from "../lib/creepNames"
 
 const rSB = {
     name: cN.SPAWN_BUILDER_NAME,
-    type: "spawnBuilder",
+    type: BodyType.spawnBuilder,
     target: 0,
 
     /** @param {Creep} creep **/
@@ -34,11 +34,11 @@ const rSB = {
             motion.newMove(creep, Game.spawns[city].pos, 10)
             return
         }
-        if (Memory.flags.claimRally && !creep.memory.rally){
+        if (Memory.flags.claimRally && !creep.memory.hasRally){
             const flag = Memory.flags.claimRally
             motion.newMove(creep, new RoomPosition(flag.x, flag.y, flag.roomName))
             if (flag.x == creep.pos.x && flag.y == creep.pos.y && flag.roomName == creep.pos.roomName){
-                creep.memory.rally = true
+                creep.memory.hasRally = true
             }
             return
         }

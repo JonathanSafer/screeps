@@ -2,7 +2,7 @@ import u = require("./utils")
 import sq = require("./spawnQueue")
 import rU = require("./roomUtils")
 import a = require("./actions")
-import cN = require("./creepNames")
+import { cN } from "../lib/creepNames"
 
 const cU = {
 

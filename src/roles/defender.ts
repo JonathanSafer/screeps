@@ -2,7 +2,7 @@ import a = require("../lib/actions")
 import motion = require("../lib/motion")
 import rH = require("./harasser")
 import settings = require("../config/settings")
-import cN = require("../lib/creepNames")
+import { cN, BodyType } from "../lib/creepNames"
 
 const CreepState = {
     START: 1,
@@ -14,7 +14,7 @@ const CS = CreepState
 
 const rD = {
     name: cN.DEFENDER_NAME,
-    type: "defender",
+    type: BodyType.defender,
     boosts: [RESOURCE_CATALYZED_GHODIUM_ALKALIDE,
         RESOURCE_CATALYZED_ZYNTHIUM_ALKALIDE, RESOURCE_CATALYZED_LEMERGIUM_ALKALIDE, 
         RESOURCE_CATALYZED_KEANIUM_ALKALIDE],

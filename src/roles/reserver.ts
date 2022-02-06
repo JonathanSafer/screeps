@@ -1,10 +1,10 @@
 import motion = require("../lib/motion")
 import settings = require("../config/settings")
-import cN = require("../lib/creepNames")
+import { cN, BodyType } from "../lib/creepNames"
 
 const rRr = {
     name: cN.RESERVER_NAME,
-    type: "reserver",
+    type: BodyType.reserver,
    
     run: function(creep: Creep) {
         const targetRoom = creep.memory.flag

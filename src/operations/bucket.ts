@@ -3,7 +3,7 @@ import observer = require("../buildings/observer")
 import u = require("../lib/utils")
 import rp = require("../managers/roomplan")
 import cU = require("../lib/creepUtils")
-import cN = require("../lib/creepNames")
+import { cN } from "../lib/creepNames"
 
 const b = {
     SIZE: 10000, // 10K constant cpu bucket size

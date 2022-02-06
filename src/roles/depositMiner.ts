@@ -4,11 +4,11 @@ import motion = require("../lib/motion")
 import u = require("../lib/utils")
 import cU = require("../lib/creepUtils")
 import rPM = require("./powerMiner")
-import cN = require("../lib/creepNames")
+import { cN, BodyType } from "../lib/creepNames"
 
 const rDM = {
     name: cN.DEPOSIT_MINER_NAME,
-    type: "depositMiner",
+    type: BodyType.depositMiner,
     target: 0,
     boosts: [RESOURCE_CATALYZED_UTRIUM_ALKALIDE, RESOURCE_CATALYZED_KEANIUM_ACID],
 

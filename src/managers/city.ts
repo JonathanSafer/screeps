@@ -28,7 +28,7 @@ import e = require("../operations/error")
 import rQr = require("../roles/qrCode")
 import rp = require("./roomplan")
 import rRe = require("../roles/repairer")
-import cN = require("../lib/creepNames")
+import { cN, BodyType } from "../lib/creepNames"
 
 
 function makeCreeps(role: CreepRole, city: string, unhealthyStore=false, creepWantsBoosts=false, flag = null) {
@@ -672,7 +672,7 @@ function updateBuilder(rcl, memory, spawn: StructureSpawn) {
 }
 
 function updateRunner(creeps: Creep[], spawn, extensions, memory, rcl, emergencyTime) {
-    if (rcl == 8 && !emergencyTime && Game.cpu.bucket < settings.mineralMining) {
+    if (rcl == 8 && !emergencyTime && Game.cpu.bucket < settings.bucket.mineralMining) {
         memory[rR.name] = 0
         return
     }
@@ -683,7 +683,7 @@ function updateRunner(creeps: Creep[], spawn, extensions, memory, rcl, emergency
     if(extensions < 10 && Game.gcl.level == 1) totalDistance = totalDistance * 1.5//for when there are no roads
     const minerEnergyPerTick = SOURCE_ENERGY_CAPACITY/ENERGY_REGEN_TIME
     const energyProduced = 2 * totalDistance * minerEnergyPerTick
-    const energyCarried = types.store(types.getRecipe("runner", spawn.room.energyCapacityAvailable, spawn.room))
+    const energyCarried = types.store(types.getRecipe(BodyType.runner, spawn.room.energyCapacityAvailable, spawn.room))
     memory[rR.name] = Math.min(settings.max.runners, Math.max(Math.ceil(energyProduced / energyCarried), minRunners))
     if(rcl >= 5){
         const upgraders = _.filter(creeps, creep => creep.memory.role == rU.name).length

@@ -1,5 +1,5 @@
 
-const cN = {
+export const cN = {
     FERRY_NAME: "ferry",
     DEFENDER_NAME: "defender",
     TRANSPORTER_NAME: "transporter",
@@ -25,4 +25,31 @@ const cN = {
     BRICK_NAME: "brick"
 }
 
-export = cN
+export const enum BodyType {
+    brick,
+    reserver,
+    scout,
+    quad,
+    runner,
+    miner,
+    normal,
+    transporter,
+    builder,
+    defender,
+    unclaimer,
+    harasser,
+    repairer,
+    spawnBuilder,
+    trooper,
+    ferry,
+    breaker,
+    medic,
+    powerMiner,
+    basic,
+    lightMiner,
+    erunner,
+    claimer,
+    robber,
+    mineralMiner,
+    depositMiner
+}

@@ -1,9 +1,9 @@
 import rC = require("./claimer")
-import cN = require("../lib/creepNames")
+import { cN, BodyType } from "../lib/creepNames"
 
 const rUC = {
     name: cN.UNCLAIMER_NAME,
-    type: "unclaimer",
+    type: BodyType.unclaimer,
 
     /** @param {Creep} creep **/
     run: function(creep) {

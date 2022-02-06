@@ -1,10 +1,10 @@
 import actions = require("../lib/actions")
 import sq = require("../lib/spawnQueue")
-import cN = require("../lib/creepNames")
+import { cN, BodyType } from "../lib/creepNames"
 
 const rF = {
     name: cN.FERRY_NAME,
-    type: "ferry",
+    type: BodyType.ferry,
     target: 0,
     TERMINAL_MAX_MINERAL_AMOUNT: 9000,
     FERRY_CARRY_AMOUNT: 1000,
@@ -307,7 +307,7 @@ const rF = {
         if(storage && Object.keys(storage.store).length > 1){
             for(const mineral of Object.keys(storage.store)){
                 if(creep.room.terminal.store[mineral] < rF.TERMINAL_MAX_MINERAL_AMOUNT - rF.FERRY_CARRY_AMOUNT){
-                    creep.memory.mineral = mineral
+                    creep.memory.mineral = mineral as ResourceConstant
                     return 2
                 }
             }
@@ -315,7 +315,7 @@ const rF = {
         if(storage){
             for(const mineral of Object.keys(creep.room.terminal.store)){
                 if(creep.room.terminal.store[mineral] > rF.TERMINAL_MAX_MINERAL_AMOUNT && mineral != RESOURCE_ENERGY){
-                    creep.memory.mineral = mineral
+                    creep.memory.mineral = mineral as ResourceConstant
                     return 6 
                 }
             }
@@ -325,8 +325,8 @@ const rF = {
             if(transfer.length){
                 for(let i = 0; i < transfer.length; i++){
                     if(transfer[i][1] === 0){//move produce from factory to terminal
-                        creep.memory.mineral = transfer[i][0]
-                        creep.memory.quantity = transfer[i][2]
+                        creep.memory.mineral = transfer[i][0] as ResourceConstant
+                        creep.memory.quantity = transfer[i][2] as number
                         creep.memory.labNum = i //use labNum as index
                         creep.memory.lab = _.find(creep.room.find(FIND_MY_STRUCTURES), structure => structure.structureType == STRUCTURE_FACTORY).id as Id<StructureFactory>
                         return 11
@@ -334,8 +334,8 @@ const rF = {
                     if(transfer[i][1] === 1){//move component from terminal to factory OR request mineral if no mineral request
                         //if compenent that is needed is not in terminal, do not request, component will be delivered by empire manager
                         if(creep.room.terminal.store[transfer[i][0]] >= transfer[i][2]){ 
-                            creep.memory.mineral = transfer[i][0]
-                            creep.memory.quantity = transfer[i][2]
+                            creep.memory.mineral = transfer[i][0] as ResourceConstant
+                            creep.memory.quantity = transfer[i][2] as number
                             creep.memory.labNum = i
                             creep.memory.lab = _.find(creep.room.find(FIND_MY_STRUCTURES), structure => structure.structureType == STRUCTURE_FACTORY).id as Id<StructureFactory>
                             return 12

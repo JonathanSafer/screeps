@@ -1,10 +1,10 @@
 import motion = require("../lib/motion")
 import a = require("../lib/actions")
-import cN = require("../lib/creepNames")
+import { cN, BodyType } from "../lib/creepNames"
 
 const rBk = {
     name: cN.BRICK_NAME,
-    type: "brick",
+    type: BodyType.brick,
    
     run: function(creep: Creep) {
         const targetRoom = creep.memory.flag

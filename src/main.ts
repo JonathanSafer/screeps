@@ -39,7 +39,7 @@ export function loop() {
     "use strict"
     profiler.wrap(function () {
         RawMemory.setActiveSegments([])
-        global.Tmp = []
+        global.Tmp = {}
         data.updateData()
         er.reset()
         if (Game.cpu.bucket < 50 && Game.shard.name != "shard1" && Game.time > 50){

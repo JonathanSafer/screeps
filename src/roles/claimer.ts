@@ -1,9 +1,9 @@
 import motion = require("../lib/motion")
-import cN = require("../lib/creepNames")
+import { cN, BodyType } from "../lib/creepNames"
 
 const rC = {
     name: cN.CLAIMER_NAME,
-    type: "claimer",
+    type: BodyType.claimer,
 
     /** @param {Creep} creep **/
     run: function(creep) {

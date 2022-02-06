@@ -1,10 +1,10 @@
 import a = require("../lib/actions")
 import roomU = require("../lib/roomUtils")
-import cN = require("../lib/creepNames")
+import { cN, BodyType } from "../lib/creepNames"
 
 const rMM = {
     name: cN.MINERAL_MINER_NAME,
-    type: "mineralMiner",
+    type: BodyType.mineralMiner,
 
     run: function(creep: Creep) {
         if(!creep.memory.suicideTime && creep.memory.source){

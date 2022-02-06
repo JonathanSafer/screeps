@@ -1,10 +1,13 @@
 /* eslint-disable no-shadow */
 import _ = require("lodash")
+import { BodyType } from "./lib/creepNames"
+export { BodyType } from "./lib/creepNames"
+
 
 // memory types for our memory structure
 declare global {
     interface CreepRole {
-        type?: string
+        type?: BodyType
         name?: string
         boosts?: string
         target?: number
@@ -31,8 +34,13 @@ declare global {
         controllerDistance?: number
     }
 
-    const Cache: ScreepsCache
+    var Cache: ScreepsCache
     type ScreepsCache = RoomDictionary & { 
+        bucket?: {
+            waste?: number
+            amount?: number
+            fillRate?: number
+        }
         time?: number
         dataString?: string
         boostCheckTime?: number
@@ -40,6 +48,7 @@ declare global {
         enemies?: {
             [key: string]: number
         }
+        roomsToScan?: Set<string>
     }
     
     interface RoomDictionary {
@@ -47,9 +56,12 @@ declare global {
     }
     
     interface RoomCache {
+        damageMatrix?: CostMatrix
+        quadMatrix?: CostMatrix
         links?: LinksCache
         factory?: Id<StructureFactory>
         container?: Id<StructureContainer>
+        enemy?: boolean
     }
     
     interface LinksCache {
@@ -59,41 +71,73 @@ declare global {
     }
 
     type BodyDictionary = {
-        [key in BodyType]: BodyPartConstant[]
-    }
-
-    enum BodyType {
-        brick,
-        reserver,
-        scout,
-        quad,
-        runner,
-        miner,
-        normal,
-        transporter,
-        builder,
-        defender,
-        unclaimer,
-        harasser,
-        repairer,
-        spawnBuilder,
-        trooper,
-        ferry,
-        breaker,
-        medic,
-        powerMiner,
-        basic,
-        lightMiner,
-        erunner,
-        claimer,
-        robber,
-        mineralMiner,
-        depositMiner
+        [key in BodyType]?: BodyPartConstant[]
     }
     
     // screeps updated memory map types
-    interface Memory { [key: string]: string }
+    interface Memory { 
+        data?: {
+            lastReset: number
+            section: number
+        }
+        stats?: {
+            [key: string]: number
+        }
+        roomsSelected?: string[]
+        gameState?: number
+        counter?: number
+        avgCpu?: number
+        sellPoint?: {
+            [key: string]: number
+        }
+        remotes?: {
+            [key: string]: number
+        }
+        profiler?: {
+            disableTick: number
+            enabledTick: number
+            filter: string
+            type: string
+            map: {
+                [key: string]: {
+                    calls: number
+                    time: number
+                }
+            }
+            totalTime?: number
+        }
+     }
     interface CreepMemory {
+        building?: boolean
+        hasRally?: boolean
+        paired?: boolean
+        resource?: ResourceConstant
+        flagDistance?: number
+        repPower?: number
+        miningPos?: RoomPosition
+        moveStatus?: string
+        spawnBuffer?: number
+        link?: Id<StructureLink>
+        construction?: boolean
+        tolerance?: number
+        safeTime?: number
+        rally?: RoomPosition
+        captain?: boolean
+        state?: number
+        row?: number
+        aware?: boolean
+        suicideTime?: number
+        anger?: number
+        dormant?: boolean
+        respawnTime?: number
+        reinforced?: boolean
+        quantity?: number
+        labNum?: number
+        reactor?: boolean
+        nuker?: Id<StructureNuker>
+        mineral?: ResourceConstant
+        nextCheckTime?: number
+        path?: string
         repair?: Id<Structure>
         pullee?: Id<Creep>
         target?: Id<RoomObject> // overused
@@ -125,14 +169,26 @@ declare global {
         tug?: boolean
         juicer?: boolean
     }
-    interface PowerCreepMemory { [name: string]: string }
+    interface PowerCreepMemory { 
+        state?: number
+        [name: string]: string
+     }
     interface FlagMemory { 
+        startTime?: number
         boosted?: boolean
         roomName?: string
+        harvested?: number
+        x?: number
+        y?: number
+        removeTime?: number
     }
     interface SpawnMemory {
+        spawnAvailability?: number
+        towersActive?: boolean
+        powerRooms?: string[]
         powerSpawn?: Id<StructurePowerSpawn>
         sq?: QueuedCreep[]
+        upgradeLinkPos?: number
         sources?: {
             [name: Id<Source>]: RoomPosition
         }
@@ -166,6 +222,12 @@ declare global {
         boost?: MineralCompoundConstant | MineralConstant
     }
     interface RoomMemory { 
+        termUsed?: number | boolean
+        plan?: {
+            x?: number
+            y?: number
+            roomName?: string
+        }
         city?: string
     }
     interface QueuedCreep {
@@ -177,29 +239,48 @@ declare global {
         roomName?: string
     }
     
-    interface Game { [key: string]: string }
+    interface Game { 
+        profiler: {
+            stream: (d: number, f?: string) => void
+            email: (d: number, f?: string) => void
+            profile: (d: number, f?: string) => void
+            background: (f: string) => void
+            restart: () => void
+            reset: () => void
+            output: (d: number) => string
+        }
+     }
     
-    const PServ: boolean
-    const Tmp: Tmp
-    const Log: Log
+    var PServ: boolean
+    var Log: Log
+    var Tmp: Tmp
     type Tmp = TmpDict & { 
         roomsByCity?: _.Dictionary<Room[]>
         creepsByCity?: _.Dictionary<Creep[]>
         myCities?: Room[]
     }
     interface TmpDict {
-        [name: string]: string 
+        [name: string]: {
+            attacks?: Array<AttackData>
+        }
+    }
+    interface AttackData {
+        x: number
+        y: number
+        damage: number
     }
 
-    interface Log { [name: string]: string }
+    interface Log { [name: string]: (name: string) => void }
     interface Position {
         x?: number
         y?: number
     }
     // Only defined in screeps sim
-    const performance: Performance
+    var performance: Performance
     interface Performance {
         now: () => number
     }
 }
+
+
 

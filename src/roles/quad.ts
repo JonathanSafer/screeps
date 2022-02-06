@@ -6,7 +6,7 @@ import a = require("../lib/actions")
 import T = require("../buildings/tower")
 import settings = require("../config/settings")
 import motion = require("../lib/motion")
-import cN = require("../lib/creepNames")
+import { cN, BodyType } from "../lib/creepNames"
 
 const CreepState = {
     START: 1,
@@ -21,7 +21,7 @@ const CS = CreepState
 
 const rQ = {
     name: cN.QUAD_NAME,
-    type: "quad",
+    type: BodyType.quad,
     boosts: [RESOURCE_CATALYZED_GHODIUM_ALKALIDE, RESOURCE_CATALYZED_ZYNTHIUM_ALKALIDE,
         RESOURCE_CATALYZED_LEMERGIUM_ALKALIDE, RESOURCE_CATALYZED_KEANIUM_ALKALIDE],
 
@@ -79,7 +79,7 @@ const rQ = {
     },
 
     reform: function(quad, creep: Creep){
-        const matrix = rQ.getRoomMatrix(creep.pos.roomName)
+        const matrix = rQ.getRoomMatrix(creep.pos.roomName) as CostMatrix
         let formPoint = null
         let range = 0
         while(!formPoint){
@@ -137,7 +137,7 @@ const rQ = {
             if(creep.memory.rally){
                 formPos = new RoomPosition(creep.memory.rally.x, creep.memory.rally.y, creep.memory.rally.roomName)
             } else {
-                const matrix = rQ.getRoomMatrix(creep.pos.roomName)
+                const matrix = rQ.getRoomMatrix(creep.pos.roomName) as CostMatrix
                 let startPos = null
                 const flagName = creep.memory.flag || creep.memory.city + "quadRally"
                 if(Memory.flags[flagName]){

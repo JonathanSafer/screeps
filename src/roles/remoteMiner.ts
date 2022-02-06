@@ -3,7 +3,7 @@ import motion = require("../lib/motion")
 import settings = require("../config/settings")
 import cU = require("../lib/creepUtils")
 import u = require("../lib/utils")
-import cN = require("../lib/creepNames")
+import { cN, BodyType } from "../lib/creepNames"
 
 const rM = {
     name: cN.REMOTE_MINER_NAME,

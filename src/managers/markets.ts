@@ -380,7 +380,7 @@ const markets = {
 
     buyMins: function(city, minerals){
         const terminal = city.terminal
-        for(const i = 0; i < minerals.length; i++){
+        for(let i = 0; i < minerals.length; i++){
             const mineralAmount = terminal.store[minerals[i]]
             if(mineralAmount < 8000){
                 const amountNeeded = 8000 - mineralAmount

@@ -5,11 +5,11 @@ import u = require("../lib/utils")
 import cU = require("../lib/creepUtils")
 import rBr = require("./breaker")
 import settings = require("../config/settings")
-import cN = require("../lib/creepNames")
+import { cN, BodyType } from "../lib/creepNames"
 
 const rPM = {
     name: cN.POWER_MINER_NAME,
-    type: "powerMiner",
+    type: BodyType.powerMiner,
     boosts: [RESOURCE_CATALYZED_GHODIUM_ALKALIDE, RESOURCE_CATALYZED_UTRIUM_ACID],
 
     run: function(creep: Creep) {
@@ -113,7 +113,8 @@ const rPM = {
             }
             const runnersNeeded = Math.ceil(bank.power/1600)
             const route = motion.getRoute(Game.spawns[creep.memory.city].pos.roomName, bank.pos.roomName, true)
-            const distance  = route != -2 ? route.length * 50 : Log.error(`PowerMiner ${creep.name} unable to find route`)
+            if (route == -2) throw Error(`PowerMiner ${creep.name} unable to find route`)
+            const distance  = route.length * 50
             const summonTime = distance + (Math.ceil(runnersNeeded/CONTROLLER_STRUCTURES[STRUCTURE_SPAWN][8]) * MAX_CREEP_SIZE * CREEP_SPAWN_TIME)
             creep.memory.bankInfo.summonHits = summonTime * damage
             creep.memory.bankInfo.runnersNeeded = runnersNeeded

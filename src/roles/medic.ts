@@ -1,9 +1,9 @@
 import actions = require("../lib/actions")
-import cN = require("../lib/creepNames")
+import { cN, BodyType } from "../lib/creepNames"
 
 const rMe = {
     name: cN.MEDIC_NAME,
-    type: "medic",
+    type: BodyType.medic,
     boosts: [RESOURCE_CATALYZED_GHODIUM_ALKALIDE, 
         RESOURCE_CATALYZED_ZYNTHIUM_ALKALIDE, RESOURCE_CATALYZED_LEMERGIUM_ALKALIDE],
 

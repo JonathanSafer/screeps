@@ -5,11 +5,11 @@ import rU = require("./upgrader")
 import template = require("../config/template")
 import rD = require("./defender")
 import motion = require("../lib/motion")
-import cN = require("../lib/creepNames")
+import { cN, BodyType } from "../lib/creepNames"
 
 const rB = {
     name: cN.BUILDER_NAME,
-    type: "builder",
+    type: BodyType.builder,
     boosts: [RESOURCE_CATALYZED_LEMERGIUM_ACID],
 
     /** @param {Creep} creep **/

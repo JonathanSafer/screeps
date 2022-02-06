@@ -6,11 +6,11 @@ import rMe = require("./medic")
 import motion = require("../lib/motion")
 import actions = require("../lib/actions")
 import rQ = require("./quad")
-import cN = require("../lib/creepNames")
+import { cN, BodyType } from "../lib/creepNames"
 
 const rBr = {
     name: cN.BREAKER_NAME,
-    type: "breaker",
+    type: BodyType.breaker,
     boosts: [RESOURCE_CATALYZED_GHODIUM_ALKALIDE,
         RESOURCE_CATALYZED_ZYNTHIUM_ALKALIDE, RESOURCE_CATALYZED_ZYNTHIUM_ACID],
 
@@ -244,12 +244,14 @@ const rBr = {
             const valuableStructures = rQ.getValuableStructures(structures)
             if (valuableStructures.length) {
                 const target = rBr.getTarget(creep, valuableStructures, structures)
-                creep.memory.target = target ? target.id : Log.error(`Error target not found ${creep.name}`)
+                if (!target) throw Error(`Error target not found ${creep.name}`)
+                creep.memory.target = target.id
                 return
             }
             if (structures.length) {
                 const target = rBr.getTarget(creep, structures, structures)
-                creep.memory.target = target ? target.id : Log.error(`Error target not found ${creep.name}`)
+                if (!target) throw Error(`Error target not found ${creep.name}`)
+                creep.memory.target = target.id
                 return
             }
         }

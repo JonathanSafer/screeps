@@ -2,12 +2,12 @@ import actions = require("../lib/actions")
 import linkLib = require("../buildings/link")
 import motion = require("../lib/motion")
 import cU = require("../lib/creepUtils")
-import cN = require("../lib/creepNames")
+import { cN, BodyType } from "../lib/creepNames"
 
 
 const rU = {
     name: cN.UPGRADER_NAME,
-    type: "normal",
+    type: BodyType.normal,
     target: 0,
     boosts: [RESOURCE_CATALYZED_GHODIUM_ACID],
 

@@ -3,7 +3,7 @@ import u = require("../lib/utils")
 import sq = require("../lib/spawnQueue")
 import motion = require("../lib/motion")
 import roomU = require("../lib/roomUtils")
-import cN = require("../lib/creepNames")
+import { cN, BodyType } from "../lib/creepNames"
 
 const rT = {
     name: cN.TRANSPORTER_NAME,

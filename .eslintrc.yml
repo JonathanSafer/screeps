@@ -30,7 +30,8 @@ rules:
   semi: [error, never]
   quotes: error
   indent: error
-  no-shadow: error
+  no-shadow: off
+  '@typescript-eslint/no-shadow': [error]
   prefer-rest-params: off
 plugins:
   - 'screeps'

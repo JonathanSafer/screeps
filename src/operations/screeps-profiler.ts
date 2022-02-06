@@ -179,7 +179,7 @@ function profileFunction(fn, functionName) {
 
 const Profiler = {
     results: {
-        stats: Array
+        stats: []
     },
 
     printProfile() {

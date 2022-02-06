@@ -435,7 +435,7 @@ const p = {
             }
             if (room.memory.plan) {
                 const plan = room.memory.plan
-                const spawnCount = 0
+                let spawnCount = 0
                 _.forEach(template.buildings, function(locations, structureType) {
                     locations.pos.forEach(location => {
                         const pos = {"x": plan.x + location.x - template.offset.x, 
@@ -942,10 +942,10 @@ const p = {
     },
 
     roomsSelected: function() {
-        let selected = Memory.rooms.selected
+        let selected = Memory.roomsSelected
         if (!selected) {
             selected = p.myRoomNames()
-            Memory.rooms.selected = selected
+            Memory.roomsSelected = selected
         }
         return selected
     },

@@ -1,7 +1,7 @@
 import sq = require("../lib/spawnQueue")
 import u = require("../lib/utils")
 import settings = require("../config/settings")
-import cN = require("../lib/creepNames")
+import { cN } from "../lib/creepNames"
 
 const m = {
 

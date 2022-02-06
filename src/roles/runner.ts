@@ -5,11 +5,11 @@ import cU = require("../lib/creepUtils")
 import motion = require("../lib/motion")
 import settings = require("../config/settings")
 import rU = require("./upgrader")
-import cN = require("../lib/creepNames")
+import { cN, BodyType } from "../lib/creepNames"
 
 const rR = {
     name: cN.RUNNER_NAME,
-    type: "runner",
+    type: BodyType.runner,
     target: 0,
 
     /** @param {Creep} creep **/

@@ -2,7 +2,7 @@ import u = require("./utils")
 import rU = require("./roomUtils")
 import settings = require("../config/settings")
 import template = require("../config/template")
-import cN = require("./creepNames")
+import { cN } from "../lib/creepNames"
 
 const m = {
     BoundingBox: class {

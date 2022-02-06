@@ -2,11 +2,11 @@ import u = require("../lib/utils")
 import motion = require("../lib/motion")
 import rB = require("./builder")
 import rR = require("./runner")
-import cN = require("../lib/creepNames")
+import { cN, BodyType } from "../lib/creepNames"
 
 const rRe = {
     name: cN.REPAIRER_NAME,
-    type: "repairer",
+    type: BodyType.repairer,
 
     /** @param {Creep} creep **/
     run: function(creep) {
