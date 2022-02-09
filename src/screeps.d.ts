@@ -26,7 +26,7 @@ declare global {
     }
 
     interface Room {
-        wallCosts?: number
+        wallCosts?: CostMatrix
     }
 
     interface CandidateData {

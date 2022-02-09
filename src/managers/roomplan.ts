@@ -504,7 +504,7 @@ const p = {
         mineralPos.createConstructionSite(STRUCTURE_EXTRACTOR)
     },
 
-    buildWalls: function(room, plan){
+    buildWalls: function(room: Room, plan){
         //first identify all locations to be walled, if there is a road there,
         //place a rampart instead. if there is a terrain wall don't make anything
         const startX = plan.x - template.wallDistance 
@@ -573,11 +573,11 @@ const p = {
                 maxOps: 1000,
                 maxRooms: 1,
                 roomCallback: function(roomName: string) {
-                    return !!Game.rooms[roomName].wallCosts
+                    return Game.rooms[roomName].wallCosts
                 }
             }
             for(const exitDirection of roomExits){
-                const exits = room.find(parseInt(exitDirection))
+                const exits = room.find(parseInt(exitDirection) as FindConstant) as Array<RoomPosition>
                 const path = PathFinder.search(origin, exits, searchSettings)
                 //if path is complete, we need a wall
                 if(!path.incomplete){
