@@ -164,8 +164,8 @@ const rF = {
                 }
                 break
             }
-            const lab = Game.getObjectById(creep.memory.lab)
-            if(lab instanceof StructureFactory || actions.withdraw(creep, lab, lab.mineralType) == 1 && lab.store[lab.mineralType] <= 1000){
+            const lab = Game.getObjectById(creep.memory.lab) as StructureLab
+            if(lab.mineralType == undefined || actions.withdraw(creep, lab, lab.mineralType) == 1 && lab.store[lab.mineralType] <= 1000){
                 const labInfo = Game.spawns[creep.memory.city].memory.ferryInfo.labInfo
                 if(creep.memory.reactor && labInfo.reactors[creep.memory.lab].fill == -1){
                     labInfo.reactors[creep.memory.lab].fill = 0
@@ -173,7 +173,7 @@ const rF = {
                     Game.spawns[creep.memory.city].memory.ferryInfo.labInfo.receivers[creep.memory.lab].fill = 0
                 }
             }
-            if(lab instanceof StructureFactory){
+            if(lab.mineralType == undefined){
                 creep.memory.mode = rF.getJob(creep)
             }
             break
