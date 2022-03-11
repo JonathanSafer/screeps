@@ -9,7 +9,7 @@ const b = {
     SIZE: 10000, // 10K constant cpu bucket size
 
     manage: function() {
-        Memory.avgCpu = Memory.avgCpu == undefined ? (Memory.avgCpu * .999) + (Game.cpu.getUsed() * .001): 0
+        Memory.avgCpu = Memory.avgCpu == undefined ? 0 : (Memory.avgCpu * .999) + (Game.cpu.getUsed() * .001)
         if(Game.time % 1000 == 2){
             const cities = u.getMyCities()
             if(Memory.avgCpu/Game.cpu.limit > settings.removeRemote)
