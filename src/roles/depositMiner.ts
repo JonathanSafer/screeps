@@ -111,7 +111,7 @@ const rDM = {
             if(cooldown > expected || dangerous){
                 //call in harasser
                 const flagName = u.generateFlagName(creep.memory.city + "harass")
-                if(!_.find(Memory.flags, flag => flag.roomName == creep.room.name))
+                if(!_.find(Object.keys(Memory.flags), flag => Memory.flags[flag].roomName == creep.room.name && flag.includes("harass")))
                     u.placeFlag(flagName, new RoomPosition(25, 25, creep.room.name))
             }
         }
