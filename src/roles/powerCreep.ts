@@ -209,13 +209,14 @@ const rPC = {
     },
 
     hasSourceUpdate: function(creep) {
+        const city = creep.memory.city + "0"
         // powerup runs out every 300 ticks
         // get all sources
         // if there is no effect on source then choose it
         if(!creep.powers[PWR_REGEN_SOURCE]){
             return false
         }
-        const sourceIds = Object.keys(Game.spawns[creep.memory.city + "0"].memory.sources) as Id<Source>[]
+        const sourceIds = Object.keys(_.filter(Game.spawns[city].memory.sources, s => s.roomName == creep.memory.city)) as Id<Source>[]
         for (const sourceId of sourceIds) {
             const source = Game.getObjectById(sourceId)
             if (source && (!source.effects || source.effects.length == 0 ||
@@ -228,23 +229,29 @@ const rPC = {
     },
 
     canOperateFactory: function(creep: Creep) {
-        const factory = _.find(creep.room.find(FIND_MY_STRUCTURES), struct => struct.structureType == STRUCTURE_FACTORY) as StructureFactory
         const city = creep.memory.city + "0"
         const spawn = Game.spawns[city]
         const isRunning = spawn && spawn.memory.ferryInfo.factoryInfo.produce !== "dormant"
+        const factory = _.find(spawn.room.find(FIND_MY_STRUCTURES), struct => struct.structureType == STRUCTURE_FACTORY) as StructureFactory
         const isNew = factory && !factory.level
         const needsBoost = (factory && factory.cooldown < 30 && isRunning) || isNew
         return rPC.canOperate(creep, factory, PWR_OPERATE_FACTORY, needsBoost)
     },
 
     canOperateObserver: function(creep: Creep) {
-        const observer = _.find(creep.room.find(FIND_MY_STRUCTURES), struct => struct.structureType == STRUCTURE_OBSERVER)
+        const city = creep.memory.city + "0"
+        const spawn = Game.spawns[city]
+        if(!spawn) return false
+        const observer = _.find(spawn.room.find(FIND_MY_STRUCTURES), struct => struct.structureType == STRUCTURE_OBSERVER)
         return rPC.canOperate(creep, observer, PWR_OPERATE_OBSERVER, true)
     },
 
     canOperateExtension: function(creep: Creep) {
-        return rPC.canOperate(creep, creep.room.storage, PWR_OPERATE_EXTENSION,
-            creep.room.energyAvailable < 0.8 * creep.room.energyCapacityAvailable)
+        const city = creep.memory.city + "0"
+        const spawn = Game.spawns[city]
+        if(!spawn) return false
+        return rPC.canOperate(creep, spawn.room.storage, PWR_OPERATE_EXTENSION,
+            spawn.room.energyAvailable < 0.8 * spawn.room.energyCapacityAvailable)
     },
 
     canOperateSpawn: function(creep: Creep) {
@@ -261,7 +268,7 @@ const rPC = {
 
     canOperateController: function(creep) {
         if(Game.spawns[creep.memory.city + "0"].memory[rU.name] > 0){
-            return rPC.canOperate(creep, creep.room.controller, PWR_OPERATE_CONTROLLER, true)
+            return rPC.canOperate(creep, Game.spawns[creep.memory.city + "0"].room.controller, PWR_OPERATE_CONTROLLER, true)
         } else {
             return false
         }
