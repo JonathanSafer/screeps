@@ -53,6 +53,7 @@ const rRe = {
                 if(Game.rooms[rooms[i]])
                     targets = targets.concat(Game.rooms[rooms[i]].find(FIND_MY_CONSTRUCTION_SITES, { filter: s => s.structureType == STRUCTURE_ROAD} ))
             }
+            targets = targets.concat(creep.room.find(FIND_MY_CONSTRUCTION_SITES, { filter: s => s.structureType == STRUCTURE_ROAD} ))
             if(targets.length){
                 creep.memory.build = _.min(targets, s => u.getRangeTo(creep.pos, s.pos)).id
                 return true
@@ -79,7 +80,8 @@ const rRe = {
         let targets: Structure[] = []
         for(let i = 0; i < rooms.length; i++)
             if(Game.rooms[rooms[i]])
-                targets = targets.concat(Game.rooms[rooms[i]].find(FIND_STRUCTURES, { filter : s => s.structureType != STRUCTURE_WALL && s.hits && s.hits/s.hitsMax < 0.3 }))
+                targets = targets.concat(Game.rooms[rooms[i]].find(FIND_STRUCTURES, { filter : s => s.structureType != STRUCTURE_WALL && s.structureType != STRUCTURE_RAMPART && s.hits && s.hits/s.hitsMax < 0.3 }))
+        targets = targets.concat(creep.room.find(FIND_STRUCTURES, { filter : s => s.structureType != STRUCTURE_WALL && s.structureType != STRUCTURE_RAMPART && s.hits && s.hits/s.hitsMax < 0.3 }))
         if(targets.length){
             return _.min(targets, s => u.getRangeTo(creep.pos, s.pos))
         }
