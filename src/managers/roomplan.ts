@@ -261,6 +261,33 @@ const p = {
         return remote
     },
 
+    reassessRemote: function(roomName, spawn){
+        const roomInfo = Cache.roomData[roomName]
+        if(!roomInfo) 
+            return -1
+        if(roomInfo.rcl || (roomInfo.sT && roomInfo.sT > Game.time))
+            return 100000 //very high number bc this remote should've been dropped anyway
+        let totalDistance = 0
+        for(const source in roomInfo.src){
+            const sourcePos = u.unpackPos(roomInfo.src[source], roomName)
+            const result = PathFinder.search(spawn.pos, {pos: sourcePos, range: 1}, {
+                plainCost: 1,
+                swampCost: 1,
+                maxOps: 20000,
+                roomCallback: function(rN){
+                    const safe = Memory.remotes[rN] 
+                        || (Cache.roomData[rN] && Cache.roomData[rN].own == settings.username)
+                        || u.isHighway(rN)
+                        || rN == roomName
+                    if(!safe) return false
+                }
+            })
+            if(result.incomplete) return 100000
+            totalDistance += result.cost
+        }
+        return totalDistance/Object.keys(roomInfo.src).length
+    },
+
     scoreRemoteRoom: function(roomName, spawn){
         const roomInfo = Cache.roomData[roomName]
         if(!roomInfo || roomInfo.rcl || !roomInfo.src || !Object.keys(roomInfo.src).length 
@@ -322,7 +349,7 @@ const p = {
             const roomInfo = Cache.roomData[roomName]
             if(roomInfo.own == settings.username)
                 continue
-            const score = p.scoreRemoteRoom(roomName, spawn)
+            const score = p.reassessRemote(roomName, spawn)
             if(score > 0 && (!remote || score > remote.score))
                 remote = {roomName: roomName, homeName: room.name, score: score}
         }
