@@ -809,7 +809,7 @@ function updateRemotes(city: string){
         Log.info(`Spawn pressure too high in ${spawn.room.name}, dropping least profitable remote...`)
         const worstRemote = rp.findWorstRemote(spawn.room)
         if(worstRemote){
-            Log.info(`Remote ${worstRemote} removed from ${spawn.room.name}`)
+            Log.info(`Remote ${worstRemote.roomName} removed from ${spawn.room.name}`)
             rp.removeRemote(worstRemote, spawn.room.name)
         } else {
             Log.info("No remotes to remove")
