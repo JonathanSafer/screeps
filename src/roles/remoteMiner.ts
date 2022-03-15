@@ -184,6 +184,8 @@ const rM = {
     findStruct: function(creep: Creep, source: Source, structureType, construction = false){
         const type = construction ? LOOK_CONSTRUCTION_SITES : LOOK_STRUCTURES
         const memory = Game.spawns[creep.memory.city].memory
+        if(!memory.sources[source.id])
+            return null
         const structPos = memory.sources[source.id][structureType + "Pos"]
         if(structPos){
             const realPos = new RoomPosition(Math.floor(structPos/50), structPos%50, source.pos.roomName)
