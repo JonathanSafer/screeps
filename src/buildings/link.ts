@@ -61,7 +61,7 @@ const rL = {
 
         // Make transfers
         for (const sourceLink of sourceLinks) {
-            if (sourceLink.store.getUsedCapacity(RESOURCE_ENERGY) <= 
+            if (!sourceLink || sourceLink.store.getUsedCapacity(RESOURCE_ENERGY) <= 
                 sourceLink.store.getCapacity(RESOURCE_ENERGY) * 0.5) {
                 continue // sourceLink isn't full yet
             }
