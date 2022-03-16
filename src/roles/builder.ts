@@ -62,10 +62,10 @@ const rB = {
             }
         }
         if(!creep.memory.nextCheckTime || creep.memory.nextCheckTime < Game.time){//occasionally scan for construction sites
-            //if room is under siege (determined by presence of a defender),
+            //if room is under siege (determined by presence of a defender OR active towers),
             // ignore any construction sites outside of wall limits
             let targets = Game.spawns[creep.memory.city].room.find(FIND_MY_CONSTRUCTION_SITES)
-            const siege = _.find(creep.room.find(FIND_MY_CREEPS), c => c.memory.role == rD.name) 
+            const siege = (_.find(creep.room.find(FIND_MY_CREEPS), c => c.memory.role == rD.name) || Game.spawns[creep.memory.city].memory.towersActive)
                 && !Game.spawns[creep.memory.city].room.controller.safeMode
             if(siege){
                 const plan = creep.room.memory.plan
