@@ -104,7 +104,7 @@ const u = {
     },
 
     findMultiRoomPath: function(startPos, endPos) {
-        return PathFinder.search(startPos, {pos: endPos, range: 1 }, 
+        return PathFinder.search(startPos, {pos: endPos, range: 24 }, 
             u.highwayMoveSettings(10000, 1, startPos, endPos))
     },
 

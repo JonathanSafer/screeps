@@ -29,7 +29,10 @@ const rRo = {
             const flagPos = new RoomPosition(flag.x, flag.y, flag.roomName)
             if(!creep.memory.flagDistance){
                 const route = motion.getRoute(Game.spawns[creep.memory.city].pos.roomName, flag.roomName, true)
-                if (route == -2) throw Error(`Invalid route for creep ${creep.name}`)
+                if (route == -2) {
+                    creep.memory.flagDistance = 1000
+                    return
+                }
                 creep.memory.flagDistance = route.length * 50
             }
             if(Game.rooms[flag.roomName]){

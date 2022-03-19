@@ -146,7 +146,7 @@ function updateCountsCity(city, creeps, rooms, claimRoom, unclaimRoom) {
     const logisticsTime = rcl8 && !emergencyTime ? 500 : 50
 
     // Always update defender
-    updateDefender(spawn, rcl)
+    updateDefender(spawn, rcl, creeps)
     updateQR(spawn, creeps)
 
     if(Game.time % 200 == 0){
@@ -462,7 +462,7 @@ function updateColonizers(city, memory, claimRoom, unclaimRoom) {
 }
 
 // Automated defender count for defense
-function updateDefender(spawn: StructureSpawn, rcl) {
+function updateDefender(spawn: StructureSpawn, rcl, creeps) {
     if (Game.time % 30 != 0) {
         return
     }
@@ -472,27 +472,38 @@ function updateDefender(spawn: StructureSpawn, rcl) {
             spawn.memory[rD.name] = Math.ceil(room.find(FIND_HOSTILE_CREEPS).length/2)
             return
         }
-        const hostiles = room.find(FIND_HOSTILE_CREEPS)
-        for(const hostile of hostiles){
-            const hasTough = hostile.getActiveBodyparts(TOUGH) > 0
-            const isBoosted = _(hostile.body).find(part => part.boost)
-            if (isBoosted && (hasTough || isBoosted.boost.toString().includes("X") || rcl < 8)) {
-                //add a defender to spawn queue if we don't have enough
-                //make sure to count spawned defenders as well as queued
-                const spawns = room.find(FIND_MY_SPAWNS)
-                const spawning = _.filter(spawns, s => s.spawning && Game.creeps[s.spawning.name].memory.role == rD.name).length
-                const defendersNeeded = Math.ceil(hostiles.length/2)
-                const liveCount = _.filter(room.find(FIND_MY_CREEPS), c => c.memory.role == rD.name).length
-                const queued = sq.getCounts(spawn)[rD.name] || 0
-                if(spawning + liveCount + queued < defendersNeeded){
-                    sq.schedule(spawn, rD.name, true)
-                }
-                return
-            }
+        const hostiles = _.filter(room.find(FIND_HOSTILE_CREEPS), hostile => _(hostile.body).find(part => part.boost) && 
+            (hostile.getActiveBodyparts(TOUGH) > 0 || hostile.body.length == 50 || rcl < 8)).length
+        if(hostiles > 3){
+            //request quad from nearest ally
+            requestSupport(spawn, rcl, Math.floor(hostiles/4))
+        } else {
+            cU.scheduleIfNeeded(rD.name, Math.min(Math.floor(hostiles/2), 4), true, spawn, creeps)
         }
     } else {
         spawn.memory[rD.name] = 0
     }
+}
+
+function requestSupport(spawn, rcl, quadsNeeded){
+    let reinforceCity = null
+    const quadFlag = _.find(Object.keys(Memory.flags), flag => flag.includes("quadRally"))
+    if(quadFlag){
+        const index = quadFlag.indexOf("quadRally")
+        reinforceCity = quadFlag.substring(0, index)
+    }
+    if(!reinforceCity){
+        //find reinforce City
+        const closestRoom = chooseClosestRoom(u.getMyCities(), spawn.pos)
+        if(!closestRoom)
+            return
+        reinforceCity = closestRoom + "0"
+    }
+    u.placeFlag(reinforceCity + "quadRally", new RoomPosition(25, 25, spawn.room.name), 10000)
+    const otherSpawn = Game.spawns[reinforceCity]
+    const creeps = u.splitCreepsByCity()[reinforceCity]
+    cU.scheduleIfNeeded(rT.name, 2, false, otherSpawn, creeps)
+    cU.scheduleIfNeeded("quad", 4 * quadsNeeded, true, otherSpawn, creeps)
 }
 
 function cityFraction(cityName) {
