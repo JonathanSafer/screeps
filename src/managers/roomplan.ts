@@ -676,6 +676,7 @@ const p = {
     buildSourceLinks: function(room: Room) {
         const sources = room.find(FIND_SOURCES)
         const spawn = Game.spawns[room.name + "0"]
+        if(!spawn) return
         for(const source of sources){
             if(spawn.memory.sources[source.id][STRUCTURE_LINK + "Pos"]){
                 const pos = spawn.memory.sources[source.id][STRUCTURE_LINK + "Pos"]
