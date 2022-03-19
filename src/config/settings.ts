@@ -42,7 +42,7 @@ const settings = {
         resourceMining: 1000,
         repair: 3000, //repairing walls in a room
         processPower: 2200,
-        colony: 4000, // building new rooms
+        colony: 2000, // building new rooms
         upgrade: 7000,
         energyMining: 4000,
         powerMining: 5000,
