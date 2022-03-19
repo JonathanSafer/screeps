@@ -635,6 +635,7 @@ const p = {
 
     buildControllerLink: function(room: Room) {
         const spawn = Game.spawns[room.name + "0"]
+        if(!spawn) return
         if(spawn.memory.upgradeLinkPos){
             const pos = spawn.memory.upgradeLinkPos
             p.buildConstructionSite(room, STRUCTURE_LINK, new RoomPosition(Math.floor(pos/50), pos%50, room.name))
