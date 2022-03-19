@@ -244,13 +244,13 @@ const rBr = {
             const valuableStructures = rQ.getValuableStructures(structures)
             if (valuableStructures.length) {
                 const target = rBr.getTarget(creep, valuableStructures, structures)
-                if (!target) throw Error(`Error target not found ${creep.name}`)
+                if (!target) return
                 creep.memory.target = target.id
                 return
             }
             if (structures.length) {
                 const target = rBr.getTarget(creep, structures, structures)
-                if (!target) throw Error(`Error target not found ${creep.name}`)
+                if (!target) return
                 creep.memory.target = target.id
                 return
             }
