@@ -252,7 +252,6 @@ const rQ = {
         const everythingByRoom = info[1] as _.Dictionary<AllRoomStuff>
         const flagName = quad[0].memory.flag || quad[0].memory.city + "quadRally"
         const flag = Memory.flags[flagName]
-        const flagPos = new RoomPosition(flag.x, flag.y, flag.roomName)
 
         if(!flag || !rQ.isSafe(everythingByRoom, quad/*, flag.roomName*/) || creep.room.name == flag.roomName){
             creep.memory.safeTime = Game.time + 20
@@ -260,6 +259,7 @@ const rQ = {
             rQ.engage(creep)
             return
         }
+        const flagPos = new RoomPosition(flag.x, flag.y, flag.roomName)
 
         motion.newMove(quad[3], quad[2].pos, 0)
         if(quad[2].pos.inRangeTo(quad[3].pos, 2) || rU.isOnEdge(quad[2].pos))

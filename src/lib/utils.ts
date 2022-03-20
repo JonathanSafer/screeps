@@ -300,7 +300,7 @@ const u = {
 
     placeFlag: function(flagName, roomPos, removeTime = null){
         Memory.flags[flagName] = roomPos
-        Memory.flags[flagName].removeTime = removeTime
+        Memory.flags[flagName].removeTime = removeTime + Game.time
     },
 
     packPos: function(pos){
