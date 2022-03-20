@@ -487,7 +487,7 @@ function updateDefender(spawn: StructureSpawn, rcl, creeps) {
 
 function requestSupport(spawn, rcl, quadsNeeded){
     let reinforceCity = null
-    const quadFlag = _.find(Object.keys(Memory.flags), flag => flag.includes("quadRally"))
+    const quadFlag = _.find(Object.keys(Memory.flags), flag => flag.includes("quadRally") && Memory.flags[flag].roomName == spawn.room.name)
     if(quadFlag){
         const index = quadFlag.indexOf("quadRally")
         reinforceCity = quadFlag.substring(0, index)
