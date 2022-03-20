@@ -11,6 +11,7 @@ const rSB = {
     name: cN.SPAWN_BUILDER_NAME,
     type: BodyType.spawnBuilder,
     target: 0,
+    boosts: [RESOURCE_CATALYZED_LEMERGIUM_ACID],
 
     /** @param {Creep} creep **/
     run: function(creep: Creep) {
@@ -25,8 +26,7 @@ const rSB = {
 
         const city = creep.memory.city
         if(creep.memory.needBoost && !creep.memory.boosted){
-            const boost = "XLH2O"
-            rU.getBoosted(creep, boost)
+            rU.getBoosted(creep, rSB.boosts[0])
             return
         }
 
