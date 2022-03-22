@@ -103,10 +103,21 @@ const cM = {
             .value()
     },
 
+    /* Randomize array in-place using Durstenfeld shuffle algorithm */
+    shuffleArray: function(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1))
+            const temp = array[i]
+            array[i] = array[j]
+            array[j] = temp
+        }
+        return array
+    },
+
     scheduleDeliveries: function(factCities, destination, terminalCache, quantities, levelCache){
         for(const component of Object.keys(quantities)){
             const compLvl = COMMODITIES[component].level || 0
-            const sourceCities = factCities[compLvl]
+            const sourceCities = cM.shuffleArray(factCities[compLvl])
             let quantity = quantities[component]
 
             for (const source of sourceCities) { //for each city at the relevant level, send resources until the quantity is satisfied
