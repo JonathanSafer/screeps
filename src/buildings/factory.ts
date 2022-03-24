@@ -116,6 +116,14 @@ const fact = {
         }
     },
 
+    goDormant: function(spawn, factory){
+        spawn.memory.ferryInfo.factoryInfo.produce = "dormant"
+        const junk = _.without(Object.keys(factory.store), RESOURCE_ENERGY)
+        for(let i = 0; i < junk.length; i++){
+            spawn.memory.ferryInfo.factoryInfo.transfer.push([junk[i], 0, factory.store[junk[i]]])
+        }
+    },
+
     chooseProduce: function(factory, city){
         const terminal = Game.spawns[city].room.terminal
         if(!terminal){
@@ -128,7 +136,7 @@ const fact = {
                 return
             }
             //otherwise go dormant
-            Game.spawns[city].memory.ferryInfo.factoryInfo.produce = "dormant"
+            fact.goDormant(Game.spawns[city], factory)
         } else {
             //make 5k of each base resource commodity (in increments of 200)
             const bars = [RESOURCE_UTRIUM_BAR, RESOURCE_LEMERGIUM_BAR, RESOURCE_ZYNTHIUM_BAR,
@@ -169,7 +177,7 @@ const fact = {
 
             }
             //activate dormant mode
-            Game.spawns[city].memory.ferryInfo.factoryInfo.produce = "dormant"
+            fact.goDormant(Game.spawns[city], factory)
         }
     },
 

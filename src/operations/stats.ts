@@ -22,7 +22,7 @@ const statsLib = {
         //stats
         if (Game.time % settings.statTime == 1 && Game.time - Memory.data.lastReset > 5){
             const stats = {}
-            stats["cpu.getUsed"] = Game.cpu.getUsed()
+            stats["cpu.getUsed"] = Memory.avgCpu
             stats["cpu.bucket"] = Game.cpu.bucket
             stats["gcl.progress"] = Game.gcl.progress
             stats["gcl.progressTotal"] = Game.gcl.progressTotal
