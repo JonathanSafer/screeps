@@ -34,8 +34,8 @@ const settings = {
     wallHeight: [0, 0, 0, 30000, 100000, 500000, 2000000, 10000000],
     flagCleanup: 2000, //interval to update old flags
     depositFlagRemoveTime: 100000, //ticks after deposit flag is placed after which it should be removed regardless of deposit status
-    addRemote: 0.6,
-    removeRemote: 0.8,
+    addRemote: 0.7,
+    removeRemote: 0.9,
     spawnFreeTime: 0.3, //amount of spawn time to be left open for miscellaneous activity
     spawnFreeTimeBuffer: 0.2,
     bucket: {//minimum bucket thresholds
