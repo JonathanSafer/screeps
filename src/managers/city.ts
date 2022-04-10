@@ -793,7 +793,7 @@ function runEarlyGame(){
     const result = spawn.spawnCreep(recipe, name)
     if(result == 0){
         Game.creeps[name].memory.role = role.name
-        Game.creeps[name].memory.target = role.target
+        Game.creeps[name].memory.mode = role.target
         Game.creeps[name].memory.city = room.name + "0"
         Game.creeps[name].memory.source = sources[source].id
         Memory.gameState++
