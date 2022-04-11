@@ -31,7 +31,7 @@ const ob = {
         const roomDataCache = u.getsetd(Cache, "roomData", {})
         for(const room in Game.rooms){
             const roomData = u.getsetd(roomDataCache, room, {})
-            if(!roomData[room].sct || roomData[room].sct < Game.time){
+            if(!roomData.sct || roomData.sct < Game.time){
                 ob.recordData(room, roomData)
                 delete roomsToScan[room]
             }
