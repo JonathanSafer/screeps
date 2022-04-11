@@ -228,7 +228,7 @@ const rR = {
             return
         }
         if(!sameRoom && (pullee.pos.roomName == endRoom || pullee.pos.roomName == nextRoom)){
-            creep.move(nextRoomDir)
+            motion.newMove(creep, pullee.pos)
         }
         //cases
         //_p_c --> do nothing
