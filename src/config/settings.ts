@@ -27,7 +27,7 @@ const settings = {
     processPower: true, //process power instead of selling it
     rcl8upgrade: true, //use excess energy to GCL pump at RCL8
 
-    miningDisabled: [], //cities that will not attempt any highway mining
+    miningDisabled: ["E2S31"], //cities that will not attempt any highway mining
     ghodiumAmount: 7000, //threshold to stop producing ghodium
     boostsNeeded: 6000, // boost needed per city for us to boost creeps
     boostAmount: 5000, //threshold to stop producing boosts (add ~8000 to this and ghodium amount since this does not include ready to go boosts in terminal)
