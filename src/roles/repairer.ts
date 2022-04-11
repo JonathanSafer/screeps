@@ -27,7 +27,7 @@ const rRe = {
         if (needRepair) {
             creep.memory.repair = needRepair.id
             if(creep.repair(needRepair) == ERR_NOT_IN_RANGE){
-                motion.newMove(creep, needRepair.pos, 3)
+                motion.newMove(creep, needRepair.pos, 1)
                 rRe.closeRepair(creep)
             }
         }
@@ -38,7 +38,7 @@ const rRe = {
             const site = Game.getObjectById(creep.memory.build)
             if(site){
                 if(creep.build(site) === ERR_NOT_IN_RANGE){
-                    motion.newMove(creep, site.pos, 3)
+                    motion.newMove(creep, site.pos, 1)
                     rRe.closeRepair(creep)
                 }
                 return true
