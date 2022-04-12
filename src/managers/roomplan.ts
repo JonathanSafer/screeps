@@ -291,7 +291,6 @@ const p = {
     scoreRemoteRoom: function(roomName, spawn){
         const roomInfo = Cache.roomData[roomName]
         if(!roomInfo || roomInfo.rcl || !roomInfo.src || !Object.keys(roomInfo.src).length 
-            || (roomInfo.sT && roomInfo.sT > Game.time)
             || Memory.remotes[roomName] || (spawn.room.energyCapacityAvailable < 2300 && !roomInfo.ctrlP)) return -1
         let totalDistance = 0
         for(const source in roomInfo.src){
@@ -310,6 +309,9 @@ const p = {
             })
             if(result.incomplete) return -1
             totalDistance += result.cost
+        }
+        if(roomInfo.d >= 4){
+            Cache.roomData[roomName].d = 3
         }
         return totalDistance/Object.keys(roomInfo.src).length
     },
