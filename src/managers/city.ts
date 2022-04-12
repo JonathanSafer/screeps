@@ -832,6 +832,7 @@ function updateRemotes(city: string){
         for(let i = 0; i < remotes.length; i++){
             const defcon = updateDEFCON(remotes[i], harasserSize)
             if(defcon >= 4){
+                Log.info(`Remote ${remotes[i]} removed from ${spawn.room.name} due to high level threat`)
                 rp.removeRemote(remotes[i], spawn.room.name)
             }
             if(Game.rooms[remotes[i]] && Game.time % 100 == 3){
@@ -889,6 +890,10 @@ function updateDEFCON(remote, harasserSize){
             roomInfo.d = 3
         } else {
             roomInfo.d = 2
+        }
+    } else {
+        if(Game.time % 1000 == 3 && roomInfo.d == 4){
+            roomInfo.d == 3
         }
     }
     Cache.roomData[remote].d = roomInfo.d
