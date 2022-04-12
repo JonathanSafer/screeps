@@ -821,7 +821,7 @@ function updateRemotes(city: string){
         const worstRemote = rp.findWorstRemote(spawn.room)
         if(worstRemote){
             Log.info(`Remote ${worstRemote.roomName} removed from ${spawn.room.name}`)
-            rp.removeRemote(worstRemote, spawn.room.name)
+            rp.removeRemote(worstRemote.roomName, spawn.room.name)
         } else {
             Log.info("No remotes to remove")
         }
