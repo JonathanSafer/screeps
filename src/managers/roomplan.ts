@@ -495,7 +495,7 @@ const p = {
 
     buildConstructionSite: function(room: Room, structureType, pos, name?: string) {
         //Log.info(room.lookAt(pos.x, pos.y)[0].type)
-        if(structureType == STRUCTURE_FACTORY && PServ){
+        if((structureType == STRUCTURE_FACTORY || structureType == STRUCTURE_POWER_SPAWN) && PServ){
             return
         }
         if(structureType == STRUCTURE_TOWER && room.controller.safeMode > 2000){
