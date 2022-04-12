@@ -265,7 +265,7 @@ function quadBody(energyAvailable, rcl, room, boosted){
         ratio = [3, 4, 1]
         break
     case 6:
-        ratio = [7, 10, 3]
+        ratio = [4, 9, 5]
         break
     case 7:
         ratio = [10, 22, 12]
