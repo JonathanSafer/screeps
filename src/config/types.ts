@@ -184,13 +184,11 @@ function minerBody(energyAvailable: number, rcl: number, room: Room, flag: Id<So
         if(source && source.room.name == room.name){
             pc = room.find(FIND_MY_POWER_CREEPS, { filter: c => c.powers[PWR_REGEN_SOURCE] }).length
             if(Game.cpu.bucket < 9500)
-                pc++
+                pc++ //pc is used when there is EITHER a PC or low cpu
         }
     }
-    if (works >= 25 && pc && !PServ) works = 25
-    else if (works > 10 && (!PServ || rcl >= 5)) works = 10
-    else if (works > 6) works = 6
-    else works = Math.max(1, works)
+    const maxWorks = pc ? 25 : source && source.room.controller ? 6 : 10
+    works = Math.min(works, maxWorks)
     const energyAfterWorks = energyAvailable - works * BODYPART_COST[WORK]
     const moves = rcl >= 6 ? Math.floor(Math.min(Math.ceil(works / 2), Math.max(1, energyAfterWorks / BODYPART_COST[MOVE]))): 0
     const energyAfterMoves = energyAfterWorks - moves * BODYPART_COST[MOVE]
@@ -203,9 +201,9 @@ function minerBody(energyAvailable: number, rcl: number, room: Room, flag: Id<So
         .filter(c => loadsNeeded(c) < loadsNeeded(c - 1)) // more carries => fewer loads?
         .filter(c => c <= energyAfterMoves / BODYPART_COST[CARRY])  // how many can we afford?
         .filter(c => works + c + moves <= MAX_CREEP_SIZE)
-    const carries = rcl >= 6 ? Math.max(...storeChoices, minCarries) : minCarries
-    // if(source && source.room.name == room.name)
-    //     carries = 1
+    let carries = rcl >= 6 ? Math.max(...storeChoices, minCarries) : minCarries
+    if(source && source.room.name != room.name)
+        carries = Math.min(carries, 1)
     return body([works, carries, moves], [WORK, CARRY, MOVE])
 }
 
