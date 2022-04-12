@@ -804,7 +804,7 @@ function updateSpawnStress(spawn: StructureSpawn){
     const room = spawn.room
     const memory = spawn.memory
     if(!memory.spawnAvailability) memory.spawnAvailability = 0
-    const freeSpawns = memory.sq.length ? 0 : _.filter(room.find(FIND_MY_SPAWNS), s => !s.spawning).length
+    const freeSpawns = memory.sq && memory.sq.length ? 0 : _.filter(room.find(FIND_MY_SPAWNS), s => !s.spawning).length
     memory.spawnAvailability = (memory.spawnAvailability * .9993) + (freeSpawns * 0.0007)
 }
 
