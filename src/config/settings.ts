@@ -36,7 +36,7 @@ const settings = {
     depositFlagRemoveTime: 100000, //ticks after deposit flag is placed after which it should be removed regardless of deposit status
     addRemote: 0.7,
     removeRemote: 0.9,
-    spawnFreeTime: 0.3, //amount of spawn time to be left open for miscellaneous activity
+    spawnFreeTime: 0.25, //amount of spawn time to be left open for miscellaneous activity
     spawnFreeTimeBuffer: 0.2,
     bucket: {//minimum bucket thresholds
         resourceMining: 1000,
