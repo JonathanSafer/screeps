@@ -169,12 +169,20 @@ const u = {
         }
     },
 
+    isEnemyRoom: function(room){
+        if(room.controller 
+            && ((room.controller.owner && !settings.allies.includes(room.controller.owner.username))
+                || (room.controller.reservation && !settings.allies.includes(room.controller.reservation.username))))
+            return true
+        return false
+    },
+
     findHostileCreeps: function(room: Room){
         return _.filter((room.find(FIND_HOSTILE_CREEPS) as Array<Creep|PowerCreep>).concat(room.find(FIND_HOSTILE_POWER_CREEPS)), c => !settings.allies.includes(c.owner.username))
     },
 
     findHostileStructures: function(room: Room){
-        if(!u.isFriendlyRoom(room)){
+        if(u.isEnemyRoom(room)){
             return _.filter(room.find(FIND_STRUCTURES), s => s.hits)
         }
         return []
