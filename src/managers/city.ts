@@ -645,13 +645,15 @@ function updateBuilder(rcl, memory, spawn: StructureSpawn) {
             && !roomU.isNukeRampart(struct.pos))
         if(walls.length){//find lowest hits wall
             const minHits = _.min(walls, wall => wall.hits).hits
-            if(minHits < settings.wallHeight[rcl - 1]){
-                if(rcl >= 7 && Game.time % 500 == 0){
-                    sq.schedule(spawn, rB.name, true)
-                    return
-                } else if(rcl <= 6){
+            const defenseMode = !spawn.room.controller.safeMode && spawn.room.controller.safeModeCooldown
+            if(minHits < settings.wallHeight[rcl - 1] || defenseMode){
+                if(Game.time % 500 == 0){
+                    sq.schedule(spawn, rB.name, rcl >= 6)
+                }
+                if(rcl <= 6){
                     memory[rB.name] = settings.max.builders
                 }
+                return
             }
         }
         const nukes = spawn.room.find(FIND_NUKES)
