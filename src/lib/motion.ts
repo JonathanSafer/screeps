@@ -364,7 +364,7 @@ const m = {
                 const inBox = boundingBox.top <= y && y <= boundingBox.bottom
                     && boundingBox.left <= x && x <= boundingBox.right
                 if (!inBox) {
-                    costs.set(x, y, 30)
+                    costs.set(x, y, 255)
                 }
             }
         }
