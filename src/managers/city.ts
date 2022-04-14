@@ -615,7 +615,7 @@ function updateRepairer(spawn, memory: SpawnMemory, creeps){
     let repairersNeeded = 0
     if(csites > 0)
         repairersNeeded++
-    repairersNeeded += Math.ceil(damagedRoads/20)
+    repairersNeeded += Math.floor(damagedRoads/20)
     cU.scheduleIfNeeded(rRe.name, repairersNeeded, false, spawn, creeps)
 }
 
