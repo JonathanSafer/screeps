@@ -836,15 +836,17 @@ function updateRemotes(city: string){
                 rp.removeRemote(remotes[i], spawn.room.name)
             }
             const myCreeps = u.splitCreepsByCity()[city]
-            const invaderCore = Game.rooms[remotes[i]].find(FIND_HOSTILE_STRUCTURES).length
-            if(invaderCore){
-                cU.scheduleIfNeeded(cN.BRICK_NAME, 1, false, spawn, myCreeps, remotes[i])
-            }
-            const reserverCost = 650
-            const controller = Game.rooms[remotes[i]].controller
-            if(spawn.room.energyCapacityAvailable >= reserverCost && controller && !controller.owner && (!controller.reservation || controller.reservation.ticksToEnd < 1000 || controller.reservation.username != settings.username)){
-                const reserversNeeded = spawn.room.energyCapacityAvailable >= reserverCost * 2 ? 1 : 2
-                cU.scheduleIfNeeded(cN.RESERVER_NAME, reserversNeeded, false, spawn, myCreeps, remotes[i])
+            if(Game.rooms[remotes[i]]){
+                const invaderCore = Game.rooms[remotes[i]].find(FIND_HOSTILE_STRUCTURES).length
+                if(invaderCore){
+                    cU.scheduleIfNeeded(cN.BRICK_NAME, 1, false, spawn, myCreeps, remotes[i])
+                }
+                const reserverCost = 650
+                const controller = Game.rooms[remotes[i]].controller
+                if(spawn.room.energyCapacityAvailable >= reserverCost && controller && !controller.owner && (!controller.reservation || controller.reservation.ticksToEnd < 1000 || controller.reservation.username != settings.username)){
+                    const reserversNeeded = spawn.room.energyCapacityAvailable >= reserverCost * 2 ? 1 : 2
+                    cU.scheduleIfNeeded(cN.RESERVER_NAME, reserversNeeded, false, spawn, myCreeps, remotes[i])
+                }
             }
             const defenders = _.filter(myCreeps, c => c.ticksToLive > 100 && c.memory.flag == remotes[i])
             if(defcon == 2){
