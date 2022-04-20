@@ -644,9 +644,12 @@ function updateBuilder(rcl, memory, spawn: StructureSpawn) {
             struct => ([STRUCTURE_RAMPART, STRUCTURE_WALL] as string[]).includes(struct.structureType) 
             && !roomU.isNukeRampart(struct.pos))
         if(walls.length){//find lowest hits wall
+            if(!spawn.memory.wallMultiplier){
+                spawn.memory.wallMultiplier = 1
+            }
             const minHits = _.min(walls, wall => wall.hits).hits
             const defenseMode = !spawn.room.controller.safeMode && spawn.room.controller.safeModeCooldown
-            if(minHits < settings.wallHeight[rcl - 1] || defenseMode){
+            if(minHits < settings.wallHeight[rcl - 1] *  spawn.memory.wallMultiplier || defenseMode){
                 if(Game.time % 500 == 0){
                     sq.schedule(spawn, rB.name, rcl >= 6)
                 }

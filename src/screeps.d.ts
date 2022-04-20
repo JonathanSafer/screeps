@@ -183,6 +183,7 @@ declare global {
         removeTime?: number
     }
     interface SpawnMemory {
+        wallMultiplier?: number
         spawnAvailability?: number
         towersActive?: boolean
         powerRooms?: string[]
