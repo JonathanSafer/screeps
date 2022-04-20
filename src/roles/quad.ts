@@ -140,8 +140,13 @@ const rQ = {
                 const matrix = rQ.getRoomMatrix(creep.pos.roomName) as CostMatrix
                 let startPos = null
                 const flagName = creep.memory.flag || creep.memory.city + "quadRally"
-                if(Memory.flags[flagName]){
-                    const rallyExit = Game.map.findExit(creep.pos.roomName, Memory.flags[flagName].roomName) as ExitConstant
+                let flagRoom = null
+                if(Game.rooms[flagName])
+                    flagRoom = flagName
+                if(Memory.flags[flagName])
+                    flagRoom = Memory.flags[flagName].roomName
+                if(flagRoom){
+                    const rallyExit = Game.map.findExit(creep.pos.roomName, flagRoom) as ExitConstant
                     startPos = _.find(creep.room.find(rallyExit), pos => matrix.get(pos.x,pos.y) == 2)
                 } else {
                     startPos = _.find(creep.room.find(FIND_EXIT), pos => matrix.get(pos.x,pos.y) == 2)
@@ -251,7 +256,9 @@ const rQ = {
         const quad = info[0] as Creep[]
         const everythingByRoom = info[1] as _.Dictionary<AllRoomStuff>
         const flagName = quad[0].memory.flag || quad[0].memory.city + "quadRally"
-        const flag = Memory.flags[flagName]
+        let flag = Memory.flags[flagName]
+        if(Game.rooms[flagName])
+            flag = new RoomPosition(25, 25, flagName)
 
         if(!flag || !rQ.isSafe(everythingByRoom, quad/*, flag.roomName*/) || creep.room.name == flag.roomName){
             creep.memory.safeTime = Game.time + 20
@@ -281,7 +288,9 @@ const rQ = {
         const quad = info[0] as Creep[]
         const everythingByRoom = info[1] as _.Dictionary<AllRoomStuff>
         const flagName = quad[0].memory.flag || quad[0].memory.city + "quadRally"
-        const flag = Memory.flags[flagName]
+        let flag = Memory.flags[flagName]
+        if(Game.rooms[flagName])
+            flag = new RoomPosition(25, 25, flagName)
 
         if(flag && (!creep.memory.safeTime || creep.memory.safeTime < Game.time) && rQ.isSafe(everythingByRoom, quad) && creep.room.name != flag.roomName){
             creep.memory.state = CS.RALLY
@@ -527,7 +536,9 @@ const rQ = {
         //  if we are in the target room, there should be a certain prioritization to killing essential structures
         //if no viable target found, move to rally flag
         const flagName = quad[0].memory.city + "quadRally"
-        const flag = Memory.flags[flagName]
+        let flag = Memory.flags[flagName]
+        if(Game.rooms[flagName])
+            flag = new RoomPosition(25, 25, flagName)
         if(target && rU.isOnEdge(target.pos)){
             target = null
         }
