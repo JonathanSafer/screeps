@@ -2,7 +2,6 @@ import u = require("./utils")
 import rU = require("./roomUtils")
 import settings = require("../config/settings")
 import template = require("../config/template")
-import { cN } from "../lib/creepNames"
 
 const m = {
     BoundingBox: class {
@@ -261,7 +260,6 @@ const m = {
                 }
                 const costs = new PathFinder.CostMatrix
                 if(roomData.skL && roomData.skL.length){
-                    if(!Memory.remotes[roomName] && avoidEnemies && creep.memory.role != cN.SCOUT_NAME) return false
                     const terrain = Game.map.getRoomTerrain(roomName)
                     for(const lairPos of roomData.skL){
                         const lair = u.unpackPos(lairPos, roomName)
@@ -272,7 +270,7 @@ const m = {
                         for(let i = minX; i < maxX; i++){
                             for (let j = minY; j < maxY; j++){
                                 if(!(terrain.get(i,j) & TERRAIN_MASK_WALL)){
-                                    costs.set(i, j, Math.ceil(50/Math.min(Math.abs(i - lair.x), Math.abs(j - lair.y))))
+                                    costs.set(i, j, Math.ceil(250/Math.min(Math.abs(i - lair.x), Math.abs(j - lair.y))))
                                 }
                             }
                         }
