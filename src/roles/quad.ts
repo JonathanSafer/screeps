@@ -269,11 +269,11 @@ const rQ = {
         const flagPos = new RoomPosition(flag.x, flag.y, flag.roomName)
 
         motion.newMove(quad[3], quad[2].pos, 0)
-        if(quad[2].pos.inRangeTo(quad[3].pos, 2) || rU.isOnEdge(quad[2].pos))
+        if(quad[2].pos.inRangeTo(quad[3].pos, 1) || rU.isOnEdge(quad[2].pos))
             motion.newMove(quad[2], quad[1].pos, 0)
-        if(quad[1].pos.inRangeTo(quad[2].pos, 2) || rU.isOnEdge(quad[1].pos))
+        if(quad[1].pos.inRangeTo(quad[2].pos, 1) || rU.isOnEdge(quad[1].pos))
             motion.newMove(quad[1], quad[0].pos, 0)
-        if(quad[0].pos.inRangeTo(quad[1].pos, 2) || rU.isOnEdge(quad[0].pos))
+        if(quad[0].pos.inRangeTo(quad[1].pos, 1) || rU.isOnEdge(quad[0].pos))
             motion.newMove(quad[0], flagPos, 23)
     },
     
