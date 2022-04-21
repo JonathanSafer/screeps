@@ -37,7 +37,7 @@ const settings = {
     addRemote: 0.7,
     removeRemote: 0.9,
     spawnFreeTime: 0.25, //amount of spawn time to be left open for miscellaneous activity
-    spawnFreeTimeBuffer: 0.2,
+    spawnFreeTimeBuffer: 0.15,
     bucket: {//minimum bucket thresholds
         resourceMining: 1000,
         repair: 3000, //repairing walls in a room
