@@ -256,7 +256,7 @@ const rBr = {
             }
         }
         if(Memory.flags[flag] && creep.room.name == Memory.flags[flag].roomName && !structures.length){
-            delete Memory.flags[flag]
+            return
         }
         //if in a friendly room or my room, ignore structures and rally. Else, set nearest structure as target
         if(creep.room.controller && creep.room.controller.owner
