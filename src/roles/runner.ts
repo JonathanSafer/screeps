@@ -115,11 +115,17 @@ const rR = {
             }
         }
         const goodLoads = cU.getGoodPickups(creep)
+        const runners = _.filter(u.splitCreepsByCity()[creep.memory.city], c => c.memory.role == rR.name)
         if(!goodLoads.length)
             return false
         const newTarget = _.min(goodLoads, function(drop: Resource | Tombstone){
             const distance = PathFinder.search(creep.pos, drop.pos).cost
-            const amount = (drop as Resource).amount || (drop as Tombstone).store.getUsedCapacity()
+            let amount = (drop as Resource).amount || (drop as Tombstone).store.getUsedCapacity()
+            for(const runner of runners){
+                if(runner.memory.targetId == drop.id)
+                    amount -= runner.store.getFreeCapacity()
+            }
+            amount = Math.max(amount, 1)
             return distance/amount
         })
         creep.memory.targetId = (newTarget as Resource | Tombstone).id
