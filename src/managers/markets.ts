@@ -26,7 +26,8 @@ const markets = {
             markets.distributeMinerals(termCities)
         }
 
-        switch (Game.time % 200) {
+        const marketOffset = Game.cpu.bucket == 10000 ? 100 : 200
+        switch (Game.time % marketOffset) {
         case 10: markets.distributePower(termCities); break
         case 20: markets.distributeUpgrade(termCities); break
         case 30: markets.buyAndSell(termCities); break
