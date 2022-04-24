@@ -260,7 +260,7 @@ const rQ = {
         if(Game.rooms[flagName])
             flag = new RoomPosition(25, 25, flagName)
 
-        if(!flag || !rQ.isSafe(everythingByRoom, quad/*, flag.roomName*/) || creep.room.name == flag.roomName){
+        if(!flag || !rQ.isSafe(everythingByRoom, quad) || creep.room.name == flag.roomName || u.getRangeTo(quad[0].pos, flag as RoomPosition) < 40){
             creep.memory.safeTime = Game.time + 20
             creep.memory.state = CS.ENGAGE
             rQ.engage(creep)
