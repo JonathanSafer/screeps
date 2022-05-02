@@ -880,7 +880,7 @@ const p = {
         if(csites.length){
             counter = csites.length
         }
-        const maxSites = Object.keys(Game.constructionSites).length / MAX_CONSTRUCTION_SITES > 0.5 ? 10 : 20
+        const maxSites = Object.keys(Game.constructionSites).length / MAX_CONSTRUCTION_SITES > 0.5 ? 2 : 20
         for(let i = 0; i < roads.length; i++){
             new RoomVisual(roads[i].roomName).circle(roads[i], {fill: "#ff1111", radius: 0.1, stroke: "red"})
             if(counter < maxSites){//doesn't update during the tick
