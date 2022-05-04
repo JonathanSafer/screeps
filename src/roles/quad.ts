@@ -535,7 +535,7 @@ const rQ = {
         //  if we aren't in the destination room, a target must be impeding motion to the target room to be considered
         //  if we are in the target room, there should be a certain prioritization to killing essential structures
         //if no viable target found, move to rally flag
-        const flagName = quad[0].memory.city + "quadRally"
+        const flagName = quad[0].memory.flag || quad[0].memory.city + "quadRally"
         let flag = Memory.flags[flagName]
         if(Game.rooms[flagName])
             flag = new RoomPosition(25, 25, flagName)
