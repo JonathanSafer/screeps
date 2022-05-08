@@ -54,8 +54,10 @@ const u = {
     silenceCreeps: function() {
         if (Game.time % 10 == 0) {
             for (const creep of Object.values(Game.creeps)) {
-                if(creep.ticksToLive < 1500 && creep.ticksToLive > 1489)
+                if(!creep.memory.notify){
                     creep.notifyWhenAttacked(false)
+                    creep.memory.notify = true
+                }
             }
         }
     },
