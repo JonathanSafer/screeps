@@ -108,6 +108,7 @@ declare global {
         }
      }
     interface CreepMemory {
+        notify?: boolean
         building?: boolean
         hasRally?: boolean
         paired?: boolean

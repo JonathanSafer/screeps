@@ -67,6 +67,11 @@ const rRe = {
         const target = _.find(creep.pos.findInRange(FIND_STRUCTURES, 3), s => s.hits && s.hitsMax - s.hits > creep.memory.repPower)
         if(target){
             creep.repair(target)
+        } else {
+            const sites = creep.pos.findInRange(FIND_MY_CONSTRUCTION_SITES, 3)
+            if(sites.length){
+                creep.build(sites[0])
+            }
         }
     },
 
