@@ -9,7 +9,7 @@ function getUsername() {
 
 const settings = {
     username: username,
-    allies: ["Atanner", "slowmotionghost", "Timendainum", "FeTiD", "6g3y",username],
+    allies: ["Atanner", "slowmotionghost", "Timendainum", "FeTiD", "SBense","6g3y",username],
     nukeStructures: [STRUCTURE_SPAWN, STRUCTURE_LAB, STRUCTURE_STORAGE, STRUCTURE_FACTORY,
         STRUCTURE_TERMINAL, STRUCTURE_POWER_SPAWN, STRUCTURE_NUKER],
     militaryBoosts:["XKHO2", "XGHO2", "XZHO2", "XLHO2", "XZH2O", "G"],
