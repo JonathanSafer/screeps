@@ -801,6 +801,7 @@ function runEarlyGame(){
         Game.creeps[name].memory.mode = role.target
         Game.creeps[name].memory.city = room.name + "0"
         Game.creeps[name].memory.source = sources[source].id
+        Game.creeps[name].memory.sourcePos = sources[source].pos
         Memory.gameState++
     }
 }
