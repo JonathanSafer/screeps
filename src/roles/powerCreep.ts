@@ -251,7 +251,7 @@ const rPC = {
         const spawn = Game.spawns[city]
         if(!spawn) return false
         return rPC.canOperate(creep, spawn.room.storage, PWR_OPERATE_EXTENSION,
-            spawn.room.energyAvailable < 0.8 * spawn.room.energyCapacityAvailable)
+            spawn.room.energyAvailable < 0.6 * spawn.room.energyCapacityAvailable)
     },
 
     canOperateSpawn: function(creep: Creep) {
