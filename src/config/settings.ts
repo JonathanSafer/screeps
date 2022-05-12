@@ -40,7 +40,7 @@ const settings = {
     spawnFreeTimeBuffer: 0.15,
     bucket: {//minimum bucket thresholds
         resourceMining: 1000,
-        repair: 3000, //repairing walls in a room
+        repair: 1500, //repairing walls in a room
         processPower: 2200,
         colony: 2000, // building new rooms
         upgrade: 7000,
