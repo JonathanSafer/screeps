@@ -58,7 +58,7 @@ const markets = {
         let receiver = null
         const needEnergy = _.filter(myCities, city => city.storage && (city.storage.store.energy < settings.energy.processPower - 250000 || city.controller.level < 8) && city.terminal)
         if (needEnergy.length){
-            receiver = _.min(needEnergy, city => (city as Room).storage.store.energy)
+            receiver = _.min(needEnergy, city => (city as Room).storage.store.energy).name
             for (const city of myCities){
                 if (city.storage && city.storage.store.energy > Game.rooms[receiver].storage.store.energy + 150000){
                     const memory = Game.spawns[city.memory.city].memory
