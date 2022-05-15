@@ -477,6 +477,8 @@ function updateDefender(spawn: StructureSpawn, rcl, creeps) {
         if(hostiles > 3){
             //request quad from nearest ally
             requestSupport(spawn, rcl, Math.floor(hostiles/4))
+            if(Game.time % 1500 == 0 && spawn.memory.wallMultiplier)
+                spawn.memory.wallMultiplier = Math.min(spawn.memory.wallMultiplier + .1, 10)
         } else {
             cU.scheduleIfNeeded(rD.name, Math.min(Math.floor(hostiles/2), 4), true, spawn, creeps)
         }
