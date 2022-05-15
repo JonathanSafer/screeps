@@ -647,6 +647,8 @@ function updateBuilder(rcl, memory, spawn: StructureSpawn) {
             if(!spawn.memory.wallMultiplier){
                 spawn.memory.wallMultiplier = 1
             }
+            if(Game.time % 20000 == 0 && Math.random() < .1)
+                spawn.memory.wallMultiplier = Math.min(spawn.memory.wallMultiplier + .1, 10)
             const minHits = _.min(walls, wall => wall.hits).hits
             const defenseMode = !spawn.room.controller.safeMode && spawn.room.controller.safeModeCooldown
             if(minHits < settings.wallHeight[rcl - 1] *  spawn.memory.wallMultiplier || defenseMode){
