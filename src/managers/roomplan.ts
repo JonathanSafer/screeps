@@ -442,7 +442,7 @@ const p = {
     },
 
     buildConstructionSites: function() {
-        const noobMode = Game.gcl.level == 1
+        const noobMode = Object.keys(Game.rooms).length == 1 // We only have one room
         for(const roomName of Object.keys(Game.rooms)){
             const room = Game.rooms[roomName]
             if(!room.controller || !room.controller.my){
