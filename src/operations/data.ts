@@ -112,7 +112,7 @@ const data = {
     backupData: function() {
         //don't backup during stats update or recovery
         //backup to section, then toggle section upon completion
-        if(Game.time - Memory.data.lastReset < 2) return
+        if(Game.time - Memory.data?.lastReset < 2) return
         switch(Game.time % (settings.statTime * settings.backupTime)){
         case 2:
         case 4:

@@ -56,7 +56,7 @@ export function loop() {
         const myCities = u.getMyCities()
         let claimRoom, unclaimRoom
 
-        if(!Memory.gameState)
+        if(!Memory.gameState || Game.time % 500 == 346)
             c.setGameState()
         if(Memory.gameState < 5)
             c.runEarlyGame()

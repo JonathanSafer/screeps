@@ -756,10 +756,18 @@ function runNuker(city){
 }
 
 function setGameState(){
-    if(Object.keys(Game.rooms).length == 1 && Game.gcl.level == 1){
+    // 1 spawn and no creeps = reset
+    const roomNames = Object.keys(Game.rooms)
+    const room = Game.rooms[roomNames[0]]
+    const rcl1 = room.controller && room.controller.level == 1
+    const hasOneSpawn = room.find(FIND_MY_STRUCTURES).filter(s => s.structureType == STRUCTURE_SPAWN).length == 1
+    const noCreeps = Object.keys(Game.creeps).length == 0
+    if(!Memory.gameState || (roomNames.length == 1 && rcl1 && hasOneSpawn && noCreeps)){
+        Object.keys(Memory).forEach(key => delete Memory[key])
+        Memory.creeps = {}
+        Memory.rooms = {}
+        Memory.spawns = {}
         Memory.gameState = 0
-    } else {
-        Memory.gameState = 4
     }
 }
 
