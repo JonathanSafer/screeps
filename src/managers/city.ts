@@ -513,22 +513,13 @@ function cityFraction(cityName) {
 }
 
 function updateMiner(creeps: Creep[], rcl8: boolean, memory: SpawnMemory, spawn: StructureSpawn){
-    if (!memory.sources) memory.sources = {}
     const flag = Memory.flags.claim
     if(flag && flag.roomName === spawn.pos.roomName &&
         Game.rooms[flag.roomName].controller.level < 6){
         memory[rM.name] = 0
         return
     }
-    const localSources: Array<Source> = spawn.room.find(FIND_SOURCES)
-
-    _.each(localSources, function(sourceInfo: Source){
-        const sourceId = sourceInfo.id
-        const sourcePos = sourceInfo.pos
-        if (!(sourceId in memory.sources)){
-            memory.sources[sourceId] = sourcePos
-        }
-    })
+    roomU.initializeSources(spawn)
 
     const powerCreep = spawn.room.find(FIND_MY_POWER_CREEPS, { filter: c => c.powers[PWR_REGEN_SOURCE] }).length
     let bucketThreshold = settings.bucket.energyMining + settings.bucket.range * cityFraction(spawn.room.name)
@@ -777,6 +768,7 @@ function runEarlyGame(){
         return
     }
     const sources = spawn.room.find(FIND_SOURCES)
+
 
     sq.schedule(spawn, rR.name, false, null, 100, -5)
     sq.schedule(spawn, rM.name, false, sources[0].id, 200, -4)

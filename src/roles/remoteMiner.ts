@@ -4,6 +4,7 @@ import settings = require("../config/settings")
 import cU = require("../lib/creepUtils")
 import u = require("../lib/utils")
 import { cN, BodyType } from "../lib/creepNames"
+import roomU = require("../lib/roomUtils")
 
 const rM = {
     name: cN.REMOTE_MINER_NAME,
@@ -239,8 +240,10 @@ const rM = {
     /** pick a target id for creep **/
     nextSource: function(creep: Creep) {
         if(creep.memory.flag){
+            const spawn = Game.spawns[creep.memory.city]
+            roomU.initializeSources(spawn)
             creep.memory.source = creep.memory.flag as Id<Source>
-            creep.memory.sourcePos = Game.spawns[creep.memory.city].memory.sources[creep.memory.source]
+            creep.memory.sourcePos = spawn.memory.sources[creep.memory.source]
             if(!creep.memory.sourcePos)
                 creep.suicide()
         } else {

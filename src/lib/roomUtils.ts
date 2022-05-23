@@ -119,6 +119,22 @@ const rU = {
             return true
         }
         return false
+    },
+
+    initializeSources: function(spawn: StructureSpawn) {
+        const memory = spawn.memory
+        if (!memory.sources) {
+            memory.sources = {}
+            const localSources: Array<Source> = spawn.room.find(FIND_SOURCES)
+
+            _.each(localSources, function(sourceInfo: Source){
+                const sourceId = sourceInfo.id
+                const sourcePos = sourceInfo.pos
+                if (!(sourceId in memory.sources)){
+                    memory.sources[sourceId] = sourcePos
+                }
+            })
+        }
     }
 }
 
