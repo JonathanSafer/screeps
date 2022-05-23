@@ -814,6 +814,7 @@ function runEarlyGame(){
         Game.creeps[name].memory.city = room.name + "0"
         Game.creeps[name].memory.source = sources[source].id
         Game.creeps[name].memory.sourcePos = sources[source].pos
+        Game.creeps[name].memory.flag = sources[source].id
         Memory.gameState++
     }
 }
