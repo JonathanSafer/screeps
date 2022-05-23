@@ -235,7 +235,9 @@ declare global {
     interface QueuedCreep {
         role: string
         boosted?: boolean
-        flag?: string
+        flag?: string,
+        budget?: number
+        priority?: number
     }
     interface SourceMemory {
         roomName?: string

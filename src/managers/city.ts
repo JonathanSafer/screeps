@@ -31,12 +31,11 @@ import rRe = require("../roles/repairer")
 import { cN, BodyType } from "../lib/creepNames"
 
 
-function makeCreeps(role: CreepRole, city: string, unhealthyStore=false, creepWantsBoosts=false, flag = null) {
-    if(Memory.gameState < 5) return false
+function makeCreeps(role: CreepRole, city: string, unhealthyStore=false, creepWantsBoosts=false, flag = null, budget = null) {
     const room = Game.spawns[city].room
    
-    const energyToSpend = unhealthyStore ? room.energyAvailable :
-        room.energyCapacityAvailable
+    const energyToSpend = budget || 
+        (unhealthyStore ? room.energyAvailable : room.energyCapacityAvailable)
 
     const weHaveBoosts = u.boostsAvailable(role, room)
     const boosted = creepWantsBoosts && weHaveBoosts
@@ -98,8 +97,7 @@ function runCity(city, creeps: Creep[]){
     })
 
     if(Game.time % 50 == 0){
-        const priorities = rr.getRolePriorities()
-        sq.sortBy(spawn, item => priorities[item.role])
+        sq.sort(spawn)
     }
     
     let usedQueue = true
@@ -114,7 +112,8 @@ function runCity(city, creeps: Creep[]){
     }
     
     if (nextRole) {
-        if(makeCreeps(nextRole, city, unhealthyStore, nextRoleInfo.boosted, nextRoleInfo.flag) && usedQueue){
+        if(makeCreeps(nextRole, city, unhealthyStore, nextRoleInfo.boosted, 
+            nextRoleInfo.flag, nextRoleInfo.budget) && usedQueue) {
             sq.removeNextRole(spawn)
         }
     }
@@ -774,49 +773,17 @@ function setGameState(){
 function runEarlyGame(){
     const spawn = Object.values(Game.spawns)[0]
     if(!spawn){
-        Memory.gameState++
+        Memory.gameState = 1
         return
     }
-    const room = spawn.room
     const sources = spawn.room.find(FIND_SOURCES)
-    let role = null
-    let budget = 0
-    let source = 0
-    switch(Memory.gameState){
-    case 0:
-        role = rR
-        budget = 100
-        break
-    case 1:
-        role = rM
-        budget = 200
-        break
-    case 2:
-        role = rR
-        budget = 100
-        break
-    case 3:
-        role = rU
-        budget = 200
-        break
-    case 4:
-        role = rM
-        budget = 300
-        source = 1
-        break
-    }
-    const name = Memory.gameState + "a"
-    const recipe = types.getRecipe(role.type, budget, room, false, null)
-    const result = spawn.spawnCreep(recipe, name)
-    if(result == 0){
-        Game.creeps[name].memory.role = role.name
-        Game.creeps[name].memory.mode = role.target
-        Game.creeps[name].memory.city = room.name + "0"
-        Game.creeps[name].memory.source = sources[source].id
-        Game.creeps[name].memory.sourcePos = sources[source].pos
-        Game.creeps[name].memory.flag = sources[source].id
-        Memory.gameState++
-    }
+
+    sq.schedule(spawn, rR.name, false, null, 100, -5)
+    sq.schedule(spawn, rM.name, false, sources[0].id, 200, -4)
+    sq.schedule(spawn, rR.name, false, null, 100, -3)
+    sq.schedule(spawn, rU.name, false, null, 200, -2)
+    sq.schedule(spawn, rM.name, false, sources[1].id, 300, -1)
+    Memory.gameState = 1
 }
 
 function updateSpawnStress(spawn: StructureSpawn){

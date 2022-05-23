@@ -1,8 +1,9 @@
+import rr = require("../roles/roles")
 
 const sq = {
-    schedule: function(spawn: StructureSpawn, role: string, boosted = false, flag = null) {
+    schedule: function(spawn: StructureSpawn, role: string, boosted = false, flag = null, budget = null, priority = null) {
         sq.initialize(spawn)
-        spawn.memory.sq.push({role: role, boosted: boosted, flag: flag})
+        spawn.memory.sq.push({role: role, boosted: boosted, flag: flag, budget: budget, priority: priority})
     },
 
     peekNextRole: function(spawn: StructureSpawn) {
@@ -38,10 +39,10 @@ const sq = {
         }
     },
 
-    sortBy: function(spawn: StructureSpawn, sortFn: (item: QueuedCreep) => number) {
-        if (spawn.memory.sq.length > 0) {
-            spawn.memory.sq = _.sortBy(spawn.memory.sq, sortFn)
-        }
+    sort: function(spawn: StructureSpawn) {
+        const priorities = rr.getRolePriorities()
+        const sortFn = (item: QueuedCreep) => item.priority || priorities[item.role]
+        spawn.memory.sq = _.sortBy(spawn.memory.sq, sortFn)
     }
 }
 export = sq

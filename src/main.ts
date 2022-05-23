@@ -57,7 +57,7 @@ export function loop() {
         const myCities = u.getMyCities()
         let claimRoom, unclaimRoom
 
-        if(Memory.gameState < 5)
+        if(Memory.gameState == 0)
             c.runEarlyGame()
 
         // TODO add a setup function to validate memory etc
