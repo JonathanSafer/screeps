@@ -759,8 +759,8 @@ function setGameState(){
     // 1 spawn and no creeps = reset
     const roomNames = Object.keys(Game.rooms)
     const room = Game.rooms[roomNames[0]]
-    const rcl1 = room.controller && room.controller.level == 1
-    const hasOneSpawn = room.find(FIND_MY_STRUCTURES).filter(s => s.structureType == STRUCTURE_SPAWN).length == 1
+    const rcl1 = room && room.controller && room.controller.level == 1
+    const hasOneSpawn = room && room.find(FIND_MY_STRUCTURES).filter(s => s.structureType == STRUCTURE_SPAWN).length == 1
     const noCreeps = Object.keys(Game.creeps).length == 0
     if(!Memory.gameState || (roomNames.length == 1 && rcl1 && hasOneSpawn && noCreeps)){
         Object.keys(Memory).forEach(key => delete Memory[key])
