@@ -442,7 +442,7 @@ const p = {
     },
 
     buildConstructionSites: function() {
-        const noobMode = Object.keys(Game.rooms).length == 1 // We only have one room
+        const noobMode = Object.keys(Game.rooms).length < 5 // We've seen less than 5 rooms
         for(const roomName of Object.keys(Game.rooms)){
             const room = Game.rooms[roomName]
             if(!room.controller || !room.controller.my){
