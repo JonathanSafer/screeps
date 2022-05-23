@@ -33,6 +33,7 @@ import rU = require("./lib/roomUtils")
 // Control vs Power
 // Power =>   4 CR / power
 // Control => 50 control / CPU. 25 CR/CPU => 2 CR / control
+c.setGameState()
 
 profiler.enable()
 export function loop() {
@@ -56,8 +57,6 @@ export function loop() {
         const myCities = u.getMyCities()
         let claimRoom, unclaimRoom
 
-        if(!Memory.gameState || Game.time % 500 == 346)
-            c.setGameState()
         if(Memory.gameState < 5)
             c.runEarlyGame()
 
