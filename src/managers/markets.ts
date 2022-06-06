@@ -128,6 +128,13 @@ const markets = {
                         sender.terminal.send(baseCom, amount, receiver.name)
                         Memory.rooms[sender.name].termUsed = true
                         go = false
+                    } else if(sender.storage.store[baseCom] > 50000){
+                        const buyOrders = markets.sortOrder(Game.market.getAllOrders(order => order.type == ORDER_BUY
+                            && order.resourceType == baseCom)).reverse()
+                        if(buyOrders.length){
+                            Game.market.deal(buyOrders[0].id, Math.min(buyOrders[0].amount, 8000), sender.name)
+                            go = false
+                        }
                     }
                 }
             }
