@@ -578,8 +578,7 @@ function updateUpgrader(city: string, controller: StructureController, memory: S
         if(!creeps.length) return
         const banks = roomU.getWithdrawLocations(creeps[0])
         //Log.info(banks);
-        let money = _.sum(_.map(banks, bank => bank.store[RESOURCE_ENERGY]))
-        if(room.find(FIND_MY_CONSTRUCTION_SITES).length) money -= 1000
+        const money = _.sum(_.map(banks, bank => bank.store[RESOURCE_ENERGY]))
         const capacity = _.sum(_.map(banks, bank => bank.store.getCapacity(RESOURCE_ENERGY)))
         //Log.info('money: ' + money + ', ' + (100*money/capacity));
         if(money > (capacity * .28)){
