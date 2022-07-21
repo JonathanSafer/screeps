@@ -411,6 +411,7 @@ function chooseClosestRoom(myCities: Room[], flag){
         return 0
     }
     const goodCities = _.filter(myCities, city => city.controller.level >= 4 && Game.spawns[city.memory.city] && city.storage)
+    if(!goodCities.length) return null
     let closestRoomPos = goodCities[0].getPositionAt(25, 25)
     let closestLength = CREEP_CLAIM_LIFE_TIME + 100//more than max claimer lifetime
     for (let i = 0; i < goodCities.length; i += 1){
