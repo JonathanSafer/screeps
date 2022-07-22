@@ -3,7 +3,6 @@ import u = require("../lib/utils")
 import roomU = require("../lib/roomUtils")
 import cU = require("../lib/creepUtils")
 import motion = require("../lib/motion")
-import settings = require("../config/settings")
 import rU = require("./upgrader")
 import { cN, BodyType } from "../lib/creepNames"
 
@@ -179,19 +178,15 @@ const rR = {
             pullee.move(creep)
             return
         }
-        const endRoom = pullee.memory.destination.roomName
-        const roomDataCache = u.getsetd(Cache, "roomData", {})
-        const nextRoomDir = Game.map.findExit(creep.pos.roomName, endRoom, {
-            routeCallback: function(roomName){
-                if(u.isHighway(roomName)) return 1
-                if(Game.map.getRoomStatus(roomName).status != "normal") return Infinity
-                const roomData = u.getsetd(roomDataCache, roomName, {})
-                if(Memory.remotes[roomName]) return 1
-                if(roomData.own && !settings.allies.includes(roomData.own)) return 50
-                if(Memory.remotes[roomName]) return 1
-                return 50
-            }
-        })
+        const endRoom = destination.roomName
+        const path = PathFinder.search(creep.pos, destination).path
+        let nextRoomDir = path[0].getDirectionTo(path[1]) as number
+        if(nextRoomDir % 2 == 0){
+            nextRoomDir = Math.random() < 0.5 ? nextRoomDir - 1 : nextRoomDir + 1
+            if (nextRoomDir == 9)
+                nextRoomDir = 1
+        }
+
         const nextRoom = Game.map.describeExits(creep.pos.roomName)[nextRoomDir]
         if(roomU.isOnEdge(creep.pos) && roomU.isOnEdge(pullee.pos)){
             //_cp_
