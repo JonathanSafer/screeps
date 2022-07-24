@@ -555,12 +555,10 @@ function updateMineralMiner(rcl, buildings: Structure[], spawn, memory) {
 function updateTransporter(extensions, memory, creeps, structures: Structure[], spawn) {
     if (extensions < 1 && !_.find(structures, struct => struct.structureType == STRUCTURE_CONTAINER)){
         memory[rT.name] = 0
-    } else if (extensions < 10){
+    } else if (extensions < 5 || creeps.length < 9){
         memory[rT.name] = 1
-    } else if(creeps.length > 8){//arbitrary 'load' on transporters
+    } else {//arbitrary 'load' on transporters
         memory[rT.name] = settings.max.transporters
-    } else {
-        memory[rT.name] = 1
     }
     cU.scheduleIfNeeded(rT.name, memory[rT.name], false, spawn, creeps)
 }
