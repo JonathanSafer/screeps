@@ -573,19 +573,19 @@ function updateUpgrader(city: string, controller: StructureController, memory: S
             cU.scheduleIfNeeded(rU.name, 1, true, Game.spawns[city], creeps)
         }
     } else {
-        if(!creeps.length) return
         const builders = _.filter(creeps, c => c.memory.role == cN.BUILDER_NAME)
         if(builders.length > 5) return
-        const banks = roomU.getWithdrawLocations(creeps[0])
-        const money = _.sum(_.map(banks, bank => bank.store[RESOURCE_ENERGY]))
-        const capacity = _.sum(_.map(banks, bank => bank.store.getCapacity(RESOURCE_ENERGY)))
+        const bank = roomU.getStorage(room) as StructureStorage
+        if(!bank) return
+        const money = bank.store[RESOURCE_ENERGY]
+        const capacity = bank.store.getCapacity()
         if(capacity < CONTAINER_CAPACITY){
             if(!builders.length)
                 cU.scheduleIfNeeded(cN.UPGRADER_NAME,1, false, Game.spawns[city], creeps)
             return
         }
-        const needed = room.storage ? Math.floor(Math.pow((money/capacity) * 4, 3)) : Math.floor((money/capacity) * 12)
-        const maxUpgraders = rcl >= 5 ? 7 : 12 //TODO make these constants
+        const needed = room.storage ? Math.floor(Math.pow((money/capacity) * 4, 3)) : Math.floor((money/capacity) * 15)
+        const maxUpgraders = rcl >= 5 ? 7 : 15 //TODO make these constants
         cU.scheduleIfNeeded(cN.UPGRADER_NAME, Math.min(needed, maxUpgraders), rcl >= 6, Game.spawns[city], creeps)
         if (controller.ticksToDowngrade < CONTROLLER_DOWNGRADE[rcl]/2){
             cU.scheduleIfNeeded(cN.UPGRADER_NAME, 1, rcl >= 6, Game.spawns[city], creeps)
