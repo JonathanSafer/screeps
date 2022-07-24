@@ -165,7 +165,7 @@ const p = {
             || (Cache.roomData[roomName].cB && Cache.roomData[roomName].cB > Game.time)
             || (Cache.roomData[roomName].sMC && Cache.roomData[roomName].sMC > Game.time + CREEP_LIFE_TIME))
         if(!candidates.length) return
-        Log.info("attempting expansion")
+        //Log.info("attempting expansion")
         const expoRooms = _.sortBy(candidates, roomName => Cache.roomData[roomName].s)
         let expoRoomName = null
         for(const candidate of expoRooms){
@@ -185,7 +185,7 @@ const p = {
             }
         }
         if(!expoRoomName){
-            Log.info("No valid rooms in range")
+            Log.info("No valid rooms in range for expansion")
             return
         }
         const expoRoom = Cache.roomData[expoRoomName]
