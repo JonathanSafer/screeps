@@ -251,29 +251,22 @@ function quadBody(energyAvailable, rcl, room, boosted){
     //make unboosted variant
     const types = [RANGED_ATTACK, MOVE, HEAL]
     let ratio = [0, 1, 0]
-    switch(rcl){
-    case 2:
+    if(energyAvailable < 550)//rcl1
+        ratio = [0, 1, 0]
+    else if(energyAvailable < 800)//rcl2
         ratio = [1, 2, 1]
-        break
-    case 3:
+    else if(energyAvailable < 1300)//rcl3
         ratio = [2, 3, 1]
-        break
-    case 4:
+    else if(energyAvailable < 1800)//rcl4
         ratio = [5, 6, 1]
-        break
-    case 5:
+    else if(energyAvailable < 2300)//rcl5
         ratio = [3, 4, 1]
-        break
-    case 6:
+    else if(energyAvailable < 5600)//rcl6
         ratio = [4, 9, 5]
-        break
-    case 7:
+    else if(energyAvailable < 10000)//rcl7
         ratio = [10, 22, 12]
-        break
-    case 8:
+    else//rcl8
         ratio = [13, 25, 12]
-        break
-    }
     return scalingBody(ratio, types, energyAvailable)
 }
 
