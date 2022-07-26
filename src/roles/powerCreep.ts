@@ -199,7 +199,7 @@ const rPC = {
 
     isPowerEnabled: function(creep) {
         const room = Game.rooms[creep.memory.city]
-        return (room.controller && room.controller.isPowerEnabled)
+        return (room && room.controller && room.controller.isPowerEnabled)
     },
 
     canGenerateOps: function(creep) {
