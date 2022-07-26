@@ -12,7 +12,7 @@ const b = {
         Memory.avgCpu = Memory.avgCpu == undefined ? 0 : (Memory.avgCpu * .999) + (Game.cpu.getUsed() * .001)
         if(Game.time % 1000 == 2){
             const cities = u.getMyCities()
-            if(Memory.avgCpu/Game.cpu.limit > settings.removeRemote)
+            if(Memory.avgCpu/Game.cpu.limit > settings.removeRemote || Game.cpu.bucket < 9500)
                 rp.dropRemote(cities)
             if(Memory.avgCpu/Game.cpu.limit < settings.addRemote)
                 rp.searchForRemote(cities)
