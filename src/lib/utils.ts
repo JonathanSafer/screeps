@@ -308,7 +308,7 @@ const u = {
         }
     },
 
-    placeFlag: function(flagName, roomPos, removeTime = null){
+    placeFlag: function(flagName, roomPos, removeTime = 20000){
         Memory.flags[flagName] = roomPos
         Memory.flags[flagName].removeTime = removeTime + Game.time
     },
