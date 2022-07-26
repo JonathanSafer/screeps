@@ -98,7 +98,7 @@ const ob = {
     findRoomsForScan: function() {
         let roomList = []
         const cities = _.filter(u.getMyCities(), c => c.controller.level >= 4)
-        const lowLevel = _.filter(u.getMyCities(), c => c.controller.level < 4 && c.energyCapacityAvailable >= 550)
+        const lowLevel = _.filter(u.getMyCities(), c => c.controller.level < 4)
         for(const city of lowLevel){
             const roomPos = u.roomNameToPos(city.name)
             roomList = roomList.concat(u.generateRoomList(roomPos[0] - 1, roomPos[1] - 1, 3, 3))//3 by 3
@@ -123,7 +123,7 @@ const ob = {
                 continue
             }
             //if no rooms have an obs in range, we'll need a nearby room to send a scout
-            const scoutRooms = _.filter(cities.concat(lowLevel), city => (city.controller.level >= 2 && Game.map.getRoomLinearDistance(roomName, city.name) <= OBSERVER_RANGE)
+            const scoutRooms = _.filter(cities.concat(lowLevel), city => (Game.map.getRoomLinearDistance(roomName, city.name) <= OBSERVER_RANGE)
                 || Game.map.getRoomLinearDistance(roomName, city.name) <= 1)
             const scoutRoom = _.min(scoutRooms, city => Game.map.getRoomLinearDistance(roomName, city.name))
             const rcache = u.getRoomCache(scoutRoom.name)
