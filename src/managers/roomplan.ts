@@ -648,22 +648,33 @@ const p = {
         if(!upgrader)
             return
         let location = null
+        let bestScore = 0
         for(let i = upgrader.pos.x - 1; i <= upgrader.pos.x + 1; i++){
-            if(location)
-                break
             for(let j = upgrader.pos.y - 1; j <= upgrader.pos.y + 1; j++){
-                if(upgrader.pos.isEqualTo(i,j) || i <= 2 || j <= 2)
-                    continue
                 const look = room.lookAt(i, j)
-                let go = true
+                let isValidPos = true
                 for(const item of look){
                     if(item.type == LOOK_STRUCTURES 
                         || (item.type == LOOK_TERRAIN && item[LOOK_TERRAIN] == "wall"))
-                        go = false
+                        isValidPos = false
                 }
-                if(go){
-                    location = i*50+j
-                    break 
+                if(isValidPos){
+                    //score by empty positions in range of controller
+                    let currentScore = 0
+                    for(let k = i; k <= i + 1; k++){
+                        for(let l = j; l <= j + 1; k++){
+                            const look2 = room.lookAt(k,l)
+                            for(const item of look2){
+                                if(!((item.type == LOOK_STRUCTURES && item[LOOK_STRUCTURES].structureType != STRUCTURE_ROAD && item[LOOK_STRUCTURES].structureType != STRUCTURE_RAMPART) 
+                                    || (item.type == LOOK_TERRAIN && item[LOOK_TERRAIN] == "wall")))
+                                    currentScore++
+                            }
+                        }
+                    }
+                    if(currentScore > bestScore){
+                        location = i*50+j
+                        bestScore = currentScore
+                    }
                 }
             }
         }
