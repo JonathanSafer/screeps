@@ -60,7 +60,7 @@ const settings = {
         powerMine: 450000
     },
     max: {
-        runners: 12, // low rcl
+        runners: 15, // low rcl
         builders: 3, //TODO is this in use?
         transporters: 2,
         miners: 1, // rcl8 TODO: this shouldn't be in use anymore

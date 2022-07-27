@@ -696,11 +696,9 @@ function updateRunner(creeps: Creep[], spawn, extensions, memory, rcl, emergency
     const energyProduced = 2 * totalDistance * minerEnergyPerTick
     const energyCarried = types.store(types.getRecipe(BodyType.runner, spawn.room.energyCapacityAvailable, spawn.room))
     memory[rR.name] = Math.min(settings.max.runners, Math.max(Math.ceil(energyProduced / energyCarried), minRunners))
-    if(rcl >= 5){
-        const upgraders = _.filter(creeps, creep => creep.memory.role == rU.name).length
-        const bonusRunners = Math.floor(upgraders/3)
-        memory[rR.name] += bonusRunners
-    }
+    const upgraders = _.filter(creeps, creep => creep.memory.role == rU.name).length
+    const bonusRunners = Math.floor(upgraders/3)
+    memory[rR.name] += bonusRunners
     cU.scheduleIfNeeded(rR.name, memory[rR.name], false, spawn, creeps)
 }
 

@@ -40,11 +40,17 @@ const rR = {
         // if there's room for more energy, go find some more
         // else find storage
         if (creep.memory.mode == 0 && !creep.memory.tug) {
-            if(!rR.pickup(creep) && Game.cpu.bucket > 9500){
+            if(!rR.pickup(creep)){
                 rR.runController(creep)
             }
         } else {
-            rR.deposit(creep)
+            if (!creep.memory.location || !Game.getObjectById(creep.memory.location))
+                creep.memory.location =  (roomU.getStorage(Game.spawns[creep.memory.city].room) as StructureStorage).id
+            const target = Game.getObjectById(creep.memory.location)
+            if(target.store.energy >= 2000)
+                rR.runController(creep)
+            else
+                rR.deposit(creep)
         }
     },
 
@@ -85,6 +91,7 @@ const rR = {
             if (!creep.memory.location || !Game.getObjectById(creep.memory.location))
                 creep.memory.location =  (roomU.getStorage(Game.spawns[creep.memory.city].room) as StructureStorage).id
             const target = Game.getObjectById(creep.memory.location)
+            if(target.store.energy < 1500) return false
             actions.withdraw(creep, target)
         }
         return true
