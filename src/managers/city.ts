@@ -159,13 +159,13 @@ function updateCountsCity(city, creeps, rooms, claimRoom, unclaimRoom) {
         updateMiner(creeps, rcl8, memory, spawn)
         updateBuilder(rcl, memory, spawn)
         updateRepairer(spawn, memory, creeps)
+        updateUpgrader(city, controller, memory, rcl8, creeps, rcl)
+        updateTransporter(extensions, memory, creeps, structures, spawn)
     
         if (Game.time % 500 === 0) {
             runNuker(city)
             checkLabs(city)
-            updateTransporter(extensions, memory, creeps, structures, spawn)
             updateColonizers(city, memory, claimRoom, unclaimRoom)
-            updateUpgrader(city, controller, memory, rcl8, creeps, rcl)
             updateMineralMiner(rcl, structures, spawn, memory)
             updatePowerSpawn(city, memory)
             updateStorageLink(spawn, memory, structures)
