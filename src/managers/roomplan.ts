@@ -675,7 +675,7 @@ const p = {
                             const look2 = room.lookAt(k,l)
                             for(const item of look2){
                                 if(!((item.type == LOOK_STRUCTURES && item[LOOK_STRUCTURES].structureType != STRUCTURE_ROAD && item[LOOK_STRUCTURES].structureType != STRUCTURE_RAMPART) 
-                                    || (item.type == LOOK_TERRAIN && item[LOOK_TERRAIN] == "wall")))
+                                    || (item.type == LOOK_TERRAIN && item[LOOK_TERRAIN] == "wall")) && room.controller.pos.inRangeTo(k,l,3))
                                     currentScore++
                             }
                         }
