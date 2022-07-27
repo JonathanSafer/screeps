@@ -479,14 +479,14 @@ const p = {
                         }
                     })
                 })
+                if(room.controller.level >= 2)
+                    p.buildControllerLink(room, room.controller.level)
                 if(!noobMode || room.controller.level >= 3){
                     p.buildRoads(room, plan)
                 }
                 if (room.controller.level >= 4 && room.storage) {
                     p.buildWalls(room, plan)
                 }
-                if(room.controller.level >= 5)
-                    p.buildControllerLink(room)
                 if (room.controller.level >= 6) {
                     p.buildExtractor(room)
                     p.buildSourceLinks(room)
@@ -635,12 +635,21 @@ const p = {
         }
     },
 
-    buildControllerLink: function(room: Room) {
+    buildControllerLink: function(room: Room, rcl: number) {
         const spawn = Game.spawns[room.name + "0"]
         if(!spawn) return
         if(spawn.memory.upgradeLinkPos){
             const pos = spawn.memory.upgradeLinkPos
-            p.buildConstructionSite(room, STRUCTURE_LINK, new RoomPosition(Math.floor(pos/50), pos%50, room.name))
+            if(rcl < 5){
+                p.buildConstructionSite(room, STRUCTURE_CONTAINER, new RoomPosition(Math.floor(pos/50), pos%50, room.name))
+            } else {
+                const look = room.lookAt(Math.floor(pos/50), pos%50)
+                for(const item of look){
+                    if(item.type == LOOK_STRUCTURES && item[LOOK_STRUCTURES].structureType == STRUCTURE_CONTAINER)
+                        item[LOOK_STRUCTURES].destroy()
+                }
+                p.buildConstructionSite(room, STRUCTURE_LINK, new RoomPosition(Math.floor(pos/50), pos%50, room.name))
+            }
             return
         }
         const creeps = room.controller.pos.findInRange(FIND_MY_CREEPS, 3)
