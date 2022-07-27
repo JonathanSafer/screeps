@@ -578,15 +578,17 @@ function updateUpgrader(city: string, controller: StructureController, memory: S
         if(builders.length > 5) return
         const bank = roomU.getStorage(room) as StructureStorage
         if(!bank) return
-        const money = bank.store[RESOURCE_ENERGY]
+        let money = bank.store[RESOURCE_ENERGY]
         const capacity = bank.store.getCapacity()
+        if(rcl < 6 && Game.gcl.level <= 2)//keep us from saving energy in early game
+            money += capacity * 0.2
         if(capacity < CONTAINER_CAPACITY){
             if(!builders.length)
                 cU.scheduleIfNeeded(cN.UPGRADER_NAME,1, false, Game.spawns[city], creeps)
             return
         }
-        const needed = room.storage ? Math.floor(Math.pow((money/capacity) * 4, 3)) : Math.floor((money/capacity) * 7)
-        const maxUpgraders = 7
+        const needed = room.storage ? Math.floor(Math.pow((money/capacity) * 4, 3)) : Math.floor((money/capacity) * 12)
+        const maxUpgraders = rcl < 3 ? 12 : 7
         cU.scheduleIfNeeded(cN.UPGRADER_NAME, Math.min(needed, maxUpgraders), rcl >= 6, Game.spawns[city], creeps)
         if (controller.ticksToDowngrade < CONTROLLER_DOWNGRADE[rcl]/2){
             cU.scheduleIfNeeded(cN.UPGRADER_NAME, 1, rcl >= 6, Game.spawns[city], creeps)
