@@ -5,6 +5,7 @@ import cU = require("../lib/creepUtils")
 import motion = require("../lib/motion")
 import rU = require("./upgrader")
 import { cN, BodyType } from "../lib/creepNames"
+import types = require("../config/types")
 
 const rR = {
     name: cN.RUNNER_NAME,
@@ -78,12 +79,16 @@ const rR = {
             if(actions.charge(creep, link) == 1){
                 creep.say("*")
             }
-            if(link.store.getFreeCapacity(RESOURCE_ENERGY) == 0){
-                const upgrader = _.find(creep.room.find(FIND_MY_CREEPS), c => c.memory.role == rU.name)
-                if(!upgrader){
-                    creep.memory.juicer = false
-                    return false
-                }
+            const freeSpace = link.store.getFreeCapacity(RESOURCE_ENERGY)
+            const upgraders = _.filter(creep.room.find(FIND_MY_CREEPS), c => c.memory.role == rU.name)//TODO tmp cache this each tick
+            const spawnRoom = Game.spawns[creep.memory.city].room
+            const runnerRecipe = types.getRecipe(rR.type, spawnRoom.energyCapacityAvailable, spawnRoom) //TODO cache this
+            const runnerCost = types.cost(runnerRecipe) //TODO cache this
+            const juicers = _.filter(creep.room.find(FIND_MY_CREEPS), c => c.memory.role == rR.name && c.memory.juicer)//TODO tmp cache this each tick
+            const juicersNeeded = Math.ceil(freeSpace/runnerCost) + Math.floor(upgraders.length/3)
+            if(!upgraders.length || juicers.length > juicersNeeded){
+                creep.memory.juicer = false
+                return false
             }
         } else {
             if (!creep.memory.location || !Game.getObjectById(creep.memory.location))
