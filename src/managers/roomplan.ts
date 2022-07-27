@@ -670,8 +670,8 @@ const p = {
                 if(isValidPos){
                     //score by empty positions in range of controller
                     let currentScore = 0
-                    for(let k = i; k <= i + 1; k++){
-                        for(let l = j; l <= j + 1; k++){
+                    for(let k = i - 1; k <= i + 1; k++){
+                        for(let l = j - 1; l <= j + 1; l++){
                             const look2 = room.lookAt(k,l)
                             for(const item of look2){
                                 if(!((item.type == LOOK_STRUCTURES && item[LOOK_STRUCTURES].structureType != STRUCTURE_ROAD && item[LOOK_STRUCTURES].structureType != STRUCTURE_RAMPART) 
