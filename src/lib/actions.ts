@@ -91,7 +91,9 @@ const actions = {
         const store = creep.store
         if (Object.keys(store).length > 1){
             const mineral = _.keys(store)[1]
-            return actions.interact(creep, location, () => creep.transfer(location, mineral), 1, false, local)
+            const result =  actions.interact(creep, location, () => creep.transfer(location, mineral), 1, false, local)
+            if(result == ERR_INVALID_TARGET)
+                return creep.drop(mineral)
         } else if (Object.keys(store).length > 0) {
             return actions.interact(creep, location, () => creep.transfer(location, Object.keys(store)[0]), 1, false, local)
         }
