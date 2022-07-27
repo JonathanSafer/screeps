@@ -179,6 +179,7 @@ function checkNukes(room){
         const nukes = room.find(FIND_NUKES)
         if(nukes.length){
             Game.notify("Nuclear launch detected in " + room.name, 720)
+            Log.warning(`Nuclear launch detected in ${room.name}`)
         }
     }
 }
