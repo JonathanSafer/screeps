@@ -816,7 +816,8 @@ function updateRemotes(city: string){
             if(Game.rooms[remotes[i]]){
                 const invaderCore = Game.rooms[remotes[i]].find(FIND_HOSTILE_STRUCTURES).length
                 if(invaderCore){
-                    cU.scheduleIfNeeded(cN.BRICK_NAME, 1, false, spawn, myCreeps, remotes[i])
+                    const bricksNeeded = spawn.room.controller.level < 5 ? 2 : 1
+                    cU.scheduleIfNeeded(cN.BRICK_NAME, bricksNeeded, false, spawn, myCreeps, remotes[i])
                 }
                 const reserverCost = 650
                 const controller = Game.rooms[remotes[i]].controller
