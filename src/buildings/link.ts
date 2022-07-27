@@ -79,13 +79,13 @@ const rL = {
     },
 
     getUpgradeLink: function(room: Room) {
-        if (!room.controller || room.controller.level < 5) return false
+        if (!room.controller) return false
         const spawn = Game.spawns[room.memory.city]
         const linkPos = spawn.memory.upgradeLinkPos
         if(linkPos){
             const look = room.lookForAt(LOOK_STRUCTURES, Math.floor(linkPos/50), linkPos%50)
             for(const result of look){
-                if(result.structureType == STRUCTURE_LINK)
+                if(result.structureType == STRUCTURE_LINK || result.structureType == STRUCTURE_CONTAINER)
                     return result as StructureLink
             }
         }
