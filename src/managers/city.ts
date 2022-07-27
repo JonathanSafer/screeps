@@ -585,8 +585,8 @@ function updateUpgrader(city: string, controller: StructureController, memory: S
                 cU.scheduleIfNeeded(cN.UPGRADER_NAME,1, false, Game.spawns[city], creeps)
             return
         }
-        const needed = room.storage ? Math.floor(Math.pow((money/capacity) * 4, 3)) : Math.floor((money/capacity) * 15)
-        const maxUpgraders = rcl >= 5 ? 7 : 15 //TODO make these constants
+        const needed = room.storage ? Math.floor(Math.pow((money/capacity) * 4, 3)) : Math.floor((money/capacity) * 7)
+        const maxUpgraders = 7
         cU.scheduleIfNeeded(cN.UPGRADER_NAME, Math.min(needed, maxUpgraders), rcl >= 6, Game.spawns[city], creeps)
         if (controller.ticksToDowngrade < CONTROLLER_DOWNGRADE[rcl]/2){
             cU.scheduleIfNeeded(cN.UPGRADER_NAME, 1, rcl >= 6, Game.spawns[city], creeps)
