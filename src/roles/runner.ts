@@ -47,9 +47,7 @@ const rR = {
             if (!creep.memory.location || !Game.getObjectById(creep.memory.location))
                 creep.memory.location =  (roomU.getStorage(Game.spawns[creep.memory.city].room) as StructureStorage).id
             const target = Game.getObjectById(creep.memory.location)
-            if(target.store.energy >= 2000)
-                rR.runController(creep)
-            else
+            if(target.store.energy < 2000 || !rR.runController(creep))
                 rR.deposit(creep)
         }
     },
