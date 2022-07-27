@@ -166,7 +166,7 @@ const p = {
             || (Cache.roomData[roomName].sMC && Cache.roomData[roomName].sMC > Game.time + CREEP_LIFE_TIME))
         if(!candidates.length) return
         //Log.info("attempting expansion")
-        const expoRooms = _.sortBy(candidates, roomName => Cache.roomData[roomName].s)
+        const expoRooms = _.sortBy(candidates, roomName => Cache.roomData[roomName].s).reverse()
         let expoRoomName = null
         for(const candidate of expoRooms){
             if(expoRoomName) break
