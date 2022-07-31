@@ -481,7 +481,7 @@ const p = {
                 })
                 if(room.controller.level >= 2)
                     p.buildControllerLink(room, room.controller.level)
-                if(!noobMode || room.controller.level >= 3){
+                if(!noobMode || room.energyCapacityAvailable >= 800){//rcl3 with extensions done
                     p.buildRoads(room, plan)
                 }
                 if (room.controller.level >= 4 && room.storage) {
