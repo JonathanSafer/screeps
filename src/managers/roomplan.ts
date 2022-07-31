@@ -474,7 +474,7 @@ const p = {
                         if (Game.cpu.getUsed() + 20 > Game.cpu.tickLimit) {
                             return
                         }
-                        if(!noobMode || room.controller.level >= 3 || structureType != STRUCTURE_ROAD){
+                        if(!noobMode || room.energyCapacityAvailable >= 800 || structureType != STRUCTURE_ROAD){
                             p.buildConstructionSite(room, structureType, pos, name)
                         }
                     })
