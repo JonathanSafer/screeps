@@ -176,7 +176,8 @@ function pMinerBody(boosted){
 }
 
 function minerBody(energyAvailable: number, rcl: number, room: Room, flag: Id<Source>) {
-    energyAvailable = Math.max(energyAvailable, 300)
+    if(Game.time < 15000)
+        energyAvailable = Math.max(energyAvailable, 300)
     let works = Math.floor((energyAvailable) / BODYPART_COST[WORK])
     let pc = null
     const source = Game.getObjectById(flag)
