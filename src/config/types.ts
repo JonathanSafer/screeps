@@ -176,7 +176,7 @@ function pMinerBody(boosted){
 }
 
 function minerBody(energyAvailable: number, rcl: number, room: Room, flag: Id<Source>) {
-    // miners. at least 1 move. 5 works until we can afford 10
+    energyAvailable = Math.max(energyAvailable, 300)
     let works = Math.floor((energyAvailable) / BODYPART_COST[WORK])
     let pc = null
     const source = Game.getObjectById(flag)
