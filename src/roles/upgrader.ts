@@ -2,6 +2,7 @@ import actions = require("../lib/actions")
 import linkLib = require("../buildings/link")
 import motion = require("../lib/motion")
 import cU = require("../lib/creepUtils")
+import u = require("../lib/utils")
 import { cN, BodyType } from "../lib/creepNames"
 
 
@@ -17,16 +18,22 @@ const rU = {
             rU.getBoosted(creep, rU.boosts[0])
             return
         }
-        creep.store.energy > 0 ? actions.upgrade(creep) : rU.getEnergy(creep)
-        if(Game.time % 50 == 0){
-            rU.checkConstruction(creep)
+        const creepCache = u.getCreepCache(creep.id)
+        if(!creepCache.works){
+            creepCache.works = creep.getActiveBodyparts(WORK)
         }
+        if(creep.store.energy <= creepCache.works)
+            rU.getEnergy(creep)
+        if(creep.store.energy > 0)
+            actions.upgrade(creep)
+        if(Game.time % 50 == 0)
+            rU.checkConstruction(creep)
     },
 
     checkConstruction: function(creep){
         if(!creep.memory.boosted){
-            if(creep.room.find(FIND_MY_CONSTRUCTION_SITES).length 
-                && creep.room.controller.ticksToDowngrade > 3000){
+            const extensionSite = _.find(creep.room.find(FIND_MY_CONSTRUCTION_SITES) as [ConstructionSite], c => c.structureType == STRUCTURE_EXTENSION)
+            if(extensionSite && creep.room.controller.ticksToDowngrade > 3000){
                 creep.memory.role = cN.BUILDER_NAME
             }
         }
