@@ -87,7 +87,7 @@ const rM = {
 
     placeContainer: function(creep, source){
         const spawn = Game.spawns[creep.memory.city]
-        if(!spawn.memory.sources[source.id] || spawn.room.energyCapacityAvailable < 800 || Math.random() < 0.9)
+        if(!spawn.memory.sources[source.id] || spawn.room.energyCapacityAvailable < 800 || Math.random() < 0.95)
             return
         if(spawn.memory.sources[source.id][STRUCTURE_CONTAINER + "Pos"]){
             const pos = spawn.memory.sources[source.id][STRUCTURE_CONTAINER + "Pos"]
