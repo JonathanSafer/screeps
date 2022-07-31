@@ -41,6 +41,7 @@ describe("types", function () {
             const b2 = t.getRecipe(rM.type, sourceMaxEnergy, testRoom(2))
             assert(t.cost(b0) <= sourceMaxEnergy)
             assert(t.cost(b1) <= sourceMaxEnergy)
+            console.log(b2)
             assert(t.cost(b2) <= sourceMaxEnergy)
         })
 

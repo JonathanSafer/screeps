@@ -219,8 +219,10 @@ function upgraderBody(energyAvailable, rcl, room) {
         return scalingBody([4, 1, 1], types, energyAvailable)
     } else if (isBoosted) {
         return scalingBody([4, 1, 1], types, energyAvailable, Math.min(maxWorks * 1.5, MAX_CREEP_SIZE))
-    } else if (rcl == 8){// don't go over 15 work for rcl8
+    } else if (rcl == 8) {// don't go over 15 work for rcl8
         return scalingBody([5, 1, 2], types, energyAvailable, 24)
+    } else if (energyAvailable >= 400) {
+        return scalingBody([3, 1, 1], types, energyAvailable)
     } else {
         return scalingBody([1, 1, 1], types, energyAvailable)
     }
