@@ -359,6 +359,7 @@ const markets = {
 
     sellOps: function(city, buyOrders){
         const storage = city.storage
+        if (!storage) return
         if (storage.store[RESOURCE_OPS] > 20000){
             const goodOrders = markets.sortOrder(buyOrders[RESOURCE_OPS])
             if (goodOrders.length){
@@ -430,6 +431,7 @@ const markets = {
     },
 
     sellResources: function(city, resources, threshold, container, buyOrders){
+        if(!container) return
         for(const resource of resources){
             if(container.store[resource] > threshold){
                 const sellAmount = container.store[resource] - threshold

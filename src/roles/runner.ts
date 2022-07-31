@@ -80,13 +80,13 @@ const rR = {
                 creep.say("*")
             }
             const freeSpace = link.store.getFreeCapacity(RESOURCE_ENERGY)
-            const upgraders = _.filter(creep.room.find(FIND_MY_CREEPS), c => c.memory.role == rU.name)//TODO tmp cache this each tick
             const spawnRoom = Game.spawns[creep.memory.city].room
+            const upgraders = _.filter(spawnRoom.find(FIND_MY_CREEPS), c => c.memory.role == rU.name)//TODO tmp cache this each tick
             const runnerRecipe = types.getRecipe(rR.type, spawnRoom.energyCapacityAvailable, spawnRoom) //TODO cache this
             const runnerCost = types.cost(runnerRecipe) //TODO cache this
             const juicers = _.filter(creep.room.find(FIND_MY_CREEPS), c => c.memory.role == rR.name && c.memory.juicer)//TODO tmp cache this each tick
-            const juicersNeeded = Math.ceil(freeSpace/runnerCost) + Math.floor(upgraders.length/3)
-            if(!upgraders.length || juicers.length > juicersNeeded){
+            const juicersNeeded = Math.ceil((freeSpace - LINK_CAPACITY)/runnerCost) + Math.floor(upgraders.length/3)
+            if(juicers.length > juicersNeeded){
                 creep.memory.juicer = false
                 return false
             }
