@@ -81,7 +81,7 @@ const rU = {
          
         // 4. Spawn   
         if (spawn) return spawn
-        return false
+        return null
     },
 
     getAvailableSpawn: function(spawns: StructureSpawn[]) {

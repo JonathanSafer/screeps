@@ -157,7 +157,7 @@ function updateCountsCity(city, creeps, rooms, claimRoom, unclaimRoom) {
         updateRunner(creeps, spawn, extensions, memory, rcl, emergencyTime)
         updateFerry(spawn, memory, rcl)
         updateMiner(creeps, rcl8, memory, spawn)
-        updateBuilder(rcl, memory, spawn)
+        updateBuilder(rcl, memory, spawn, creeps)
         updateRepairer(spawn, memory, creeps)
         updateUpgrader(city, controller, memory, rcl8, creeps, rcl)
         updateTransporter(extensions, memory, creeps, structures, spawn)
@@ -614,9 +614,10 @@ function updateRepairer(spawn, memory: SpawnMemory, creeps){
     cU.scheduleIfNeeded(rRe.name, repairersNeeded, false, spawn, creeps)
 }
 
-function updateBuilder(rcl, memory, spawn: StructureSpawn) {
+function updateBuilder(rcl, memory, spawn: StructureSpawn, creeps) {
     const room = spawn.room
     const constructionSites = room.find(FIND_MY_CONSTRUCTION_SITES)
+    const storage = roomU.getStorage(room) as StructureStorage
     let totalSites
     if (rcl < 4) {
         const repairSites = _.filter(room.find(FIND_STRUCTURES), structure => (structure.hits < (structure.hitsMax*0.3)) 
@@ -627,10 +628,8 @@ function updateBuilder(rcl, memory, spawn: StructureSpawn) {
     }
     if (totalSites > 0){
         // If room is full of energy and there is construction, make a builder
-        if (room.energyAvailable == room.energyCapacityAvailable && Game.time % 500 == 0) {
-            sq.schedule(spawn, rB.name)
-        }
-        memory[rB.name] = rcl < 6 ? settings.max.builders : 1
+        const buildersNeeded = storage.store.getCapacity() == CONTAINER_CAPACITY ? 6 : 3
+        cU.scheduleIfNeeded(rB.name, buildersNeeded, rcl >= 6, spawn, creeps)
     } else {
         memory[rB.name] = 0
     }
@@ -647,12 +646,7 @@ function updateBuilder(rcl, memory, spawn: StructureSpawn) {
             const minHits = _.min(walls, wall => wall.hits).hits
             const defenseMode = !spawn.room.controller.safeMode && spawn.room.controller.safeModeCooldown
             if(minHits < settings.wallHeight[rcl - 1] *  spawn.memory.wallMultiplier || defenseMode){
-                if(Game.time % 500 == 0){
-                    sq.schedule(spawn, rB.name, rcl >= 6)
-                }
-                if(rcl <= 6){
-                    memory[rB.name] = settings.max.builders
-                }
+                cU.scheduleIfNeeded(rB.name, 3, rcl >= 6, spawn, creeps)
                 return
             }
         }
