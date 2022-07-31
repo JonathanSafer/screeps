@@ -171,6 +171,7 @@ const rR = {
             creep.pull(pullee)
             pullee.move(creep)
             creep.memory.tug = false
+            pullee.memory.paired = pullee.id
             return
         } else if(creep.ticksToLive == 1){
             pullee.memory.paired = null
