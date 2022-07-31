@@ -15,12 +15,13 @@ const rM = {
             return
         }
         rM.checkRespawn(creep)
-
         if(creep.hits < creep.hitsMax && creep.pos.roomName == Game.spawns[creep.memory.city].pos.roomName){
             Game.spawns[creep.memory.city].memory.towersActive = true
             motion.newMove(creep, Game.spawns[creep.memory.city].pos, 7)
             return
         }
+        if(creep.memory.paired && !Game.getObjectById(creep.memory.paired))
+            creep.memory.paired = null
         if(!creep.memory.source || !creep.memory.sourcePos) {
             rM.nextSource(creep)
             return

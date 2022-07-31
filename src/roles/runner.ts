@@ -62,7 +62,7 @@ const rR = {
         if(pullee){
             creep.memory.tug = true
             creep.memory.pullee = pullee.id
-            pullee.memory.paired = true
+            pullee.memory.paired = creep.id
         }
     },
 
@@ -173,7 +173,7 @@ const rR = {
             creep.memory.tug = false
             return
         } else if(creep.ticksToLive == 1){
-            pullee.memory.paired = false
+            pullee.memory.paired = null
         }
         const range = new RoomPosition(destination.x, destination.y, destination.roomName).isEqualTo(pullee.memory.sourcePos.x, pullee.memory.sourcePos.y)  ? 1 : 0
         motion.newMove(creep, destination, range)

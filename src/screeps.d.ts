@@ -111,7 +111,7 @@ declare global {
         notify?: boolean
         building?: boolean
         hasRally?: boolean
-        paired?: boolean
+        paired?: Id<Creep>
         resource?: ResourceConstant
         flagDistance?: number
         repPower?: number
