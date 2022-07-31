@@ -301,7 +301,7 @@ function harasserBody(energyAvailable, boosted, rcl){
     if(energyAvailable < 500){
         return scalingBody([1, 1], [RANGED_ATTACK, MOVE], energyAvailable)
     }
-    if(rcl < 4){
+    if(energyAvailable < 1100){
         return scalingBody([1, 2, 1], [RANGED_ATTACK, MOVE, HEAL], energyAvailable)
     }
     return scalingBody([4, 5, 1], [RANGED_ATTACK, MOVE, HEAL], energyAvailable)
