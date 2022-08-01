@@ -587,7 +587,11 @@ function updateUpgrader(city: string, controller: StructureController, memory: S
                 cU.scheduleIfNeeded(cN.UPGRADER_NAME,1, false, Game.spawns[city], creeps)
             return
         }
-        const needed = room.storage ? Math.floor(Math.pow((money/capacity) * 4, 3)) : Math.floor((money/capacity) * 7)
+        let storedEnergy = bank.store[RESOURCE_ENERGY]
+        for(const c of creeps){
+            storedEnergy += c.store.energy
+        }
+        const needed = room.storage ? Math.floor(Math.pow((money/capacity) * 4, 3)) : Math.floor((storedEnergy*2/capacity))
         const maxUpgraders = 7 - builders.length
         cU.scheduleIfNeeded(cN.UPGRADER_NAME, Math.min(needed, maxUpgraders), rcl >= 6, Game.spawns[city], creeps)
         if (controller.ticksToDowngrade < CONTROLLER_DOWNGRADE[rcl]/2){
@@ -617,7 +621,7 @@ function updateRepairer(spawn, memory: SpawnMemory, creeps){
 function updateBuilder(rcl, memory, spawn: StructureSpawn, creeps) {
     const room = spawn.room
     const constructionSites = room.find(FIND_MY_CONSTRUCTION_SITES)
-    const storage = roomU.getStorage(room) as StructureStorage
+    const storage = roomU.getStorage(room) as StructureStorage | StructureContainer | StructureSpawn
     let totalSites
     if (rcl < 4) {
         const repairSites = _.filter(room.find(FIND_STRUCTURES), structure => (structure.hits < (structure.hitsMax*0.3)) 
@@ -627,9 +631,17 @@ function updateBuilder(rcl, memory, spawn: StructureSpawn, creeps) {
         totalSites = constructionSites.length
     }
     if (totalSites > 0){
-        // If room is full of energy and there is construction, make a builder
-        const buildersNeeded = storage.store.getCapacity() == CONTAINER_CAPACITY ? 6 : 3
-        cU.scheduleIfNeeded(rB.name, buildersNeeded, rcl >= 6, spawn, creeps)
+        if(storage.structureType == STRUCTURE_CONTAINER){
+            //make builders based on quantity of carried energy in room
+            let energyStore = storage.store.energy
+            for(const c of creeps){
+                energyStore += c.store.energy
+            }
+            const buildersNeeded = Math.floor(energyStore*2/CONTAINER_CAPACITY)
+            cU.scheduleIfNeeded(rB.name, buildersNeeded, rcl >= 6, spawn, creeps)
+        } else {
+            cU.scheduleIfNeeded(rB.name, settings.max.builders, rcl >= 6, spawn, creeps)
+        }
     } else {
         memory[rB.name] = 0
     }
