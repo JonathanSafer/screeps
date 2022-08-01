@@ -37,10 +37,12 @@ const rR = {
         }
         if(creep.memory.mode == 0 && !creep.memory.targetId){
             rR.checkForPullees(creep)
+            if(creep.memory.tug)
+                return
         }
         // if there's room for more energy, go find some more
         // else find storage
-        if (creep.memory.mode == 0 && !creep.memory.tug) {
+        if (creep.memory.mode == 0) {
             if(!rR.pickup(creep)){
                 rR.runController(creep)
             }
