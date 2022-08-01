@@ -10,7 +10,7 @@ const rL = {
         const rN = room.name
         if (!Cache[rN]) Cache[rN] = {}
         const links: LinksCache = Cache[rN].links || {}
-        Cache[rN].links = {}
+        Cache[rN].links = Cache[rN].links || {}
         if (!room.storage) return
         let storageLink: StructureLink = Game.getObjectById(links.store)
         let upgradeLink: StructureLink = Game.getObjectById(links.upgrade)
