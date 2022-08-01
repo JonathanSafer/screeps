@@ -26,7 +26,7 @@ const rU = {
             rU.getEnergy(creep)
         if(creep.store.energy > 0)
             actions.upgrade(creep)
-        if(Game.time % 50 == 0)
+        if(Game.time % 50 == 49)
             rU.checkConstruction(creep)
     },
 
