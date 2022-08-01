@@ -255,7 +255,7 @@ function quadBody(energyAvailable, rcl, room, boosted){
     const types = [RANGED_ATTACK, MOVE, HEAL]
     let ratio = [0, 1, 0]
     if(energyAvailable < 550)//rcl1
-        ratio = [0, 1, 0]
+        ratio = [1, 1, 0]
     else if(energyAvailable < 800)//rcl2
         ratio = [1, 2, 1]
     else if(energyAvailable < 1300)//rcl3
