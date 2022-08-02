@@ -266,6 +266,9 @@ declare global {
     interface TmpDict {
         [name: string]: {
             attacks?: Array<AttackData>
+            juicers?: number
+            juicersNeeded?: number
+
         }
     }
     interface AttackData {

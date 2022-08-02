@@ -76,21 +76,30 @@ const rR = {
         const link = rU.getUpgradeLink(creep)
         if(!link) return false
         if(!creep.memory.juicer && link.store.getFreeCapacity(RESOURCE_ENERGY) == 0) return false
+        const wasJuicer = creep.memory.juicer
         creep.memory.juicer = true
         if(creep.store.energy > 0){
             if(actions.charge(creep, link) == 1){
                 creep.say("*")
             }
-            const freeSpace = link.store.getFreeCapacity(RESOURCE_ENERGY)
             const spawnRoom = Game.spawns[creep.memory.city].room
-            const upgraders = _.filter(spawnRoom.find(FIND_MY_CREEPS), c => c.memory.role == rU.name)//TODO tmp cache this each tick
-            const runnerRecipe = types.getRecipe(rR.type, spawnRoom.energyCapacityAvailable, spawnRoom) //TODO cache this
-            const runnerCost = types.cost(runnerRecipe) //TODO cache this
-            const juicers = _.filter(creep.room.find(FIND_MY_CREEPS), c => c.memory.role == rR.name && c.memory.juicer)//TODO tmp cache this each tick
-            const juicersNeeded = Math.ceil((freeSpace - LINK_CAPACITY)/runnerCost) + Math.floor(upgraders.length/3)
-            if(juicers.length > juicersNeeded){
+            if(!Tmp[spawnRoom.name]){
+                Tmp[spawnRoom.name] = {}
+            }
+            if(!Tmp[spawnRoom.name].juicers && Tmp[spawnRoom.name].juicers != 0){
+                const freeSpace = link.store.getFreeCapacity(RESOURCE_ENERGY)
+                const upgraders = _.filter(spawnRoom.find(FIND_MY_CREEPS), c => c.memory.role == rU.name).length
+                const runnerRecipe = types.getRecipe(rR.type, spawnRoom.energyCapacityAvailable, spawnRoom)
+                const runnerCost = types.cost(runnerRecipe)
+                Tmp[spawnRoom.name].juicers = _.filter(creep.room.find(FIND_MY_CREEPS), c => c.memory.role == rR.name && c.memory.juicer).length
+                Tmp[spawnRoom.name].juicersNeeded = Math.ceil((freeSpace - LINK_CAPACITY)/runnerCost) + Math.floor(upgraders/3)
+            }
+            if(Tmp[spawnRoom.name].juicers >= Tmp[spawnRoom.name].juicersNeeded){
                 creep.memory.juicer = false
                 return false
+            } else {
+                if(!wasJuicer)
+                    Tmp[spawnRoom.name].juicers += 1
             }
         } else {
             if (!creep.memory.location || !Game.getObjectById(creep.memory.location))
