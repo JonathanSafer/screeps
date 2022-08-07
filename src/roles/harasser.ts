@@ -19,7 +19,7 @@ const rH = {
             return
         }
         const flagName = creep.memory.flag || creep.memory.city + "harass"
-        if(Game.rooms[flagName] && !Memory.flags[flagName]){
+        if(!Memory.flags[flagName] && Game.map.getRoomStatus(flagName)){
             u.placeFlag(flagName, new RoomPosition(25, 25, flagName))
         }
         if(creep.hits < creep.hitsMax * 0.2 && !creep.memory.reinforced){
