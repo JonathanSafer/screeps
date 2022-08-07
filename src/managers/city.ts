@@ -592,6 +592,7 @@ function updateUpgrader(city: string, controller: StructureController, memory: S
             storedEnergy += c.store.energy
         }
         const needed = room.storage ? Math.floor(Math.pow((money/capacity) * 4, 3)) : Math.floor((storedEnergy*2/capacity))
+        Log.info(`City ${city}: stored energy: ${storedEnergy}, upgraders requested: ${needed}`)
         const maxUpgraders = 7 - builders.length
         cU.scheduleIfNeeded(cN.UPGRADER_NAME, Math.min(needed, maxUpgraders), rcl >= 6, Game.spawns[city], creeps)
         if (controller.ticksToDowngrade < CONTROLLER_DOWNGRADE[rcl]/2){
@@ -638,6 +639,7 @@ function updateBuilder(rcl, memory, spawn: StructureSpawn, creeps) {
                 energyStore += c.store.energy
             }
             const buildersNeeded = Math.floor(energyStore*2/CONTAINER_CAPACITY)
+            Log.info(`City ${spawn.name}: stored energy: ${energyStore}, builders requested: ${buildersNeeded}`)
             cU.scheduleIfNeeded(rB.name, buildersNeeded, rcl >= 6, spawn, creeps)
         } else {
             cU.scheduleIfNeeded(rB.name, settings.max.builders, rcl >= 6, spawn, creeps)
