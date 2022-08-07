@@ -575,7 +575,7 @@ function updateUpgrader(city: string, controller: StructureController, memory: S
         }
     } else {
         const builders = _.filter(creeps, c => c.memory.role == cN.BUILDER_NAME)
-        if(builders.length > 5) return
+        if(builders.length > 3) return
         const bank = roomU.getStorage(room) as StructureStorage
         if(!bank) return
         let money = bank.store[RESOURCE_ENERGY]
@@ -589,9 +589,11 @@ function updateUpgrader(city: string, controller: StructureController, memory: S
         }
         let storedEnergy = bank.store[RESOURCE_ENERGY]
         for(const c of creeps){
-            storedEnergy += c.store.energy
+            if(c.room.name == controller.room.name)
+                storedEnergy += c.store.energy
         }
-        const needed = room.storage ? Math.floor(Math.pow((money/capacity) * 4, 3)) : Math.floor((storedEnergy*2/capacity))
+        const energyMultiplier = rcl > 2 ? 2 : 4
+        const needed = room.storage ? Math.floor(Math.pow((money/capacity) * 4, 3)) : Math.floor((storedEnergy*energyMultiplier/capacity))
         Log.info(`City ${city}: stored energy: ${storedEnergy}, upgraders requested: ${needed}`)
         const maxUpgraders = 7 - builders.length
         cU.scheduleIfNeeded(cN.UPGRADER_NAME, Math.min(needed, maxUpgraders), rcl >= 6, Game.spawns[city], creeps)

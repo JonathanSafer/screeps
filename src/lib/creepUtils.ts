@@ -143,6 +143,9 @@ const cU = {
         const creepsOnOperation = _.filter(creepsInField, creep => creep.memory.flag == flag).length
         const queued = sq.countByInfo(spawn, role, flag)
         let creepsNeeded = count - queued - creepsOnOperation
+        if(role == cN.QUAD_NAME){
+            Log.info(`${spawn.name} spawning quad. Queued: ${queued}, OnOp: ${creepsOnOperation}, Needed: ${creepsNeeded} `)
+        }
         while (creepsNeeded > 0) {
             sq.schedule(spawn, role, boosted, flag)
             if(role == cN.POWER_MINER_NAME){
