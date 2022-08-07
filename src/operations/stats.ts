@@ -12,6 +12,7 @@ const statsLib = {
         if(!Memory.benchmark){
             Memory.benchmark = {}
         }
+        if(!myCities.length) return
         const maxRcl = _.max(myCities, city => city.controller.level).controller.level
         const gcl = Game.gcl.level
         if(!Memory.benchmark["rcl"+maxRcl])
