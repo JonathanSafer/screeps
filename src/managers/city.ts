@@ -699,7 +699,7 @@ function updateRunner(creeps: Creep[], spawn, extensions, memory, rcl, emergency
     const minRunners = rcl < 7 ? 2 : 0
     const distances = _.map(miners, miner => PathFinder.search(spawn.pos, miner.pos).cost)
     let totalDistance = _.sum(distances)
-    if(extensions < 10 && Object.keys(Game.rooms).length == 1) totalDistance = totalDistance * 1.5//for when there are no roads
+    if(extensions < 10 && Object.keys(Game.rooms).length == 1) totalDistance = totalDistance * 0.8//for when there are no reservers
     const minerEnergyPerTick = SOURCE_ENERGY_CAPACITY/ENERGY_REGEN_TIME
     const energyProduced = 2 * totalDistance * minerEnergyPerTick
     const energyCarried = types.store(types.getRecipe(BodyType.runner, spawn.room.energyCapacityAvailable, spawn.room))
