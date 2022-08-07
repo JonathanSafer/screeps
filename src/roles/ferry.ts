@@ -189,8 +189,11 @@ const rF = {
                 break
             }
             const factory = Game.getObjectById(creep.memory.lab)
-            actions.withdraw(creep, factory, creep.memory.mineral, Math.min(creep.memory.quantity, creep.store.getCapacity())) 
-
+            if(!factory.store[creep.memory.mineral]){
+                actions.withdraw(creep, factory, RESOURCE_ENERGY, 1) 
+            } else {
+                actions.withdraw(creep, factory, creep.memory.mineral, Math.min(creep.memory.quantity, creep.store.getCapacity())) 
+            }
             break
         }
         case 12:
