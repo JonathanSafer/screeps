@@ -8,6 +8,19 @@ import profiler = require("./screeps-profiler")
 const statsLib = {
     cityCpuMap: {},
 
+    benchmark: function(myCities: Room[]){
+        if(!Memory.benchmark){
+            Memory.benchmark = {}
+        }
+        const maxRcl = _.max(myCities, city => city.controller.level).controller.level
+        const gcl = Game.gcl.level
+        if(!Memory.benchmark["rcl"+maxRcl])
+            Memory.benchmark["rcl"+maxRcl] = Game.time - Memory.startTick
+        if(!Memory.benchmark["gcl"+gcl])
+            Memory.benchmark["gcl"+gcl] = Game.time - Memory.startTick
+
+    },
+
     collectStats: function(myCities: Room[]) {
         for (const creep of Object.values(Game.creeps)) {
             const ccache = u.getCreepCache(creep.id)

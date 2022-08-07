@@ -173,6 +173,10 @@ export function loop() {
         }
 
         s.collectStats(myCities)
+
+        if(Game.time % 7 == 4){
+            s.benchmark(myCities)
+        }
         
         if (Game.time % settings.profileFrequency == 0) {
             Game.profiler.profile(settings.profileLength)

@@ -765,6 +765,7 @@ function setGameState(){
         Memory.rooms = {}
         Memory.spawns = {}
         Memory.gameState = 0
+        Memory.startTick = Game.time
     }
 }
 

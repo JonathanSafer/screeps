@@ -106,6 +106,8 @@ declare global {
             }
             totalTime?: number
         }
+        startTick?: number
+        benchmark?: {}
      }
     interface CreepMemory {
         notify?: boolean
