@@ -92,6 +92,8 @@ const rR = {
                 }
                 if(Tmp[spawnRoom.name].juicers <= Tmp[spawnRoom.name].juicersNeeded || (creep.saying == "*" && Tmp[spawnRoom.name].juicersNeeded > 0)){
                     creep.memory.juicer = true
+                    if(creep.saying != "*")
+                        Tmp[spawnRoom.name].juicers++
                 } else {
                     creep.memory.juicer = false
                     return false
