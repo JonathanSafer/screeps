@@ -292,6 +292,7 @@ const p = {
         const roomInfo = Cache.roomData[roomName]
         if(!roomInfo || roomInfo.rcl || !roomInfo.src || !Object.keys(roomInfo.src).length 
             || Memory.remotes[roomName] || (spawn.room.energyCapacityAvailable < 2300 && !roomInfo.ctrlP)) return -1
+        if(!roomInfo.ctrlP) return -1 //TODO add SK mining
         let totalDistance = 0
         for(const source in roomInfo.src){
             const sourcePos = u.unpackPos(roomInfo.src[source], roomName)
