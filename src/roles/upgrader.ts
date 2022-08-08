@@ -42,9 +42,12 @@ const rU = {
     },
 
     getEnergy: function(creep){
-        const link = rU.getUpgradeLink(creep)
+        const link = rU.getUpgradeLink(creep) as StructureLink | StructureContainer
         if(link){
             actions.withdraw(creep, link)
+            if(link && link.structureType == STRUCTURE_CONTAINER && link.pos.isNearTo(creep.pos) && link.pos.inRangeTo(link.room.controller.pos,3)){
+                creep.move(creep.pos.getDirectionTo(link.pos))
+            }
             return
         }
         cU.getEnergy(creep)

@@ -621,7 +621,7 @@ function updateRepairer(spawn, memory: SpawnMemory, creeps){
     cU.scheduleIfNeeded(rRe.name, repairersNeeded, false, spawn, creeps)
 }
 
-function updateBuilder(rcl, memory, spawn: StructureSpawn, creeps) {
+function updateBuilder(rcl, memory, spawn: StructureSpawn, creeps: [Creep]) {
     const room = spawn.room
     const constructionSites = room.find(FIND_MY_CONSTRUCTION_SITES)
     const storage = roomU.getStorage(room) as StructureStorage | StructureContainer | StructureSpawn
@@ -640,7 +640,8 @@ function updateBuilder(rcl, memory, spawn: StructureSpawn, creeps) {
             for(const c of creeps){
                 energyStore += c.store.energy
             }
-            const buildersNeeded = Math.floor(energyStore*2/CONTAINER_CAPACITY)
+            const upgraders = _.filter(creeps, c => c.memory.role == cN.UPGRADER_NAME).length
+            const buildersNeeded = Math.max(Math.floor(energyStore*2/CONTAINER_CAPACITY) - upgraders, 3)
             Log.info(`City ${spawn.name}: stored energy: ${energyStore}, builders requested: ${buildersNeeded}`)
             cU.scheduleIfNeeded(rB.name, buildersNeeded, rcl >= 6, spawn, creeps)
         } else {
