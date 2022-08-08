@@ -90,7 +90,7 @@ const rR = {
                     Tmp[spawnRoom.name].juicers = _.filter(creep.room.find(FIND_MY_CREEPS), c => c.memory.role == rR.name && c.memory.juicer).length
                     Tmp[spawnRoom.name].juicersNeeded = Math.ceil((freeSpace - LINK_CAPACITY)/runnerCost) + Math.floor(upgraders/3)
                 }
-                if(Tmp[spawnRoom.name].juicers <= Tmp[spawnRoom.name].juicersNeeded || (creep.saying == "*" && Tmp[spawnRoom.name].juicersNeeded > 0)){
+                if(Tmp[spawnRoom.name].juicers <= Tmp[spawnRoom.name].juicersNeeded || (creep.saying == "*" && Tmp[spawnRoom.name].juicersNeeded < 0)){
                     creep.memory.juicer = true
                     if(creep.saying != "*")
                         Tmp[spawnRoom.name].juicers++
