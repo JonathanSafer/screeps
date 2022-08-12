@@ -862,16 +862,9 @@ function updateDEFCON(remote, harasserSize){
         roomInfo.d = 2
     }
     if(Game.rooms[remote]){
-        if(Game.rooms[remote].controller){
-            if(Game.rooms[remote].controller.my){
-                Cache.roomData[remote].d = 1
-                return Cache.roomData[remote].d
-            } else if(Game.rooms[remote].controller.owner){
-                Cache.roomData[remote].d = 4
-                return Cache.roomData[remote].d
-            }
-        } else {
-            roomInfo.d = 3
+        if(Game.rooms[remote].controller && Game.rooms[remote].controller.owner){
+            Cache.roomData[remote].d = 4
+            return Cache.roomData[remote].d
         }
         const hostiles = _.filter(u.findHostileCreeps(Game.rooms[remote]), h => h instanceof Creep &&
             (h.getActiveBodyparts(WORK) || h.getActiveBodyparts(RANGED_ATTACK) || h.getActiveBodyparts(ATTACK) || h.getActiveBodyparts(HEAL)))
