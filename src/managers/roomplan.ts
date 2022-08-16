@@ -703,7 +703,7 @@ const p = {
         const spawn = Game.spawns[room.name + "0"]
         if(!spawn) return
         for(const source of sources){
-            if(spawn.memory.sources[source.id][STRUCTURE_LINK + "Pos"]){
+            if(spawn.memory.sources[source.id] && spawn.memory.sources[source.id][STRUCTURE_LINK + "Pos"]){
                 const pos = spawn.memory.sources[source.id][STRUCTURE_LINK + "Pos"]
                 p.buildConstructionSite(room, STRUCTURE_LINK, new RoomPosition(Math.floor(pos/50), pos%50, room.name))
                 continue
