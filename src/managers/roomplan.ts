@@ -734,6 +734,10 @@ const p = {
                 }
             }
             if(location){
+                if(!spawn.memory.sources[source.id]){
+                    Log.error(`Source not in memory at ${source.pos}`)
+                    return
+                }
                 spawn.memory.sources[source.id][STRUCTURE_LINK + "Pos"] = location
                 p.buildConstructionSite(room, STRUCTURE_LINK, new RoomPosition(Math.floor(location/50), location%50, room.name))
             } else {
