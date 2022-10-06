@@ -350,7 +350,7 @@ const p = {
         const remotes = Object.keys(_.countBy(spawn.memory.sources, s => s.roomName))
         for(const roomName of remotes){
             const roomInfo = Cache.roomData[roomName]
-            if(roomInfo.own == settings.username)
+            if(roomName == room.name)
                 continue
             const score = p.reassessRemote(roomName, spawn)
             if(score > 0 && (!remote || score > remote.score))
