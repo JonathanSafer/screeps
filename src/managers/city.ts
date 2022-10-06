@@ -821,6 +821,8 @@ function updateRemotes(city: string){
         const harasserRecipe = types.getRecipe(rH.type, Game.spawns[city].room.energyCapacityAvailable, Game.spawns[city].room)
         const harasserSize = harasserRecipe.length
         for(let i = 0; i < remotes.length; i++){
+            if(remotes[i] == spawn.room.name)
+                continue
             const defcon = updateDEFCON(remotes[i], harasserSize)
             if(defcon >= 4){
                 Log.info(`Remote ${remotes[i]} removed from ${spawn.room.name} due to high level threat`)
