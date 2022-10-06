@@ -123,7 +123,7 @@ const rU = {
 
     initializeSources: function(spawn: StructureSpawn) {
         const memory = spawn.memory
-        if (!memory.sources) {
+        if (!memory.sources || Object.keys(memory.sources).length == 0) {
             memory.sources = {}
             const localSources: Array<Source> = spawn.room.find(FIND_SOURCES)
 
