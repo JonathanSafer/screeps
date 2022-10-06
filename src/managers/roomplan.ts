@@ -349,7 +349,6 @@ const p = {
         if(!spawn) return null
         const remotes = Object.keys(_.countBy(spawn.memory.sources, s => s.roomName))
         for(const roomName of remotes){
-            const roomInfo = Cache.roomData[roomName]
             if(roomName == room.name)
                 continue
             const score = p.reassessRemote(roomName, spawn)
