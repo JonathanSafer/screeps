@@ -156,6 +156,10 @@ const rQ = {
                 //TODO: if path is less than 2 in length, find a new startPos and try again
 
                 formPos = path[Math.max(path.length - 2, 0)]
+                if(path.length < 2){
+                    const spawn = Game.spawns[creep.memory.city]
+                    formPos = new RoomPosition(spawn.pos.x + 1, spawn.pos.y + 4, spawn.pos.roomName)
+                }
                 creep.memory.rally = formPos
             }
             let inLine = 0
