@@ -100,7 +100,7 @@ const cU = {
         const city = creep.memory.city
         const localCreeps = u.splitCreepsByCity()
         const miners = _.filter(localCreeps[city], lcreep => lcreep.memory.role == "remoteMiner")
-        const drops: (AnyStoreStructure | Resource)[] = _.flatten(_.map(miners, miner => miner.room.find(FIND_DROPPED_RESOURCES)))
+        const drops: (AnyStoreStructure | Resource)[] = _.flatten(_.map(miners, miner => _.filter(miner.room.find(FIND_DROPPED_RESOURCES),d => d.resourceType == RESOURCE_ENERGY)))
         const containers = _.map(miners, miner => _.find(miner.pos.lookFor(LOOK_STRUCTURES), struct => struct.structureType == STRUCTURE_CONTAINER)) as StructureContainer[]
         let hostileStorageStructures = []
         
