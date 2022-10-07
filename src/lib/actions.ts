@@ -166,7 +166,7 @@ const actions = {
                 return result
             }
         }
-        const resources = creep.room.find(FIND_DROPPED_RESOURCES)
+        const resources = _.filter(creep.room.find(FIND_DROPPED_RESOURCES), d => d.resourceType == RESOURCE_ENERGY)
         const closeStuff = _.filter(resources, thing => thing.pos.isNearTo(creep.pos))
         if (closeStuff.length) {
             // we can only get one thing per turn, success is assumed since we're close
