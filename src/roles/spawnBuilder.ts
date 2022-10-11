@@ -84,7 +84,7 @@ const rSB = {
                 return
             }
             if(Game.time % 100 == 0 && rSB.jobDone(creep)){
-                u.removeFlags(Memory.flags.claim.roomName)
+                delete(Memory.flags.claim)
             }
             if(creep.store.energy == 0 && creep.memory.building){
                 creep.memory.building = false
