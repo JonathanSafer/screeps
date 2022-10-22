@@ -107,6 +107,11 @@ global.RemoveJunk = function(city){//only to be used on cities with levelled fac
         }
     }
 }
+global.RemoveConstruction = function(){
+    for(const id in Game.constructionSites){
+        Game.constructionSites[id].remove()
+    }
+}
 global.CleanCities = function(){
     const u = require("./utils")
     const rU = require("./roomUtils")
