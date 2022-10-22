@@ -345,6 +345,17 @@ const u = {
         const kWorldSize = Game.map.getWorldSize()/2 - 1
         const room = /^([WE])([0-9]+)([NS])([0-9]+)$/.exec(pos.roomName)
         return {"x": pos.x + 50 * (kWorldSize + (room[1] === "W" ? -Number(room[2]) : Number(room[2]) + 1)), "y": pos.y + 50 * (kWorldSize + (room[3] === "N" ? -Number(room[4]) : Number(room[4]) + 1))}
+    },
+
+    removeConstruction: function(){
+        if(Object.keys(Game.constructionSites).length > 1){
+            return
+        }
+        for(const id in Game.constructionSites){
+            const site = Game.constructionSites[id]
+            if(site.progress == 0)
+                site.remove()
+        }
     }
 }
 

@@ -140,6 +140,7 @@ export function loop() {
                     delete Memory.rooms[name]
                 }
             }
+            u.removeConstruction()
         }
 
         m.manageMarket(myCities)
