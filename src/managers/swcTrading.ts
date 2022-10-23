@@ -3,7 +3,7 @@
 
 import settings = require("../config/settings")
 import u = require("../lib/utils")
-const segmentID = 90
+const segmentID = 98
 const allyList = settings.allies
 
 // Priority convention:
