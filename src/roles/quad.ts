@@ -243,7 +243,7 @@ const rQ = {
                 if(tower) return false
             }
             const hostile = _.find(everythingByRoom[rooms[i]].hostiles, h => (cU.getCreepDamage(h as Creep, ATTACK) > 0 || cU.getCreepDamage(h as Creep, RANGED_ATTACK) > 0) && 
-                h.pos.inRangeTo(quad[0], 8) || h.pos.inRangeTo(quad[1], 8) || h.pos.inRangeTo(quad[2], 8) || h.pos.inRangeTo(quad[3], 8))
+                h.pos.inRangeTo(quad[0], 3) || h.pos.inRangeTo(quad[1], 3) || h.pos.inRangeTo(quad[2], 3) || h.pos.inRangeTo(quad[3], 3))
             if(hostile) return false
         }
         // const exits = Game.map.describeExits(quad[i].pos.roomName)
@@ -264,7 +264,7 @@ const rQ = {
         if(Game.rooms[flagName])
             flag = new RoomPosition(25, 25, flagName)
 
-        if(!flag || !rQ.isSafe(everythingByRoom, quad) || creep.room.name == flag.roomName || u.getRangeTo(quad[0].pos, flag as RoomPosition) < 40){
+        if(!flag || !rQ.isSafe(everythingByRoom, quad) || creep.room.name == flag.roomName || u.getRangeTo(quad[0].pos, flag as RoomPosition) < 26){
             creep.memory.safeTime = Game.time + 20
             creep.memory.state = CS.ENGAGE
             rQ.engage(creep)
