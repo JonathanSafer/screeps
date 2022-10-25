@@ -662,7 +662,8 @@ function updateBuilder(rcl, memory, spawn: StructureSpawn, creeps: [Creep]) {
                 spawn.memory.wallMultiplier = Math.min(spawn.memory.wallMultiplier + .1, 10)
             const minHits = _.min(walls, wall => wall.hits).hits
             const defenseMode = !spawn.room.controller.safeMode && spawn.room.controller.safeModeCooldown
-            if(minHits < settings.wallHeight[rcl - 1] *  spawn.memory.wallMultiplier || defenseMode){
+            const wallHeight = Game.gcl.level < 3 ? settings.wallHeight[Math.min(rcl - 1, 3)] : settings.wallHeight[rcl - 1] *  spawn.memory.wallMultiplier
+            if(minHits < wallHeight || defenseMode){
                 cU.scheduleIfNeeded(rB.name, 3, rcl >= 6, spawn, creeps)
                 return
             }
