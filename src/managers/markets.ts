@@ -502,8 +502,8 @@ const markets = {
             if(store[products[i]]){
                 const orders = markets.sortOrder(buyOrders[products[i]]).reverse()
                 if(orders.length && orders[0].price > Memory.sellPoint[products[i]] * 0.9){
-                    if(Game.shard.name == "shard3" && Math.random() < 0.2 && !Game.rooms["E11N14"]){
-                        city.terminal.send(products[i], Math.min(orders[0].remainingAmount, store[products[i]]), "E11N14")
+                    if(Game.shard.name == "shard3" && Math.random() < 0.2 && !Game.rooms["W29S31"]){
+                        city.terminal.send(products[i], Math.min(orders[0].remainingAmount, store[products[i]]), "W29S31")
                         return true
                     }
                     Game.market.deal(orders[0].id, Math.min(orders[0].remainingAmount, store[products[i]]), city.name)

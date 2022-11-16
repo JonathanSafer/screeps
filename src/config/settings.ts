@@ -24,8 +24,8 @@ const settings = {
     powerPrice: 8, // price we will pay for power
     upgradeBoostPrice: 500,
     powerBuyVolume: 5000, // amount of power we will buy at once
-    processPower: true, //process power instead of selling it
-    rcl8upgrade: true, //use excess energy to GCL pump at RCL8
+    processPower: false, //process power instead of selling it
+    rcl8upgrade: false, //use excess energy to GCL pump at RCL8
 
     miningDisabled: ["W31S41"], //cities that will not attempt any highway mining
     ghodiumAmount: 7000, //threshold to stop producing ghodium

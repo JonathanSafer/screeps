@@ -86,11 +86,11 @@ const rR = {
                     const freeSpace = link.store.getFreeCapacity(RESOURCE_ENERGY)
                     const upgraders = _.filter(spawnRoom.find(FIND_MY_CREEPS), c => c.memory.role == rU.name).length
                     const runnerRecipe = types.getRecipe(rR.type, spawnRoom.energyCapacityAvailable, spawnRoom)
-                    const runnerCost = types.cost(runnerRecipe)
+                    const runnerCarry = runnerRecipe.filter(part => part == CARRY).length * CARRY_CAPACITY
                     Tmp[spawnRoom.name].juicers = _.filter(creep.room.find(FIND_MY_CREEPS), c => c.memory.role == rR.name && c.memory.juicer).length
-                    Tmp[spawnRoom.name].juicersNeeded = Math.ceil((freeSpace - LINK_CAPACITY)/runnerCost) + Math.floor(upgraders/3)
+                    Tmp[spawnRoom.name].juicersNeeded = Math.ceil((freeSpace - LINK_CAPACITY)/runnerCarry) + Math.floor(upgraders/3)
                 }
-                if(Tmp[spawnRoom.name].juicers <= Tmp[spawnRoom.name].juicersNeeded || (creep.saying == "*" && Tmp[spawnRoom.name].juicersNeeded < 0)){
+                if(Tmp[spawnRoom.name].juicers < Tmp[spawnRoom.name].juicersNeeded || (creep.saying == "*" && Tmp[spawnRoom.name].juicersNeeded > 0)){
                     creep.memory.juicer = true
                     if(creep.saying != "*")
                         Tmp[spawnRoom.name].juicers++
