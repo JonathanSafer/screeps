@@ -47,7 +47,8 @@ const rRe = {
             }
         }
         if(!creep.memory.nextCheckTime || creep.memory.nextCheckTime < Game.time){//occasionally scan for construction sites
-            const rooms = Object.keys(_.countBy(Game.spawns[creep.memory.city].memory.sources, s => s.roomName))
+            const runners = _.filter(u.splitCreepsByCity()[creep.memory.city], c => c.memory.role == rR.name)
+            const rooms = Object.keys(_.countBy(runners, s => s.pos.roomName))
             let targets: ConstructionSite[] = []
             for(let i = 0; i < rooms.length; i++){
                 if(Game.rooms[rooms[i]])
@@ -81,7 +82,8 @@ const rRe = {
             if(target)
                 return target
         }
-        const rooms = Object.keys(_.countBy(Game.spawns[creep.memory.city].memory.sources, s => s.roomName))
+        const runners = _.filter(u.splitCreepsByCity()[creep.memory.city], c => c.memory.role == rR.name)
+        const rooms = Object.keys(_.countBy(runners, s => s.pos.roomName))
         let targets: Structure[] = []
         for(let i = 0; i < rooms.length; i++)
             if(Game.rooms[rooms[i]])
