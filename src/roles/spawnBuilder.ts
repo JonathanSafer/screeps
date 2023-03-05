@@ -92,7 +92,7 @@ const rSB = {
                 delete(Memory.flags.claim)
             }
             if(creep.store.energy == 0){
-                creep.memory.state == rSB.CreepState.HARVEST
+                creep.memory.state = rSB.CreepState.HARVEST
             }
             const spawn = Game.spawns[Memory.flags.claim.roomName + "0"]
             if(creep.store.energy == creep.store.getCapacity()){
