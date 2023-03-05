@@ -194,7 +194,7 @@ const rSB = {
         if(creep.ticksToLive > 1450 || creep.store.energy == 0)
             creep.memory.state = rSB.CreepState.HARVEST
         if(spawn.store.energy < 100)
-            creep.transfer(spawn, RESOURCE_ENERGY, 100)
+            creep.transfer(spawn, RESOURCE_ENERGY, Math.min(100, creep.store.energy))
         spawn.renewCreep(creep)
     }
 }
