@@ -21,8 +21,9 @@ const rSB = {
     /** @param {Creep} creep **/
     run: function(creep: Creep) {
         // Use the spawn queue to set respawn
-        if(creep.ticksToLive == 500 && Memory.flags.claim) {
+        if(creep.ticksToLive == 500 && Memory.flags.claim && creep.memory.mode != 2) {
             sq.respawn(creep)
+            creep.memory.mode = 2
         }
 
         if (Game.cpu.bucket < s.bucket.colony) {
