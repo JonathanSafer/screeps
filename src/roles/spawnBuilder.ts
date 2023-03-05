@@ -84,6 +84,10 @@ const rSB = {
             }
         }
         if(creep.pos.roomName === Memory.flags.claim.roomName){
+            const spawn = Game.spawns[Memory.flags.claim.roomName + "0"]
+            if(creep.ticksToLive == 500 && !spawn) {
+                sq.respawn(creep)
+            }
             if (!creep.room.controller || !creep.room.controller.my) {
                 rBr.breakStuff(creep, null)
                 motion.newMove(creep, creep.room.controller.pos, 3)
@@ -95,7 +99,6 @@ const rSB = {
             if(creep.store.energy == 0){
                 creep.memory.state = rSB.CreepState.HARVEST
             }
-            const spawn = Game.spawns[Memory.flags.claim.roomName + "0"]
             if(creep.store.energy == creep.store.getCapacity()){
                 if(spawn && creep.ticksToLive < 700){
                     creep.memory.state = rSB.CreepState.RENEW
