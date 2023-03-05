@@ -843,7 +843,7 @@ function updateRemotes(city: string){
                     cU.scheduleIfNeeded(cN.RESERVER_NAME, reserversNeeded, false, spawn, myCreeps, remotes[i])
                 }
             }
-            const defenders = _.filter(myCreeps, c => c.ticksToLive > 100 && c.memory.flag == remotes[i])
+            const defenders = _.filter(myCreeps, c => !(c.ticksToLive < 100) && c.memory.flag == remotes[i])
             if(defcon == 2){
                 cU.scheduleIfNeeded(cN.HARASSER_NAME, 1, false, spawn, defenders, remotes[i])
             }
