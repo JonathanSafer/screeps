@@ -12,6 +12,11 @@ const rSB = {
     type: BodyType.spawnBuilder,
     target: 0,
     boosts: [RESOURCE_CATALYZED_LEMERGIUM_ACID],
+    CreepState: {
+        BUILD: 1,
+        HARVEST: 2,
+        RENEW: 3
+    },
 
     /** @param {Creep} creep **/
     run: function(creep: Creep) {
@@ -86,14 +91,21 @@ const rSB = {
             if(Game.time % 100 == 0 && rSB.jobDone(creep)){
                 delete(Memory.flags.claim)
             }
-            if(creep.store.energy == 0 && creep.memory.building){
-                creep.memory.building = false
+            if(creep.store.energy == 0){
+                creep.memory.state == rSB.CreepState.HARVEST
             }
-            if(creep.store.energy == creep.store.getCapacity() && !creep.memory.building) {
-                creep.memory.building = true
+            const spawn = Game.spawns[Memory.flags.claim.roomName + "0"]
+            if(creep.store.energy == creep.store.getCapacity()){
+                if(spawn && creep.ticksToLive < 700){
+                    creep.memory.state = rSB.CreepState.RENEW
+                } else {
+                    creep.memory.state = rSB.CreepState.BUILD
+                }
             }
-            if (creep.memory.building){
+            if (creep.memory.state == rSB.CreepState.BUILD){
                 rSB.build(creep)
+            } else if (creep.memory.state == rSB.CreepState.RENEW) {
+                rSB.renew(creep, spawn)
             } else {
                 rSB.harvest(creep)
             }
@@ -174,6 +186,16 @@ const rSB = {
         } else if (result == ERR_NOT_ENOUGH_RESOURCES){
             creep.memory.mode = (creep.memory.mode + 1) % 2
         }
+    },
+
+    renew: function(creep: Creep, spawn: StructureSpawn) {
+        if(!creep.pos.isNearTo(spawn.pos))
+            motion.newMove(creep, spawn.pos, 1)
+        if(creep.ticksToLive > 1450 || creep.store.energy == 0)
+            creep.memory.state = rSB.CreepState.HARVEST
+        if(spawn.store.energy < 100)
+            creep.transfer(spawn, RESOURCE_ENERGY, 100)
+        spawn.renewCreep(creep)
     }
 }
 export = rSB
