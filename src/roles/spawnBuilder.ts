@@ -180,7 +180,7 @@ const rSB = {
         }
         const result = creep.harvest(sources[creep.memory.mode])
         if(result == ERR_NOT_IN_RANGE) {
-            if(creep.moveTo(sources[creep.memory.mode], {reusePath: 15, range: 1}) == ERR_NO_PATH){
+            if(creep.moveTo(sources[creep.memory.mode], {reusePath: 15, range: 1, maxRooms: 1}) == ERR_NO_PATH){
                 creep.memory.mode = (creep.memory.mode + 1) % 2
             }
         } else if (result == ERR_NOT_ENOUGH_RESOURCES){
