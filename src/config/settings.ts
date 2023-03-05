@@ -94,7 +94,7 @@ const settings = {
 
 if(!Game.shard.name.includes("shard") || Game.shard.name == "shardSeason"){
     //botarena and swc custom settings
-    settings.allies = [username]
+    settings.allies = [username, "Saruss", "MarvinTMB", "Silten", "Mirroar", "V1king", "asdpof"]
 }
 
 export = settings
