@@ -45,10 +45,11 @@ const ob = {
         }
         if(room.controller){
             roomData.sMC = room.controller.safeModeCooldown && (Game.time + room.controller.safeModeCooldown) || 0
-            roomData.own = room.controller.owner && room.controller.owner.username
-            roomData.rcl = (room.controller.level) || 0
+            roomData.own = (room.controller.owner && room.controller.owner.username) || undefined
+            roomData.rcl = room.controller.level || 0
             roomData.ctrlP = u.packPos(room.controller.pos)
             roomData.min = room.find(FIND_MINERALS)[0].mineralType
+            roomData.res = (room.controller.reservation && room.controller.reservation.username) || undefined
             if(room.controller.safeMode){
                 roomData.sME = room.controller.safeMode + Game.time
             }

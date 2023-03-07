@@ -290,8 +290,14 @@ const p = {
 
     scoreRemoteRoom: function(roomName, spawn){
         const roomInfo = Cache.roomData[roomName]
-        if(!roomInfo || roomInfo.rcl || !roomInfo.src || !Object.keys(roomInfo.src).length 
-            || Memory.remotes[roomName] || (spawn.room.energyCapacityAvailable < 2300 && !roomInfo.ctrlP)) return -1
+        if(!roomInfo 
+            || roomInfo.rcl 
+            || !roomInfo.src 
+            || !Object.keys(roomInfo.src).length 
+            || Memory.remotes[roomName] 
+            || (spawn.room.energyCapacityAvailable < 2300 && !roomInfo.ctrlP)
+            || roomInfo.res && settings.allies.includes(roomInfo.res) && settings.username != roomInfo.res) 
+            return -1
         if(!roomInfo.ctrlP) return -1 //TODO add SK mining
         let totalDistance = 0
         for(const source in roomInfo.src){

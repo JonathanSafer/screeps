@@ -865,7 +865,11 @@ function updateDEFCON(remote, harasserSize){
         roomInfo.d = 2
     }
     if(Game.rooms[remote]){
-        if(Game.rooms[remote].controller && Game.rooms[remote].controller.owner){
+        const remoteRoom = Game.rooms[remote]
+        if(remoteRoom.controller && (remoteRoom.controller.owner
+            || (remoteRoom.controller.reservation 
+                && settings.allies.includes(remoteRoom.controller.reservation.username)
+                && remoteRoom.controller.reservation.username != settings.username))){
             Cache.roomData[remote].d = 4
             return Cache.roomData[remote].d
         }
