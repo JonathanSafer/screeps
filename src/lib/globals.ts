@@ -24,12 +24,12 @@ global.BuyUnlock = function(price, amount) {
     Log.error("Order failed. Please use BuyUnlock (float price, int amount)")
     return -1
 }
-global.SpawnQuad = function(city, boosted){
+global.SpawnQuad = function(city, boosted, flagName = city + "quadRally"){
     if(!Game.spawns[city]){
-        Log.error("Invalid city name. Use SpawnQuad(string city, bool boosted)")
+        Log.error("Invalid city name. Use SpawnQuad(string city, bool boosted, string destination)")
         return -1
     }
-    military.spawnQuad(city, boosted)
+    military.spawnQuad(city, boosted, flagName)
     return Log.console(`Spawning Quad from ${city}`)
 }
 global.SpawnBreaker = function(city, boosted){

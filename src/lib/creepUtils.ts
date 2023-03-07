@@ -153,6 +153,14 @@ const cU = {
             }
             creepsNeeded--
         }
+    },
+
+    maybeBoost(creep: Creep){
+        if(creep.memory.needBoost && !creep.memory.boosted){
+            a.getBoosted(creep)
+            return true
+        }
+        return false
     }
 }
 

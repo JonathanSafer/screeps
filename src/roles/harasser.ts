@@ -1,7 +1,6 @@
 import settings = require("../config/settings")
 import motion = require("../lib/motion")
 import sq = require("../lib/spawnQueue")
-import a = require("../lib/actions")
 import u = require("../lib/utils")
 import cU = require("../lib/creepUtils")
 import military = require("../managers/military")
@@ -14,75 +13,87 @@ const rH = {
         RESOURCE_CATALYZED_LEMERGIUM_ALKALIDE, RESOURCE_CATALYZED_KEANIUM_ALKALIDE],
 
     run: function(creep: Creep) {
-        if(creep.memory.needBoost && !creep.memory.boosted){
-            a.getBoosted(creep)
+        if(cU.maybeBoost(creep)) // get boosted if needed
             return
-        }
+
         const flagName = creep.memory.flag || creep.memory.city + "harass"
-        if(!Memory.flags[flagName] && Game.map.getRoomStatus(flagName)){
-            u.placeFlag(flagName, new RoomPosition(25, 25, flagName))
+
+        rH.maybeRespawn(creep, flagName)
+
+        if(rH.dormant(creep))
+            return
+        
+        rH.init(creep)
+
+        const hostiles = _.filter(creep.room.find(FIND_HOSTILE_CREEPS), c => !settings.allies.includes(c.owner.username))
+        
+        rH.maybeHeal(creep, hostiles)
+        
+        if(hostiles.length){
+            creep.memory.dormant = false
+
+            if(creep.memory.target && Game.getObjectById(creep.memory.target) && Game.getObjectById(creep.memory.target) instanceof Structure)
+                creep.memory.target = null
+
+            const needRetreat = rH.maybeRetreat(creep, hostiles)
+
+            if(!needRetreat && (hostiles.length || Game.getObjectById(creep.memory.target)))
+                rH.aMove(creep, hostiles)
+            rH.shoot(creep, hostiles)
+        } else {
+            if(rH.rally(creep, flagName))
+                return
+
+            const injuredFriendlies = _.filter(u.findFriendlyCreeps(creep.room), c => c.hits < c.hitsMax)
+            if(injuredFriendlies.length)
+                return rH.healFriend(creep, injuredFriendlies[0])
+            
+            const hostileStructures = u.findHostileStructures(creep.room)
+            if(hostileStructures.length)
+                rH.attackStruct(creep, hostileStructures[0])
         }
+    },
+
+    healFriend: function(creep: Creep, friend: Creep | PowerCreep){
+        creep.pos.isNearTo(friend.pos) ? creep.heal(friend) : creep.rangedHeal(friend)
+        motion.newMove(creep, friend.pos, 0)
+    },
+
+    attackStruct: function(creep: Creep, struct: Structure){
+        creep.rangedAttack(struct)
+        motion.newMove(creep, struct.pos, 3)
+    },
+    // Respawn if damaged or dying of old age. Don't respawn if flag is missing.
+    maybeRespawn: function(creep: Creep, flagName: string){
+        if(!Memory.flags[flagName])
+            return
+
+        // respawn if damaged
         if(creep.hits < creep.hitsMax * 0.2 && !creep.memory.reinforced){
             creep.memory.reinforced = true
             sq.respawn(creep, true)
-            if(Memory.flags["claim"] && creep.room.name == Memory.flags["claim"].roomName){
-                Memory.flags[creep.memory.city + "quadRally"] = Memory.flags["claim"]
-                military.spawnQuad(creep.memory.city, true)
-            }
+
+            // add a quad if claiming
+            if(Memory.flags["claim"] && creep.room.name == Memory.flags["claim"].roomName)
+                military.spawnQuad(creep.memory.city, true, creep.room.name)
         }
-        if(Game.time % 51 == 0){
-            //check to remove flag and respawn
+
+        // update TTL to respawn if needed
+        if(!creep.memory.respawnTime){
+            const route = motion.getRoute(Memory.flags[flagName].roomName, Game.spawns[creep.memory.city].room.name, true)
+            if(route != -2 && route.length)
+                creep.memory.respawnTime = (route.length * 50) + (creep.body.length * CREEP_SPAWN_TIME)
+            else  // if path planning fails, don't set a respawn time
+                creep.memory.respawnTime = -1
+        }
+
+        // check if flag can be removed early
+        if(Game.time % 51 == 0)
             rH.removeFlag(creep, flagName)
-            if(Memory.flags[flagName] && !creep.memory.respawnTime){
-                const route = motion.getRoute(Memory.flags[flagName].roomName, Game.spawns[creep.memory.city].room.name, true)
-                if(route != -2 && route.length){
-                    creep.memory.respawnTime = (route.length * 50) + (creep.body.length * CREEP_SPAWN_TIME)
-                }
-            }
-        }
-        if(creep.memory.respawnTime && creep.ticksToLive == creep.memory.respawnTime && Memory.flags[flagName]){
-            const reinforcement = _.find(creep.room.find(FIND_MY_CREEPS), c => c.memory.role == rH.name && c.name != creep.name)
-            if(!reinforcement){
+        
+        if(creep.ticksToLive == creep.memory.respawnTime){
+            if(!_.find(creep.room.find(FIND_MY_CREEPS), c => c.memory.role == rH.name && c.name != creep.name))
                 sq.respawn(creep)
-            }
-        }
-        if(rH.dormant(creep)){
-            return
-        }
-        rH.init(creep)
-        const hostiles = _.filter(creep.room.find(FIND_HOSTILE_CREEPS), c => !settings.allies.includes(c.owner.username))
-        rH.maybeHeal(creep, hostiles)
-        if(!hostiles.length){
-            if(Memory.flags[flagName] && creep.room.name == Memory.flags[flagName].roomName){
-                const injuredFriendlies = _.filter(creep.room.find(FIND_MY_CREEPS), c => c.hits < c.hitsMax)
-                const hostileStructures = u.findHostileStructures(creep.room)
-                if(injuredFriendlies.length){
-                    if(!Game.getObjectById(creep.memory.target)){
-                        creep.memory.target = injuredFriendlies[0].id
-                    }
-                } else if(hostileStructures.length){
-                    if(!Game.getObjectById(creep.memory.target)){
-                        creep.memory.target = hostileStructures[0].id
-                    }
-                } else {
-                    if(rH.rally(creep, flagName)){
-                        return
-                    }
-                }
-            } else {
-                if(rH.rally(creep, flagName)){
-                    return
-                }
-            }
-        }
-        creep.memory.dormant = false
-        const needRetreat = rH.maybeRetreat(creep, hostiles)
-        if(!needRetreat && (hostiles.length || Game.getObjectById(creep.memory.target))){
-            rH.aMove(creep, hostiles)
-        }
-        rH.shoot(creep, hostiles)
-        if(creep.memory.target && Game.getObjectById(creep.memory.target) && Game.getObjectById(creep.memory.target) instanceof Structure){
-            creep.memory.target = null
         }
     },
 
@@ -98,14 +109,6 @@ const rH = {
         //if target and in range, shoot target, otherwise shoot anybody in range
         if(creep.memory.target){
             const target = Game.getObjectById(creep.memory.target) as Creep
-            if(target && target.my){
-                if(target.hits < target.hitsMax){
-                    creep.rangedHeal(target)
-                } else {
-                    creep.memory.target = null
-                }
-                return
-            }
             if(target && target.pos.inRangeTo(creep.pos, 3)){
                 creep.rangedAttack(target)
                 cU.logDamage(creep, target.pos)
@@ -192,21 +195,20 @@ const rH = {
         //move toward an enemy
     },
 
+    // remove harass flag if it's the only flag in a highway room
     removeFlag: function(creep, flagName){
-        if(!Memory.flags[flagName]){
+        if(!Memory.flags[flagName] || !u.isHighway(Memory.flags[flagName].roomName)){
             return
         }
-        if(creep.pos.roomName == Memory.flags[flagName].roomName){
-            const flags = Object.keys(Memory.flags)
-            for(let i = 0; i < flags.length; i++){
-                if(!flags[i].includes("harass") && Memory.flags[flags[i]].roomName == creep.pos.roomName){
-                    return
-                }
+        for(const flag in Memory.flags){
+            if(flag != flagName && Memory.flags[flag].roomName == Memory.flags[flagName].roomName){
+                return
             }
-            delete Memory.flags[flagName]
         }
+        delete Memory.flags[flagName]
     },
 
+    // initialize target and anger
     init: function(creep){
         if(!creep.memory.target){
             creep.memory.target = null
@@ -216,6 +218,7 @@ const rH = {
         }
     },
 
+    // heal if needed
     maybeHeal: function(creep: Creep, hostiles: Creep[]){
         const damager = _.find(hostiles, c => c.getActiveBodyparts(ATTACK) > 0 || c.getActiveBodyparts(RANGED_ATTACK) > 0)
         if(creep.hits < creep.hitsMax || damager){

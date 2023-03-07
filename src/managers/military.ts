@@ -59,7 +59,7 @@ const m = {
         }
 
         Memory.flags[flagName] = flagPos
-        m.spawnQuad(`${closestRoomName}0`, boosted)
+        m.spawnQuad(`${closestRoomName}0`, boosted, roomName)
     },
 
     nonWallRoomPos: function(roomName) {
@@ -99,10 +99,10 @@ const m = {
             city.storage
     },
 
-    spawnQuad: function(city, boosted=false){
+    spawnQuad: function(city, boosted=false, flagName: string){
         sq.initialize(Game.spawns[city])
         for(let i = 0; i < 4; i++){
-            sq.schedule(Game.spawns[city], cN.QUAD_NAME, boosted)
+            sq.schedule(Game.spawns[city], cN.QUAD_NAME, boosted, flagName)
         }
     }
 }

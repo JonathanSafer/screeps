@@ -183,6 +183,10 @@ const u = {
         return _.filter((room.find(FIND_HOSTILE_CREEPS) as Array<Creep|PowerCreep>).concat(room.find(FIND_HOSTILE_POWER_CREEPS)), c => !settings.allies.includes(c.owner.username))
     },
 
+    findFriendlyCreeps: function(room: Room){
+        return _.filter((room.find(FIND_CREEPS) as Array<Creep|PowerCreep>).concat(room.find(FIND_POWER_CREEPS)), c => settings.allies.includes(c.owner.username))
+    },
+
     findHostileStructures: function(room: Room){
         if(u.isEnemyRoom(room)){
             return _.filter(room.find(FIND_STRUCTURES), s => s.hits)
