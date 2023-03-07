@@ -5,37 +5,37 @@ const T = {
             return null
         }
         const healMap = T.generateHealMap(hostiles)
-        for(let i = 0; i < hostiles.length; i++){
-            if(hostiles[i].pos.x == 49 || hostiles[i].pos.y == 49 || hostiles[i].pos.x == 0 || hostiles[i].pos.y == 49){
+        for(const hostile of hostiles){
+            if(hostile.pos.x == 49 || hostile.pos.y == 49 || hostiles.pos.x == 0 || hostiles.pos.y == 49){
                 continue
             }
-            let damage = T.calcTowerDamage(towers, hostiles[i])
+            let damage = T.calcTowerDamage(towers, hostile)
             if(Tmp[roomName] && Tmp[roomName].attacks){
                 for(const attack of Tmp[roomName].attacks){
-                    if(hostiles[i].pos.isEqualTo(attack.x, attack.y)){
+                    if(hostile.pos.isEqualTo(attack.x, attack.y)){
                         damage +=  attack.damage
                     }
                 }
             }
-            const heal = T.calcHeal(hostiles[i], healMap)
+            const heal = T.calcHeal(hostile, healMap)
             if(heal > damage){
                 continue
             }
             //check creep for boosted tough
-            const toughs = T.findToughs(hostiles[i])
+            const toughs = T.findToughs(hostile)
             const buffer = toughs * 333.33
             if(damage < buffer){
                 damage = damage * 0.3
             } else if(buffer){
                 damage = (damage - buffer) + (toughs * 50)
             }
-            if(damage > heal + 100){
-                return hostiles[i]
+            if(damage > (heal * 1.2) + (hostile.hits * .05)){
+                return hostile
             }
         }
         //if we make it here, none of the targets could be out gunned
         //shoot randomly every few ticks, maybe mess something up
-        if(Game.time % 12 === 0){
+        if(Game.time % Math.ceil(Math.random() * 20) == 0){
             return hostiles[Math.floor(Math.random() * hostiles.length)]
         }
         return null
@@ -43,9 +43,9 @@ const T = {
 
     calcTowerDamage: function(towers, target) {
         let damage = 0
-        for(let i = 0; i < towers.length; i++){
-            if(towers[i].energy >= TOWER_ENERGY_COST){
-                const distance = towers[i].pos.getRangeTo(target.pos)
+        for(const tower of towers){
+            if(tower.store.energy >= TOWER_ENERGY_COST){
+                const distance = tower.pos.getRangeTo(target.pos)
                 const damage_distance = Math.max(TOWER_OPTIMAL_RANGE, Math.min(distance, TOWER_FALLOFF_RANGE))
                 const steps = TOWER_FALLOFF_RANGE - TOWER_OPTIMAL_RANGE
                 const step_size = TOWER_FALLOFF * TOWER_POWER_ATTACK / steps
