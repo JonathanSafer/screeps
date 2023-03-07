@@ -50,8 +50,17 @@ const rH = {
             
             const hostileStructures = u.findHostileStructures(creep.room)
             if(hostileStructures.length)
-                rH.attackStruct(creep, hostileStructures[0])
+                return rH.attackStruct(creep, hostileStructures[0])
+            // go dormant
+            rH.goDormant(creep)
         }
+    },
+
+    goDormant: function(creep: Creep){
+        const roomCenter = new RoomPosition(25, 25, creep.room.name)
+        if(creep.pos.inRangeTo(roomCenter, 10))
+            creep.memory.dormant = true
+        motion.newMove(creep, roomCenter, 9)
     },
 
     healFriend: function(creep: Creep, friend: Creep | PowerCreep){
@@ -226,21 +235,14 @@ const rH = {
         }
     },
 
+    // rally if outside of target room
     rally: function(creep, flagName){
-        const dFlag = Memory.flags[flagName]
-        if (dFlag){
-            if(creep.pos.roomName === dFlag.roomName){
-                //move to center of room
-                if(!creep.pos.inRangeTo(25, 25, 8)){
-                    motion.newMove(creep, new RoomPosition(25, 25, creep.pos.roomName), 5)
-                } else {
-                    creep.memory.dormant = true
-                    return true
-                }
-            } else {
-                //move to flag
-                motion.newMove(creep, new RoomPosition(dFlag.x, dFlag.y, dFlag.roomName), 5)
-            }
+        let dFlag = Memory.flags[flagName]
+        if (!dFlag && Game.map.getRoomStatus(flagName))
+            dFlag = new RoomPosition(25, 25, flagName)
+        if (dFlag && creep.pos.roomName != dFlag.roomName){
+            motion.newMove(creep, new RoomPosition(dFlag.x, dFlag.y, dFlag.roomName), 5)
+            return true
         }
         return false
     }
