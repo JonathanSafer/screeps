@@ -6,7 +6,7 @@ const T = {
         }
         const healMap = T.generateHealMap(hostiles)
         for(const hostile of hostiles){
-            if(hostile.pos.x == 49 || hostile.pos.y == 49 || hostiles.pos.x == 0 || hostiles.pos.y == 49){
+            if(hostile.pos.x == 49 || hostile.pos.y == 49 || hostile.pos.x == 0 || hostile.pos.y == 49){
                 continue
             }
             let damage = T.calcTowerDamage(towers, hostile)
