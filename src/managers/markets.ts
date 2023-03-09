@@ -184,7 +184,7 @@ const markets = {
                     const sellOrders = markets.sortOrder(Game.market.getAllOrders(order => order.type == ORDER_SELL 
                         && order.resourceType == mineral 
                         && order.amount >= amount 
-                        && (order.price < goodPrice || goodPrice == 0.002)))
+                        && (order.price <= goodPrice || goodPrice == 0.002)))
                     if (sellOrders.length && sellOrders[0].price * amount <= Game.market.credits){
                         Game.market.deal(sellOrders[0].id, amount, myCity.name)
                         Game.spawns[city].memory.ferryInfo.mineralRequest = null
@@ -308,11 +308,11 @@ const markets = {
             //if any base mineral (besides ghodium) is low, an order for it will be placed on the market. If an order already exists, update quantity
             //if an order already exists and is above threshold (arbitrary?), increase price
             //buy minerals as needed
-            if(!PServ){
+            if(PServ){
+                markets.requestMins(city, baseMins)
+            } else {
                 markets.buyMins(city, baseMins)
                 markets.buyBoosts(city)
-            } else {
-                markets.requestMins(city, baseMins)
             }
             if(!level && !termUsed){
                 termUsed = markets.sellResources(city, bars, 3000/*TODO make this a setting*/, city.terminal, buyOrders)
