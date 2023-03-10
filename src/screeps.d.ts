@@ -215,7 +215,14 @@ declare global {
             comSend?: (string | number)[][]
             needPower?: boolean
             mineralRequest?: MineralCompoundConstant | MineralConstant
+            taskQueue?: Array<FerryTask>
         }
+    }
+    interface FerryTask {
+        sourceId: Id<Structure>
+        targetId: Id<Structure>
+        resourceType: ResourceConstant
+        quantity: number
     }
     interface Reactor {
         fill?: number

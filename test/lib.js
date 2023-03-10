@@ -344,6 +344,15 @@ global.StructureExtension = class extends Structure {
     }
 }
 
+global.StructureLink = class extends Structure {
+    constructor(room, store, cooldown) {
+        super(room, STRUCTURE_LINK)
+        this.store = new Store(store || {}, 
+            LINK_CAPACITY)
+        this.cooldown = cooldown || 0
+    }
+}
+
 global.Source = class extends RoomObject {
     constructor(room, id) {
         super(room, FIND_SOURCES)

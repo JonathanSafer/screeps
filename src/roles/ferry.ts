@@ -1,6 +1,7 @@
 import actions = require("../lib/actions")
 import sq = require("../lib/spawnQueue")
 import { cN, BodyType } from "../lib/creepNames"
+import u = require("../lib/utils")
 
 const rF = {
     name: cN.FERRY_NAME,
@@ -8,6 +9,46 @@ const rF = {
     target: 0,
     TERMINAL_MAX_MINERAL_AMOUNT: 9000,
     FERRY_CARRY_AMOUNT: 1000,
+
+    FerryTask: class {
+        constructor(sourceId: Id<Structure>, targetId: Id<Structure>, resourceType: ResourceConstant , quantity: number){
+            this.sourceId = sourceId
+            this.targetId = targetId
+            this.resourceType = resourceType
+            this.quantity = quantity
+        }
+        sourceId: Id<Structure>
+        targetId: Id<Structure>
+        resourceType: ResourceConstant
+        quantity: number
+    },
+
+    queueUpgradeLink: function(taskQueue: Array<FerryTask>, spawn: StructureSpawn){
+        const storageLink = Game.getObjectById(spawn.memory.storageLink)
+        const cachedLinks = Cache[spawn.room.name] && Cache[spawn.room.name].links || {}
+        const upgradeLink = Game.getObjectById(cachedLinks.upgrade)
+
+        if (storageLink && !storageLink.store.energy && storageLink.cooldown < 2 && upgradeLink && !upgradeLink.store.energy) {
+            const task = new rF.FerryTask(spawn.room.storage.id, storageLink.id, RESOURCE_ENERGY, LINK_CAPACITY)
+            taskQueue.push(task)
+        }
+    },
+
+    // generate queue of ferry tasks for any ferry or transporter to complete
+    generateTaskQueue: function(spawn: StructureSpawn){
+        const taskQueue = u.getsetd(spawn.memory.ferryInfo, "taskQueue", [])
+        
+        // until we have an easy way to prevent generation of duplicate tasks, we should avoid adding
+        // to the queue if it isn't empty
+        if (taskQueue.length) return
+
+        // check for creeps completing tasks. We can't add more tasks to the queue until all creeps have completed their tasks
+        const ferries = _.filter(spawn.room.find(FIND_MY_CREEPS), c => c.memory.role == cN.TRANSPORTER_NAME 
+                                                                    || c.memory.role == cN.FERRY_NAME)
+        if(_.find(ferries, f => f.memory.state == 2)) return
+
+        rF.queueUpgradeLink(taskQueue, spawn)
+    },
 
     run: function(creep: Creep) {
         if(creep.ticksToLive < 10 && creep.store.getUsedCapacity() == 0){
