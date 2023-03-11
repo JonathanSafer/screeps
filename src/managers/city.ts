@@ -33,6 +33,8 @@ import { cN, BodyType } from "../lib/creepNames"
 
 function makeCreeps(role: CreepRole, city: string, unhealthyStore=false, creepWantsBoosts=false, flag = null, budget = null) {
     const room = Game.spawns[city].room
+    if(Memory.flags.claim && Memory.flags.claim.roomName == room.name)
+        return true
    
     const energyToSpend = budget || 
         (unhealthyStore ? room.energyAvailable : room.energyCapacityAvailable)

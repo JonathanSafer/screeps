@@ -3,7 +3,7 @@
 
 import settings = require("../config/settings")
 import u = require("../lib/utils")
-const segmentID = 98
+const segmentID = 90
 const allyList = settings.allies
 
 // Priority convention:
@@ -25,43 +25,47 @@ const simpleAllies = {
     // This sets foreign segments. Maybe you set them yourself for some other reason
     // Up to you to fix that.
     checkAllies() {
-        if (!allyList.length) return
-        // Only work 10% of the time
-        if (Game.time % (10 * allyList.length) >= allyList.length) return
-        const currentAllyName = allyList[Game.time % allyList.length]
-        if (RawMemory.foreignSegment && RawMemory.foreignSegment.username == currentAllyName) {
-            const allyRequests = JSON.parse(RawMemory.foreignSegment.data)
-            //console.log(currentAllyName, RawMemory.foreignSegment.data)
-            const requests = u.getsetd(Cache, "requests", {})
-            requests[currentAllyName] = []
-            if(!allyRequests){
-                return
-            }
-            for (const request of allyRequests) {
-                //const priority = Math.max(0, Math.min(1, request.priority))
-                switch (request.requestType) {
-                case requestTypes.ATTACK:
-                    //console.log("Attack help requested!", request.roomName, priority)
-                    break
-                case requestTypes.DEFENSE:
-                    //console.log("Defense help requested!", request.roomName, priority)
-                    break
-                case requestTypes.RESOURCE:
-                    requests[currentAllyName].push(request)
-                    // const resourceType = request.resourceType
-                    // const maxAmount = request.maxAmount
-                    //console.log("Resource requested!", request.roomName, request.resourceType, request.maxAmount, priority)
-                    // const lowerELimit = 350000 - priority * 200000
-                    // const lowerRLimit = 24000 - priority * 12000
-                    break
+        try {
+            if (!allyList.length) return
+            // Only work 10% of the time
+            if (Game.time % (10 * allyList.length) >= allyList.length) return
+            const currentAllyName = allyList[Game.time % allyList.length]
+            if (RawMemory.foreignSegment && RawMemory.foreignSegment.username == currentAllyName) {
+                const allyRequests = JSON.parse(RawMemory.foreignSegment.data)
+                //console.log(currentAllyName, RawMemory.foreignSegment.data)
+                const requests = u.getsetd(Cache, "requests", {})
+                requests[currentAllyName] = []
+                if(!allyRequests){
+                    return
                 }
+                for (const request of allyRequests) {
+                    //const priority = Math.max(0, Math.min(1, request.priority))
+                    switch (request.requestType) {
+                    case requestTypes.ATTACK:
+                        //console.log("Attack help requested!", request.roomName, priority)
+                        break
+                    case requestTypes.DEFENSE:
+                        //console.log("Defense help requested!", request.roomName, priority)
+                        break
+                    case requestTypes.RESOURCE:
+                        requests[currentAllyName].push(request)
+                        // const resourceType = request.resourceType
+                        // const maxAmount = request.maxAmount
+                        //console.log("Resource requested!", request.roomName, request.resourceType, request.maxAmount, priority)
+                        // const lowerELimit = 350000 - priority * 200000
+                        // const lowerRLimit = 24000 - priority * 12000
+                        break
+                    }
+                }
+            } else {
+                //console.log("Simple allies either has no segment or has the wrong name?", currentAllyName)
             }
-        } else {
-            //console.log("Simple allies either has no segment or has the wrong name?", currentAllyName)
-        }
 
-        const nextAllyName = allyList[(Game.time + 1) % allyList.length]
-        RawMemory.setActiveForeignSegment(nextAllyName, segmentID)
+            const nextAllyName = allyList[(Game.time + 1) % allyList.length]
+            RawMemory.setActiveForeignSegment(nextAllyName, segmentID)
+        } catch (err){
+            Log.error(`Simple Allies Failure: ${err}`)
+        }
     },
     // Call before making any requests
     startOfTick() {

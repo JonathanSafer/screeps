@@ -323,6 +323,12 @@ const markets = {
             if(!termUsed && !settings.processPower){
                 termUsed = markets.sellResources(city, [RESOURCE_POWER], 5000/*TODO make this a setting*/, city.terminal, buyOrders)
             }
+            if(!termUsed && PServ){
+                const boosts = [RESOURCE_CATALYZED_GHODIUM_ACID, RESOURCE_CATALYZED_GHODIUM_ALKALIDE, RESOURCE_CATALYZED_KEANIUM_ACID
+                    , RESOURCE_CATALYZED_KEANIUM_ALKALIDE, RESOURCE_CATALYZED_LEMERGIUM_ACID, RESOURCE_CATALYZED_LEMERGIUM_ALKALIDE
+                    , RESOURCE_CATALYZED_UTRIUM_ACID, RESOURCE_CATALYZED_UTRIUM_ALKALIDE, RESOURCE_CATALYZED_ZYNTHIUM_ACID, RESOURCE_CATALYZED_ZYNTHIUM_ALKALIDE]
+                termUsed = markets.sellResources(city, boosts, 0, city.terminal, [])
+            }
             //buy/sell energy
             termUsed = markets.processEnergy(city, termUsed, highEnergyOrder, energyOrders)
             //sell products
@@ -432,13 +438,20 @@ const markets = {
 
     sellResources: function(city, resources, threshold, container, buyOrders){
         if(!container) return
+        threshold = PServ ? threshold * 2 : threshold
         for(const resource of resources){
             if(container.store[resource] > threshold){
                 const sellAmount = container.store[resource] - threshold
                 const goodOrders = markets.sortOrder(buyOrders[resource]).reverse()
                 if(PServ){
-                    threshold = threshold*2
                     //distribute to allies in need
+                    for (const ally in Cache.requests){
+                        for (const request of Cache.requests[ally]){
+                            if (request.resourceType == resource){
+                                city.terminal.send(resource, sellAmount, request.roomName)
+                            }
+                        }
+                    }
                 }
                 if(goodOrders.length && goodOrders[0].price > (0.50 * markets.getPrice(resource))){
                     Game.market.deal(goodOrders[0].id, Math.min(Math.min(goodOrders[0].remainingAmount,  sellAmount), city.terminal.store[resource]), city.name)
