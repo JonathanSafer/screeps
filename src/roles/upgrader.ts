@@ -35,7 +35,7 @@ const rU = {
             const extensionSite = _.find(creep.room.find(FIND_MY_CONSTRUCTION_SITES) as [ConstructionSite], c => c.structureType == STRUCTURE_EXTENSION
                 || c.structureType == STRUCTURE_CONTAINER
                 || c.structureType == STRUCTURE_STORAGE)
-            if(extensionSite && creep.room.controller.ticksToDowngrade > 3000){
+            if(extensionSite && creep.room.controller.ticksToDowngrade > CONTROLLER_DOWNGRADE[creep.room.controller.level] * 0.8){
                 creep.memory.role = cN.BUILDER_NAME
             }
         }

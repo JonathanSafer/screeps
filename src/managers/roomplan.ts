@@ -502,8 +502,6 @@ const p = {
     },
 
     buildConstructionSite: function(room: Room, structureType, pos: Position, name?: string) {
-        this.currentTick = Game.time
-        this.csites = room.find(FIND_MY_CONSTRUCTION_SITES).length
 
         if(Game.time != this.currentTick){
             this.currentTick = Game.time
