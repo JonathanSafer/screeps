@@ -157,7 +157,7 @@ const p = {
     expand: function(){
         if(Game.cpu.bucket != 10000 || Memory.flags["claim"] || !PServ) return
         const myCities = u.getMyCities()
-        if(Game.gcl.level == myCities.length) return
+        if(Game.gcl.level == myCities.length || Game.gcl.level > myCities.length + 1) return
         const candidates = _.reject(Object.keys(Cache.roomData), roomName => !Cache.roomData[roomName].s 
             || Cache.roomData[roomName].s == -1 
             || Cache.roomData[roomName].rcl 
