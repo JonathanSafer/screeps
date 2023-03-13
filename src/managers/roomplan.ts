@@ -501,29 +501,40 @@ const p = {
         }
     },
 
-    buildConstructionSite: function(room: Room, structureType, pos, name?: string) {
-        //Log.info(room.lookAt(pos.x, pos.y)[0].type)
-        if((structureType == STRUCTURE_FACTORY || structureType == STRUCTURE_POWER_SPAWN) && PServ){
-            return
+    buildConstructionSite: function(room: Room, structureType, pos: Position, name?: string) {
+        this.currentTick = Game.time
+        this.csites = room.find(FIND_MY_CONSTRUCTION_SITES).length
+
+        if(Game.time != this.currentTick){
+            this.currentTick = Game.time
+            this.csites = room.find(FIND_MY_CONSTRUCTION_SITES).length
         }
+
+        if(this.csites > 5)
+            return
+
+        if((structureType == STRUCTURE_FACTORY || structureType == STRUCTURE_POWER_SPAWN) && PServ)
+            return
         if(structureType == STRUCTURE_LAB && room.controller.level < 7 && Game.gcl.level < 4)
             return
-        if(structureType == STRUCTURE_TOWER && room.controller.safeMode > 2000){
+        if(structureType == STRUCTURE_TOWER && room.controller.safeMode > 5000)
             return
-        }
+
         const look = room.lookAt(pos.x, pos.y)
         if(room.controller.level < 5 && room.controller.level > 1 && structureType == STRUCTURE_TERMINAL && !room.storage){
             structureType = STRUCTURE_CONTAINER
         } else if(structureType == STRUCTURE_TERMINAL){
-            const struct = _.find(look, object => object.type == "structure")
-            if(struct && struct.structure.structureType == STRUCTURE_CONTAINER){
-                struct.structure.destroy()
+            const containerObj = _.find(look, object => object.type == LOOK_STRUCTURES && object[LOOK_STRUCTURES].structureType == STRUCTURE_CONTAINER)
+            if(containerObj){
+                containerObj[LOOK_STRUCTURES].destroy()
             }
         }
         const terrain = _.find(look, item => item.type == LOOK_TERRAIN)
-        if (terrain && (terrain[LOOK_TERRAIN] == "wall") || _.find(look, item => item.type == "structure" && item[LOOK_STRUCTURES].structureType != STRUCTURE_RAMPART)) 
+        if (terrain && (terrain[LOOK_TERRAIN] == "wall") || _.find(look, item => item.type == LOOK_STRUCTURES && item[LOOK_STRUCTURES].structureType == structureType))
             return
+
         room.createConstructionSite(pos.x, pos.y, structureType, name)
+        this.csites++
     },
 
     buildExtractor: function(room) {
@@ -537,8 +548,7 @@ const p = {
             return
         }
 
-        Log.info("Building extractor: " + room.name)
-        mineralPos.createConstructionSite(STRUCTURE_EXTRACTOR)
+        p.buildConstructionSite(room, STRUCTURE_EXTRACTOR, mineralPos)
     },
 
     buildWalls: function(room: Room, plan){
@@ -574,12 +584,6 @@ const p = {
             costs.set(wallSpot.x, wallSpot.y, 0xff)
         })
         room.wallCosts = costs
-
-        let counter = 0
-        const csites = room.find(FIND_MY_CONSTRUCTION_SITES)
-        if(csites.length){
-            counter = csites.length
-        }
 
         for(let i = 0; i < wallSpots.length; i++){//build stuff
             if(terrain.get(wallSpots[i].x, wallSpots[i].y) === TERRAIN_MASK_WALL){
@@ -630,15 +634,11 @@ const p = {
 
             //now we need a wall
             if(structures.length || wallSpots[i].getRangeTo(room.controller) == 3){//rampart
-                room.createConstructionSite(wallSpots[i], STRUCTURE_RAMPART)
+                p.buildConstructionSite(room, STRUCTURE_RAMPART, wallSpots[i])
                 room.visual.circle(wallSpots[i], {fill: "transparent", radius: 0.25, stroke: "green"})
             } else {//wall
-                room.createConstructionSite(wallSpots[i], STRUCTURE_WALL)
+                p.buildConstructionSite(room, STRUCTURE_WALL, wallSpots[i])
                 room.visual.circle(wallSpots[i], {fill: "transparent", radius: 0.25, stroke: "blue"})
-            }
-            counter++
-            if(counter > 10){
-                break
             }
         }
     },
@@ -907,25 +907,9 @@ const p = {
         const roads = p.compileRoads(controllerPath, sourcePaths, mineralPath, exitPaths)
         
         //place Csites
-        let counter = 0
-        const csites = room.find(FIND_MY_CONSTRUCTION_SITES)
-        if(csites.length){
-            counter = csites.length
-        }
-        const maxSites = Object.keys(Game.constructionSites).length / MAX_CONSTRUCTION_SITES > 0.5 ? 2 : 20
         for(let i = 0; i < roads.length; i++){
             new RoomVisual(roads[i].roomName).circle(roads[i], {fill: "#ff1111", radius: 0.1, stroke: "red"})
-            if(counter < maxSites){//doesn't update during the tick
-                const look = room.lookForAt(LOOK_STRUCTURES, roads[i])
-                if(look.length){
-                    if(look[0].structureType != STRUCTURE_RAMPART){
-                        continue
-                    }
-                }
-                if(Game.rooms[roads[i].roomName] && !roads[i].createConstructionSite(STRUCTURE_ROAD)){
-                    counter++
-                }
-            }
+            p.buildConstructionSite(room, STRUCTURE_ROAD, roads[i])
         }
     },
 

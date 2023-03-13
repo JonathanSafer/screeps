@@ -20,11 +20,6 @@ const rSB = {
 
     /** @param {Creep} creep **/
     run: function(creep: Creep) {
-        // Use the spawn queue to set respawn
-        if(creep.ticksToLive == 500 && Memory.flags.claim && creep.memory.mode != 2) {
-            sq.respawn(creep)
-            creep.memory.mode = 2
-        }
 
         if (Game.cpu.bucket < s.bucket.colony) {
             return
@@ -90,7 +85,6 @@ const rSB = {
             }
             if (!creep.room.controller || !creep.room.controller.my) {
                 rBr.breakStuff(creep, null)
-                motion.newMove(creep, creep.room.controller.pos, 3)
                 return
             }
             if(Game.time % 100 == 0 && rSB.jobDone(creep)){
