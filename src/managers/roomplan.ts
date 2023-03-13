@@ -10,6 +10,8 @@ import types = require("../config/types")
 
 const p = {
     frequency: 2000,
+    tick: 0,
+    sites: 0,
 
     judgeNextRoom: function(){
         if(!Cache.roomData) return true
@@ -502,10 +504,9 @@ const p = {
     },
 
     buildConstructionSite: function(room: Room, structureType, pos: Position, name?: string) {
-
-        if(Game.time != this.currentTick){
-            this.currentTick = Game.time
-            this.csites = room.find(FIND_MY_CONSTRUCTION_SITES).length
+        if(Game.time != p.tick){
+            p.tick = Game.time
+            p.sites = room.find(FIND_MY_CONSTRUCTION_SITES).length
         }
 
         if(this.csites > 5)
@@ -532,7 +533,7 @@ const p = {
             return
 
         room.createConstructionSite(pos.x, pos.y, structureType, name)
-        this.csites++
+        p.sites++
     },
 
     buildExtractor: function(room) {
