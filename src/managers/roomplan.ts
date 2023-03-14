@@ -514,7 +514,8 @@ const p = {
 
         if((structureType == STRUCTURE_FACTORY || structureType == STRUCTURE_POWER_SPAWN) && PServ)
             return
-        if(structureType == STRUCTURE_LAB && room.controller.level < 7 && Game.gcl.level < 4)
+        if(structureType == STRUCTURE_LAB && room.controller.level < 7 && Game.gcl.level < 4 
+            || !room.storage || room.storage.store[RESOURCE_ENERGY] < 160000)
             return
         if(structureType == STRUCTURE_TOWER && room.controller.safeMode > 5000)
             return
