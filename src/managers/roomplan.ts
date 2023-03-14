@@ -504,12 +504,13 @@ const p = {
     },
 
     buildConstructionSite: function(room: Room, structureType, pos: Position, name?: string) {
-        if(Game.time != p.tick){
-            p.tick = Game.time
-            p.sites = room.find(FIND_MY_CONSTRUCTION_SITES).length
+        const roomInfo = u.getsetd(Cache.roomData, room.name, {})
+        if(Game.time != roomInfo.pTick){
+            roomInfo.pTick = Game.time
+            roomInfo.cSites = room.find(FIND_MY_CONSTRUCTION_SITES).length
         }
 
-        if(this.csites > 5)
+        if(roomInfo.cSites > 3)
             return
 
         if((structureType == STRUCTURE_FACTORY || structureType == STRUCTURE_POWER_SPAWN) && PServ)
@@ -533,8 +534,8 @@ const p = {
         if (terrain && (terrain[LOOK_TERRAIN] == "wall") || _.find(look, item => item.type == LOOK_STRUCTURES && item[LOOK_STRUCTURES].structureType == structureType))
             return
 
-        room.createConstructionSite(pos.x, pos.y, structureType, name)
-        p.sites++
+        if(room.createConstructionSite(pos.x, pos.y, structureType, name) == 0)
+            roomInfo.cSites++
     },
 
     buildExtractor: function(room) {
