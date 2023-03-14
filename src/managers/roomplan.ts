@@ -909,7 +909,7 @@ const p = {
         //place Csites
         for(let i = 0; i < roads.length; i++){
             new RoomVisual(roads[i].roomName).circle(roads[i], {fill: "#ff1111", radius: 0.1, stroke: "red"})
-            p.buildConstructionSite(room, STRUCTURE_ROAD, roads[i])
+            p.buildConstructionSite(roads[i].roomName, STRUCTURE_ROAD, roads[i])
         }
     },
 
