@@ -504,6 +504,9 @@ const p = {
     },
 
     buildConstructionSite: function(room: Room, structureType, pos: Position, name?: string) {
+        if(!room)
+            return
+
         const roomInfo = u.getsetd(Cache.roomData, room.name, {})
         if(Game.time != roomInfo.pTick){
             roomInfo.pTick = Game.time
@@ -910,7 +913,7 @@ const p = {
         //place Csites
         for(let i = 0; i < roads.length; i++){
             new RoomVisual(roads[i].roomName).circle(roads[i], {fill: "#ff1111", radius: 0.1, stroke: "red"})
-            p.buildConstructionSite(roads[i].roomName, STRUCTURE_ROAD, roads[i])
+            p.buildConstructionSite(Game.rooms[roads[i].roomName], STRUCTURE_ROAD, roads[i])
         }
     },
 
