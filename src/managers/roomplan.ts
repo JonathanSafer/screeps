@@ -518,14 +518,17 @@ const p = {
 
         if([STRUCTURE_FACTORY, STRUCTURE_POWER_SPAWN, STRUCTURE_NUKER].includes(structureType) && PServ)
             return
-        if(structureType == STRUCTURE_LAB && room.controller.level < 7 && Game.gcl.level < 4 
-            || !room.storage || room.storage.store[RESOURCE_ENERGY] < 160000)
+        if(structureType == STRUCTURE_LAB) {
+            if (room.controller.level < 7 && Game.gcl.level < 4)
+                return
+            if (!room.storage || room.storage.store[RESOURCE_ENERGY] < 160000)
             return
+        }
         if(structureType == STRUCTURE_TOWER && room.controller.safeMode > 5000)
             return
 
         const look = room.lookAt(pos.x, pos.y)
-        if(room.controller.level < 5 && room.controller.level > 1 && structureType == STRUCTURE_TERMINAL && !room.storage){
+        if(structureType == STRUCTURE_TERMINAL && room.controller.level < 5 && room.controller.level > 1 && !room.storage){
             structureType = STRUCTURE_CONTAINER
         } else if(structureType == STRUCTURE_TERMINAL){
             const containerObj = _.find(look, object => object.type == LOOK_STRUCTURES && object[LOOK_STRUCTURES].structureType == STRUCTURE_CONTAINER)
