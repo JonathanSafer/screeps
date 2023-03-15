@@ -488,7 +488,7 @@ function updateDefender(spawn: StructureSpawn, rcl, creeps) {
     } else {
         spawn.memory[rD.name] = 0
     }
-    if(rcl <= 2 || (room.controller.safeModeCooldown && !room.controller.safeMode))
+    if((rcl <= 2 || room.controller.safeModeCooldown) && !room.controller.safeMode)
         requestSupport(spawn, 1, rcl)
 }
 
