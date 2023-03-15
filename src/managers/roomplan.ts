@@ -516,7 +516,7 @@ const p = {
         if(roomInfo.cSites > 3)
             return
 
-        if((structureType == STRUCTURE_FACTORY || structureType == STRUCTURE_POWER_SPAWN) && PServ)
+        if([STRUCTURE_FACTORY, STRUCTURE_POWER_SPAWN, STRUCTURE_NUKER].includes(structureType) && PServ)
             return
         if(structureType == STRUCTURE_LAB && room.controller.level < 7 && Game.gcl.level < 4 
             || !room.storage || room.storage.store[RESOURCE_ENERGY] < 160000)
