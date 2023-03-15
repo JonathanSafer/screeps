@@ -146,7 +146,9 @@ export function loop() {
         m.manageMarket(myCities)
 
         const noobMode = Object.keys(Game.rooms).length < 5
-        if (Game.time % settings.roomplanTime == settings.roomplanOffset || (Game.time % 10 == 0 && noobMode && Game.cpu.bucket > 1000)){
+        if (Game.time % settings.roomplanTime == settings.roomplanOffset 
+            || (Game.time % 10 == 0 && noobMode && Game.cpu.bucket > 1000) 
+            || (Game.time % 50 == 0 && Game.cpu.bucket > 9900)){
             rp.buildConstructionSites() 
         }// TODO: this could go in run city?
 
