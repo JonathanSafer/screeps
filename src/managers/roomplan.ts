@@ -522,7 +522,7 @@ const p = {
             if (room.controller.level < 7 && Game.gcl.level < 4)
                 return
             if (!room.storage || room.storage.store[RESOURCE_ENERGY] < 160000)
-            return
+                return
         }
         if(structureType == STRUCTURE_TOWER && room.controller.safeMode > 5000)
             return
