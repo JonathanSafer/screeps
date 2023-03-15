@@ -479,36 +479,30 @@ function updateDefender(spawn: StructureSpawn, rcl, creeps) {
             (hostile.getActiveBodyparts(TOUGH) > 0 || hostile.body.length == 50 || rcl < 8)).length
         if(hostiles > 3){
             //request quad from nearest ally
-            requestSupport(spawn, rcl, Math.floor(hostiles/4))
+            requestSupport(spawn, Math.floor(hostiles/4), rcl)
             if(Game.time % 1500 == 0 && spawn.memory.wallMultiplier)
-                spawn.memory.wallMultiplier = Math.min(spawn.memory.wallMultiplier + .1, 10)
+                spawn.memory.wallMultiplier = Math.min(spawn.memory.wallMultiplier + .1, 20)
         } else {
             cU.scheduleIfNeeded(rD.name, Math.min(Math.floor(hostiles/2), 4), true, spawn, creeps)
         }
     } else {
         spawn.memory[rD.name] = 0
     }
+    if(rcl <= 2 || (room.controller.safeModeCooldown && !room.controller.safeMode))
+        requestSupport(spawn, 1, rcl)
 }
 
-function requestSupport(spawn, rcl, quadsNeeded){
-    let reinforceCity = null
-    const quadFlag = _.find(Object.keys(Memory.flags), flag => flag.includes("quadRally") && Memory.flags[flag].roomName == spawn.room.name)
-    if(quadFlag){
-        const index = quadFlag.indexOf("quadRally")
-        reinforceCity = quadFlag.substring(0, index)
-    }
-    if(!reinforceCity){
-        //find reinforce City
-        const closestRoom = chooseClosestRoom(u.getMyCities(), spawn.pos)
-        if(!closestRoom)
-            return
-        reinforceCity = closestRoom + "0"
-    }
-    u.placeFlag(reinforceCity + "quadRally", new RoomPosition(25, 25, spawn.room.name), 10000)
-    const otherSpawn = Game.spawns[reinforceCity]
+function requestSupport(spawn, quadsNeeded, rcl){
+    //find reinforce City
+    const reinforceCities = _.filter(u.getMyCities(), c => c.controller.level >= rcl)
+    const closestRoom = chooseClosestRoom(reinforceCities, spawn.pos)
+    if(!closestRoom)
+        return
+    const reinforceCity = closestRoom + "0"
+    const reinforcingSpawn = Game.spawns[reinforceCity]
     const creeps = u.splitCreepsByCity()[reinforceCity]
-    cU.scheduleIfNeeded(rT.name, 2, false, otherSpawn, creeps)
-    cU.scheduleIfNeeded("quad", 4 * quadsNeeded, true, otherSpawn, creeps)
+    cU.scheduleIfNeeded(rT.name, 2, false, reinforcingSpawn, creeps)
+    cU.scheduleIfNeeded(cN.QUAD_NAME, 4 * quadsNeeded, true, reinforcingSpawn, creeps, spawn.room.name)
 }
 
 function cityFraction(cityName) {
@@ -660,7 +654,7 @@ function updateBuilder(rcl, memory, spawn: StructureSpawn, creeps: [Creep]) {
             if(!spawn.memory.wallMultiplier){
                 spawn.memory.wallMultiplier = 1
             }
-            if(Game.time % 20000 == 0 && Math.random() < .1)
+            if(Game.time % 10000 == 0 && Math.random() < .1)
                 spawn.memory.wallMultiplier = Math.min(spawn.memory.wallMultiplier + .1, 10)
             const minHits = _.min(walls, wall => wall.hits).hits
             const defenseMode = !spawn.room.controller.safeMode && spawn.room.controller.safeModeCooldown

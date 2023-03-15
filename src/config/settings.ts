@@ -31,7 +31,7 @@ const settings = {
     ghodiumAmount: 7000, //threshold to stop producing ghodium
     boostsNeeded: 6000, // boost needed per city for us to boost creeps
     boostAmount: 5000, //threshold to stop producing boosts (add ~8000 to this and ghodium amount since this does not include ready to go boosts in terminal)
-    wallHeight: [0, 0, 0, 30000, 100000, 500000, 2000000, 10000000],
+    wallHeight: [0, 0, 0, 30000, 100000, 500000, 2000000, 5000000],
     flagCleanup: 2000, //interval to update old flags
     depositFlagRemoveTime: 100000, //ticks after deposit flag is placed after which it should be removed regardless of deposit status
     addRemote: 0.7,
