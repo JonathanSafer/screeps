@@ -19,8 +19,8 @@ const rMM = {
             creep.suicide()
         }
         if (!creep.memory.source){
-            const sources = creep.room.find(FIND_MINERALS)
-            creep.memory.source = sources[0].id
+            const mineral = _.find(creep.room.find(FIND_MINERALS), m => m.mineralType != RESOURCE_THORIUM)
+            creep.memory.source = mineral.id
         }
         if (rMM.needEnergy(creep)){
             rMM.harvestTarget(creep)

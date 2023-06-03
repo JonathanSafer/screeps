@@ -550,12 +550,12 @@ const p = {
             return
         }
 
-        const mineralPos = minerals[0].pos
-        if (mineralPos.lookFor(LOOK_STRUCTURES).length > 0) {
-            return
+        for(const mineral of minerals) {
+            const mineralPos = mineral.pos
+            if (!mineralPos.lookFor(LOOK_STRUCTURES).length) {
+                p.buildConstructionSite(room, STRUCTURE_EXTRACTOR, mineralPos)
+            }
         }
-
-        p.buildConstructionSite(room, STRUCTURE_EXTRACTOR, mineralPos)
     },
 
     buildWalls: function(room: Room, plan){

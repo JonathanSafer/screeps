@@ -4,7 +4,6 @@ import rSB = require("../roles/spawnBuilder")
 import rC = require("../roles/claimer")
 import rUC = require("../roles/unclaimer")
 import rF = require("../roles/ferry")
-import rMM = require("../roles/mineralMiner")
 import rU = require("../roles/upgrader")
 import rB = require("../roles/builder")
 import rR = require("../roles/runner")
@@ -168,7 +167,7 @@ function updateCountsCity(city, creeps, rooms, claimRoom, unclaimRoom) {
             runNuker(city)
             checkLabs(city)
             updateColonizers(city, memory, claimRoom, unclaimRoom)
-            updateMineralMiner(rcl, structures, spawn, memory)
+            updateMineralMiner(rcl, structures, spawn, creeps)
             updatePowerSpawn(city, memory)
             updateStorageLink(spawn, memory, structures)
         }
@@ -533,17 +532,17 @@ function updateMiner(creeps: Creep[], rcl8: boolean, memory: SpawnMemory, spawn:
     }     
 }
 
-function updateMineralMiner(rcl, buildings: Structure[], spawn, memory) {
-    memory[rMM.name] = 0
+function updateMineralMiner(rcl, buildings: Structure[], spawn, creeps) {
     if (rcl > 5){
         const extractor = _.find(buildings, structure => structure.structureType == STRUCTURE_EXTRACTOR)
-        //Log.info(extractor)
         if(extractor) {
             const cityObject = spawn.room
-            const minerals = cityObject.find(FIND_MINERALS)
-            if(spawn.room.terminal && (spawn.room.terminal.store[minerals[0].mineralType] < 6000 
-                || (Game.cpu.bucket > settings.bucket.mineralMining && spawn.room.storage && spawn.room.storage.store[minerals[0].mineralType] < 50000))){
-                memory[rMM.name] = (minerals[0].mineralAmount < 1) ? 0 : 1
+            const mineral = cityObject.find(FIND_MINERALS, m => m.mineralType != RESOURCE_THORIUM)[0]
+            if(spawn.room.terminal
+                    && (spawn.room.terminal.store[mineral.mineralType] < 6000
+                    || (Game.cpu.bucket > settings.bucket.mineralMining && spawn.room.storage && spawn.room.storage.store[mineral].mineralType < 50000))
+                    && mineral.mineralAmount > 0){
+                cU.scheduleIfNeeded(cN.MINERAL_MINER_NAME, 1, false, spawn, creeps)
             }
         }
     }
