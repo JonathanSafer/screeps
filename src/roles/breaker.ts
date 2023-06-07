@@ -1,7 +1,6 @@
 import u = require("../lib/utils")
 import rU = require("../lib/roomUtils")
 import cU = require("../lib/creepUtils")
-import settings = require("../config/settings")
 import rMe = require("./medic")
 import motion = require("../lib/motion")
 import actions = require("../lib/actions")
@@ -101,8 +100,8 @@ const rBr = {
             // if next to target, break it
         }
         // if next to enemy structure, break it
-        if(creep.room.controller && (creep.room.controller.owner && settings.allies.includes(creep.room.controller.owner.username)
-            || creep.room.controller.reservation && settings.allies.includes(creep.room.controller.reservation.username)))
+        if(creep.room.controller && (creep.room.controller.owner && Memory.settings.allies.includes(creep.room.controller.owner.username)
+            || creep.room.controller.reservation && Memory.settings.allies.includes(creep.room.controller.reservation.username)))
             return
         const structures = creep.room.lookForAtArea(LOOK_STRUCTURES,
             Math.max(0, creep.pos.y - 1),
@@ -237,7 +236,7 @@ const rBr = {
         const flag = creep.memory.city + "break"
         const structures = creep.room.find(FIND_STRUCTURES, {
             filter: structure => structure.hits && 
-            (!(structure instanceof OwnedStructure) || !settings.allies.includes(structure.owner.username))
+            (!(structure instanceof OwnedStructure) || !Memory.settings.allies.includes(structure.owner.username))
         })
         if(!Memory.flags[flag] || creep.pos.roomName == Memory.flags[flag].roomName){
             //we are in destination room, target "valuable" structures
@@ -260,7 +259,7 @@ const rBr = {
         }
         //if in a friendly room or my room, ignore structures and rally. Else, set nearest structure as target
         if(creep.room.controller && creep.room.controller.owner
-                && (settings.allies.includes(creep.room.controller.owner.username)
+                && (Memory.settings.allies.includes(creep.room.controller.owner.username)
                 || creep.room.controller.my)){
             rBr.rally(creep, medic, flag)
         } else {

@@ -275,9 +275,9 @@ var u = {
         if(room.controller 
             && (room.controller.my
                 || (room.controller.owner 
-                    && settings.allies.includes(room.controller.owner.username))
+                    && Memory.settings.allies.includes(room.controller.owner.username))
                 || (room.controller.reservation
-                    && settings.allies.includes(room.controller.reservation.username)))){
+                    && Memory.settings.allies.includes(room.controller.reservation.username)))){
             return true
         } else {
             return false
@@ -285,7 +285,7 @@ var u = {
     },
 
     findHostileCreeps: function(room){
-        return _.filter(room.find(FIND_HOSTILE_CREEPS), c => !settings.allies.includes(c.owner.username))
+        return _.filter(room.find(FIND_HOSTILE_CREEPS), c => !Memory.settings.allies.includes(c.owner.username))
     },
 
     findHostileStructures: function(room){

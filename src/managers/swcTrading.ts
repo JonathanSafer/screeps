@@ -1,10 +1,9 @@
 //Borrowed from Sergey
 
 
-import settings = require("../config/settings")
 import u = require("../lib/utils")
 const segmentID = 90
-const allyList = settings.allies
+const allyList = Memory.settings.allies
 
 // Priority convention:
 // 1: I really need this or I'm going to die

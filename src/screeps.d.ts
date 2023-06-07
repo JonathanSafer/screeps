@@ -108,6 +108,9 @@ declare global {
         }
         startTick?: number
         benchmark?: {}
+        settings?: {
+            allies: string[]
+        }
      }
     interface CreepMemory {
         notify?: boolean

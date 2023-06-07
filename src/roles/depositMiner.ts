@@ -123,12 +123,12 @@ const rDM = {
             Cache.enemies = Cache.enemies || {}
             Cache.enemies[owner] = Cache.enemies[owner] || 0
             Cache.enemies[owner]++
-            return settings.allies.includes(owner)
+            return Memory.settings.allies.includes(owner)
         })
         if (ally) {
             //remove flag
             const flag = Memory.flags[creep.memory.flag]
-            const allies = _.filter(creep.room.find(FIND_HOSTILE_CREEPS), c => settings.allies.includes(c.owner.username))
+            const allies = _.filter(creep.room.find(FIND_HOSTILE_CREEPS), c => Memory.settings.allies.includes(c.owner.username))
             for(const friendly of allies){
                 if(friendly.getActiveBodyparts(WORK) > 0 && friendly.pos.isNearTo(flag.x, flag.y)){
                     delete Memory.flags[creep.memory.flag]

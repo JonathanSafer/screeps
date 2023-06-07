@@ -1,7 +1,6 @@
 import a = require("../lib/actions")
 import motion = require("../lib/motion")
 import rH = require("./harasser")
-import settings = require("../config/settings")
 import { cN, BodyType } from "../lib/creepNames"
 
 const CreepState = {
@@ -28,7 +27,7 @@ const rD = {
         }
         let hostiles = []
         if(creep.memory.state != CS.DORMANT){
-            hostiles = _.filter(creep.room.find(FIND_HOSTILE_CREEPS), c => !settings.allies.includes(c.owner.username))
+            hostiles = _.filter(creep.room.find(FIND_HOSTILE_CREEPS), c => !Memory.settings.allies.includes(c.owner.username))
         }
         switch (creep.memory.state) {
         case CS.START:

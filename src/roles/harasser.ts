@@ -1,4 +1,3 @@
-import settings = require("../config/settings")
 import motion = require("../lib/motion")
 import sq = require("../lib/spawnQueue")
 import u = require("../lib/utils")
@@ -25,7 +24,7 @@ const rH = {
         
         rH.init(creep)
 
-        const hostiles = _.filter(creep.room.find(FIND_HOSTILE_CREEPS), c => !settings.allies.includes(c.owner.username))
+        const hostiles = _.filter(creep.room.find(FIND_HOSTILE_CREEPS), c => !Memory.settings.allies.includes(c.owner.username))
         
         rH.maybeHeal(creep, hostiles)
         

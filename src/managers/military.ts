@@ -1,6 +1,5 @@
 import sq = require("../lib/spawnQueue")
 import u = require("../lib/utils")
-import settings = require("../config/settings")
 import { cN } from "../lib/creepNames"
 
 const m = {
@@ -40,7 +39,7 @@ const m = {
                         const route = Game.map.findRoute(city, neighbor)
                         return route == ERR_NO_PATH || route.length > 1
                     }
-                    return !settings.allies.includes(data.own) && data.rcl <= 6 
+                    return !Memory.settings.allies.includes(data.own) && data.rcl <= 6 
                         && data.sME && data.sME < Game.time && !tooFar()
                 }).value()
             })

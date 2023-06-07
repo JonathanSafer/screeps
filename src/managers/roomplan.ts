@@ -176,7 +176,7 @@ const p = {
                 const controllerPos = u.unpackPos(Cache.roomData[candidate].ctrlP, candidate)
                 const result = PathFinder.search(room.controller.pos, {pos: controllerPos, range: 1}, {
                     plainCost: 1, swampCost: 1, maxOps: 10000, roomCallback: (roomName) => {
-                        if(!Cache.roomData[roomName] || (Cache.roomData[roomName].rcl && CONTROLLER_STRUCTURES[STRUCTURE_TOWER][Cache.roomData[roomName].rcl] && !settings.allies.includes(Cache.roomData[roomName].own)))
+                        if(!Cache.roomData[roomName] || (Cache.roomData[roomName].rcl && CONTROLLER_STRUCTURES[STRUCTURE_TOWER][Cache.roomData[roomName].rcl] && !Memory.settings.allies.includes(Cache.roomData[roomName].own)))
                             return false
                     }
                 })
@@ -298,7 +298,7 @@ const p = {
             || !Object.keys(roomInfo.src).length 
             || Memory.remotes[roomName] 
             || (spawn.room.energyCapacityAvailable < 2300 && !roomInfo.ctrlP)
-            || roomInfo.res && settings.allies.includes(roomInfo.res) && settings.username != roomInfo.res) 
+            || roomInfo.res && Memory.settings.allies.includes(roomInfo.res) && settings.username != roomInfo.res) 
             return -1
         if(!roomInfo.ctrlP) return -1 //TODO add SK mining
         let totalDistance = 0

@@ -4,7 +4,6 @@ import rR = require("./runner")
 import u = require("../lib/utils")
 import cU = require("../lib/creepUtils")
 import rBr = require("./breaker")
-import settings = require("../config/settings")
 import { cN, BodyType } from "../lib/creepNames"
 
 const rPM = {
@@ -152,7 +151,7 @@ const rPM = {
         if(!creep.memory.aware && Game.time % 5 != 0){
             return null
         }
-        const hostiles = _.filter(creep.room.find(FIND_HOSTILE_CREEPS), c => settings.allies.includes(creep.owner.username) 
+        const hostiles = _.filter(creep.room.find(FIND_HOSTILE_CREEPS), c => Memory.settings.allies.includes(creep.owner.username) 
             && c.pos.inRangeTo(creep.pos, 9) 
             && (c.getActiveBodyparts(ATTACK) > 0 || c.getActiveBodyparts(RANGED_ATTACK) > 0 || c.pos.isNearTo(creep.pos)))
         if(!hostiles.length){

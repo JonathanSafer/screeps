@@ -35,7 +35,7 @@ const settings = {
     flagCleanup: 2000, //interval to update old flags
     depositFlagRemoveTime: 100000, //ticks after deposit flag is placed after which it should be removed regardless of deposit status
     addRemote: 0.7,
-    removeRemote: 0.9,
+    removeRemote: 0.9, // TODO: move this to bucket
     spawnFreeTime: 0.25, //amount of spawn time to be left open for miscellaneous activity
     spawnFreeTimeBuffer: 0.15,
     bucket: {//minimum bucket thresholds
@@ -63,10 +63,10 @@ const settings = {
         runners: 15, // low rcl
         builders: 3, //TODO is this in use?
         transporters: 2,
-        miners: 1, // rcl8 TODO: this shouldn't be in use anymore
+        miners: 1, // TODO: this shouldn't be in use anymore
     },
     motion: {
-        backRoadPenalty: 1.5
+        backRoadPenalty: 1.5 // higher number prioritizes highways for long distance path planning
     },
     scouting: {
         assessTime: 500,
@@ -94,7 +94,13 @@ const settings = {
 
 if(!Game.shard.name.includes("shard") || Game.shard.name == "shardSeason"){
     //botarena and swc custom settings
-    settings.allies = [username, "Saruss", "MarvinTMB", "Silten", "Mirroar", "V1king", "asdpof"]
+    settings.allies = [username]
+}
+
+if (!Memory.settings) {
+    Memory.settings = {
+        allies: settings.allies
+    }
 }
 
 export = settings

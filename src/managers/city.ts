@@ -238,7 +238,7 @@ function runTowers(city: string){
             return (injured) && injured.hits < injured.hitsMax
         }})
         const hostilePower: Array<Creep | PowerCreep> = spawn.room.find(FIND_HOSTILE_POWER_CREEPS)
-        const hostiles = _.filter(hostilePower.concat(hostileCreep), c => !settings.allies.includes(c.owner.username))
+        const hostiles = _.filter(hostilePower.concat(hostileCreep), c => !Memory.settings.allies.includes(c.owner.username))
         const injured = injuredPower.concat(injuredCreep)
         let damaged = null
         let repair = 0
@@ -863,7 +863,7 @@ function updateDEFCON(remote, harasserSize){
         const remoteRoom = Game.rooms[remote]
         if(remoteRoom.controller && (remoteRoom.controller.owner
             || (remoteRoom.controller.reservation 
-                && settings.allies.includes(remoteRoom.controller.reservation.username)
+                && Memory.settings.allies.includes(remoteRoom.controller.reservation.username)
                 && remoteRoom.controller.reservation.username != settings.username))){
             Cache.roomData[remote].d = 4
             return Cache.roomData[remote].d

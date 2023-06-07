@@ -246,7 +246,7 @@ const m = {
             maxOps: 10000,
             roomCallback: function(roomName){
                 const roomData = u.getsetd(roomDataCache, roomName, {})
-                if(roomName != creep.pos.roomName && roomData.own && !settings.allies.includes(roomData.own) 
+                if(roomName != creep.pos.roomName && roomData.own && !Memory.settings.allies.includes(roomData.own) 
                     && (goals.length || goals.pos.roomName != roomName)
                     && roomData.rcl 
                     && CONTROLLER_STRUCTURES[STRUCTURE_TOWER][roomData.rcl] 
@@ -254,7 +254,7 @@ const m = {
                     || creep.memory.tolerance < CONTROLLER_STRUCTURES[STRUCTURE_TOWER][roomData.rcl] * TOWER_POWER_ATTACK - (TOWER_POWER_ATTACK * TOWER_FALLOFF))){
                     return false
                 }
-                if(roomData.skL && roomData.rcl) return false
+                if(roomData.skL && roomData.rcl && (goals.length || goals.pos.roomName != roomName)) return false
                 if(Game.map.getRoomStatus(roomName).status != "normal"){
                     return false
                 }
@@ -296,7 +296,7 @@ const m = {
                         }
                     } else if (struct.structureType !== STRUCTURE_CONTAINER &&
                              (struct.structureType !== STRUCTURE_RAMPART ||
-                              !(struct.my || (settings.allies.includes(struct.owner.username) && struct.isPublic)))) {
+                              !(struct.my || (Memory.settings.allies.includes(struct.owner.username) && struct.isPublic)))) {
                     // Can't walk through non-walkable buildings
                         costs.set(struct.pos.x, struct.pos.y, 0xff)
                     }
@@ -379,7 +379,7 @@ const m = {
                     return Infinity
                 }
                 const roomData = u.getsetd(roomDataCache, roomName, {})
-                if(roomData.own && !settings.allies.includes(roomData.own) && roomData.rcl && CONTROLLER_STRUCTURES[STRUCTURE_TOWER][roomData.rcl] && avoidEnemies){
+                if(roomData.own && !Memory.settings.allies.includes(roomData.own) && roomData.rcl && CONTROLLER_STRUCTURES[STRUCTURE_TOWER][roomData.rcl] && avoidEnemies){
                     return 5
                 }
                 return settings.motion.backRoadPenalty

@@ -4,7 +4,6 @@ import rU = require("../lib/roomUtils")
 import cU = require("../lib/creepUtils")
 import a = require("../lib/actions")
 import T = require("../buildings/tower")
-import settings = require("../config/settings")
 import motion = require("../lib/motion")
 import { cN, BodyType } from "../lib/creepNames"
 
@@ -238,7 +237,7 @@ const rQ = {
         const rooms = Object.keys(everythingByRoom)
         for(let i = 0; i < rooms.length; i++){
             const controller = Game.rooms[rooms[i]].controller
-            if(controller && controller.owner && !settings.allies.includes(controller.owner.username)){
+            if(controller && controller.owner && !Memory.settings.allies.includes(controller.owner.username)){
                 const tower = _.find(everythingByRoom[rooms[i]].structures, struct => struct.structureType == STRUCTURE_TOWER)
                 if(tower) return false
             }
@@ -946,7 +945,7 @@ const rQ = {
                     }
                     for (const creep of Game.rooms[roomName].find(FIND_CREEPS)) {
                         if(!_(quad).find(member => member.pos.inRangeTo(creep.pos, 8))
-                            || (!settings.allies.includes(creep.owner.username) && !_(quad).find(member => member.pos.inRangeTo(creep.pos, 3)))){
+                            || (!Memory.settings.allies.includes(creep.owner.username) && !_(quad).find(member => member.pos.inRangeTo(creep.pos, 3)))){
                             continue
                         }
                         if(!quadNames.includes(creep.id)){
