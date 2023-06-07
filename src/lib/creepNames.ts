@@ -22,7 +22,35 @@ export const cN = {
     QR_CODE_NAME: "qrCode",
     REPAIRER_NAME: "repairer",
     RESERVER_NAME: "reserver",
-    BRICK_NAME: "brick"
+    BRICK_NAME: "brick",
+
+    getRolePriorities: function(){
+        const priorities = {}
+        priorities[cN.FERRY_NAME] = 0
+        priorities[cN.DEFENDER_NAME] = 2
+        priorities[cN.TRANSPORTER_NAME] = 1
+        priorities[cN.REMOTE_MINER_NAME] = 3
+        priorities[cN.RUNNER_NAME] = 4
+        priorities[cN.UPGRADER_NAME] = 5
+        priorities[cN.BUILDER_NAME] = 6
+        priorities[cN.QUAD_NAME] = 3
+        priorities[cN.MINERAL_MINER_NAME] = 8
+        priorities[cN.CLAIMER_NAME] = 9
+        priorities[cN.UNCLAIMER_NAME] = 10
+        priorities[cN.SPAWN_BUILDER_NAME] = 11
+        priorities[cN.HARASSER_NAME] = 3
+        priorities[cN.MEDIC_NAME] = 13
+        priorities[cN.BREAKER_NAME] = 13
+        priorities[cN.POWER_MINER_NAME] = 13
+        priorities[cN.ROBBER_NAME] = 14
+        priorities[cN.DEPOSIT_MINER_NAME] = 15
+        priorities[cN.SCOUT_NAME] = 16
+        priorities[cN.QR_CODE_NAME] = 17
+        priorities[cN.REPAIRER_NAME] = 14
+        priorities[cN.RESERVER_NAME] = 15
+        priorities[cN.BRICK_NAME] = 15
+        return priorities
+    }
 }
 
 export const enum BodyType {

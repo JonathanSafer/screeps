@@ -1,4 +1,4 @@
-import rr = require("../roles/roles")
+import { cN } from "./creepNames"
 
 const sq = {
     schedule: function(spawn: StructureSpawn, role: string, boosted = false, flag = null, budget = null, priority = null) {
@@ -40,7 +40,7 @@ const sq = {
     },
 
     sort: function(spawn: StructureSpawn) {
-        const priorities = rr.getRolePriorities()
+        const priorities = cN.getRolePriorities()
         const sortFn = (item: QueuedCreep) => item.priority || priorities[item.role]
         spawn.memory.sq = _.sortBy(spawn.memory.sq, sortFn)
     }

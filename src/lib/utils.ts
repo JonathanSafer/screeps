@@ -172,9 +172,12 @@ const u = {
     },
 
     isEnemyRoom: function(room){
-        if(room.controller 
+        const roomDataCache = u.getsetd(Cache, "roomData", {})
+        const roomData = u.getsetd(roomDataCache, room.name, {})
+        if((room.controller 
             && ((room.controller.owner && !Memory.settings.allies.includes(room.controller.owner.username))
                 || (room.controller.reservation && !Memory.settings.allies.includes(room.controller.reservation.username))))
+            || (roomData.skL && roomData.rcl))
             return true
         return false
     },
