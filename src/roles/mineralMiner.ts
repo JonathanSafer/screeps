@@ -1,52 +1,67 @@
 import a = require("../lib/actions")
 import roomU = require("../lib/roomUtils")
 import { cN, BodyType } from "../lib/creepNames"
+import motion = require("../lib/motion")
 
 const rMM = {
     name: cN.MINERAL_MINER_NAME,
     type: BodyType.mineralMiner,
 
     run: function(creep: Creep) {
-        if(!creep.memory.suicideTime && creep.memory.source){
-            const works = creep.getActiveBodyparts(WORK) * HARVEST_MINERAL_POWER
-            const carry = creep.getActiveBodyparts(CARRY) * CARRY_CAPACITY
-            const ticksToFill = Math.ceil(carry/works * EXTRACTOR_COOLDOWN)
-            const mineral = Game.getObjectById(creep.memory.source)
-            const distance = Game.spawns[creep.memory.city].pos.getRangeTo(mineral.pos)
-            creep.memory.suicideTime = distance + ticksToFill
-        }
-        if (_.sum(Object.values(creep.store)) == 0 && creep.ticksToLive < creep.memory.suicideTime){
-            creep.suicide()
-        }
-        if (!creep.memory.source){
-            const mineral = _.find(creep.room.find(FIND_MINERALS), m => m.mineralType != RESOURCE_THORIUM)
-            creep.memory.source = mineral.id
-        }
-        if (rMM.needEnergy(creep)){
-            rMM.harvestTarget(creep)
+        rMM.contemplateSuicide(creep)
+
+        rMM.getMineral(creep)
+
+        if (rMM.hasCapacity(creep)){
+            rMM.harvestMineral(creep)
         } else {
             const bucket = roomU.getStorage(creep.room)
             a.charge(creep, bucket)
         }
     },
 
-    needEnergy: function(creep: Creep) {
+    // attempt to find a mineral
+    getMineral: function(creep: Creep) {
+        if(creep.memory.source) return
+        const targetRoom = creep.memory.flag || creep.pos.roomName
+        if (Game.rooms[targetRoom]) {
+            const extractor = _.find(creep.room.find(FIND_STRUCTURES), s => s.structureType == STRUCTURE_EXTRACTOR)
+            const mineral = extractor && _.find(extractor.pos.lookFor(LOOK_MINERALS))
+            creep.memory.source = mineral && mineral.id
+        }
+    },
+
+    // suicide if not enough TTL to complete another job cycle
+    contemplateSuicide: function(creep: Creep) {
+        if (!creep.memory.source) return
+        const mineral = Game.getObjectById(creep.memory.source) as Mineral
+        if(!creep.memory.suicideTime){
+            const works = creep.getActiveBodyparts(WORK) * HARVEST_MINERAL_POWER
+            const carry = creep.getActiveBodyparts(CARRY) * CARRY_CAPACITY
+            const ticksToFill = Math.ceil(carry/works * EXTRACTOR_COOLDOWN)
+            const distance = PathFinder.search(Game.spawns[creep.memory.city].pos, {pos: mineral.pos, range: 1}).path.length
+            creep.memory.suicideTime = distance + ticksToFill
+        }
+        if (_.sum(Object.values(creep.store)) == 0 
+            && (creep.ticksToLive < creep.memory.suicideTime
+                || (creep.ticksToLive < CREEP_LIFE_TIME/2 && mineral.mineralType == RESOURCE_THORIUM))) {
+            creep.suicide()
+        }
+    },
+
+    hasCapacity: function(creep: Creep) {
         const store = _.sum(Object.values(creep.store))
         return (store < creep.store.getCapacity())
     },
 
-    harvestTarget: function(creep: Creep) {
+    harvestMineral: function(creep: Creep) {
         const source = Game.getObjectById(creep.memory.source)
-        const harvestResult = a.harvest(creep, source)
-        if (harvestResult == ERR_NO_PATH) {
-            Log.info("no path for mining :/")
-        } else if (harvestResult == 1) {
-        // Record mining totals in memory for stat tracking
-            const works = _.filter(creep.body, part => part.type == WORK).length
-            if (!creep.memory.mined) {
-                creep.memory.mined = 0
-            }
-            creep.memory.mined += works
+        if (source) {
+            a.harvest(creep, source)
+        } else if (creep.memory.flag) {
+            motion.newMove(creep, new RoomPosition(25, 25, creep.memory.flag), 24)
+        } else {
+            Log.error(`MineralMiner at ${creep.pos} unable to find target`)
         }
     },
 

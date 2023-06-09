@@ -12,7 +12,6 @@ Log.error = function(text) { console.log(`<p style="color:red">[ERROR] ${Game.ti
 Log.warning = function(text) { console.log(`<p style="color:orange">[WARNING] ${Game.time}: ${text}</p>`) }
 Log.console = function(text) { return `<p style="color:green">[CONSOLE] ${Game.time}: ${text}</p>` }
 
-
 global.AddAlly = function(username: string) {
     Memory.settings.allies.push(username)
     Log.console(`Added ${username} to allies. Current allies are ${Memory.settings.allies}`)
