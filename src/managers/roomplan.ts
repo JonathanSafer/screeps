@@ -545,13 +545,23 @@ const p = {
     },
 
     buildExtractor: function(room) {
-        const minerals = room.find(FIND_MINERALS)
-        if (!minerals) {
-            return
+        const minerals = room.find(FIND_MINERALS) as Mineral[]
+        const thorium = _.find(minerals, mineral => mineral.mineralType == RESOURCE_THORIUM)
+        if (!thorium.pos.lookFor(LOOK_STRUCTURES).length) {
+            p.buildConstructionSite(room, STRUCTURE_EXTRACTOR, thorium.pos)
         }
 
-        for(const mineral of minerals) {
-            const mineralPos = mineral.pos
+        //remove extractor if no minerals left
+        const extractor = _.find(room.find(FIND_MY_STRUCTURES, {filter: s => s.structureType == STRUCTURE_EXTRACTOR})) as StructureExtractor
+        if (extractor) {
+            const mineral = extractor.pos.lookFor(LOOK_MINERALS)
+            if (!mineral.length) {
+                extractor.destroy()
+            }
+        }
+
+        if (!thorium && minerals.length) {
+            const mineralPos = minerals[0].pos
             if (!mineralPos.lookFor(LOOK_STRUCTURES).length) {
                 p.buildConstructionSite(room, STRUCTURE_EXTRACTOR, mineralPos)
             }
