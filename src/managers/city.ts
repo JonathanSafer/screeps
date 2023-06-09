@@ -536,13 +536,15 @@ function updateMineralMiner(rcl, buildings: Structure[], spawn, creeps) {
     if (rcl > 5){
         const extractor = _.find(buildings, structure => structure.structureType == STRUCTURE_EXTRACTOR)
         if(extractor) {
-            const cityObject = spawn.room
-            const mineral = cityObject.find(FIND_MINERALS, m => m.mineralType != RESOURCE_THORIUM)[0]
-            if(spawn.room.terminal
-                    && (spawn.room.terminal.store[mineral.mineralType] < 6000
-                    || (Game.cpu.bucket > settings.bucket.mineralMining && spawn.room.storage && spawn.room.storage.store[mineral].mineralType < 50000))
+            const minerals = extractor.pos.lookFor(LOOK_MINERALS)
+            if (!minerals.length) return
+            const mineral = minerals[0]
+            const room = spawn.room
+            if(room.terminal
+                    && (room.terminal.store[mineral.mineralType] < 6000
+                    || (Game.cpu.bucket > settings.bucket.mineralMining && room.storage && room.storage.getUsedCapacity(mineral) < 30000))
                     && mineral.mineralAmount > 0){
-                cU.scheduleIfNeeded(cN.MINERAL_MINER_NAME, 1, false, spawn, creeps)
+                cU.scheduleIfNeeded(cN.MINERAL_MINER_NAME, 1, false, spawn, creeps, room)
             }
         }
     }
