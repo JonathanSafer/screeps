@@ -547,7 +547,7 @@ const p = {
     buildExtractor: function(room) {
         const minerals = room.find(FIND_MINERALS) as Mineral[]
         const thorium = _.find(minerals, mineral => mineral.mineralType == RESOURCE_THORIUM)
-        if (!thorium.pos.lookFor(LOOK_STRUCTURES).length) {
+        if (thorium && !thorium.pos.lookFor(LOOK_STRUCTURES).length) {
             p.buildConstructionSite(room, STRUCTURE_EXTRACTOR, thorium.pos)
         }
 
