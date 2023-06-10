@@ -419,6 +419,25 @@ const m = {
         const bottom = top + template.dimensions.y - 1
         const right = left + template.dimensions.x - 1
         return new m.BoundingBox(top, left, bottom, right)
+    },
+
+    retreat: function(creep: Creep, hostiles: Creep[]) {
+        const dangerous = _.filter(hostiles, h => h.getActiveBodyparts(ATTACK) > 0 || h.getActiveBodyparts(RANGED_ATTACK) > 0)
+        const goals = _.map(dangerous, function(d) {
+            return { pos: d.pos, range: 8 }
+        })
+        const retreatPath = PathFinder.search(creep.pos, goals, {maxOps: 200, flee: true, maxRooms: 1,
+            roomCallback: function(roomName){
+                const room = Game.rooms[roomName]
+                const costs = new PathFinder.CostMatrix
+                room.find(FIND_CREEPS).forEach(function(c) {
+                    costs.set(c.pos.x, c.pos.y, 0xff)
+                })
+
+                return costs
+            }
+        })
+        creep.moveByPath(retreatPath.path)
     }
 }
 

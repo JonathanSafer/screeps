@@ -537,7 +537,7 @@ const p = {
             }
         }
         const terrain = _.find(look, item => item.type == LOOK_TERRAIN)
-        if (terrain && (terrain[LOOK_TERRAIN] == "wall") || _.find(look, item => item.type == LOOK_STRUCTURES && item[LOOK_STRUCTURES].structureType == structureType))
+        if (terrain && (terrain[LOOK_TERRAIN] == "wall" && structureType == STRUCTURE_ROAD) || _.find(look, item => item.type == LOOK_STRUCTURES && item[LOOK_STRUCTURES].structureType == structureType))
             return
 
         if(room.createConstructionSite(pos.x, pos.y, structureType, name) == 0)

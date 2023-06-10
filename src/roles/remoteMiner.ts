@@ -15,14 +15,10 @@ const rM = {
             return
         }
         rM.checkRespawn(creep)
-        if(creep.hits < creep.hitsMax && creep.pos.roomName == Game.spawns[creep.memory.city].pos.roomName){
-            Game.spawns[creep.memory.city].memory.towersActive = true
-            motion.newMove(creep, Game.spawns[creep.memory.city].pos, 7)
-            return
-        }
-        if(creep.memory.paired && !Game.getObjectById(creep.memory.paired))
+        if (rM.retreat(creep)) return
+        if (creep.memory.paired && !Game.getObjectById(creep.memory.paired))
             creep.memory.paired = null
-        if(!creep.memory.source || !creep.memory.sourcePos) {
+        if (!creep.memory.source || !creep.memory.sourcePos) {
             rM.nextSource(creep)
             return
         }
@@ -83,6 +79,29 @@ const rM = {
             // 2 creeps needed, because one is still alive
             cU.scheduleIfNeeded(cN.REMOTE_MINER_NAME, 2, false, spawn, creeps, creep.memory.flag)
         }
+    },
+
+    retreat: function(creep: Creep){
+        if (creep.memory.aware || creep.hits < creep.hitsMax || Game.time % 10 == 9) {
+            // if creep has a hostile within 15 spaces, become aware
+            const hostiles = _.filter(u.findHostileCreeps(creep.room), (c) => c.pos.getRangeTo(creep.pos) < 15)
+            // check nearby sourcekeeper lairs
+            const lair = _.find(creep.room.find(FIND_HOSTILE_STRUCTURES), (s) => s.structureType == STRUCTURE_KEEPER_LAIR && s.pos.getRangeTo(creep.pos) < 10) as StructureKeeperLair
+            const dangerousLair = lair && lair.ticksToSpawn < 10
+            //lose awareness if no hostiles or lairs
+            if(hostiles.length == 0 && !dangerousLair && creep.hits == creep.hitsMax){
+                creep.memory.aware = false
+            } else if (creep.pos.roomName == Game.spawns[creep.memory.city].pos.roomName) {
+                Game.spawns[creep.memory.city].memory.towersActive = true
+            }
+            // if creep has an enemy within 5 spaces, retreat
+            const enemies = creep.pos.findInRange(FIND_HOSTILE_CREEPS, 5)
+            if(enemies.length > 0){
+                motion.retreat(creep, enemies)
+                return true
+            }
+        }
+        return false
     },
 
     placeContainer: function(creep, source){

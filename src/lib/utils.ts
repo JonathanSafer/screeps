@@ -125,6 +125,17 @@ const u = {
         return (x % 10 == 0) && (y % 10 == 0)
     },
 
+    // return true if room is a Source Keeper room
+    isSKRoom: function(roomName) {
+        const coords = roomName.match(/[0-9]+/g)
+        const x = Number(coords[0])
+        const y = Number(coords[1])
+        // x mod 10 between 4 and 6, y mod 10 between 4 and 6, but not both mod 10 equal to 5
+        const xmod = x % 10
+        const ymod = y % 10
+        return (xmod >= 4 && xmod <= 6) && (ymod >= 4 && ymod <= 6) && !(xmod == 5 && ymod == 5)
+    },
+
     getAllRoomsInRange: function(d, rooms) {
         const size = 2 * d + 1
         return _(rooms)

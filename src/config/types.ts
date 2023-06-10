@@ -20,41 +20,32 @@ function getRecipe(type: BodyType, energyAvailable: number, room: Room, boosted 
     d[BodyType.unclaimer] = scalingBody([2, 1], [MOVE, CLAIM], energy)
     d[BodyType.harasser] = harasserBody(energy, boosted, rcl)
     d[BodyType.repairer] = repairerBody(energy)
+    d[BodyType.robber] = scalingBody([1, 1], [CARRY, MOVE], energy)
 
     // used at rcl 4+
     d[BodyType.spawnBuilder] = scalingBody([2, 3, 5], [WORK, CARRY, MOVE], energy)
-    d[BodyType.trooper] = scalingBody([1, 1], [RANGED_ATTACK, MOVE], energy)
 
     // used at rcl 5+
     d[BodyType.ferry] = scalingBody([2, 1], [CARRY, MOVE], energy, 30)
     d[BodyType.breaker] = breakerBody(energy, rcl, boosted)
     d[BodyType.medic] = medicBody(energy, rcl, boosted)
 
+    // used at rcl 7+
+    // skGuard body borrowed from tigga
+    d[BodyType.sKguard] = body([1, 23, 16, 1, 5, 1, 2, 1], [ATTACK, MOVE, ATTACK, RANGED_ATTACK, HEAL, RANGED_ATTACK, MOVE, HEAL])
+
     // rcl 8 only
     d[BodyType.powerMiner] = pMinerBody(boosted)
 
     switch (rcl) {
-    case 4:
-        //lvl 4 recipes
-        break
-    case 5:
-        //lvl 5 recipes
-        d[BodyType.robber] = body([15, 15], [CARRY, MOVE]) 
-        break
     case 6:
         // lvl 6 recipes
         d[BodyType.mineralMiner] = body([12, 6, 9], [WORK, CARRY, MOVE])
-        d[BodyType.robber] = body([20, 20], [CARRY, MOVE])
         break
     case 7:
-        // lvl 7 recipes
-        d[BodyType.mineralMiner] = body([22, 10, 16], [WORK, CARRY, MOVE])
-        d[BodyType.robber] = body([25, 25], [CARRY, MOVE])
-        break
     case 8:
-        // lvl 8 recipes
-        d[BodyType.mineralMiner] = body([22, 10, 16], [WORK, CARRY, MOVE])
-        d[BodyType.robber] = body([25, 25], [CARRY, MOVE])
+        // lvl 7/8 recipes
+        d[BodyType.mineralMiner] = body([20, 10, 15], [WORK, CARRY, MOVE])
         break
     default:
         break

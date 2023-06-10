@@ -12,7 +12,7 @@ const rMM = {
 
         rMM.getMineral(creep)
 
-        if (rMM.hasCapacity(creep)){
+        if (rMM.canMine(creep)){
             rMM.harvestMineral(creep)
         } else {
             const bucket = roomU.getStorage(creep.room)
@@ -49,9 +49,12 @@ const rMM = {
         }
     },
 
-    hasCapacity: function(creep: Creep) {
-        const store = _.sum(Object.values(creep.store))
-        return (store < creep.store.getCapacity())
+    canMine: function(creep: Creep) {
+        const hasCapacity = creep.store.getFreeCapacity()
+        const sourceDepleted = creep.memory.source 
+            && !Game.getObjectById(creep.memory.source) 
+            && creep.pos.roomName == creep.memory.flag
+        return hasCapacity && !sourceDepleted
     },
 
     harvestMineral: function(creep: Creep) {

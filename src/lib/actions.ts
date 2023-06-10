@@ -78,7 +78,7 @@ const actions = {
         const res = actions.interact(creep, target, () => creep.harvest(target), 1)
         if (res == 1) {
             // Record mining totals in memory for stat tracking
-            const works = creep.body.getActiveBodyparts(WORK)
+            const works = creep.getActiveBodyparts(WORK)
             if (!creep.memory.mined) {
                 creep.memory.mined = 0
             }

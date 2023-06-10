@@ -23,6 +23,7 @@ export const cN = {
     REPAIRER_NAME: "repairer",
     RESERVER_NAME: "reserver",
     BRICK_NAME: "brick",
+    SK_GUARD_NAME: "skGuard",
 
     getRolePriorities: function(){
         const priorities = {}
@@ -30,6 +31,7 @@ export const cN = {
         priorities[cN.DEFENDER_NAME] = 2
         priorities[cN.TRANSPORTER_NAME] = 1
         priorities[cN.REMOTE_MINER_NAME] = 3
+        priorities[cN.SK_GUARD_NAME] = 3
         priorities[cN.RUNNER_NAME] = 4
         priorities[cN.UPGRADER_NAME] = 5
         priorities[cN.BUILDER_NAME] = 6
@@ -68,7 +70,6 @@ export const enum BodyType {
     harasser,
     repairer,
     spawnBuilder,
-    trooper,
     ferry,
     breaker,
     medic,
@@ -79,5 +80,6 @@ export const enum BodyType {
     claimer,
     robber,
     mineralMiner,
-    depositMiner
+    depositMiner,
+    sKguard,
 }
