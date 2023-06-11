@@ -5,6 +5,7 @@ import rU = require("../roles/upgrader")
 import rR = require("../roles/runner")
 import rH = require("../roles/harasser")
 import rQ = require("../roles/quad")
+import rSK = require("../roles/sKguard")
 import settings = require("../config/settings")
 import types = require("../config/types")
 
@@ -300,7 +301,6 @@ const p = {
             || (spawn.room.energyCapacityAvailable < 2300 && !roomInfo.ctrlP)
             || roomInfo.res && Memory.settings.allies.includes(roomInfo.res) && settings.username != roomInfo.res) 
             return -1
-        if(!roomInfo.ctrlP) return -1 //TODO add SK mining
         let totalDistance = 0
         for(const source in roomInfo.src){
             const sourcePos = u.unpackPos(roomInfo.src[source], roomName)
@@ -399,13 +399,22 @@ const p = {
         const quadSize = quadBody.length * 4
         const roadUpkeep = ROAD_DECAY_AMOUNT/ROAD_DECAY_TIME * REPAIR_COST
         const sourceEnergy = roomInfo.ctrlP ? SOURCE_ENERGY_CAPACITY : SOURCE_ENERGY_KEEPER_CAPACITY
+        const sKGuardBody = types.getRecipe(rSK.type, spawn.room.energyCapacityAvailable, spawn.room)
+        const sKGuardCost = types.cost(sKGuardBody)
+        const sKGuardSize = sKGuardBody.length
 
         totalTime += harasserSize * CREEP_SPAWN_TIME/CREEP_LIFE_TIME
         totalCost += harasserCost/CREEP_LIFE_TIME
 
         if(!roomInfo.ctrlP){
-            totalTime += quadSize * CREEP_SPAWN_TIME/(CREEP_LIFE_TIME - quadSize)//subtracting quad size to account for prespawn
-            totalCost += quadCost/(CREEP_LIFE_TIME - quadSize)
+            if (spawn.room.controller.level < 7) {
+                totalTime += quadSize * CREEP_SPAWN_TIME/(CREEP_LIFE_TIME - quadSize)//subtracting quad size to account for prespawn
+                totalCost += quadCost/(CREEP_LIFE_TIME - quadSize)
+            } else {
+                // increase time by sKGuard spawn time factoring in 300 ticks of buffer to get to the room
+                totalTime += sKGuardSize * CREEP_SPAWN_TIME/(CREEP_LIFE_TIME - sKGuardSize - 300)
+                totalCost += sKGuardCost/(CREEP_LIFE_TIME - 300)
+            }
         }
 
         for(const source in roomInfo.src){
@@ -424,6 +433,9 @@ const p = {
 
         const revenue = sourceEnergy * Object.keys(roomInfo.src).length/ENERGY_REGEN_TIME
         const profit = revenue - totalCost
+        if (roomInfo.ctrlP) {
+            Log.info(`Room ${roomName} has a profit of ${profit} and a spawn time of ${totalTime} ticks`)
+        }
         return {profit: profit, time: totalTime}
     },
 
