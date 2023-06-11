@@ -110,30 +110,34 @@ const u = {
             u.highwayMoveSettings(10000, 1, startPos, endPos))
     },
 
+    parseCoords: function(roomName) {
+        const coords = roomName.match(/[0-9]+/g)
+        return {x: Number(coords[0]), y: Number(coords[1])}
+    },
+
     // E0,E10... W0, 10 ..., N0, N10 ...
     isHighway: function(roomName) {
-        const coords = roomName.match(/[0-9]+/g)
-        const x = Number(coords[0])
-        const y = Number(coords[1])
-        return (x % 10 == 0) || (y % 10 == 0)
+        const coords = u.parseCoords(roomName)
+        return (coords.x % 10 == 0) || (coords.y % 10 == 0)
     },
 
     isIntersection: function(roomName){
-        const coords = roomName.match(/[0-9]+/g)
-        const x = Number(coords[0])
-        const y = Number(coords[1])
-        return (x % 10 == 0) && (y % 10 == 0)
+        const coords = u.parseCoords(roomName)
+        return (coords.x % 10 == 0) && (coords.y % 10 == 0)
     },
 
     // return true if room is a Source Keeper room
     isSKRoom: function(roomName) {
-        const coords = roomName.match(/[0-9]+/g)
-        const x = Number(coords[0])
-        const y = Number(coords[1])
+        const coords = u.parseCoords(roomName)
         // x mod 10 between 4 and 6, y mod 10 between 4 and 6, but not both mod 10 equal to 5
-        const xmod = x % 10
-        const ymod = y % 10
+        const xmod = coords.x % 10
+        const ymod = coords.y % 10
         return (xmod >= 4 && xmod <= 6) && (ymod >= 4 && ymod <= 6) && !(xmod == 5 && ymod == 5)
+    },
+
+    isCenterRoom: function(roomName) {
+        const coords = u.parseCoords(roomName)
+        return (coords.x % 10 == 5) && (coords.y % 10 == 5)
     },
 
     getAllRoomsInRange: function(d, rooms) {

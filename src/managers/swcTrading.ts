@@ -125,7 +125,7 @@ const simpleAllies = {
             priority: priority === undefined ? 0 : priority
         }
         if (Game.time % 10 == 0) {
-            console.log(roomName, "requesting", resourceType, "max amount", maxAmount, "priority", priority)
+            //console.log(roomName, "requesting", resourceType, "max amount", maxAmount, "priority", priority)
         }
         requestArray.push(request)
     }
