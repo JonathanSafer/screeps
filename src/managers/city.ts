@@ -832,7 +832,12 @@ function updateRemotes(city: string){
             const myCreeps = u.splitCreepsByCity()[city]
             const defenders = _.filter(myCreeps, c => c.ticksToLive > 300 && c.memory.flag == remotes[i])
             if (u.isSKRoom(remotes[i])){
-                cU.scheduleIfNeeded(cN.SK_GUARD_NAME, 1, false, spawn, defenders, remotes[i])
+                //if room is under rcl7 spawn a quad
+                if (spawn.room.controller.level < 7){
+                    cU.scheduleIfNeeded(cN.QUAD_NAME, 1, false, spawn, defenders, remotes[i])
+                } else {
+                    cU.scheduleIfNeeded(cN.SK_GUARD_NAME, 1, false, spawn, defenders, remotes[i])
+                }
             }
             if(Game.rooms[remotes[i]]){
                 const invaderCore = Game.rooms[remotes[i]].find(FIND_HOSTILE_STRUCTURES).length

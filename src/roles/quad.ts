@@ -577,6 +577,9 @@ const rQ = {
     chooseNextTarget: function(everythingInRoom) {
         const valuableStructures = rQ.getValuableStructures(everythingInRoom.structures)
         const creep = everythingInRoom.creeps[0]
+        if (u.isSKRoom(creep.room.name)) {
+            return rQ.getSKTarget(creep, everythingInRoom.hostiles, everythingInRoom.structures)
+        }
         if (valuableStructures.length) {
             return rQ.getTarget(creep, valuableStructures, everythingInRoom.structures)
         }
@@ -595,6 +598,18 @@ const rQ = {
         return _(structures)
             .filter(structure => !ignoreStructures.includes(structure.structureType))
             .value()
+    },
+
+    getSKTarget: function(creep: Creep, hostiles: Creep[], structures: Structure[]) {
+        const sourceKeeper = _.find(hostiles, c => c.owner.username == "Source Keeper")
+        if (sourceKeeper) {
+            return sourceKeeper
+        }
+        //find source keeper spawners
+        const sKSpawners = _.filter(structures, s => s.structureType == STRUCTURE_KEEPER_LAIR) as StructureKeeperLair[]
+        // sort spawners by respawn time
+        const nextSpawn = _.sortBy(sKSpawners, s => s.ticksToSpawn)[0]
+        return nextSpawn
     },
 
     // Find an attack vector to a building based on the lowest hits required
