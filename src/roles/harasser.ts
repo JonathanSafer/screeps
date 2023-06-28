@@ -225,7 +225,7 @@ const rH = {
         if (!dFlag && Game.map.getRoomStatus(flagName))
             dFlag = new RoomPosition(25, 25, flagName)
         if (dFlag && creep.pos.roomName != dFlag.roomName){
-            motion.newMove(creep, new RoomPosition(dFlag.x, dFlag.y, dFlag.roomName), 5)
+            motion.newMove(creep, new RoomPosition(dFlag.x, dFlag.y, dFlag.roomName), 20)
             return true
         }
         return false

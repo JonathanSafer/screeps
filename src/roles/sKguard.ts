@@ -7,6 +7,7 @@ const rSK = {
     type: BodyType.sKguard,
    
     run: function(creep: Creep) {
+        rSK.healAndShoot(creep)
         if(creep.memory.target){
             const target = Game.getObjectById(creep.memory.target)
             if(target){
@@ -14,7 +15,6 @@ const rSK = {
                 return
             } 
         }
-        rSK.healAndShoot(creep)
         const targetRoom = creep.memory.flag
         if(Game.rooms[targetRoom]){
             const room = Game.rooms[targetRoom]

@@ -97,6 +97,7 @@ if(!Game.shard.name.includes("shard") || Game.shard.name == "shardSeason"){
     settings.allies = [username]
     settings.processPower = true
     settings.rcl8upgrade = false
+    settings.powerMiningRange = 4 //manhattan distance that we can powermine (in rooms)
 }
 
 if (!Memory.settings) {
