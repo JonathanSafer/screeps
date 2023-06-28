@@ -63,12 +63,13 @@ const ob = {
         if(skLairs && skLairs.length){
             roomData.skL = skLairs.map(lair => u.packPos(lair.pos))
             const core = _.find(room.find(FIND_HOSTILE_STRUCTURES), struct => struct.structureType == STRUCTURE_INVADER_CORE) as StructureInvaderCore
-            roomData.rcl = core ? core.level : 0
+            roomData.rcl = core && !core.ticksToDeploy ? core.level : 0
+            roomData.sME = core && !core.ticksToDeploy ? core.effects[0].ticksRemaining + Game.time : 0
+            roomData.sct = roomData.sME || Game.time + settings.scouting.sk
+        } else {
+            const scoutTime = room.controller ? settings.scouting.controllerRoom[roomData.rcl] : settings.scouting.highway
+            roomData.sct = Game.time + scoutTime
         }
-        const scoutTime = room.controller ? settings.scouting.controllerRoom[roomData.rcl] :
-            skLairs && skLairs.length ? settings.scouting.sk :
-                settings.scouting.highway
-        roomData.sct = Game.time + scoutTime
     },
 
     getUnusedObserver: function() {

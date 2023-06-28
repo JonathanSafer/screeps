@@ -299,28 +299,23 @@ const p = {
             || !Object.keys(roomInfo.src).length 
             || Memory.remotes[roomName] 
             || (spawn.room.energyCapacityAvailable < 2300 && !roomInfo.ctrlP)
-            || roomInfo.res && Memory.settings.allies.includes(roomInfo.res) && settings.username != roomInfo.res) 
+            || roomInfo.res && Memory.settings.allies.includes(roomInfo.res) && settings.username != roomInfo.res
+            || roomInfo.sT && roomInfo.sT > Game.time
+            || roomInfo.d >= 4) 
             return -1
         let totalDistance = 0
         for(const source in roomInfo.src){
             const sourcePos = u.unpackPos(roomInfo.src[source], roomName)
-            const result = PathFinder.search(spawn.pos, {pos: sourcePos, range: 1}, {
-                plainCost: 1,
-                swampCost: 1,
-                maxOps: 10000,
-                roomCallback: function(rN){
-                    const safe = Memory.remotes[rN] 
-                        || (Cache.roomData[rN] && Cache.roomData[rN].own == settings.username)
-                        || u.isHighway(rN)
-                        || rN == roomName
-                    if(!safe) return false
-                }
-            })
-            if(result.incomplete) return -1
-            totalDistance += result.cost
+            const sourceDistance = u.getRemoteSourceDistance(spawn.pos, sourcePos)
+            if(sourceDistance == -1) return -1
+            totalDistance += sourceDistance
         }
         if(roomInfo.d >= 4){
-            Cache.roomData[roomName].d = 3
+            // if room doesn't have an invader core reduce defcon level
+            if (!roomInfo.sME || roomInfo.sME < Game.time) {
+                if (Math.random() < 0.5)
+                    Cache.roomData[roomName].d = 3
+            }
         }
         return totalDistance/Object.keys(roomInfo.src).length
     },
@@ -406,7 +401,7 @@ const p = {
         totalTime += harasserSize * CREEP_SPAWN_TIME/CREEP_LIFE_TIME
         totalCost += harasserCost/CREEP_LIFE_TIME
 
-        if(!roomInfo.ctrlP){
+        if(u.isSKRoom(roomName)){
             if (spawn.room.controller.level < 7) {
                 totalTime += quadSize * CREEP_SPAWN_TIME/(CREEP_LIFE_TIME - quadSize)//subtracting quad size to account for prespawn
                 totalCost += quadCost/(CREEP_LIFE_TIME - quadSize)
@@ -433,7 +428,7 @@ const p = {
 
         const revenue = sourceEnergy * Object.keys(roomInfo.src).length/ENERGY_REGEN_TIME
         const profit = revenue - totalCost
-        if (roomInfo.ctrlP) {
+        if (!roomInfo.ctrlP) {
             Log.info(`Room ${roomName} has a profit of ${profit} and a spawn time of ${totalTime} ticks`)
         }
         return {profit: profit, time: totalTime}

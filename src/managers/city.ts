@@ -743,8 +743,9 @@ function updateStorageLink(spawn, memory, structures: Structure[]) {
 function updateHighwayCreep(flagName: string, spawn: StructureSpawn, creeps: Creep[], role: string) {
     const flagNames = _.filter(Object.keys(Memory.flags), flag => flag.includes(flagName))
     for(const flag of flagNames){
-        const boosted = role != rH.name || Memory.flags[flag].boosted
-        cU.scheduleIfNeeded(role, 1, boosted, spawn, creeps, flag)
+        const boosted = role != cN.HARASSER_NAME || Memory.flags[flag].boosted && PServ
+        const numNeeded = role == cN.POWER_MINER_NAME && PServ ? 2 : 1
+        cU.scheduleIfNeeded(role, numNeeded, boosted, spawn, creeps, flag)
     }
 }
 
@@ -828,6 +829,25 @@ function updateRemotes(city: string){
             if(defcon >= 4){
                 Log.info(`Remote ${remotes[i]} removed from ${spawn.room.name} due to high level threat`)
                 rp.removeRemote(remotes[i], spawn.room.name)
+                continue
+            }
+            if(Game.time % 100 == 3 && Game.rooms[remotes[i]]) {
+                // ensure that we can still safely path all sources in the remote
+                // find all sources
+                let droppedRemote = false
+                const sources = Game.rooms[remotes[i]].find(FIND_SOURCES)
+                for (const source of sources) {
+                    const pathLength = u.getRemoteSourceDistance(spawn.pos, source.pos)
+                    if (pathLength == -1) {
+                        Log.info(`Remote ${remotes[i]} removed from ${spawn.room.name} due to inaccessable source at ${source.pos}`)
+                        rp.removeRemote(remotes[i], spawn.room.name)
+                        droppedRemote = true
+                        break
+                    }
+                }
+                if (droppedRemote) {
+                    continue
+                }
             }
             const myCreeps = u.splitCreepsByCity()[city]
             const defenders = _.filter(myCreeps, c => c.ticksToLive > 300 && c.memory.flag == remotes[i])
@@ -841,7 +861,7 @@ function updateRemotes(city: string){
             }
             if(Game.rooms[remotes[i]]){
                 const invaderCore = Game.rooms[remotes[i]].find(FIND_HOSTILE_STRUCTURES).length
-                if(invaderCore){
+                if(invaderCore && !u.isSKRoom(remotes[i])){
                     const bricksNeeded = spawn.room.controller.level < 5 ? 4 : 1
                     cU.scheduleIfNeeded(cN.BRICK_NAME, bricksNeeded, false, spawn, myCreeps, remotes[i])
                 }
@@ -880,6 +900,18 @@ function updateDEFCON(remote, harasserSize){
                 && remoteRoom.controller.reservation.username != settings.username))){
             Cache.roomData[remote].d = 4
             return Cache.roomData[remote].d
+        }
+        // if room is an SK room, check for invader core
+        if(u.isSKRoom(remote)){
+            const invaderCore = _.find(remoteRoom.find(FIND_HOSTILE_STRUCTURES), s => s.structureType == STRUCTURE_INVADER_CORE) as StructureInvaderCore
+            if(invaderCore && !invaderCore.ticksToDeploy){
+                Cache.roomData[remote].d = 4
+                // set scout time to now
+                Cache.roomData[remote].sct = Game.time
+                // set safeTime to core expiry
+                Cache.roomData[remote].sME = Game.time + invaderCore.effects[0].ticksRemaining
+                return Cache.roomData[remote].d
+            }
         }
         const hostiles = _.filter(u.findHostileCreeps(Game.rooms[remote]), h => h instanceof Creep 
             && h.owner.username != "Source Keeper" 

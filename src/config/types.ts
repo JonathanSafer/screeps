@@ -33,8 +33,6 @@ function getRecipe(type: BodyType, energyAvailable: number, room: Room, boosted 
     // used at rcl 7+
     // skGuard body borrowed from tigga
     d[BodyType.sKguard] = body([1, 23, 16, 1, 5, 1, 2, 1], [ATTACK, MOVE, ATTACK, RANGED_ATTACK, HEAL, RANGED_ATTACK, MOVE, HEAL])
-
-    // rcl 8 only
     d[BodyType.powerMiner] = pMinerBody(boosted)
 
     switch (rcl) {

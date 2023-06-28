@@ -155,6 +155,25 @@ const u = {
         return (Math.abs(pos1[0] - pos2[0]) <= range) && (Math.abs(pos1[1] - pos2[1]) <= range)
     },
 
+    getRemoteSourceDistance: function(spawnPos, sourcePos) {
+        const result = PathFinder.search(spawnPos, {pos: sourcePos, range: 1}, {
+            plainCost: 1,
+            swampCost: 1,
+            maxOps: 10000,
+            roomCallback: function(rN){
+                const safe = Memory.remotes[rN] 
+                    || (Cache.roomData[rN] && Cache.roomData[rN].own == settings.username)
+                    || u.isHighway(rN)
+                    || rN == sourcePos.roomName
+                if(!safe) return false
+            }
+        })
+        if (result.incomplete) {
+            return -1
+        }
+        return result.path.length
+    },
+
     roomNameToPos: function(roomName) {
         const quad = roomName.match(/[NSEW]/g)
         const coords = roomName.match(/[0-9]+/g)

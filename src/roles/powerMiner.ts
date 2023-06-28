@@ -1,6 +1,4 @@
 import motion = require("../lib/motion")
-import sq = require("../lib/spawnQueue")
-import rR = require("./runner")
 import u = require("../lib/utils")
 import cU = require("../lib/creepUtils")
 import rBr = require("./breaker")
@@ -109,6 +107,8 @@ const rPM = {
             let damage = creep.getActiveBodyparts(ATTACK) * ATTACK_POWER
             if(creep.memory.boosted){
                 damage = damage * BOOSTS[ATTACK][RESOURCE_CATALYZED_UTRIUM_ACID][ATTACK]
+            } else if (PServ) {
+                damage = damage * 2
             }
             const runnersNeeded = Math.ceil(bank.power/1600)
             const route = motion.getRoute(Game.spawns[creep.memory.city].pos.roomName, bank.pos.roomName, true)
@@ -119,12 +119,10 @@ const rPM = {
             creep.memory.bankInfo.runnersNeeded = runnersNeeded
         }
 
-        if(Game.time % 5 == 1 && bank.hits < creep.memory.bankInfo.summonHits && !creep.memory.bankInfo.runnersSummoned){
-            creep.memory.bankInfo.runnersSummoned = true
-            sq.initialize(Game.spawns[creep.memory.city])
-            for(let i = 0; i < creep.memory.bankInfo.runnersNeeded; i++){
-                sq.schedule(Game.spawns[creep.memory.city], rR.name, false, creep.memory.flag)
-            }
+        if(Game.time % 15 == 1 && bank.hits < creep.memory.bankInfo.summonHits){
+            const localCreeps = u.splitCreepsByCity()[creep.memory.city]
+            const localSpawn = Game.spawns[creep.memory.city]
+            cU.scheduleIfNeeded(cN.RUNNER_NAME, creep.memory.bankInfo.runnersNeeded, false, localSpawn, localCreeps, creep.memory.flag)
         }
     },
 
@@ -169,7 +167,7 @@ const rPM = {
     },
 
     getBoosted: function(creep: Creep, boosts: string[]){
-        const alreadyBoosted = creep.memory.boosted && creep.memory.boosted >= boosts.length
+        const alreadyBoosted = creep.memory.boosted && creep.memory.boosted as number >= boosts.length
         if (!creep.memory.needBoost || alreadyBoosted) {
             return true
         }

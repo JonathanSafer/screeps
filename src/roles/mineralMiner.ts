@@ -44,7 +44,7 @@ const rMM = {
         }
         if (_.sum(Object.values(creep.store)) == 0 
             && (creep.ticksToLive < creep.memory.suicideTime
-                || (creep.ticksToLive < CREEP_LIFE_TIME/2 && mineral.mineralType == RESOURCE_THORIUM))) {
+                || (creep.ticksToLive < CREEP_LIFE_TIME/2 && mineral && mineral.mineralType == RESOURCE_THORIUM))) {
             creep.suicide()
         }
     },

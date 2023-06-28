@@ -21,6 +21,7 @@ import rRe = require("./repairer")
 import rQr = require("./qrCode")
 import rRr = require("./reserver")
 import rBk = require("./brick")
+import rSk = require("./sKguard")
 
 
 const rr = {
@@ -28,7 +29,7 @@ const rr = {
     getRoles: function() {
         return [rF, rD, rT, rM, rR, rU, rB, rQ, rMM, rC, rUC,
             rSB, rH,rMe, rBr, rPM,
-            rRo, rDM, rS, rQr, rRe, rRr, rBk]
+            rRo, rDM, rS, rQr, rRe, rRr, rBk, rSk]
     },
 
     getCoreRoles: function() {
