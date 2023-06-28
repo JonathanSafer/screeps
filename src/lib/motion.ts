@@ -259,7 +259,7 @@ const m = {
                     return false
                 }
                 const costs = new PathFinder.CostMatrix
-                if(roomData.skL && roomData.skL.length){
+                if(roomData.skL && roomData.skL.length && !Memory.remotes[roomName]){
                     const terrain = Game.map.getRoomTerrain(roomName)
                     for(const lairPos of roomData.skL){
                         const lair = u.unpackPos(lairPos, roomName)
