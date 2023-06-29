@@ -46,13 +46,13 @@ global.SpawnBreaker = function(city, boosted){
     sq.schedule(Game.spawns[city], "breaker", boosted)
     return Log.console(`Spawning Breaker and Medic from ${city}`)
 }
-global.SpawnRole = function(role, city, boosted){
+global.SpawnRole = function(role, city, boosted, flagName){
     if(!Game.spawns[city]){
         Log.error("Invalid city name. Use SpawnRole(string role, string city, bool boosted)")
         return -1
     }
     sq.initialize(Game.spawns[city])
-    sq.schedule(Game.spawns[city], role, boosted)
+    sq.schedule(Game.spawns[city], role, boosted, flagName)
     return Log.console(`Spawning ${role} from ${city}`)
 }
 global.PlaceFlag = function(flagName, x, y, roomName, duration){

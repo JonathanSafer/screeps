@@ -27,6 +27,7 @@ import e = require("../operations/error")
 import rQr = require("../roles/qrCode")
 import rp = require("./roomplan")
 import rRe = require("../roles/repairer")
+import motion = require("../lib/motion")
 import { cN, BodyType } from "../lib/creepNames"
 
 
@@ -745,7 +746,10 @@ function updateHighwayCreep(flagName: string, spawn: StructureSpawn, creeps: Cre
     for(const flag of flagNames){
         const boosted = role != cN.HARASSER_NAME || Memory.flags[flag].boosted && PServ
         const numNeeded = role == cN.POWER_MINER_NAME && PServ ? 2 : 1
-        cU.scheduleIfNeeded(role, numNeeded, boosted, spawn, creeps, flag)
+        // distance is a very rough approximation here, so not bothering to factor in spawn time
+        const route = motion.getRoute(spawn.room.name, Memory.flags[flag].roomName, true)
+        const distance = route == -2 ? 0 : route.length * 50
+        cU.scheduleIfNeeded(role, numNeeded, boosted, spawn, creeps, flag, distance)
     }
 }
 

@@ -11,6 +11,7 @@ const rRr = {
         const targetRoom = creep.memory.flag
         if (u.isCenterRoom(targetRoom)){
             rRr.claimReactor(creep, targetRoom)
+            return
         }
         if(Game.rooms[targetRoom]){
             if(Game.rooms[targetRoom].controller.pos.isNearTo(creep.pos)){
