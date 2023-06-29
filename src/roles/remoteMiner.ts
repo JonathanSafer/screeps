@@ -95,7 +95,10 @@ const rM = {
                 Game.spawns[creep.memory.city].memory.towersActive = true
             }
             // if creep has an enemy within 5 spaces, retreat
-            const enemies = creep.pos.findInRange(FIND_HOSTILE_CREEPS, 5)
+            const enemies = creep.pos.findInRange(FIND_HOSTILE_CREEPS, 5) as Array<Creep | Structure>
+            if(dangerousLair) {
+                enemies.push(lair)
+            }
             if(enemies.length > 0){
                 motion.retreat(creep, enemies)
                 return true

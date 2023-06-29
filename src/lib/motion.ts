@@ -421,8 +421,8 @@ const m = {
         return new m.BoundingBox(top, left, bottom, right)
     },
 
-    retreat: function(creep: Creep, hostiles: Creep[]) {
-        const dangerous = _.filter(hostiles, h => h.getActiveBodyparts(ATTACK) > 0 || h.getActiveBodyparts(RANGED_ATTACK) > 0)
+    retreat: function(creep: Creep, hostiles: Array<Creep | Structure>) {
+        const dangerous = _.filter(hostiles, h => h instanceof(Structure) || h.getActiveBodyparts(ATTACK) > 0 || h.getActiveBodyparts(RANGED_ATTACK) > 0)
         const goals = _.map(dangerous, function(d) {
             return { pos: d.pos, range: 8 }
         })

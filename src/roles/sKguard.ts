@@ -45,6 +45,15 @@ const rSK = {
         }
         if (creep.hits < creep.hitsMax || rangedTarget){
             creep.heal(creep)
+        } else {
+            // find injured friendlies
+            const injuredFriendlies = _.filter(u.findFriendlyCreeps(creep.room), c => c.hits < c.hitsMax && c.pos.inRangeTo(creep.pos, 3))
+            const nearFriendly = _.find(injuredFriendlies, c => c.pos.isNearTo(creep.pos))
+            if(nearFriendly){
+                creep.heal(nearFriendly)
+            } else if(injuredFriendlies.length){
+                creep.rangedHeal(injuredFriendlies[0])
+            }
         }
     }
 }
