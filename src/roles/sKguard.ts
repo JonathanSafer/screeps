@@ -39,7 +39,11 @@ const rSK = {
         const meleeTarget = _.find(u.findHostileCreeps(creep.room), c => c.pos.isNearTo(creep.pos))
         const rangedTarget = _.find(u.findHostileCreeps(creep.room), c => c.pos.getRangeTo(creep.pos) <= 3)
         if(meleeTarget){
-            creep.rangedMassAttack()
+            if(meleeTarget instanceof Creep && meleeTarget.getActiveBodyparts(ATTACK) > 0) {
+                creep.rangedMassAttack()
+            } else {
+                creep.attack(meleeTarget)
+            }
         } else if(rangedTarget){
             creep.rangedAttack(rangedTarget)
         }

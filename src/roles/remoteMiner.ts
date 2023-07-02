@@ -83,11 +83,12 @@ const rM = {
 
     retreat: function(creep: Creep){
         if (creep.memory.aware || creep.hits < creep.hitsMax || Game.time % 10 == 9) {
+            creep.memory.aware = true
             // if creep has a hostile within 15 spaces, become aware
             const hostiles = _.filter(u.findHostileCreeps(creep.room), (c) => c.pos.getRangeTo(creep.pos) < 15)
             // check nearby sourcekeeper lairs
             const lair = _.find(creep.room.find(FIND_HOSTILE_STRUCTURES), (s) => s.structureType == STRUCTURE_KEEPER_LAIR && s.pos.getRangeTo(creep.pos) < 10) as StructureKeeperLair
-            const dangerousLair = lair && lair.ticksToSpawn < 10
+            const dangerousLair = lair && lair.ticksToSpawn < 20
             //lose awareness if no hostiles or lairs
             if(hostiles.length == 0 && !dangerousLair && creep.hits == creep.hitsMax){
                 creep.memory.aware = false

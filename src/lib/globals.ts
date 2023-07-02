@@ -10,7 +10,7 @@ global.Log = {}
 Log.info = function(text) { console.log(`<p style="color:yellow">[INFO] ${Game.time}: ${text}</p>`) }
 Log.error = function(text) { console.log(`<p style="color:red">[ERROR] ${Game.time}: ${text}</p>`) }
 Log.warning = function(text) { console.log(`<p style="color:orange">[WARNING] ${Game.time}: ${text}</p>`) }
-Log.console = function(text) { return `<p style="color:green">[CONSOLE] ${Game.time}: ${text}</p>` }
+Log.console = function(text) { console.log(`<p style="color:green">[CONSOLE] ${Game.time}: ${text}</p>`) }
 
 global.AddAlly = function(username: string) {
     Memory.settings.allies.push(username)
@@ -114,6 +114,24 @@ global.RemoveJunk = function(city){//only to be used on cities with levelled fac
 global.RemoveConstruction = function(){
     for(const id in Game.constructionSites){
         Game.constructionSites[id].remove()
+    }
+}
+global.DropRemote = function(remoteRoomName: string) {
+    if (!Memory.remotes[remoteRoomName]) {
+        Log.error("Invalid room name. Use dropRemote(string roomName)")
+    }
+    delete Memory.remotes[remoteRoomName]
+    // loop through all spawns and remove any sources that have this roomName
+    for (const spawnName in Game.spawns) {
+        const spawn = Game.spawns[spawnName]
+        if (spawn.memory.sources) {
+            for (const sourceId in spawn.memory.sources) {
+                if (spawn.memory.sources[sourceId].roomName == remoteRoomName) {
+                    delete spawn.memory.sources[sourceId]
+                    Log.console(`Removed source ${sourceId} in ${remoteRoomName} from ${spawnName}`)
+                }
+            }
+        }
     }
 }
 global.CleanCities = function(){

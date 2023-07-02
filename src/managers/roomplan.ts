@@ -294,10 +294,10 @@ const p = {
     scoreRemoteRoom: function(roomName, spawn){
         const roomInfo = Cache.roomData[roomName]
         // season5 only
-        if(spawn.name == "E15S130" && roomName != "E15S14") {
+        if(spawn.name == "E25S130" && roomName != "E25S14") {
             return -1
         }
-        if(spawn.name == "E14S130" && !(roomName == "E14S14" || roomName == "E14S15")) {
+        if(spawn.name == "E24S130" && !(roomName == "E24S14" || roomName == "E24S15")) {
             return -1
         }
         if(!roomInfo 

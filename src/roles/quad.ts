@@ -577,11 +577,11 @@ const rQ = {
     chooseNextTarget: function(everythingInRoom) {
         const valuableStructures = rQ.getValuableStructures(everythingInRoom.structures)
         const creep = everythingInRoom.creeps[0]
-        if (u.isSKRoom(creep.room.name)) {
-            return rQ.getSKTarget(creep, everythingInRoom.hostiles, everythingInRoom.structures)
-        }
         if (valuableStructures.length) {
             return rQ.getTarget(creep, valuableStructures, everythingInRoom.structures)
+        }
+        if (u.isSKRoom(creep.room.name)) {
+            return rQ.getSKTarget(creep, everythingInRoom.hostiles, everythingInRoom.structures)
         }
         if(everythingInRoom.hostiles.length){
             return rQ.getTarget(creep, everythingInRoom.hostiles, everythingInRoom.structures)

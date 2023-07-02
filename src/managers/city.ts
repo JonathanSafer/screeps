@@ -854,34 +854,33 @@ function updateRemotes(city: string){
                 }
             }
             const myCreeps = u.splitCreepsByCity()[city]
-            const defenders = _.filter(myCreeps, c => c.ticksToLive > 300 && c.memory.flag == remotes[i])
             if (u.isSKRoom(remotes[i])){
                 //if room is under rcl7 spawn a quad
                 if (spawn.room.controller.level < 7){
-                    cU.scheduleIfNeeded(cN.QUAD_NAME, 1, false, spawn, defenders, remotes[i])
+                    cU.scheduleIfNeeded(cN.QUAD_NAME, 1, false, spawn, myCreeps, remotes[i], 300)
                 } else {
-                    cU.scheduleIfNeeded(cN.SK_GUARD_NAME, 1, false, spawn, defenders, remotes[i])
+                    cU.scheduleIfNeeded(cN.SK_GUARD_NAME, 1, false, spawn, myCreeps, remotes[i], 300)
                 }
             }
             if(Game.rooms[remotes[i]]){
                 const invaderCore = Game.rooms[remotes[i]].find(FIND_HOSTILE_STRUCTURES).length
                 if(invaderCore && !u.isSKRoom(remotes[i])){
                     const bricksNeeded = spawn.room.controller.level < 5 ? 4 : 1
-                    cU.scheduleIfNeeded(cN.BRICK_NAME, bricksNeeded, false, spawn, myCreeps, remotes[i])
+                    cU.scheduleIfNeeded(cN.BRICK_NAME, bricksNeeded, false, spawn, myCreeps, remotes[i], 100)
                 }
                 const reserverCost = 650
                 const controller = Game.rooms[remotes[i]].controller
                 if(spawn.room.energyCapacityAvailable >= reserverCost && controller && !controller.owner && (!controller.reservation || controller.reservation.ticksToEnd < 2000 || controller.reservation.username != settings.username)){
                     const reserversNeeded = spawn.room.energyCapacityAvailable >= reserverCost * 2 ? 1 : 2
-                    cU.scheduleIfNeeded(cN.RESERVER_NAME, reserversNeeded, false, spawn, myCreeps, remotes[i])
+                    cU.scheduleIfNeeded(cN.RESERVER_NAME, reserversNeeded, false, spawn, myCreeps, remotes[i], 100)
                 }
             }
             if(defcon == 2){
-                cU.scheduleIfNeeded(cN.HARASSER_NAME, 1, false, spawn, defenders, remotes[i])
+                cU.scheduleIfNeeded(cN.HARASSER_NAME, 1, false, spawn, myCreeps, remotes[i], 300)
             }
             if(defcon == 3){
-                cU.scheduleIfNeeded(cN.HARASSER_NAME, 2, false, spawn, defenders, remotes[i])
-                cU.scheduleIfNeeded(cN.QUAD_NAME, 4, false, spawn, defenders, remotes[i])
+                cU.scheduleIfNeeded(cN.HARASSER_NAME, 2, false, spawn, myCreeps, remotes[i], 300)
+                cU.scheduleIfNeeded(cN.QUAD_NAME, 4, false, spawn, myCreeps, remotes[i], 300)
             }
         }
     }
