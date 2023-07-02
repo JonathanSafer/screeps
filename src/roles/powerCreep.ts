@@ -18,6 +18,7 @@ const CreepState = {
     WORK_EXTENSION: 12,
     WORK_SPAWN: 13,
     WORK_CONTROLLER: 14,
+    WORK_MINERAL: 15
 }
 const CS = CreepState
 
@@ -89,27 +90,37 @@ const rPC = {
             break
         case CS.WORK_CONTROLLER:
             a.usePower(creep, creep.room.controller, PWR_OPERATE_CONTROLLER)
+            break
+        case CS.WORK_MINERAL:
+            a.usePower(creep, Game.getObjectById(creep.memory.target), PWR_REGEN_MINERAL)
         }
         creep.memory.state = rPC.getNextState(creep)
     },
 
     getNextState: function(creep) {
         switch (creep.memory.state) {
-        case CS.START: return creep.memory.city ? CS.SPAWN : CS.START
-        case CS.SPAWN: return (creep.spawnCooldownTime > Date.now()) ? CS.SPAWN :
-            rPC.isPowerEnabled(creep) ? rPC.getNextWork(creep) : CS.ENABLE_POWER
-        case CS.ENABLE_POWER: return rPC.atTarget(creep) ? rPC.getNextWork(creep) : CS.ENABLE_POWER
-        case CS.WORK_SOURCE: return rPC.atTarget(creep) ? rPC.getNextWork(creep) : CS.WORK_SOURCE
-        case CS.WORK_FACTORY: return rPC.atTarget(creep) ? rPC.getNextWork(creep) : CS.WORK_FACTORY
-        case CS.WORK_GENERATE_OPS: return rPC.getNextWork(creep)
-        case CS.WORK_DECIDE: return rPC.getNextWork(creep)
-        case CS.WORK_RENEW: return rPC.atTarget(creep) ? rPC.getNextWork(creep) : CS.WORK_RENEW
-        case CS.WORK_BALANCE_OPS: return rPC.atTarget(creep) ? CS.SLEEP : CS.WORK_BALANCE_OPS
-        case CS.SLEEP: return Game.time % 10 == 0 ? rPC.getNextWork(creep) : CS.SLEEP
-        case CS.WORK_OBSERVER: return rPC.atTarget(creep) ? rPC.getNextWork(creep) : CS.WORK_OBSERVER
-        case CS.WORK_EXTENSION: return rPC.atTarget(creep) ? rPC.getNextWork(creep) : CS.WORK_EXTENSION
-        case CS.WORK_SPAWN: return rPC.atTarget(creep) ? rPC.getNextWork(creep) : CS.WORK_SPAWN
-        case CS.WORK_CONTROLLER: return rPC.atTarget(creep) ? rPC.getNextWork(creep) : CS.WORK_CONTROLLER
+        case CS.START: 
+            return creep.memory.city ? CS.SPAWN : CS.START
+        case CS.SPAWN: 
+            return (creep.spawnCooldownTime > Date.now()) ? CS.SPAWN : rPC.isPowerEnabled(creep)
+                ? rPC.getNextWork(creep) : CS.ENABLE_POWER
+        case CS.WORK_GENERATE_OPS:
+        case CS.WORK_DECIDE:
+            return rPC.getNextWork(creep)
+        case CS.WORK_BALANCE_OPS: 
+            return rPC.atTarget(creep) ? CS.SLEEP : CS.WORK_BALANCE_OPS
+        case CS.WORK_RENEW:
+        case CS.ENABLE_POWER:
+        case CS.WORK_SOURCE:
+        case CS.WORK_FACTORY:
+        case CS.WORK_OBSERVER:
+        case CS.WORK_EXTENSION:
+        case CS.WORK_SPAWN:
+        case CS.WORK_CONTROLLER:
+        case CS.WORK_MINERAL: 
+            return rPC.atTarget(creep) ? rPC.getNextWork(creep) : creep.memory.state
+        case CS.SLEEP:
+            return Game.time % 10 == 0 ? rPC.getNextWork(creep) : CS.SLEEP
         }
         // If state is unknown then restart
         return CS.START
@@ -161,6 +172,7 @@ const rPC = {
         case CS.WORK_EXTENSION:
         case CS.WORK_SPAWN:
         case CS.WORK_CONTROLLER:
+        case CS.WORK_MINERAL:
             target = Game.getObjectById(creep.memory.target)
             distance = 3
             break
@@ -174,6 +186,9 @@ const rPC = {
             target = Game.getObjectById(creep.memory.powerSpawn)
             break
         }
+        if (creep.memory.state == CS.WORK_MINERAL && creep.powers[PWR_REGEN_MINERAL].cooldown != 0) {
+            return false
+        }
         return target && creep.pos.inRangeTo(target, distance)
     },
 
@@ -186,6 +201,7 @@ const rPC = {
      */
     getNextWork: function(creep) {
         if (creep.ticksToLive < 300) return CS.WORK_RENEW
+        if (rPC.hasMineralUpdate(creep)) return CS.WORK_MINERAL
         if (rPC.canGenerateOps(creep)) return CS.WORK_GENERATE_OPS
         if (rPC.hasSourceUpdate(creep)) return CS.WORK_SOURCE
         if (rPC.canOperateFactory(creep)) return rPC.getOpsJob(creep, PWR_OPERATE_FACTORY, CS.WORK_FACTORY)
@@ -206,6 +222,23 @@ const rPC = {
         return creep.powers[PWR_GENERATE_OPS] &&
             creep.powers[PWR_GENERATE_OPS].cooldown == 0 &&
             _.sum(creep.store) < creep.store.getCapacity()
+    },
+
+    hasMineralUpdate: function(creep) {
+        // powerup runs out every 100 ticks
+        // if there is no effect on mineral OR effect is running low then choose it
+        if(!creep.powers[PWR_REGEN_MINERAL]){
+            return false
+        }
+        const mineral = _.find(creep.room.find(FIND_MINERALS) as Mineral[], m => m.mineralType == RESOURCE_THORIUM)
+
+        if (mineral && (!mineral.effects 
+                        || mineral.effects.length == 0
+                        || mineral.effects[0].ticksRemaining < 50)) {
+            creep.memory.target = mineral.id
+            return true
+        }
+        return false
     },
 
     hasSourceUpdate: function(creep) {
