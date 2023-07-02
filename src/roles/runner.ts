@@ -17,6 +17,9 @@ const rR = {
         if (creep.memory.flag && creep.memory.flag.includes("powerMine")){
             rR.runPower(creep)
             return
+        } else if (creep.memory.flag && u.isCenterRoom(creep.memory.flag)){
+            rR.runThorium(creep)
+            return
         }
         if(creep.memory.juicer && rR.runController(creep)){
             return
@@ -110,6 +113,47 @@ const rR = {
             actions.withdraw(creep, target)
         }
         return true
+    },
+
+    runThorium: function(creep: Creep){
+        if (creep.store.getUsedCapacity() == 0) {
+            if (creep.ticksToLive < 1400) {
+                creep.suicide()
+            }
+            const terminal = Game.spawns[creep.memory.city].room.terminal
+            if (terminal.store.getUsedCapacity(RESOURCE_THORIUM) < 5000) {
+                Log.error(`Running low on thorium in ${creep.memory.city}`)
+            }
+            if (creep.withdraw(terminal, RESOURCE_THORIUM) == ERR_NOT_IN_RANGE) {
+                motion.newMove(creep, terminal.pos, 1)
+                return
+            }
+        }
+        // if any hostiles are nearby run away
+        const hostiles = _.filter(u.findHostileCreeps(creep.room), c => c instanceof Creep && (c.getActiveBodyparts(ATTACK) || c.getActiveBodyparts(RANGED_ATTACK)))
+        if(hostiles.length) {
+            motion.retreat(creep, hostiles as Creep[])
+            Log.error(`thorium runner under attack in ${creep.room.name}`)
+            return
+        }
+        // if we have vision of center room, find reactor and move to it
+        const targetRoom = creep.memory.flag
+        if (Game.rooms[targetRoom]) {
+            // find reactor
+            const reactor = _.find(Game.rooms[targetRoom].find(FIND_REACTORS)) as Structure
+            if (reactor) {
+                // move to reactor
+                motion.newMove(creep, reactor.pos, 1)
+                // claim reactor
+                if (creep.pos.isNearTo(reactor.pos)) {
+                    creep.transfer(reactor, RESOURCE_THORIUM)
+                }
+            } else {
+                Log.error(`No reactor found in ${targetRoom}`)
+            }
+        } else {
+            motion.newMove(creep, new RoomPosition(25, 25, targetRoom), 24)
+        }
     },
 
     pickup: function(creep: Creep) {

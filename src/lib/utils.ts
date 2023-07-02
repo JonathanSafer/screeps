@@ -112,6 +112,10 @@ const u = {
 
     parseCoords: function(roomName) {
         const coords = roomName.match(/[0-9]+/g)
+        if (!coords || coords.length != 2) {
+            Log.error("Invalid room name: " + roomName)
+            return {x: -1, y: -1}
+        }
         return {x: Number(coords[0]), y: Number(coords[1])}
     },
 

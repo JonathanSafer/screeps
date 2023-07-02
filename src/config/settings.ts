@@ -12,7 +12,7 @@ const settings = {
     allies: ["Atanner", "slowmotionghost", "Timendainum", "FeTiD", "SBense","6g3y",username],
     nukeStructures: [STRUCTURE_SPAWN, STRUCTURE_LAB, STRUCTURE_STORAGE, STRUCTURE_FACTORY,
         STRUCTURE_TERMINAL, STRUCTURE_POWER_SPAWN, STRUCTURE_NUKER],
-    militaryBoosts:["XKHO2", "XGHO2", "XZHO2", "XLHO2", "XZH2O", "G"], // military boosts will be prioritized over civilian boosts
+    militaryBoosts:["XKHO2", /*"XGHO2",*/ "XZHO2", "XLHO2", "XZH2O"/*, "G"*/], // military boosts will be prioritized over civilian boosts
     civBoosts: ["XLH2O", "XUHO2", "XKH2O", "XUH2O", "XGH2O"],
     roomplanTime: 500,
     roomplanOffset: 155,

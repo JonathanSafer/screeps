@@ -1,4 +1,5 @@
 import motion = require("../lib/motion")
+import u = require("../lib/utils")
 import { BodyType } from "../screeps"
 
 function getRecipe(type: BodyType, energyAvailable: number, room: Room, boosted = false, flagName?: string){
@@ -11,7 +12,7 @@ function getRecipe(type: BodyType, energyAvailable: number, room: Room, boosted 
     d[BodyType.reserver] = scalingBody([1,1], [CLAIM, MOVE], energy, 12)
     d[BodyType.scout] = [MOVE]
     d[BodyType.quad] = quadBody(energy, rcl, room, boosted)
-    d[BodyType.runner] = rcl == 1 ? scalingBody([1, 1], [CARRY, MOVE], energy) : scalingBody([2, 1], [CARRY, MOVE], energy)
+    d[BodyType.runner] = runnerBody(energy, rcl, flagName)
     d[BodyType.miner] = minerBody(energy, rcl, room, flagName as Id<Source>)
     d[BodyType.normal] = upgraderBody(energy, rcl, room)
     d[BodyType.transporter] = scalingBody([2, 1], [CARRY, MOVE], energy, 30)
@@ -99,6 +100,13 @@ function dMinerCalc(room: Room, boosted: boolean, flagName: string){
         delete Memory.flags[flagName]
     }
     return result
+}
+
+function runnerBody(energy: number, rcl: number, flagName: string){
+    if(flagName && u.isCenterRoom(flagName)){
+        return body([4, 4], [MOVE, CARRY])
+    }
+    return rcl == 1 ? scalingBody([1, 1], [CARRY, MOVE], energy) : scalingBody([2, 1], [CARRY, MOVE], energy)
 }
 
 function depositMinerBody(workTime, harvested, boosted, baseBody) {
