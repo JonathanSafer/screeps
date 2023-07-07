@@ -259,7 +259,7 @@ const m = {
                     return false
                 }
                 const costs = new PathFinder.CostMatrix
-                if(roomData.skL && roomData.skL.length && !Memory.remotes[roomName]){
+                if(roomData.skL && roomData.skL.length && !Memory.remotes[roomName] && (goals.length || goals.pos.roomName != roomName)){
                     const terrain = Game.map.getRoomTerrain(roomName)
                     for(const lairPos of roomData.skL){
                         const lair = u.unpackPos(lairPos, roomName)
@@ -421,8 +421,10 @@ const m = {
         return new m.BoundingBox(top, left, bottom, right)
     },
 
-    retreat: function(creep: Creep, hostiles: Array<Creep | Structure>) {
-        const dangerous = _.filter(hostiles, h => h instanceof(Structure) || h.getActiveBodyparts(ATTACK) > 0 || h.getActiveBodyparts(RANGED_ATTACK) > 0)
+    retreat: function(creep: Creep, hostiles: Array<Creep | Structure | PowerCreep>) {
+        const dangerous = _.filter(hostiles, h => h instanceof Structure 
+            || h instanceof Creep 
+            && (h.getActiveBodyparts(ATTACK) > 0 || h.getActiveBodyparts(RANGED_ATTACK) > 0))
         const goals = _.map(dangerous, function(d) {
             return { pos: d.pos, range: 8 }
         })

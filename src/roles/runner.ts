@@ -130,7 +130,9 @@ const rR = {
             }
         }
         // if any hostiles are nearby run away
-        const hostiles = _.filter(u.findHostileCreeps(creep.room), c => c instanceof Creep && (c.getActiveBodyparts(ATTACK) || c.getActiveBodyparts(RANGED_ATTACK)))
+        const hostiles = _.filter(u.findHostileCreeps(creep.room), c => c instanceof Creep 
+            && (c.getActiveBodyparts(ATTACK) || c.getActiveBodyparts(RANGED_ATTACK))
+            && c.pos.inRangeTo(creep.pos, 8))
         if(hostiles.length) {
             motion.retreat(creep, hostiles as Creep[])
             Log.error(`thorium runner under attack in ${creep.room.name}`)

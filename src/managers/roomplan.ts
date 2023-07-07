@@ -294,11 +294,15 @@ const p = {
     scoreRemoteRoom: function(roomName, spawn){
         const roomInfo = Cache.roomData[roomName]
         // season5 only
-        if(spawn.name == "E25S130" && roomName != "E25S14") {
+        if(roomName == "E25S15") {
             return -1
         }
-        if(spawn.name == "E24S130" && !(roomName == "E24S14" || roomName == "E24S15")) {
-            return -1
+        if(roomInfo.d >= 4){
+            // if room doesn't have an invader core reduce defcon level
+            if (!roomInfo.sME || roomInfo.sME < Game.time) {
+                if (Math.random() < 0.5)
+                    Cache.roomData[roomName].d = 3
+            }
         }
         if(!roomInfo 
             || roomInfo.rcl 
@@ -316,13 +320,6 @@ const p = {
             const sourceDistance = u.getRemoteSourceDistance(spawn.pos, sourcePos)
             if(sourceDistance == -1) return -1
             totalDistance += sourceDistance
-        }
-        if(roomInfo.d >= 4){
-            // if room doesn't have an invader core reduce defcon level
-            if (!roomInfo.sME || roomInfo.sME < Game.time) {
-                if (Math.random() < 0.5)
-                    Cache.roomData[roomName].d = 3
-            }
         }
         return totalDistance/Object.keys(roomInfo.src).length
     },

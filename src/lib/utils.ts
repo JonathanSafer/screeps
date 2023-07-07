@@ -221,7 +221,7 @@ const u = {
     },
 
     findHostileCreeps: function(room: Room){
-        return _.filter((room.find(FIND_HOSTILE_CREEPS) as Array<Creep|PowerCreep>).concat(room.find(FIND_HOSTILE_POWER_CREEPS)), c => !Memory.settings.allies.includes(c.owner.username) && !(c.owner.username == "Geir1983" && c.room.name == "E24S15"))
+        return _.filter((room.find(FIND_HOSTILE_CREEPS) as Array<Creep|PowerCreep>).concat(room.find(FIND_HOSTILE_POWER_CREEPS)), c => !Memory.settings.allies.includes(c.owner.username) && !(c.owner.username == "Geir1983" && ["E24S15", "E25S15"].includes(c.room.name)))
     },
 
     findFriendlyCreeps: function(room: Room){

@@ -15,6 +15,7 @@ import "./lib/globals"
 import rr = require("./roles/roles")
 import data = require("./operations/data")
 import rU = require("./lib/roomUtils")
+import cU = require("./lib/creepUtils")
 
 //Code to manually profile:
 //Game.profiler.profile(1000);
@@ -173,6 +174,88 @@ export function loop() {
         // clean room memory
         if (Game.time % 50 === 0) {
             rU.removeOldRoomMemory()
+        }
+
+        const e25s13observer = Game.rooms["E25S13"] && _.find(Game.rooms["E25S13"].find(FIND_MY_STRUCTURES), struct => struct.structureType == STRUCTURE_OBSERVER) as StructureObserver
+        if(e25s13observer) {
+            e25s13observer.observeRoom("E25S15")
+        }
+
+        if(Game.rooms["E25S15"]) {
+            const room = Game.rooms["E25S15"]
+            const reactor = _.find(room.find(FIND_REACTORS)) as StructureStorage
+            let needClaimer = false
+            let needHaulers = false
+            if(!reactor.owner
+                || !["Yoner", "Geir1983"].includes(reactor.owner.username)
+                || (reactor.store.getFreeCapacity(RESOURCE_THORIUM) > 500 && reactor.owner.username == "Geir1983")){
+                needHaulers = true
+                needClaimer = true
+            } else if(reactor.owner.username == "Yoner") {
+                needHaulers = true
+            }
+            if(needHaulers) {
+                const haulersNeeded = Math.ceil((reactor.store.getFreeCapacity(RESOURCE_THORIUM) + 100) / 200)
+                // determine if we should send from E24S13 or E25S13
+                let sender = "E25S13"
+                if(Cache.roomData && Cache.roomData["E25S14"] && Cache.roomData["E25S14"].rcl > 0){
+                    sender = "E24S13"
+                }
+                if(sender == "E25S13") {
+                    if(needClaimer) {
+                        cU.scheduleIfNeeded("reserver", 1, false, Game.spawns["E25S130"], localCreeps["E25S130"], "E25S15")
+                    }
+                    cU.scheduleIfNeeded("runner", haulersNeeded, false, Game.spawns["E25S130"], localCreeps["E25S130"], "E25S15")
+                    cU.scheduleIfNeeded("harasser", 3, false, Game.spawns["E25S130"], localCreeps["E25S130"], "E25S14", 300)
+                } else {
+                    if(needClaimer) {
+                        cU.scheduleIfNeeded("reserver", 1, false, Game.spawns["E24S130"], localCreeps["E24S130"], "E25S15")
+                    }
+                    cU.scheduleIfNeeded("runner", haulersNeeded, false, Game.spawns["E24S130"], localCreeps["E24S130"], "E25S15")
+                    cU.scheduleIfNeeded("harasser", 3, false, Game.spawns["E24S130"], localCreeps["E24S130"], "E24S14", 300)
+                    cU.scheduleIfNeeded("harasser", 3, false, Game.spawns["E24S130"], localCreeps["E24S130"], "E24S15", 300)
+                }
+            }
+
+        }
+
+        const e28s12observer = Game.rooms["E28S12"] && _.find(Game.rooms["E28S12"].find(FIND_MY_STRUCTURES), struct => struct.structureType == STRUCTURE_OBSERVER) as StructureObserver
+        if(e28s12observer) {
+            e28s12observer.observeRoom("E35S15")
+        }
+
+        if(Game.rooms["E35S15"]) {
+            const room = Game.rooms["E35S15"]
+            const reactor = _.find(room.find(FIND_REACTORS)) as StructureStorage
+            let needClaimer = false
+            let needHaulers = false
+            if(!reactor.owner
+                || !["Yoner"].includes(reactor.owner.username)
+                || (reactor.store.getFreeCapacity(RESOURCE_THORIUM) > 500 && reactor.owner.username != "Yoner")){
+                needHaulers = true
+                needClaimer = true
+            } else if(reactor.owner.username == "Yoner") {
+                needHaulers = true
+            }
+            if(needHaulers) {
+                const haulersNeeded = Math.ceil((reactor.store.getFreeCapacity(RESOURCE_THORIUM) + 100) / 200)
+                // determine if we should send from E33S15
+                let canSend = false
+                if(Cache.roomData && Cache.roomData["E34S15"] && Cache.roomData["E34S15"].rcl == 0){
+                    canSend = true
+                }
+                if(canSend) {
+                    if(needClaimer) {
+                        cU.scheduleIfNeeded("reserver", 1, false, Game.spawns["E33S150"], localCreeps["E33S150"], "E35S15")
+                    }
+                    //cU.scheduleIfNeeded("runner", haulersNeeded, false, Game.spawns["E33S150"], localCreeps["E33S150"], "E35S15")
+                    cU.scheduleIfNeeded("harasser", 3, false, Game.spawns["E33S150"], localCreeps["E33S150"], "E34S15", 300)
+                    cU.scheduleIfNeeded("harasser", 2, false, Game.spawns["E33S150"], localCreeps["E33S150"], "E35S15", 300)
+                } else {
+                    Log.error("Can't send from E33S15 to E35S15")
+                }
+            }
+
         }
 
         s.collectStats(myCities)

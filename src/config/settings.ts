@@ -12,7 +12,7 @@ const settings = {
     allies: ["Atanner", "slowmotionghost", "Timendainum", "FeTiD", "SBense","6g3y",username],
     nukeStructures: [STRUCTURE_SPAWN, STRUCTURE_LAB, STRUCTURE_STORAGE, STRUCTURE_FACTORY,
         STRUCTURE_TERMINAL, STRUCTURE_POWER_SPAWN, STRUCTURE_NUKER],
-    militaryBoosts:["XKHO2", /*"XGHO2",*/ "XZHO2", "XLHO2", "XZH2O"/*, "G"*/], // military boosts will be prioritized over civilian boosts
+    militaryBoosts:["XKHO2", "XGHO2", "XZHO2", "XLHO2", "XZH2O", "G"], // military boosts will be prioritized over civilian boosts
     civBoosts: ["XLH2O", "XUHO2", "XKH2O", "XUH2O", "XGH2O"],
     roomplanTime: 500,
     roomplanOffset: 155,
@@ -28,6 +28,7 @@ const settings = {
     rcl8upgrade: true, // use excess energy to GCL pump at RCL8
 
     miningDisabled: ["W31S41"], //cities that will not attempt any highway mining
+    mineralAmount: 50000, // threshold to stop mining minerals
     ghodiumAmount: 7000, // threshold to stop producing ghodium
     boostsNeeded: 6000, // boost needed per city for us to boost creeps
     boostAmount: 5000, // threshold to stop producing boosts (add ~8000 to this and ghodium amount since this does not include ready to go boosts in terminal)
@@ -57,7 +58,7 @@ const settings = {
         repair: 60000,
         rcl8upgrade: 450000,
         processPower: 400000,
-        powerMine: 450000
+        powerMine: 350000
     },
     max: {
         runners: 15, // low rcl
@@ -75,7 +76,7 @@ const settings = {
         highway: 10000000
     },
     minerUpdateTime: 50,
-    powerMiningRange: 2, //manhattan distance that we can powermine (in rooms)
+    powerMiningRange: 4, //manhattan distance that we can powermine (in rooms)
     miningRange: 7, //manhattan distance that we can deposit mine (in rooms)
     observerFrequency: 20, // how often each city scans a highway room (other rooms will be scanned as often as possible with spare cpu)
 

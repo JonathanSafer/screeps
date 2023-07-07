@@ -545,7 +545,7 @@ function updateMineralMiner(rcl, buildings: Structure[], spawn, creeps) {
                     && (room.terminal.store[mineral.mineralType] < 6000
                         || (Game.cpu.bucket > settings.bucket.mineralMining 
                         && room.storage 
-                        && room.storage.store.getUsedCapacity(mineral.mineralType) < 30000)
+                        && room.storage.store.getUsedCapacity(mineral.mineralType) < settings.mineralAmount)
                         || mineral.mineralType == RESOURCE_THORIUM)
                     && mineral.mineralAmount > 0){
                 cU.scheduleIfNeeded(cN.MINERAL_MINER_NAME, 1, false, spawn, creeps, room.name)

@@ -81,6 +81,10 @@ const ob = {
     },
 
     scanNextRoom: function(observer) {
+        if(observer.room.name == "E25S13") {
+            observer.observeRoom("E25S15")
+            return
+        }
         const target = ob.getScannerTarget(observer)
         observer.observeRoom(target)
 

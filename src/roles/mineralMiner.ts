@@ -54,6 +54,10 @@ const rMM = {
         const sourceDepleted = creep.memory.source 
             && !Game.getObjectById(creep.memory.source) 
             && creep.pos.roomName == creep.memory.flag
+        const mineral = creep.memory.source && Game.getObjectById(creep.memory.source) as Mineral
+        if (mineral && mineral.mineralType == RESOURCE_THORIUM && mineral.mineralAmount < 500) {
+            return false
+        }
         return hasCapacity && !sourceDepleted
     },
 

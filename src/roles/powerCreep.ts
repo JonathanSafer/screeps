@@ -201,8 +201,8 @@ const rPC = {
      */
     getNextWork: function(creep) {
         if (creep.ticksToLive < 300) return CS.WORK_RENEW
-        if (rPC.hasMineralUpdate(creep)) return CS.WORK_MINERAL
         if (rPC.canGenerateOps(creep)) return CS.WORK_GENERATE_OPS
+        if (rPC.hasMineralUpdate(creep)) return CS.WORK_MINERAL
         if (rPC.hasSourceUpdate(creep)) return CS.WORK_SOURCE
         if (rPC.canOperateFactory(creep)) return rPC.getOpsJob(creep, PWR_OPERATE_FACTORY, CS.WORK_FACTORY)
         //if (rPC.canOperateObserver(creep)) return rPC.getOpsJob(creep, PWR_OPERATE_OBSERVER, CS.WORK_OBSERVER)
@@ -252,8 +252,9 @@ const rPC = {
         const sourceIds = Object.keys(_.filter(Game.spawns[city].memory.sources, s => s.roomName == creep.memory.city)) as Id<Source>[]
         for (const sourceId of sourceIds) {
             const source = Game.getObjectById(sourceId)
-            if (source && (!source.effects || source.effects.length == 0 ||
-                source.effects[0].ticksRemaining < 30)) {
+            if (source && (!source.effects 
+                           || source.effects.length == 0
+                           || source.effects[0].ticksRemaining < 30)) {
                 creep.memory.target = sourceId
                 return true
             }
