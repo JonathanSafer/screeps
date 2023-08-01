@@ -43,21 +43,16 @@ const rMM = {
             creep.memory.suicideTime = distance + ticksToFill
         }
         if (_.sum(Object.values(creep.store)) == 0 
-            && (creep.ticksToLive < creep.memory.suicideTime
-                || (creep.ticksToLive < CREEP_LIFE_TIME/2 && mineral && mineral.mineralType == RESOURCE_THORIUM))) {
+            && (creep.ticksToLive < creep.memory.suicideTime)) {
             creep.suicide()
         }
     },
 
     canMine: function(creep: Creep) {
         const hasCapacity = creep.store.getFreeCapacity()
-        const sourceDepleted = creep.memory.source 
-            && !Game.getObjectById(creep.memory.source) 
-            && creep.pos.roomName == creep.memory.flag
-        const mineral = creep.memory.source && Game.getObjectById(creep.memory.source) as Mineral
-        if (mineral && mineral.mineralType == RESOURCE_THORIUM && mineral.mineralAmount < 500) {
-            return false
-        }
+        const source = creep.memory.source 
+            && Game.getObjectById(creep.memory.source) as Mineral
+        const sourceDepleted = source && source.mineralAmount > 0
         return hasCapacity && !sourceDepleted
     },
 

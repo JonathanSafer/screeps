@@ -27,7 +27,7 @@ const settings = {
     processPower: false, // process power instead of selling it
     rcl8upgrade: true, // use excess energy to GCL pump at RCL8
 
-    miningDisabled: ["W31S41"], //cities that will not attempt any highway mining
+    miningDisabled: [], //cities that will not attempt any highway mining
     mineralAmount: 50000, // threshold to stop mining minerals
     ghodiumAmount: 7000, // threshold to stop producing ghodium
     boostsNeeded: 6000, // boost needed per city for us to boost creeps
@@ -76,7 +76,7 @@ const settings = {
         highway: 10000000
     },
     minerUpdateTime: 50,
-    powerMiningRange: 4, //manhattan distance that we can powermine (in rooms)
+    powerMiningRange: 2, //manhattan distance that we can powermine (in rooms)
     miningRange: 7, //manhattan distance that we can deposit mine (in rooms)
     observerFrequency: 20, // how often each city scans a highway room (other rooms will be scanned as often as possible with spare cpu)
 
@@ -96,7 +96,7 @@ const settings = {
 if(!Game.shard.name.includes("shard") || Game.shard.name == "shardSeason"){
     //botarena, swc and seasonal custom settings
     settings.allies = [username]
-    settings.processPower = true
+    settings.processPower = false
     settings.rcl8upgrade = false
     settings.powerMiningRange = 4 //manhattan distance that we can powermine (in rooms)
 }

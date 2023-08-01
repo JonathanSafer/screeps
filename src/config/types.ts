@@ -1,5 +1,4 @@
 import motion = require("../lib/motion")
-import u = require("../lib/utils")
 import { BodyType } from "../screeps"
 
 function getRecipe(type: BodyType, energyAvailable: number, room: Room, boosted = false, flagName?: string){
@@ -10,13 +9,13 @@ function getRecipe(type: BodyType, energyAvailable: number, room: Room, boosted 
     case BodyType.brick:
         return scalingBody([1,1], [ATTACK, MOVE], energy, 20)
     case BodyType.reserver:
-        return reserverBody(energyAvailable, rcl, flagName)
+        return reserverBody(energyAvailable)
     case BodyType.scout:
         return [MOVE]
     case BodyType.quad:
         return quadBody(energy, rcl, room, boosted)
     case BodyType.runner:
-        return runnerBody(energy, rcl, flagName)
+        return runnerBody(energy, rcl)
     case BodyType.miner:
         return minerBody(energy, rcl, room, flagName as Id<Source>)
     case BodyType.normal:
@@ -100,10 +99,7 @@ function mineralMinerBody(rcl: number) {
     return rcl > 6 ? body([20, 10, 15], [WORK, CARRY, MOVE]) : body([12, 6, 9], [WORK, CARRY, MOVE])
 }
 
-function runnerBody(energy: number, rcl: number, flagName: string){
-    if(flagName && u.isCenterRoom(flagName)){
-        return body([4, 4], [MOVE, CARRY])
-    }
+function runnerBody(energy: number, rcl: number){
     return rcl == 1 ? scalingBody([1, 1], [CARRY, MOVE], energy) : scalingBody([2, 1], [CARRY, MOVE], energy)
 }
 
@@ -234,10 +230,7 @@ function builderBody(energyAvailable, rcl) {
     return body(ratio, types)
 }
 
-function reserverBody(energyAvailable, rcl, flagName) {
-    if(flagName && u.isCenterRoom(flagName)){
-        return body([2, 1], [MOVE, CLAIM])
-    }
+function reserverBody(energyAvailable) {
     return scalingBody([1,1], [MOVE, CLAIM], energyAvailable, 12)
 }
 

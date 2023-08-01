@@ -186,9 +186,6 @@ const rPC = {
             target = Game.getObjectById(creep.memory.powerSpawn)
             break
         }
-        if (creep.memory.state == CS.WORK_MINERAL && creep.powers[PWR_REGEN_MINERAL].cooldown != 0) {
-            return false
-        }
         return target && creep.pos.inRangeTo(target, distance)
     },
 
@@ -230,11 +227,11 @@ const rPC = {
         if(!creep.powers[PWR_REGEN_MINERAL]){
             return false
         }
-        const mineral = _.find(creep.room.find(FIND_MINERALS) as Mineral[], m => m.mineralType == RESOURCE_THORIUM)
+        const mineral = _.find(creep.room.find(FIND_MINERALS) as Mineral[])
 
         if (mineral && (!mineral.effects 
                         || mineral.effects.length == 0
-                        || mineral.effects[0].ticksRemaining < 50)) {
+                        || mineral.effects[0].ticksRemaining < 5)) {
             creep.memory.target = mineral.id
             return true
         }

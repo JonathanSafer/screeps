@@ -28,8 +28,6 @@ const names = {
     BRICK_NAME: "brick"
 }
 
-global.RESOURCE_THORIUM = "T"
-
 describe("#main", function () {
     beforeEach(function() {
         Game.reset()

@@ -14,7 +14,6 @@ globals:
   Log: writable
   T: writable
   PIXEL: readonly
-  RESOURCE_THORIUM: writable
   CPU_UNLOCK: readonly
   PServ: readonly
   describe: readonly

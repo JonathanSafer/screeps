@@ -500,7 +500,7 @@ function requestSupport(spawn, quadsNeeded, rcl){
     const reinforcingSpawn = Game.spawns[reinforceCity]
     const creeps = u.splitCreepsByCity()[reinforceCity]
     cU.scheduleIfNeeded(rT.name, 2, false, reinforcingSpawn, creeps)
-    cU.scheduleIfNeeded(cN.QUAD_NAME, 4 * quadsNeeded, true, reinforcingSpawn, creeps, spawn.room.name)
+    cU.scheduleIfNeeded(cN.QUAD_NAME, 4 * quadsNeeded, true, reinforcingSpawn, creeps, spawn.room.name, 400)
 }
 
 function cityFraction(cityName) {
@@ -540,12 +540,11 @@ function updateMineralMiner(rcl, buildings: Structure[], spawn, creeps) {
             const mineral = minerals[0]
             const room = spawn.room as Room
             if(room.terminal
+                    && mineral.mineralAmount > 0
                     && (room.terminal.store[mineral.mineralType] < 6000
                         || (Game.cpu.bucket > settings.bucket.mineralMining 
                         && room.storage 
-                        && room.storage.store.getUsedCapacity(mineral.mineralType) < settings.mineralAmount)
-                        || mineral.mineralType == RESOURCE_THORIUM)
-                    && mineral.mineralAmount > 0){
+                        && room.storage.store.getUsedCapacity(mineral.mineralType) < settings.mineralAmount))){
                 cU.scheduleIfNeeded(cN.MINERAL_MINER_NAME, 1, false, spawn, creeps, room.name)
             }
         }

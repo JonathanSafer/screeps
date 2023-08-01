@@ -221,39 +221,11 @@ const u = {
     },
 
     findHostileCreeps: function(room: Room){
-        return _.filter((room.find(FIND_HOSTILE_CREEPS) as Array<Creep|PowerCreep>).concat(room.find(FIND_HOSTILE_POWER_CREEPS)), c => !Memory.settings.allies.includes(c.owner.username) && !u.tempIsAllyCreep(c))
+        return _.filter((room.find(FIND_HOSTILE_CREEPS) as Array<Creep|PowerCreep>).concat(room.find(FIND_HOSTILE_POWER_CREEPS)), c => !Memory.settings.allies.includes(c.owner.username))
     },
 
     findFriendlyCreeps: function(room: Room){
         return _.filter((room.find(FIND_CREEPS) as Array<Creep|PowerCreep>).concat(room.find(FIND_POWER_CREEPS)), c => Memory.settings.allies.includes(c.owner.username))
-    },
-
-    tempIsAllyCreep: function(creep: Creep | PowerCreep){
-        if(creep instanceof PowerCreep) return false
-        if (creep.owner.username == "Geir1983" && ["E24S15", "E25S15"].includes(creep.room.name)) {
-            return true
-        }
-        if (Memory.settings.allies.includes(creep.owner.username)) {
-            return true
-        }
-        if (["SystemParadox"].includes(creep.owner.username)
-            && (u.isThoriumHauler(creep)
-            || u.tempIsClaimer(creep))) {
-            return true
-        }
-    },
-
-    tempIsClaimer: function(creep: Creep){
-        const hasNonClaim = _.find(creep.body, b => b.type != CLAIM && b.type != MOVE)
-        if(hasNonClaim || creep.room.controller) return false
-        return true
-    },
-
-    isThoriumHauler: function(creep: Creep){
-        const hasNonCarry = _.find(creep.body, b => b.type != CARRY && b.type != MOVE)
-        if(hasNonCarry) return false
-        //if(creep.store.getFreeCapacity() == 0 && creep.store.getUsedCapacity(RESOURCE_THORIUM) > 0) return true
-        return true
     },
 
     findHostileStructures: function(room: Room){

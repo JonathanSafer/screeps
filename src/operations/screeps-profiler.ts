@@ -160,7 +160,7 @@ function profileObjectFunctions(object, label) {
             return
         }
         const originalFunction = objectToWrap[functionName]
-        //objectToWrap[functionName] = profileFunction(originalFunction, extendedLabel)
+        objectToWrap[functionName] = profileFunction(originalFunction, extendedLabel)
     })
 
     return objectToWrap
