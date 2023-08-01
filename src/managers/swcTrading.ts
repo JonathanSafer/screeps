@@ -1,10 +1,9 @@
 //Borrowed from Sergey
 
 
-import settings = require("../config/settings")
 import u = require("../lib/utils")
 const segmentID = 90
-const allyList = settings.allies
+const allyList = Memory.settings.allies
 
 // Priority convention:
 // 1: I really need this or I'm going to die
@@ -126,7 +125,7 @@ const simpleAllies = {
             priority: priority === undefined ? 0 : priority
         }
         if (Game.time % 10 == 0) {
-            console.log(roomName, "requesting", resourceType, "max amount", maxAmount, "priority", priority)
+            //console.log(roomName, "requesting", resourceType, "max amount", maxAmount, "priority", priority)
         }
         requestArray.push(request)
     }

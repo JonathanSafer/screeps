@@ -5,6 +5,7 @@ import rU = require("../roles/upgrader")
 import rR = require("../roles/runner")
 import rH = require("../roles/harasser")
 import rQ = require("../roles/quad")
+import rSK = require("../roles/sKguard")
 import settings = require("../config/settings")
 import types = require("../config/types")
 
@@ -176,7 +177,7 @@ const p = {
                 const controllerPos = u.unpackPos(Cache.roomData[candidate].ctrlP, candidate)
                 const result = PathFinder.search(room.controller.pos, {pos: controllerPos, range: 1}, {
                     plainCost: 1, swampCost: 1, maxOps: 10000, roomCallback: (roomName) => {
-                        if(!Cache.roomData[roomName] || (Cache.roomData[roomName].rcl && CONTROLLER_STRUCTURES[STRUCTURE_TOWER][Cache.roomData[roomName].rcl] && !settings.allies.includes(Cache.roomData[roomName].own)))
+                        if(!Cache.roomData[roomName] || (Cache.roomData[roomName].rcl && CONTROLLER_STRUCTURES[STRUCTURE_TOWER][Cache.roomData[roomName].rcl] && !Memory.settings.allies.includes(Cache.roomData[roomName].own)))
                             return false
                     }
                 })
@@ -257,7 +258,7 @@ const p = {
             const spawnTimeNeeded = resourcesNeeded.time
             const profitMargin = resourcesNeeded.profit
             Log.info(`Remote found at ${remote.roomName} with spawn time of ${spawnTimeNeeded} and profit of ${profitMargin}`)
-            if(spawnFreeTime - spawnTimeNeeded < settings.spawnFreeTime || profitMargin < 0)
+            if(spawnFreeTime - spawnTimeNeeded < settings.spawnFreeTime || profitMargin < 3)
                 return null
         }
         return remote
@@ -292,35 +293,29 @@ const p = {
 
     scoreRemoteRoom: function(roomName, spawn){
         const roomInfo = Cache.roomData[roomName]
+        if(roomInfo.d >= 4){
+            // if room doesn't have an invader core reduce defcon level
+            if (!roomInfo.sME || roomInfo.sME < Game.time) {
+                if (Math.random() < 0.5)
+                    Cache.roomData[roomName].d = 3
+            }
+        }
         if(!roomInfo 
             || roomInfo.rcl 
             || !roomInfo.src 
             || !Object.keys(roomInfo.src).length 
             || Memory.remotes[roomName] 
             || (spawn.room.energyCapacityAvailable < 2300 && !roomInfo.ctrlP)
-            || roomInfo.res && settings.allies.includes(roomInfo.res) && settings.username != roomInfo.res) 
+            || roomInfo.res && Memory.settings.allies.includes(roomInfo.res) && settings.username != roomInfo.res
+            || roomInfo.sT && roomInfo.sT > Game.time
+            || roomInfo.d >= 4) 
             return -1
-        if(!roomInfo.ctrlP) return -1 //TODO add SK mining
         let totalDistance = 0
         for(const source in roomInfo.src){
             const sourcePos = u.unpackPos(roomInfo.src[source], roomName)
-            const result = PathFinder.search(spawn.pos, {pos: sourcePos, range: 1}, {
-                plainCost: 1,
-                swampCost: 1,
-                maxOps: 10000,
-                roomCallback: function(rN){
-                    const safe = Memory.remotes[rN] 
-                        || (Cache.roomData[rN] && Cache.roomData[rN].own == settings.username)
-                        || u.isHighway(rN)
-                        || rN == roomName
-                    if(!safe) return false
-                }
-            })
-            if(result.incomplete) return -1
-            totalDistance += result.cost
-        }
-        if(roomInfo.d >= 4){
-            Cache.roomData[roomName].d = 3
+            const sourceDistance = u.getRemoteSourceDistance(spawn.pos, sourcePos)
+            if(sourceDistance == -1) return -1
+            totalDistance += sourceDistance
         }
         return totalDistance/Object.keys(roomInfo.src).length
     },
@@ -399,13 +394,22 @@ const p = {
         const quadSize = quadBody.length * 4
         const roadUpkeep = ROAD_DECAY_AMOUNT/ROAD_DECAY_TIME * REPAIR_COST
         const sourceEnergy = roomInfo.ctrlP ? SOURCE_ENERGY_CAPACITY : SOURCE_ENERGY_KEEPER_CAPACITY
+        const sKGuardBody = types.getRecipe(rSK.type, spawn.room.energyCapacityAvailable, spawn.room)
+        const sKGuardCost = types.cost(sKGuardBody)
+        const sKGuardSize = sKGuardBody.length
 
         totalTime += harasserSize * CREEP_SPAWN_TIME/CREEP_LIFE_TIME
         totalCost += harasserCost/CREEP_LIFE_TIME
 
-        if(!roomInfo.ctrlP){
-            totalTime += quadSize * CREEP_SPAWN_TIME/(CREEP_LIFE_TIME - quadSize)//subtracting quad size to account for prespawn
-            totalCost += quadCost/(CREEP_LIFE_TIME - quadSize)
+        if(u.isSKRoom(roomName)){
+            if (spawn.room.controller.level < 7) {
+                totalTime += quadSize * CREEP_SPAWN_TIME/(CREEP_LIFE_TIME - quadSize)//subtracting quad size to account for prespawn
+                totalCost += quadCost/(CREEP_LIFE_TIME - quadSize)
+            } else {
+                // increase time by sKGuard spawn time factoring in 300 ticks of buffer to get to the room
+                totalTime += sKGuardSize * CREEP_SPAWN_TIME/(CREEP_LIFE_TIME - sKGuardSize - 300)
+                totalCost += sKGuardCost/(CREEP_LIFE_TIME - 300)
+            }
         }
 
         for(const source in roomInfo.src){
@@ -424,6 +428,9 @@ const p = {
 
         const revenue = sourceEnergy * Object.keys(roomInfo.src).length/ENERGY_REGEN_TIME
         const profit = revenue - totalCost
+        if (!roomInfo.ctrlP) {
+            Log.info(`Room ${roomName} has a profit of ${profit} and a spawn time of ${totalTime} ticks`)
+        }
         return {profit: profit, time: totalTime}
     },
 
@@ -537,7 +544,7 @@ const p = {
             }
         }
         const terrain = _.find(look, item => item.type == LOOK_TERRAIN)
-        if (terrain && (terrain[LOOK_TERRAIN] == "wall") || _.find(look, item => item.type == LOOK_STRUCTURES && item[LOOK_STRUCTURES].structureType == structureType))
+        if (terrain && (terrain[LOOK_TERRAIN] == "wall" && structureType == STRUCTURE_ROAD) || _.find(look, item => item.type == LOOK_STRUCTURES && item[LOOK_STRUCTURES].structureType == structureType))
             return
 
         if(room.createConstructionSite(pos.x, pos.y, structureType, name) == 0)
@@ -545,17 +552,13 @@ const p = {
     },
 
     buildExtractor: function(room) {
-        const minerals = room.find(FIND_MINERALS)
-        if (!minerals) {
-            return
+        const minerals = room.find(FIND_MINERALS) as Mineral[]
+        if (minerals.length) {
+            const mineralPos = minerals[0].pos
+            if (!mineralPos.lookFor(LOOK_STRUCTURES).length) {
+                p.buildConstructionSite(room, STRUCTURE_EXTRACTOR, mineralPos)
+            }
         }
-
-        const mineralPos = minerals[0].pos
-        if (mineralPos.lookFor(LOOK_STRUCTURES).length > 0) {
-            return
-        }
-
-        p.buildConstructionSite(room, STRUCTURE_EXTRACTOR, mineralPos)
     },
 
     buildWalls: function(room: Room, plan){

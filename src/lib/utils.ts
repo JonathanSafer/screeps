@@ -110,19 +110,38 @@ const u = {
             u.highwayMoveSettings(10000, 1, startPos, endPos))
     },
 
+    parseCoords: function(roomName) {
+        const coords = roomName.match(/[0-9]+/g)
+        if (!coords || coords.length != 2) {
+            Log.error("Invalid room name: " + roomName)
+            return {x: -1, y: -1}
+        }
+        return {x: Number(coords[0]), y: Number(coords[1])}
+    },
+
     // E0,E10... W0, 10 ..., N0, N10 ...
     isHighway: function(roomName) {
-        const coords = roomName.match(/[0-9]+/g)
-        const x = Number(coords[0])
-        const y = Number(coords[1])
-        return (x % 10 == 0) || (y % 10 == 0)
+        const coords = u.parseCoords(roomName)
+        return (coords.x % 10 == 0) || (coords.y % 10 == 0)
     },
 
     isIntersection: function(roomName){
-        const coords = roomName.match(/[0-9]+/g)
-        const x = Number(coords[0])
-        const y = Number(coords[1])
-        return (x % 10 == 0) && (y % 10 == 0)
+        const coords = u.parseCoords(roomName)
+        return (coords.x % 10 == 0) && (coords.y % 10 == 0)
+    },
+
+    // return true if room is a Source Keeper room
+    isSKRoom: function(roomName) {
+        const coords = u.parseCoords(roomName)
+        // x mod 10 between 4 and 6, y mod 10 between 4 and 6, but not both mod 10 equal to 5
+        const xmod = coords.x % 10
+        const ymod = coords.y % 10
+        return (xmod >= 4 && xmod <= 6) && (ymod >= 4 && ymod <= 6) && !(xmod == 5 && ymod == 5)
+    },
+
+    isCenterRoom: function(roomName) {
+        const coords = u.parseCoords(roomName)
+        return (coords.x % 10 == 5) && (coords.y % 10 == 5)
     },
 
     getAllRoomsInRange: function(d, rooms) {
@@ -138,6 +157,25 @@ const u = {
         const pos1 = u.roomNameToPos(roomName1)
         const pos2 = u.roomNameToPos(roomName2)
         return (Math.abs(pos1[0] - pos2[0]) <= range) && (Math.abs(pos1[1] - pos2[1]) <= range)
+    },
+
+    getRemoteSourceDistance: function(spawnPos, sourcePos) {
+        const result = PathFinder.search(spawnPos, {pos: sourcePos, range: 1}, {
+            plainCost: 1,
+            swampCost: 1,
+            maxOps: 10000,
+            roomCallback: function(rN){
+                const safe = Memory.remotes[rN] 
+                    || (Cache.roomData[rN] && Cache.roomData[rN].own == settings.username)
+                    || u.isHighway(rN)
+                    || rN == sourcePos.roomName
+                if(!safe) return false
+            }
+        })
+        if (result.incomplete) {
+            return -1
+        }
+        return result.path.length
     },
 
     roomNameToPos: function(roomName) {
@@ -162,9 +200,9 @@ const u = {
         if((Memory.remotes && Memory.remotes[room.name]) || room.controller 
             && (room.controller.my
                 || (room.controller.owner 
-                    && settings.allies.includes(room.controller.owner.username))
+                    && Memory.settings.allies.includes(room.controller.owner.username))
                 || (room.controller.reservation
-                    && settings.allies.includes(room.controller.reservation.username)))){
+                    && Memory.settings.allies.includes(room.controller.reservation.username)))){
             return true
         } else {
             return false
@@ -172,24 +210,29 @@ const u = {
     },
 
     isEnemyRoom: function(room){
-        if(room.controller 
-            && ((room.controller.owner && !settings.allies.includes(room.controller.owner.username))
-                || (room.controller.reservation && !settings.allies.includes(room.controller.reservation.username))))
+        const roomDataCache = u.getsetd(Cache, "roomData", {})
+        const roomData = u.getsetd(roomDataCache, room.name, {})
+        if((room.controller 
+            && ((room.controller.owner && !Memory.settings.allies.includes(room.controller.owner.username))
+                || (room.controller.reservation && !Memory.settings.allies.includes(room.controller.reservation.username))))
+            || (roomData.skL && roomData.rcl))
             return true
         return false
     },
 
     findHostileCreeps: function(room: Room){
-        return _.filter((room.find(FIND_HOSTILE_CREEPS) as Array<Creep|PowerCreep>).concat(room.find(FIND_HOSTILE_POWER_CREEPS)), c => !settings.allies.includes(c.owner.username))
+        return _.filter((room.find(FIND_HOSTILE_CREEPS) as Array<Creep|PowerCreep>).concat(room.find(FIND_HOSTILE_POWER_CREEPS)), c => !Memory.settings.allies.includes(c.owner.username))
     },
 
     findFriendlyCreeps: function(room: Room){
-        return _.filter((room.find(FIND_CREEPS) as Array<Creep|PowerCreep>).concat(room.find(FIND_POWER_CREEPS)), c => settings.allies.includes(c.owner.username))
+        return _.filter((room.find(FIND_CREEPS) as Array<Creep|PowerCreep>).concat(room.find(FIND_POWER_CREEPS)), c => Memory.settings.allies.includes(c.owner.username))
     },
 
     findHostileStructures: function(room: Room){
         if(u.isEnemyRoom(room)){
             return _.filter(room.find(FIND_STRUCTURES), s => s.hits)
+        } else if (u.isSKRoom(room.name)) {
+            return _.filter(room.find(FIND_HOSTILE_STRUCTURES), s => s.hits)
         }
         return []
     },

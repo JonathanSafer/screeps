@@ -1,10 +1,7 @@
 import motion = require("../lib/motion")
-import sq = require("../lib/spawnQueue")
-import rR = require("./runner")
 import u = require("../lib/utils")
 import cU = require("../lib/creepUtils")
 import rBr = require("./breaker")
-import settings = require("../config/settings")
 import { cN, BodyType } from "../lib/creepNames"
 
 const rPM = {
@@ -110,22 +107,25 @@ const rPM = {
             let damage = creep.getActiveBodyparts(ATTACK) * ATTACK_POWER
             if(creep.memory.boosted){
                 damage = damage * BOOSTS[ATTACK][RESOURCE_CATALYZED_UTRIUM_ACID][ATTACK]
+            } else if (PServ) {
+                damage = damage * 2
             }
             const runnersNeeded = Math.ceil(bank.power/1600)
             const route = motion.getRoute(Game.spawns[creep.memory.city].pos.roomName, bank.pos.roomName, true)
-            if (route == -2) throw Error(`PowerMiner ${creep.name} unable to find route`)
+            if (route == -2) {
+                Log.error(`PowerMiner ${creep.name} at ${creep.pos} unable to find route`)
+                return
+            }
             const distance  = route.length * 50
             const summonTime = distance + (Math.ceil(runnersNeeded/CONTROLLER_STRUCTURES[STRUCTURE_SPAWN][8]) * MAX_CREEP_SIZE * CREEP_SPAWN_TIME)
             creep.memory.bankInfo.summonHits = summonTime * damage
             creep.memory.bankInfo.runnersNeeded = runnersNeeded
         }
 
-        if(Game.time % 5 == 1 && bank.hits < creep.memory.bankInfo.summonHits && !creep.memory.bankInfo.runnersSummoned){
-            creep.memory.bankInfo.runnersSummoned = true
-            sq.initialize(Game.spawns[creep.memory.city])
-            for(let i = 0; i < creep.memory.bankInfo.runnersNeeded; i++){
-                sq.schedule(Game.spawns[creep.memory.city], rR.name, false, creep.memory.flag)
-            }
+        if(Game.time % 15 == 1 && bank.hits < creep.memory.bankInfo.summonHits){
+            const localCreeps = u.splitCreepsByCity()[creep.memory.city]
+            const localSpawn = Game.spawns[creep.memory.city]
+            cU.scheduleIfNeeded(cN.RUNNER_NAME, creep.memory.bankInfo.runnersNeeded, false, localSpawn, localCreeps, creep.memory.flag)
         }
     },
 
@@ -152,7 +152,7 @@ const rPM = {
         if(!creep.memory.aware && Game.time % 5 != 0){
             return null
         }
-        const hostiles = _.filter(creep.room.find(FIND_HOSTILE_CREEPS), c => settings.allies.includes(creep.owner.username) 
+        const hostiles = _.filter(creep.room.find(FIND_HOSTILE_CREEPS), c => Memory.settings.allies.includes(creep.owner.username) 
             && c.pos.inRangeTo(creep.pos, 9) 
             && (c.getActiveBodyparts(ATTACK) > 0 || c.getActiveBodyparts(RANGED_ATTACK) > 0 || c.pos.isNearTo(creep.pos)))
         if(!hostiles.length){
@@ -170,7 +170,7 @@ const rPM = {
     },
 
     getBoosted: function(creep: Creep, boosts: string[]){
-        const alreadyBoosted = creep.memory.boosted && creep.memory.boosted >= boosts.length
+        const alreadyBoosted = creep.memory.boosted && creep.memory.boosted as number >= boosts.length
         if (!creep.memory.needBoost || alreadyBoosted) {
             return true
         }

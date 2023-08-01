@@ -70,6 +70,7 @@ export function loop() {
                 (f.unclaim && f.unclaimRally) || f.unclaim)
             //em.expand() // grow the empire!
         }
+
         //run cities
         let prevCpu = Game.cpu.getUsed()
         for (let i = 0; i < myCities.length; i += 1) {

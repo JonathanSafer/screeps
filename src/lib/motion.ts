@@ -246,7 +246,7 @@ const m = {
             maxOps: 10000,
             roomCallback: function(roomName){
                 const roomData = u.getsetd(roomDataCache, roomName, {})
-                if(roomName != creep.pos.roomName && roomData.own && !settings.allies.includes(roomData.own) 
+                if(roomName != creep.pos.roomName && roomData.own && !Memory.settings.allies.includes(roomData.own) 
                     && (goals.length || goals.pos.roomName != roomName)
                     && roomData.rcl 
                     && CONTROLLER_STRUCTURES[STRUCTURE_TOWER][roomData.rcl] 
@@ -254,12 +254,12 @@ const m = {
                     || creep.memory.tolerance < CONTROLLER_STRUCTURES[STRUCTURE_TOWER][roomData.rcl] * TOWER_POWER_ATTACK - (TOWER_POWER_ATTACK * TOWER_FALLOFF))){
                     return false
                 }
-                if(roomData.skL && roomData.rcl) return false
+                if(roomData.skL && roomData.rcl && (goals.length || goals.pos.roomName != roomName)) return false
                 if(Game.map.getRoomStatus(roomName).status != "normal"){
                     return false
                 }
                 const costs = new PathFinder.CostMatrix
-                if(roomData.skL && roomData.skL.length){
+                if(roomData.skL && roomData.skL.length && !Memory.remotes[roomName] && (goals.length || goals.pos.roomName != roomName)){
                     const terrain = Game.map.getRoomTerrain(roomName)
                     for(const lairPos of roomData.skL){
                         const lair = u.unpackPos(lairPos, roomName)
@@ -296,7 +296,7 @@ const m = {
                         }
                     } else if (struct.structureType !== STRUCTURE_CONTAINER &&
                              (struct.structureType !== STRUCTURE_RAMPART ||
-                              !(struct.my || (settings.allies.includes(struct.owner.username) && struct.isPublic)))) {
+                              !(struct.my || (Memory.settings.allies.includes(struct.owner.username) && struct.isPublic)))) {
                     // Can't walk through non-walkable buildings
                         costs.set(struct.pos.x, struct.pos.y, 0xff)
                     }
@@ -379,7 +379,7 @@ const m = {
                     return Infinity
                 }
                 const roomData = u.getsetd(roomDataCache, roomName, {})
-                if(roomData.own && !settings.allies.includes(roomData.own) && roomData.rcl && CONTROLLER_STRUCTURES[STRUCTURE_TOWER][roomData.rcl] && avoidEnemies){
+                if(roomData.own && !Memory.settings.allies.includes(roomData.own) && roomData.rcl && CONTROLLER_STRUCTURES[STRUCTURE_TOWER][roomData.rcl] && avoidEnemies){
                     return 5
                 }
                 return settings.motion.backRoadPenalty
@@ -419,6 +419,27 @@ const m = {
         const bottom = top + template.dimensions.y - 1
         const right = left + template.dimensions.x - 1
         return new m.BoundingBox(top, left, bottom, right)
+    },
+
+    retreat: function(creep: Creep, hostiles: Array<Creep | Structure | PowerCreep>) {
+        const dangerous = _.filter(hostiles, h => h instanceof Structure 
+            || h instanceof Creep 
+            && (h.getActiveBodyparts(ATTACK) > 0 || h.getActiveBodyparts(RANGED_ATTACK) > 0))
+        const goals = _.map(dangerous, function(d) {
+            return { pos: d.pos, range: 8 }
+        })
+        const retreatPath = PathFinder.search(creep.pos, goals, {maxOps: 200, flee: true, maxRooms: 1,
+            roomCallback: function(roomName){
+                const room = Game.rooms[roomName]
+                const costs = new PathFinder.CostMatrix
+                room.find(FIND_CREEPS).forEach(function(c) {
+                    costs.set(c.pos.x, c.pos.y, 0xff)
+                })
+
+                return costs
+            }
+        })
+        creep.moveByPath(retreatPath.path)
     }
 }
 

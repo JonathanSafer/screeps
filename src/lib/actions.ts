@@ -75,7 +75,16 @@ const actions = {
     },
 
     harvest: function(creep, target) {
-        return actions.interact(creep, target, () => creep.harvest(target), 1)
+        const res = actions.interact(creep, target, () => creep.harvest(target), 1)
+        if (res == 1) {
+            // Record mining totals in memory for stat tracking
+            const works = creep.getActiveBodyparts(WORK)
+            if (!creep.memory.mined) {
+                creep.memory.mined = 0
+            }
+            creep.memory.mined += works
+        }
+        return res
     },
 
     pick: function(creep, target){

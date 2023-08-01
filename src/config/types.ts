@@ -3,75 +3,58 @@ import { BodyType } from "../screeps"
 
 function getRecipe(type: BodyType, energyAvailable: number, room: Room, boosted = false, flagName?: string){
     const energy = energyAvailable || 0
-    const d: BodyDictionary = {}
     const rcl = room.controller.level
 
-    // used at all rcls
-    d[BodyType.brick] = scalingBody([1,1], [ATTACK, MOVE], energy, 20)
-    d[BodyType.reserver] = scalingBody([1,1], [CLAIM, MOVE], energy, 12)
-    d[BodyType.scout] = [MOVE]
-    d[BodyType.quad] = quadBody(energy, rcl, room, boosted)
-    d[BodyType.runner] = rcl == 1 ? scalingBody([1, 1], [CARRY, MOVE], energy) : scalingBody([2, 1], [CARRY, MOVE], energy)
-    d[BodyType.miner] = minerBody(energy, rcl, room, flagName as Id<Source>)
-    d[BodyType.normal] = upgraderBody(energy, rcl, room)
-    d[BodyType.transporter] = scalingBody([2, 1], [CARRY, MOVE], energy, 30)
-    d[BodyType.builder] = builderBody(energy, rcl)
-    d[BodyType.defender] = defenderBody(energy, rcl, boosted)
-    d[BodyType.unclaimer] = scalingBody([2, 1], [MOVE, CLAIM], energy)
-    d[BodyType.harasser] = harasserBody(energy, boosted, rcl)
-    d[BodyType.repairer] = repairerBody(energy)
-
-    // used at rcl 4+
-    d[BodyType.spawnBuilder] = scalingBody([2, 3, 5], [WORK, CARRY, MOVE], energy)
-    d[BodyType.trooper] = scalingBody([1, 1], [RANGED_ATTACK, MOVE], energy)
-
-    // used at rcl 5+
-    d[BodyType.ferry] = scalingBody([2, 1], [CARRY, MOVE], energy, 30)
-    d[BodyType.breaker] = breakerBody(energy, rcl, boosted)
-    d[BodyType.medic] = medicBody(energy, rcl, boosted)
-
-    // rcl 8 only
-    d[BodyType.powerMiner] = pMinerBody(boosted)
-
-    switch (rcl) {
-    case 4:
-        //lvl 4 recipes
-        break
-    case 5:
-        //lvl 5 recipes
-        d[BodyType.robber] = body([15, 15], [CARRY, MOVE]) 
-        break
-    case 6:
-        // lvl 6 recipes
-        d[BodyType.mineralMiner] = body([12, 6, 9], [WORK, CARRY, MOVE])
-        d[BodyType.robber] = body([20, 20], [CARRY, MOVE])
-        break
-    case 7:
-        // lvl 7 recipes
-        d[BodyType.mineralMiner] = body([22, 10, 16], [WORK, CARRY, MOVE])
-        d[BodyType.robber] = body([25, 25], [CARRY, MOVE])
-        break
-    case 8:
-        // lvl 8 recipes
-        d[BodyType.mineralMiner] = body([22, 10, 16], [WORK, CARRY, MOVE])
-        d[BodyType.robber] = body([25, 25], [CARRY, MOVE])
-        break
-    default:
-        break
+    switch (type) {
+    case BodyType.brick:
+        return scalingBody([1,1], [ATTACK, MOVE], energy, 20)
+    case BodyType.reserver:
+        return reserverBody(energyAvailable)
+    case BodyType.scout:
+        return [MOVE]
+    case BodyType.quad:
+        return quadBody(energy, rcl, room, boosted)
+    case BodyType.runner:
+        return runnerBody(energy, rcl)
+    case BodyType.miner:
+        return minerBody(energy, rcl, room, flagName as Id<Source>)
+    case BodyType.normal:
+        return upgraderBody(energy, rcl, room)
+    case BodyType.transporter:
+        return scalingBody([2, 1], [CARRY, MOVE], energy, 30)
+    case BodyType.builder:
+        return builderBody(energy, rcl)
+    case BodyType.defender:
+        return defenderBody(energy, rcl, boosted)
+    case BodyType.claimer:
+        return body([5, 1], [MOVE, CLAIM])
+    case BodyType.unclaimer:
+        return scalingBody([2, 1], [MOVE, CLAIM], energy)
+    case BodyType.harasser:
+        return harasserBody(energy, boosted, rcl)
+    case BodyType.repairer:
+        return repairerBody(energy)
+    case BodyType.robber:
+        return scalingBody([1, 1], [CARRY, MOVE], energy)
+    case BodyType.spawnBuilder:
+        return scalingBody([2, 3, 5], [WORK, CARRY, MOVE], energy)
+    case BodyType.ferry:
+        return scalingBody([2, 1], [CARRY, MOVE], energy, 30)
+    case BodyType.breaker:
+        return breakerBody(energy, rcl, boosted)
+    case BodyType.medic:
+        return medicBody(energy, rcl, boosted)
+    case BodyType.sKguard:
+        return body([1, 23, 16, 1, 5, 1, 2, 1], [ATTACK, MOVE, ATTACK, RANGED_ATTACK, HEAL, RANGED_ATTACK, MOVE, HEAL])
+    case BodyType.powerMiner:
+        return pMinerBody(boosted)
+    case BodyType.mineralMiner:
+        return mineralMinerBody(rcl)
+    case BodyType.depositMiner:
+        return dMinerCalc(room, boosted, flagName)
     }
-
-    d[BodyType.basic] = body([1,1,1],[WORK, CARRY, MOVE])
-    d[BodyType.lightMiner] = body([2, 2], [MOVE, WORK])
-    d[BodyType.erunner] = body([2, 1], [CARRY, MOVE])
-    d[BodyType.claimer] = body([5, 1], [MOVE, CLAIM])
-    if (type === BodyType.depositMiner){
-        const dMinerCounts = dMinerCalc(room, boosted, flagName)
-        d[BodyType.depositMiner] = body(dMinerCounts, [WORK, CARRY, MOVE])
-    }
-    if (d[type] == null) {
-        return [WORK, CARRY, MOVE]
-    }
-    return d[type]//recipe
+    Log.error(`No recipe found for ${type} in ${room.name} with ${energy} energy`)
+    return [MOVE]
 }
 function body(counts: number[], order: BodyPartConstant[]) { // order is list of types from move, work, attack, store, heal, ranged, tough, claim
     // assert counts.length == order.length
@@ -110,6 +93,14 @@ function dMinerCalc(room: Room, boosted: boolean, flagName: string){
         delete Memory.flags[flagName]
     }
     return result
+}
+
+function mineralMinerBody(rcl: number) {
+    return rcl > 6 ? body([20, 10, 15], [WORK, CARRY, MOVE]) : body([12, 6, 9], [WORK, CARRY, MOVE])
+}
+
+function runnerBody(energy: number, rcl: number){
+    return rcl == 1 ? scalingBody([1, 1], [CARRY, MOVE], energy) : scalingBody([2, 1], [CARRY, MOVE], energy)
 }
 
 function depositMinerBody(workTime, harvested, boosted, baseBody) {
@@ -237,6 +228,10 @@ function builderBody(energyAvailable, rcl) {
     if (rcl >= 4 && energyAvailable > cost(body(ratio4, types))) ratio = ratio4
     if (rcl >= 7 && energyAvailable > cost(body(ratio7, types))) ratio = ratio7
     return body(ratio, types)
+}
+
+function reserverBody(energyAvailable) {
+    return scalingBody([1,1], [MOVE, CLAIM], energyAvailable, 12)
 }
 
 function quadBody(energyAvailable, rcl, room, boosted){

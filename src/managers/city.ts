@@ -4,7 +4,6 @@ import rSB = require("../roles/spawnBuilder")
 import rC = require("../roles/claimer")
 import rUC = require("../roles/unclaimer")
 import rF = require("../roles/ferry")
-import rMM = require("../roles/mineralMiner")
 import rU = require("../roles/upgrader")
 import rB = require("../roles/builder")
 import rR = require("../roles/runner")
@@ -28,6 +27,7 @@ import e = require("../operations/error")
 import rQr = require("../roles/qrCode")
 import rp = require("./roomplan")
 import rRe = require("../roles/repairer")
+import motion = require("../lib/motion")
 import { cN, BodyType } from "../lib/creepNames"
 
 
@@ -168,7 +168,7 @@ function updateCountsCity(city, creeps, rooms, claimRoom, unclaimRoom) {
             runNuker(city)
             checkLabs(city)
             updateColonizers(city, memory, claimRoom, unclaimRoom)
-            updateMineralMiner(rcl, structures, spawn, memory)
+            updateMineralMiner(rcl, structures, spawn, creeps)
             updatePowerSpawn(city, memory)
             updateStorageLink(spawn, memory, structures)
         }
@@ -231,15 +231,13 @@ function runTowers(city: string){
             return
         }
         const towers = _.filter(spawn.room.find(FIND_MY_STRUCTURES), (structure) => structure.structureType == STRUCTURE_TOWER) as StructureTower[]
-        const hostileCreep = spawn.room.find(FIND_HOSTILE_CREEPS)
         const injuredCreep = spawn.room.find(FIND_MY_CREEPS, {filter: (injured) => { 
             return (injured) && injured.hits < injured.hitsMax
         }})
         const injuredPower: Array<Creep | PowerCreep> = spawn.room.find(FIND_MY_POWER_CREEPS, {filter: (injured) => { 
             return (injured) && injured.hits < injured.hitsMax
         }})
-        const hostilePower: Array<Creep | PowerCreep> = spawn.room.find(FIND_HOSTILE_POWER_CREEPS)
-        const hostiles = _.filter(hostilePower.concat(hostileCreep), c => !settings.allies.includes(c.owner.username))
+        const hostiles = u.findHostileCreeps(spawn.room)
         const injured = injuredPower.concat(injuredCreep)
         let damaged = null
         let repair = 0
@@ -502,7 +500,7 @@ function requestSupport(spawn, quadsNeeded, rcl){
     const reinforcingSpawn = Game.spawns[reinforceCity]
     const creeps = u.splitCreepsByCity()[reinforceCity]
     cU.scheduleIfNeeded(rT.name, 2, false, reinforcingSpawn, creeps)
-    cU.scheduleIfNeeded(cN.QUAD_NAME, 4 * quadsNeeded, true, reinforcingSpawn, creeps, spawn.room.name)
+    cU.scheduleIfNeeded(cN.QUAD_NAME, 4 * quadsNeeded, true, reinforcingSpawn, creeps, spawn.room.name, 400)
 }
 
 function cityFraction(cityName) {
@@ -533,17 +531,21 @@ function updateMiner(creeps: Creep[], rcl8: boolean, memory: SpawnMemory, spawn:
     }     
 }
 
-function updateMineralMiner(rcl, buildings: Structure[], spawn, memory) {
-    memory[rMM.name] = 0
+function updateMineralMiner(rcl, buildings: Structure[], spawn, creeps) {
     if (rcl > 5){
         const extractor = _.find(buildings, structure => structure.structureType == STRUCTURE_EXTRACTOR)
-        //Log.info(extractor)
         if(extractor) {
-            const cityObject = spawn.room
-            const minerals = cityObject.find(FIND_MINERALS)
-            if(spawn.room.terminal && (spawn.room.terminal.store[minerals[0].mineralType] < 6000 
-                || (Game.cpu.bucket > settings.bucket.mineralMining && spawn.room.storage && spawn.room.storage.store[minerals[0].mineralType] < 50000))){
-                memory[rMM.name] = (minerals[0].mineralAmount < 1) ? 0 : 1
+            const minerals = extractor.pos.lookFor(LOOK_MINERALS)
+            if (!minerals.length) return
+            const mineral = minerals[0]
+            const room = spawn.room as Room
+            if(room.terminal
+                    && mineral.mineralAmount > 0
+                    && (room.terminal.store[mineral.mineralType] < 6000
+                        || (Game.cpu.bucket > settings.bucket.mineralMining 
+                        && room.storage 
+                        && room.storage.store.getUsedCapacity(mineral.mineralType) < settings.mineralAmount))){
+                cU.scheduleIfNeeded(cN.MINERAL_MINER_NAME, 1, false, spawn, creeps, room.name)
             }
         }
     }
@@ -739,8 +741,12 @@ function updateStorageLink(spawn, memory, structures: Structure[]) {
 function updateHighwayCreep(flagName: string, spawn: StructureSpawn, creeps: Creep[], role: string) {
     const flagNames = _.filter(Object.keys(Memory.flags), flag => flag.includes(flagName))
     for(const flag of flagNames){
-        const boosted = role != rH.name || Memory.flags[flag].boosted
-        cU.scheduleIfNeeded(role, 1, boosted, spawn, creeps, flag)
+        const boosted = role != cN.HARASSER_NAME || Memory.flags[flag].boosted && PServ
+        const numNeeded = role == cN.POWER_MINER_NAME && PServ ? 2 : 1
+        // distance is a very rough approximation here, so not bothering to factor in spawn time
+        const route = motion.getRoute(spawn.room.name, Memory.flags[flag].roomName, true)
+        const distance = route == -2 ? 0 : route.length * 50
+        cU.scheduleIfNeeded(role, numNeeded, boosted, spawn, creeps, flag, distance)
     }
 }
 
@@ -824,28 +830,54 @@ function updateRemotes(city: string){
             if(defcon >= 4){
                 Log.info(`Remote ${remotes[i]} removed from ${spawn.room.name} due to high level threat`)
                 rp.removeRemote(remotes[i], spawn.room.name)
+                continue
+            }
+            if(Game.time % 100 == 3 && Game.rooms[remotes[i]]) {
+                // ensure that we can still safely path all sources in the remote
+                // find all sources
+                let droppedRemote = false
+                const sources = Game.rooms[remotes[i]].find(FIND_SOURCES)
+                for (const source of sources) {
+                    const pathLength = u.getRemoteSourceDistance(spawn.pos, source.pos)
+                    if (pathLength == -1) {
+                        Log.info(`Remote ${remotes[i]} removed from ${spawn.room.name} due to inaccessable source at ${source.pos}`)
+                        rp.removeRemote(remotes[i], spawn.room.name)
+                        droppedRemote = true
+                        break
+                    }
+                }
+                if (droppedRemote) {
+                    continue
+                }
             }
             const myCreeps = u.splitCreepsByCity()[city]
+            if (u.isSKRoom(remotes[i])){
+                //if room is under rcl7 spawn a quad
+                if (spawn.room.controller.level < 7){
+                    cU.scheduleIfNeeded(cN.QUAD_NAME, 1, false, spawn, myCreeps, remotes[i], 300)
+                } else {
+                    cU.scheduleIfNeeded(cN.SK_GUARD_NAME, 1, false, spawn, myCreeps, remotes[i], 300)
+                }
+            }
             if(Game.rooms[remotes[i]]){
                 const invaderCore = Game.rooms[remotes[i]].find(FIND_HOSTILE_STRUCTURES).length
-                if(invaderCore){
+                if(invaderCore && !u.isSKRoom(remotes[i])){
                     const bricksNeeded = spawn.room.controller.level < 5 ? 4 : 1
-                    cU.scheduleIfNeeded(cN.BRICK_NAME, bricksNeeded, false, spawn, myCreeps, remotes[i])
+                    cU.scheduleIfNeeded(cN.BRICK_NAME, bricksNeeded, false, spawn, myCreeps, remotes[i], 100)
                 }
                 const reserverCost = 650
                 const controller = Game.rooms[remotes[i]].controller
                 if(spawn.room.energyCapacityAvailable >= reserverCost && controller && !controller.owner && (!controller.reservation || controller.reservation.ticksToEnd < 2000 || controller.reservation.username != settings.username)){
                     const reserversNeeded = spawn.room.energyCapacityAvailable >= reserverCost * 2 ? 1 : 2
-                    cU.scheduleIfNeeded(cN.RESERVER_NAME, reserversNeeded, false, spawn, myCreeps, remotes[i])
+                    cU.scheduleIfNeeded(cN.RESERVER_NAME, reserversNeeded, false, spawn, myCreeps, remotes[i], 100)
                 }
             }
-            const defenders = _.filter(myCreeps, c => !(c.ticksToLive < 100) && c.memory.flag == remotes[i])
             if(defcon == 2){
-                cU.scheduleIfNeeded(cN.HARASSER_NAME, 1, false, spawn, defenders, remotes[i])
+                cU.scheduleIfNeeded(cN.HARASSER_NAME, 1, false, spawn, myCreeps, remotes[i], 300)
             }
             if(defcon == 3){
-                cU.scheduleIfNeeded(cN.HARASSER_NAME, 2, false, spawn, defenders, remotes[i])
-                cU.scheduleIfNeeded(cN.QUAD_NAME, 4, false, spawn, defenders, remotes[i])
+                cU.scheduleIfNeeded(cN.HARASSER_NAME, 2, false, spawn, myCreeps, remotes[i], 300)
+                cU.scheduleIfNeeded(cN.QUAD_NAME, 4, false, spawn, myCreeps, remotes[i], 300)
             }
         }
     }
@@ -864,13 +896,29 @@ function updateDEFCON(remote, harasserSize){
         const remoteRoom = Game.rooms[remote]
         if(remoteRoom.controller && (remoteRoom.controller.owner
             || (remoteRoom.controller.reservation 
-                && settings.allies.includes(remoteRoom.controller.reservation.username)
+                && Memory.settings.allies.includes(remoteRoom.controller.reservation.username)
                 && remoteRoom.controller.reservation.username != settings.username))){
             Cache.roomData[remote].d = 4
             return Cache.roomData[remote].d
         }
-        const hostiles = _.filter(u.findHostileCreeps(Game.rooms[remote]), h => h instanceof Creep &&
-            (h.getActiveBodyparts(WORK) || h.getActiveBodyparts(RANGED_ATTACK) || h.getActiveBodyparts(ATTACK) || h.getActiveBodyparts(HEAL)))
+        // if room is an SK room, check for invader core
+        if(u.isSKRoom(remote)){
+            const invaderCore = _.find(remoteRoom.find(FIND_HOSTILE_STRUCTURES), s => s.structureType == STRUCTURE_INVADER_CORE) as StructureInvaderCore
+            if(invaderCore && !invaderCore.ticksToDeploy){
+                Cache.roomData[remote].d = 4
+                // set scout time to now
+                Cache.roomData[remote].sct = Game.time
+                // set safeTime to core expiry
+                Cache.roomData[remote].sME = Game.time + invaderCore.effects[0].ticksRemaining
+                return Cache.roomData[remote].d
+            }
+        }
+        const hostiles = _.filter(u.findHostileCreeps(Game.rooms[remote]), h => h instanceof Creep 
+            && h.owner.username != "Source Keeper" 
+            && (h.getActiveBodyparts(WORK) 
+                || h.getActiveBodyparts(RANGED_ATTACK) 
+                || h.getActiveBodyparts(ATTACK) 
+                || h.getActiveBodyparts(HEAL)))
         let hostileParts = 0
         for(let i = 0; i < hostiles.length; i++){
             const hostile = hostiles[i] as Creep

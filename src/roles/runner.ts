@@ -310,7 +310,7 @@ const rR = {
             return
         }
         if (Game.time % 50 == 0)
-            creep.suicide()
+            creep.memory.flag = null
     }
     
 }

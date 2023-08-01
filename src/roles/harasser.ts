@@ -1,4 +1,3 @@
-import settings = require("../config/settings")
 import motion = require("../lib/motion")
 import sq = require("../lib/spawnQueue")
 import u = require("../lib/utils")
@@ -25,7 +24,7 @@ const rH = {
         
         rH.init(creep)
 
-        const hostiles = _.filter(creep.room.find(FIND_HOSTILE_CREEPS), c => !settings.allies.includes(c.owner.username))
+        const hostiles = u.findHostileCreeps(creep.room)
         
         rH.maybeHeal(creep, hostiles)
         
@@ -106,7 +105,7 @@ const rH = {
         }
     },
 
-    shoot: function(creep: Creep, hostiles: Creep[]){
+    shoot: function(creep: Creep, hostiles: Array<Creep | PowerCreep>){
         //RMA if anybody is touching
         for(let i = 0; i < hostiles.length; i++){
             if(hostiles[i].pos.isNearTo(creep.pos)){
@@ -140,8 +139,9 @@ const rH = {
         return false
     },
 
-    maybeRetreat: function(creep: Creep, hostiles: Creep[]) {
-        const attacker = _.find(hostiles, h => h.getActiveBodyparts(ATTACK) > 0
+    maybeRetreat: function(creep: Creep, hostiles: Array<Creep | PowerCreep>) {
+        const attacker = _.find(hostiles, h => h instanceof Creep
+                && h.getActiveBodyparts(ATTACK) > 0
                 && (h.fatigue === 0 || h.pos.isNearTo(creep.pos))
                 && h.pos.inRangeTo(creep.pos, 2))
         if(attacker || creep.hits < creep.hitsMax){
@@ -150,29 +150,15 @@ const rH = {
                 //get less angry
                 creep.memory.anger = creep.memory.anger/2
             }
-            const dangerous = _.filter(hostiles, h => h.getActiveBodyparts(ATTACK) > 0 || h.getActiveBodyparts(RANGED_ATTACK) > 0)
-            const goals = _.map(dangerous, function(d) {
-                return { pos: d.pos, range: 8 }
-            })
-            const retreatPath = PathFinder.search(creep.pos, goals, {maxOps: 200, flee: true, maxRooms: 1,
-                roomCallback: function(roomName){
-                    const room = Game.rooms[roomName]
-                    const costs = new PathFinder.CostMatrix
-                    room.find(FIND_CREEPS).forEach(function(c) {
-                        costs.set(c.pos.x, c.pos.y, 0xff)
-                    })
-
-                    return costs
-                }
-            })
-            creep.moveByPath(retreatPath.path)
+            motion.retreat(creep, hostiles)
             return true
         }
         return false
     },
 
-    aMove: function(creep: Creep, hostiles: Creep[]){
-        const attacker = _.find(hostiles, h => h.getActiveBodyparts(ATTACK) > 0
+    aMove: function(creep: Creep, hostiles: Array<Creep | PowerCreep>){
+        const attacker = _.find(hostiles, h => h instanceof Creep
+                && h.getActiveBodyparts(ATTACK) > 0
                 && (h.fatigue === 0 || h.pos.isNearTo(creep.pos))
                 && h.pos.inRangeTo(creep.pos, 3))
         if(attacker){
@@ -228,8 +214,10 @@ const rH = {
     },
 
     // heal if needed
-    maybeHeal: function(creep: Creep, hostiles: Creep[]){
-        const damager = _.find(hostiles, c => c.getActiveBodyparts(ATTACK) > 0 || c.getActiveBodyparts(RANGED_ATTACK) > 0)
+    maybeHeal: function(creep: Creep, hostiles: Array<Creep | PowerCreep>){
+        const damager = _.find(hostiles, c => c instanceof Creep 
+            && (c.getActiveBodyparts(ATTACK) > 0 
+            || c.getActiveBodyparts(RANGED_ATTACK) > 0))
         if(creep.hits < creep.hitsMax || damager){
             creep.heal(creep)
         }
@@ -241,7 +229,7 @@ const rH = {
         if (!dFlag && Game.map.getRoomStatus(flagName))
             dFlag = new RoomPosition(25, 25, flagName)
         if (dFlag && creep.pos.roomName != dFlag.roomName){
-            motion.newMove(creep, new RoomPosition(dFlag.x, dFlag.y, dFlag.roomName), 5)
+            motion.newMove(creep, new RoomPosition(dFlag.x, dFlag.y, dFlag.roomName), 20)
             return true
         }
         return false

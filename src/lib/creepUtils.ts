@@ -138,9 +138,17 @@ const cU = {
             .value()
     },
     
-    scheduleIfNeeded: function(role: string, count: number, boosted: boolean, spawn: StructureSpawn, currentCreeps: Creep[], flag: string = null) {
+    /// schedules creeps to spawn up until provided quota
+    /// param role: role of creep(s) to spawn
+    /// param count: number of creeps needed (of this role)
+    /// param boosted: whether or not to spawn boosted creeps
+    /// param spawn: spawn to spawn from
+    /// param currentCreeps: creeps currently in the field (not including spawn queue)
+    /// param flag: operation flag used to further filter creeps
+    /// param tickOffset: number of ticks of overlap to provide between creeps (i.e if offset is 50, creeps will be scheduled to spawn 50 ticks before the current ones die)
+    scheduleIfNeeded: function(role: string, count: number, boosted: boolean, spawn: StructureSpawn, currentCreeps: Creep[], flag: string = null, tickOffset = 0) {
         const creepsInField = cU.getCreepsByRole(currentCreeps, role)
-        const creepsOnOperation = _.filter(creepsInField, creep => creep.memory.flag == flag).length
+        const creepsOnOperation = _.filter(creepsInField, creep => creep.memory.flag == flag && !(creep.ticksToLive < tickOffset)).length
         const queued = sq.countByInfo(spawn, role, flag)
         let creepsNeeded = count - queued - creepsOnOperation
         if(role == cN.QUAD_NAME){
