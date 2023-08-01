@@ -293,10 +293,6 @@ const p = {
 
     scoreRemoteRoom: function(roomName, spawn){
         const roomInfo = Cache.roomData[roomName]
-        // season5 only
-        if(roomName == "E25S15") {
-            return -1
-        }
         if(roomInfo.d >= 4){
             // if room doesn't have an invader core reduce defcon level
             if (!roomInfo.sME || roomInfo.sME < Game.time) {
