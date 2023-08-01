@@ -111,6 +111,7 @@ declare global {
         settings?: {
             allies: string[]
         }
+        reactorEndTime?: number
      }
     interface CreepMemory {
         notify?: boolean

@@ -231,15 +231,13 @@ function runTowers(city: string){
             return
         }
         const towers = _.filter(spawn.room.find(FIND_MY_STRUCTURES), (structure) => structure.structureType == STRUCTURE_TOWER) as StructureTower[]
-        const hostileCreep = spawn.room.find(FIND_HOSTILE_CREEPS)
         const injuredCreep = spawn.room.find(FIND_MY_CREEPS, {filter: (injured) => { 
             return (injured) && injured.hits < injured.hitsMax
         }})
         const injuredPower: Array<Creep | PowerCreep> = spawn.room.find(FIND_MY_POWER_CREEPS, {filter: (injured) => { 
             return (injured) && injured.hits < injured.hitsMax
         }})
-        const hostilePower: Array<Creep | PowerCreep> = spawn.room.find(FIND_HOSTILE_POWER_CREEPS)
-        const hostiles = _.filter(hostilePower.concat(hostileCreep), c => !Memory.settings.allies.includes(c.owner.username))
+        const hostiles = u.findHostileCreeps(spawn.room)
         const injured = injuredPower.concat(injuredCreep)
         let damaged = null
         let repair = 0

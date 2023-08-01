@@ -27,6 +27,8 @@ function getRecipe(type: BodyType, energyAvailable: number, room: Room, boosted 
         return builderBody(energy, rcl)
     case BodyType.defender:
         return defenderBody(energy, rcl, boosted)
+    case BodyType.claimer:
+        return body([5, 1], [MOVE, CLAIM])
     case BodyType.unclaimer:
         return scalingBody([2, 1], [MOVE, CLAIM], energy)
     case BodyType.harasser:
