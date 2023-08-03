@@ -51,7 +51,7 @@ function getRecipe(type: BodyType, energyAvailable: number, room: Room, boosted 
     case BodyType.mineralMiner:
         return mineralMinerBody(rcl)
     case BodyType.depositMiner:
-        return dMinerCalc(room, boosted, flagName)
+        return body(dMinerCalc(room, boosted, flagName), [WORK, CARRY, MOVE])
     }
     Log.error(`No recipe found for ${type} in ${room.name} with ${energy} energy`)
     return [MOVE]
