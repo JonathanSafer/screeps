@@ -52,7 +52,7 @@ const rMM = {
         const hasCapacity = creep.store.getFreeCapacity()
         const source = creep.memory.source 
             && Game.getObjectById(creep.memory.source) as Mineral
-        const sourceDepleted = source && source.mineralAmount > 0
+        const sourceDepleted = !source || source.mineralAmount == 0
         return hasCapacity && !sourceDepleted
     },
 
