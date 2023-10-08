@@ -293,7 +293,7 @@ const p = {
 
     scoreRemoteRoom: function(roomName, spawn){
         const roomInfo = Cache.roomData[roomName]
-        if(roomInfo.d >= 4){
+        if(roomInfo && roomInfo.d >= 4){
             // if room doesn't have an invader core reduce defcon level
             if (!roomInfo.sME || roomInfo.sME < Game.time) {
                 if (Math.random() < 0.5)
