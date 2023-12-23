@@ -753,7 +753,8 @@ function updateHighwayCreep(flagName: string, spawn: StructureSpawn, creeps: Cre
 function runNuker(city){
     const flagName = city + "nuke"
     const flag = Memory.flags[flagName]
-    if (flag){
+    if (flag && !Tmp.nuked){
+        Tmp.nuked = true //ensure that only one nuke is launched per tick (and per iteration)
         const nuker = _.find(Game.spawns[city].room.find(FIND_MY_STRUCTURES), structure => structure.structureType === STRUCTURE_NUKER) as StructureNuker
         nuker.launchNuke(new RoomPosition(flag.x, flag.y, flag.roomName))
         delete Memory.flags[flagName]

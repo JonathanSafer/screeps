@@ -218,14 +218,17 @@ declare global {
             comSend?: (string | number)[][]
             needPower?: boolean
             mineralRequest?: MineralCompoundConstant | MineralConstant
-            taskQueue?: Array<FerryTask>
+            taskQueue?: Map<FerryTaskId, FerryTask>
         }
     }
     interface FerryTask {
-        sourceId: Id<Structure>
-        targetId: Id<Structure>
         resourceType: ResourceConstant
         quantity: number
+        inProgress: boolean
+    }
+    interface FerryTaskId {
+        sourceId: Id<Structure>
+        targetId: Id<Structure>
     }
     interface Reactor {
         fill?: number
@@ -274,6 +277,7 @@ declare global {
         roomsByCity?: _.Dictionary<Room[]>
         creepsByCity?: _.Dictionary<Creep[]>
         myCities?: Room[]
+        nuked?: boolean
     }
     interface TmpDict {
         [name: string]: {
