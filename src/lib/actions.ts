@@ -24,7 +24,9 @@ const actions = {
             creep.memory.path = null
             return result
         default:
-            Log.info(`${creep.memory.role} at ${creep.pos} operating on ${location}: ${result.toString()}`)
+            if (creep.hits == creep.hitsMax) {
+                Log.info(`${creep.memory.role} at ${creep.pos} operating on ${location}: ${result.toString()}`)
+            }
             return result
         }
     },
@@ -128,7 +130,6 @@ const actions = {
         const buildings = _.flatten(_.map(myRooms[city], room => room.find(FIND_STRUCTURES)))
         const needRepair = _.filter(buildings, structure => (structure.hits < (0.2*structure.hitsMax)) && (structure.structureType != STRUCTURE_WALL) && (structure.structureType != STRUCTURE_RAMPART))
         const walls = _.filter(buildings, structure => (structure.hits < 1000000) && (structure.hits < structure.hitsMax) && (structure.structureType != STRUCTURE_ROAD))
-        //Log.info(buildings);
         if(needRepair.length){
             creep.memory.repair = needRepair[0].id
             return actions.repair(creep, needRepair[0])
@@ -162,7 +163,6 @@ const actions = {
         const tombstones = creep.room.find(FIND_TOMBSTONES)
         const closeStones = _.filter(tombstones, stone => stone.pos.isNearTo(creep.pos))
         if (closeStones.length) {
-            //Log.info(closeStones);
             // we can only get one thing per turn, success is assumed since we're close
             const result = creep.withdraw(closeStones[0], _.keys(closeStones[0])[0] as ResourceConstant)
             switch (result) {

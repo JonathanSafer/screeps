@@ -73,12 +73,14 @@ const m = {
 
             }
         } else {
-            Log.info(`Pathing failure at ${creep.pos}. Target: ${endPos}. Range: ${range}`)
             if(ccache.pathFail){
                 ccache.pathFail++
                 return
             }
             ccache.pathFail = 1
+            if (ccache.pathFail > 2) {
+                Log.warning(`Pathing failure at ${creep.pos}. Target: ${endPos}. Range: ${range}`)
+            }
         }
     },
 
