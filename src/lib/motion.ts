@@ -47,8 +47,8 @@ const m = {
             }
         }
         //recalc needed
-        if(ccache.pathFail > 2){
-            if(Game.time % 50 != 0){
+        if(ccache.pathFail >= settings.motion.pathFailThreshold){
+            if(Game.time % settings.motion.pathFailRetry != 0){
                 return
             }
             ccache.pathFail = 0 

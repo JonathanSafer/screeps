@@ -67,7 +67,9 @@ const settings = {
         miners: 1, // TODO: this shouldn't be in use anymore
     },
     motion: {
-        backRoadPenalty: 1.5 // higher number prioritizes highways for long distance path planning
+        backRoadPenalty: 1.5, // higher number prioritizes highways for long distance path planning
+        pathFailThreshold: 3, // number of pathfinding failures before we stop trying to find a path
+        pathFailRetry: 53 // number of ticks to wait before trying to find a path again after hitting the threshold
     },
     scouting: {
         assessTime: 500,
