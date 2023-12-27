@@ -18,8 +18,9 @@ const rBk = {
         if(Game.rooms[targetRoom]){
             const hostileStructures = Game.rooms[targetRoom].find(FIND_HOSTILE_STRUCTURES)
             if(hostileStructures.length){
-                a.attack(creep, hostileStructures[0])
-                creep.memory.target = hostileStructures[0].id
+                const newTarget = creep.pos.findClosestByPath(hostileStructures)
+                a.attack(creep, newTarget)
+                creep.memory.target = newTarget.id
             }
         } else {
             motion.newMove(creep, new RoomPosition(25, 25, targetRoom), 24)
