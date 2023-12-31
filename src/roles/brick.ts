@@ -15,7 +15,7 @@ const rBk = {
             } 
         }
         const targetRoom = creep.memory.flag
-        if(Game.rooms[targetRoom]){
+        if(Game.rooms[targetRoom] && creep.room.name == targetRoom){
             const hostileStructures = Game.rooms[targetRoom].find(FIND_HOSTILE_STRUCTURES)
             if(hostileStructures.length){
                 const newTarget = creep.pos.findClosestByPath(hostileStructures)
