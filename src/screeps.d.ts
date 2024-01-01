@@ -110,6 +110,7 @@ declare global {
         benchmark?: {}
         settings?: {
             allies: string[]
+            allySegmentID?: number
         }
      }
     interface CreepMemory {

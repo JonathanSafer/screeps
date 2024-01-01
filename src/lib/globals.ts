@@ -1,7 +1,7 @@
 import military = require("../managers/military")
 import sq = require("./spawnQueue")
 import rp = require("../managers/roomplan")
-import trading = require("../managers/swcTrading")
+import { simpleAllies } from "../managers/swcTrading"
 
 global.Tmp = {}
 global.T = function() { return `Time: ${Game.time}` }
@@ -15,6 +15,11 @@ Log.console = function(text) { console.log(`<p style="color:green">[CONSOLE] ${G
 global.AddAlly = function(username: string) {
     Memory.settings.allies.push(username)
     Log.console(`Added ${username} to allies. Current allies are ${Memory.settings.allies}`)
+}
+
+global.SetAllySegment = function(segmentID: number) {
+    Memory.settings.allySegmentID = segmentID
+    Log.console(`Set ally segment to ${segmentID}`)
 }
 
 global.BuyUnlock = function(price, amount) {
@@ -74,9 +79,16 @@ global.RoomWeights = function(roomName) {
 global.PServ = (!Game.shard.name.includes("shard") || Game.shard.name == "shardSeason")
 
 global.RequestResource = function(roomName, resourceType, maxAmount, priority) {
-    trading.startOfTick()
-    trading.requestResource(roomName, resourceType, maxAmount, priority)
-    trading.endOfTick()
+    simpleAllies.initRun()
+    const request = {
+        roomName: roomName,
+        resourceType: resourceType,
+        amount: maxAmount,
+        priority: priority,
+        terminal: !!Game.rooms[roomName].terminal
+    }
+    simpleAllies.requestResource(request)
+    simpleAllies.endRun()
 }
 global.PCAssign = function(name, city, shard){
     const creep = Game.powerCreeps[name]

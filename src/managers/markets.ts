@@ -1,11 +1,11 @@
 import u = require("../lib/utils")
 import settings = require("../config/settings")
 import cM = require("./commodityManager")
-import simpleAllies = require("./swcTrading")
+import { simpleAllies, FunnelGoal } from "./swcTrading"
 
 const markets = {
     manageMarket: function(myCities: Room[]){//this function is now in charge of all terminal acitivity
-        if(PServ) simpleAllies.checkAllies()
+        if(PServ) simpleAllies.readAllySegment()
         if(Game.time % 10 != 0){
             return
         }
@@ -67,8 +67,15 @@ const markets = {
                     }
                 }
             }
-            if(PServ){
-                simpleAllies.requestResource(receiver, RESOURCE_ENERGY, 100000, 0.1)
+            if(PServ && Game.rooms[receiver].storage.store[RESOURCE_ENERGY] < 30000){
+                const resourceRequest = {
+                    roomName: receiver,
+                    resourceType: RESOURCE_ENERGY,
+                    amount: 10000,
+                    priority: 1,
+                    terminal: true
+                }
+                simpleAllies.requestResource(resourceRequest)
             }
         }
         if(!_.find(myCities, city => city.controller.level == 8)){
@@ -84,7 +91,13 @@ const markets = {
                 }
             }
             if(target && PServ && Game.rooms[target].storage && Game.rooms[target].storage.store[RESOURCE_ENERGY] < 600000){
-                simpleAllies.requestResource(target, RESOURCE_ENERGY, 100000, 0.2)
+                const goalType = Game.rooms[target].controller.level == 6 ? FunnelGoal.RCL7 : FunnelGoal.RCL8
+                const funnelRequest = {
+                    maxAmount: Game.rooms[target].controller.progressTotal - Game.rooms[target].controller.progress,
+                    goalType: goalType,
+                    roomName: target
+                }
+                simpleAllies.requestFunnel(funnelRequest)
             }
         }
     },
@@ -284,7 +297,7 @@ const markets = {
         //markets.sellPixels(buyOrders)
 
         if(PServ){
-            simpleAllies.startOfTick()
+            simpleAllies.initRun()
         }
         markets.distributeEnergy(termCities)
         
@@ -335,7 +348,7 @@ const markets = {
             termUsed = markets.sellProducts(city, termUsed, buyOrders, highTier)
 
             if(PServ){
-                simpleAllies.endOfTick()
+                simpleAllies.endRun()
             }
             //termUsed = markets.buyPower(city, termUsed, sellOrders)
         }
@@ -431,7 +444,14 @@ const markets = {
             const mineralAmount = terminal.store[minerals[i]]
             if(mineralAmount < 8000){
                 const amountNeeded = 8000 - mineralAmount
-                simpleAllies.requestResource(city.name, minerals[i], amountNeeded, (amountNeeded * amountNeeded)/64000000)
+                const resourceRequest = {
+                    roomName: city.name,
+                    resourceType: minerals[i],
+                    amount: amountNeeded,
+                    priority: (amountNeeded * amountNeeded)/64000000,
+                    terminal: true
+                }
+                simpleAllies.requestResource(resourceRequest)
             }
         }
     },
@@ -445,10 +465,14 @@ const markets = {
                 const goodOrders = markets.sortOrder(buyOrders[resource]).reverse()
                 if(PServ){
                     //distribute to allies in need
-                    for (const ally in Cache.requests){
-                        for (const request of Cache.requests[ally]){
-                            if (request.resourceType == resource){
-                                city.terminal.send(resource, sellAmount, request.roomName)
+                    for (const ally in simpleAllies.allyRequestMap){
+                        const requests = simpleAllies.allyRequestMap[ally]
+                        if (requests.resource && requests.resource.length) {
+                            for (const request of requests.resource){
+                                if (request.resourceType == resource){
+                                    city.terminal.send(resource, sellAmount, request.roomName)
+                                    Log.info(`Sending ${resource} to ${request.roomName} for ${ally}`)
+                                }
                             }
                         }
                     }
