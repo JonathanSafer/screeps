@@ -51,15 +51,7 @@ const rSB = {
                     return
                 }
                 creep.memory.city = creep.memory.flagRoom + "0"
-                const room = Game.rooms[creep.memory.flagRoom]
-                const minerCount = _.filter(room.find(FIND_MY_CREEPS), c => c.memory.role == "remoteMiner").length
-                if(minerCount < 1){
-                    creep.memory.role = "remoteMiner"
-                    creep.memory.source = Object.keys(Game.spawns[creep.memory.city].memory.sources)[0] as Id<Source>
-                    creep.memory.flag = Object.keys(Game.spawns[creep.memory.city].memory.sources)[0] as Id<Source>
-                    return
-                }
-                creep.memory.role = rU.name
+                creep.memory.role = cN.RUNNER_NAME
             }
             return
         }

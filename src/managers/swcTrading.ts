@@ -184,14 +184,14 @@ class SimpleAllies {
      * Try to get segment data from our current ally. If successful, assign to the instane
      */
     readAllySegment() {
-        const allies = _.remove(Memory.settings.allies, name => name == settings.username)
+        const allies = _.without(Memory.settings.allies, settings.username)
         if (!allies.length) {
-            Log.Error("Failed to find an ally for simpleAllies, you probably have none :(")
+            Log.error("Failed to find an ally for simpleAllies, you probably have none :(")
             return
         }
 
         if (!Memory.settings.allySegmentID) {
-            Log.Warning("Failed to find an ally segment ID for simpleAllies, set one using 'SetAllySegment(int segmentID)'")
+            Log.warning("Failed to find an ally segment ID for simpleAllies, set one using 'SetAllySegment(int segmentID)'")
             return
         }
 
@@ -226,7 +226,7 @@ class SimpleAllies {
 
         // Make sure we don't have too many segments open
         if (Object.keys(RawMemory.segments).length >= maxSegmentsOpen) {
-            Log.Error("Too many segments open: simpleAllies")
+            Log.error("Too many segments open: simpleAllies")
             return
         }
 
