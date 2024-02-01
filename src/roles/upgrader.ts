@@ -67,7 +67,8 @@ const rU = {
             for (let y = -1; y < 2; y++) {
                 const newPos = new RoomPosition(pos.x + x, pos.y + y, pos.roomName)
                 if (!roomU.isPositionBlocked(newPos)
-                    && !_.find(otherUpgraders, c => c.pos.isEqualTo(newPos))){
+                    && newPos.inRangeTo(creep.room.controller.pos, 3)
+                    && !_.find(otherUpgraders, c => c.memory.destination && newPos.isEqualTo(c.memory.destination.x, c.memory.destination.y))){
                     return newPos
                 }
             }
