@@ -20,22 +20,6 @@ export const enum CreepActions {
 const boostsInternal = {
     boostRanking: {},
 
-    // given a creep action, return the body part that can be boosted to do that action
-    // TODO: maybe cache this?
-    mapActionToPart: function(creepAction: CreepActions) {
-        const bodyPart = _.findKey(BOOSTS, part =>
-            _.findKey(part, boost =>
-                _.find(Object.keys(boost), action =>
-                    action == creepAction
-                )
-            )
-        )
-        if (!bodyPart) {
-            Log.error(`No body part found for action ${creepAction}`)
-        }
-        return bodyPart
-    },
-
     getBoostRanking: function() {
         if (Object.keys(boostsInternal.boostRanking).length == 0) {
             for (const bodyPartType in BOOSTS) {
@@ -115,5 +99,35 @@ export const boosts = {
             }
         }
         return boostsForRank
+    },
+
+    // given a creep action, return the body part that can be boosted to do that action
+    // TODO: maybe cache this?
+    mapActionToPart: function(creepAction: CreepActions) {
+        const bodyPart = _.findKey(BOOSTS, part =>
+            _.findKey(part, boost =>
+                _.find(Object.keys(boost), action =>
+                    action == creepAction
+                )
+            )
+        )
+        if (!bodyPart) {
+            Log.error(`No body part found for action ${creepAction}`)
+        }
+        return bodyPart
+    },
+
+    // given a creep action, return the body part that can be boosted to do that action
+    // TODO: maybe cache this?
+    mapBoostToPart: function(boost: MineralBoostConstant) {
+        const bodyPart = _.findKey(BOOSTS, part =>
+            _.find(Object.keys(part), b =>
+                b == boost
+            )
+        )
+        if (!bodyPart) {
+            Log.error(`No body part found for boost ${boost}`)
+        }
+        return bodyPart
     }
 }

@@ -184,39 +184,45 @@ const actions = {
         }
     },
     
-    getBoosted: function(creep, creepActions: CreepActions[], rank: number){
+    getBoosted: function(creep: Creep, creepActions: CreepActions[], rank: number){
         if(creep.spawning){
             return
         }
         if(!Game.spawns[creep.memory.city].memory.ferryInfo.labInfo){
-            creep.memory.boosted++
+            creep.memory.boosted = true
             return
         }
 
-        //const boostsNeeded = boosts.getBoostsForRank(creepActions, rank)
-        //{"move": "XZHO2", "tough": "XGHO2", "work": "XZH2O", "heal": "XLHO2", "ranged_attack": "XKHO2"}
-        for(let i = creep.body.length - 1; i >= 0; i--){
-            if(!creep.body[i].boost){
-                const type = creep.body[i].type
-                const boost = boosts[type]
-                const labs = Object.keys(Game.spawns[creep.memory.city].memory.ferryInfo.labInfo.receivers)
-                for(const labId of labs){
-                    const lab: StructureLab = Game.getObjectById(labId)
-                    if(lab.store[boost] >= LAB_BOOST_MINERAL){
-                        if(!lab.store.energy){
-                            return
-                        }
-                        //boost self
-                        if (lab.boostCreep(creep) === ERR_NOT_IN_RANGE) {
-                            motion.newMove(creep, lab.pos, 1)
-                        }
-                        return
-                    }
-                }
+        const boostsNeeded = boosts.getBoostsForRank(creepActions, rank)
+        let nextBoost = null
+        for (const boost of boostsNeeded){
+            const part = boosts.mapBoostToPart(boost)
+            if(_.find(creep.body, p => p.type === part && !p.boost)){
+                nextBoost = boost
+                break
             }
         }
-        creep.memory.boosted = true
-        return
+        if (!nextBoost){
+            creep.memory.boosted = true
+            return
+        }
+
+        //{"move": "XZHO2", "tough": "XGHO2", "work": "XZH2O", "heal": "XLHO2", "ranged_attack": "XKHO2"}
+
+        const labs = Object.keys(Game.spawns[creep.memory.city].memory.ferryInfo.labInfo.receivers)
+        for(const labId of labs){
+            const lab: StructureLab = Game.getObjectById(labId)
+            if(lab.store[nextBoost] >= LAB_BOOST_MINERAL){
+                if(!lab.store.energy){
+                    return
+                }
+                //boost self
+                if (lab.boostCreep(creep) === ERR_NOT_IN_RANGE) {
+                    motion.newMove(creep, lab.pos, 1)
+                }
+                return
+            }
+        }
     },
 
     breakStuff: function(creep: Creep) {
