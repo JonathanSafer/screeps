@@ -1,5 +1,6 @@
 import u = require("./utils")
 import motion = require("./motion")
+import { boosts, CreepActions } from "./boosts"
 
 
 const actions = {
@@ -183,7 +184,7 @@ const actions = {
         }
     },
     
-    getBoosted: function(creep){
+    getBoosted: function(creep, creepActions: CreepActions[], rank: number){
         if(creep.spawning){
             return
         }
@@ -191,7 +192,10 @@ const actions = {
             creep.memory.boosted++
             return
         }
-        const boosts = {"move": "XZHO2", "tough": "XGHO2", "work": "XZH2O", "heal": "XLHO2", "ranged_attack": "XKHO2"}
+        console.log(`boosting ${creep.name} to rank ${rank} with actions ${creepActions}`)
+
+        //const boostsNeeded = boosts.getBoostsForRank(creepActions, rank)
+        //{"move": "XZHO2", "tough": "XGHO2", "work": "XZH2O", "heal": "XLHO2", "ranged_attack": "XKHO2"}
         for(let i = creep.body.length - 1; i >= 0; i--){
             if(!creep.body[i].boost){
                 const type = creep.body[i].type
@@ -241,7 +245,7 @@ const actions = {
         if (checkpoints) {
             const oldCheckpoint = checkpoints[0]
             const o = oldCheckpoint
-            return motion.newMove(creep, new RoomPosition(o.x, o.y, o.roomName), 0)//creep.moveTo(new RoomPosition(o.x, o.y, o.roomName), {reusePath: 0})
+            return motion.newMove(creep, new RoomPosition(o.x, o.y, o.roomName), 0)
         }
     }
 }

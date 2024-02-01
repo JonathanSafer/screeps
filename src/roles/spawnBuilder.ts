@@ -6,12 +6,14 @@ import rBr = require("./breaker")
 import motion = require("../lib/motion")
 import u = require("../lib/utils")
 import { cN, BodyType } from "../lib/creepNames"
+import { CreepActions as cA } from "../lib/boosts"
 
 const rSB = {
     name: cN.SPAWN_BUILDER_NAME,
     type: BodyType.spawnBuilder,
     target: 0,
     boosts: [RESOURCE_CATALYZED_LEMERGIUM_ACID],
+    actions: [cA.BUILD],
     CreepState: {
         BUILD: 1,
         HARVEST: 2,

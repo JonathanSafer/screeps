@@ -6,6 +6,7 @@ import a = require("../lib/actions")
 import T = require("../buildings/tower")
 import motion = require("../lib/motion")
 import { cN, BodyType } from "../lib/creepNames"
+import { CreepActions as cA } from "../lib/boosts"
 
 const CreepState = {
     START: 1,
@@ -23,6 +24,7 @@ const rQ = {
     type: BodyType.quad,
     boosts: [RESOURCE_CATALYZED_GHODIUM_ALKALIDE, RESOURCE_CATALYZED_ZYNTHIUM_ALKALIDE,
         RESOURCE_CATALYZED_LEMERGIUM_ALKALIDE, RESOURCE_CATALYZED_KEANIUM_ALKALIDE],
+    actions: [cA.TOUGH, cA.MOVE, cA.HEAL, cA.RANGED_ATTACK],
 
     /** @param {Creep} creep **/
     run: function(creep: Creep) {
@@ -34,7 +36,7 @@ const rQ = {
             break
         case CS.BOOST:
             if(!creep.memory.boosted){
-                a.getBoosted(creep)
+                a.getBoosted(creep, rQ.actions, creep.memory.boostTier)
             } else {
                 creep.memory.state = CS.FORM
             }
@@ -70,7 +72,7 @@ const rQ = {
     },
     
     checkBoost: function(creep){
-        if(creep.memory.needBoost){
+        if(creep.memory.boostTier > 0){
             creep.memory.state = CS.BOOST
         } else {
             creep.memory.state = CS.FORM

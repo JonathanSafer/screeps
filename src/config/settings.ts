@@ -101,6 +101,7 @@ if(!Game.shard.name.includes("shard") || Game.shard.name == "shardSeason"){
     settings.processPower = false
     settings.rcl8upgrade = false
     settings.powerMiningRange = 4 //manhattan distance that we can powermine (in rooms)
+    settings.militaryBoosts = ["XKHO2", "XGHO2", "XZHO2", "XLHO2", "XZH2O", "G"]
 }
 
 if (!Memory.settings) {

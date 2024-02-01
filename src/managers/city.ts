@@ -29,6 +29,7 @@ import rp = require("./roomplan")
 import rRe = require("../roles/repairer")
 import motion = require("../lib/motion")
 import { cN, BodyType } from "../lib/creepNames"
+import { boosts } from "../lib/boosts"
 
 
 function makeCreeps(role: CreepRole, city: string, unhealthyStore=false, creepWantsBoosts=false, flag = null, budget = null) {
@@ -39,10 +40,9 @@ function makeCreeps(role: CreepRole, city: string, unhealthyStore=false, creepWa
     const energyToSpend = budget || 
         (unhealthyStore ? room.energyAvailable : room.energyCapacityAvailable)
 
-    const weHaveBoosts = u.boostsAvailable(role, room)
-    const boosted = creepWantsBoosts && weHaveBoosts
+    const boostTier = creepWantsBoosts ? boosts.getBoostRank(role.actions, room) : 0
 
-    const recipe = types.getRecipe(role.type, energyToSpend, room, boosted, flag)
+    const recipe = types.getRecipe(role.type, energyToSpend, room, boostTier, flag)
     const spawns = room.find(FIND_MY_SPAWNS)
     if(!Memory.counter){
         Memory.counter = 0
@@ -59,14 +59,16 @@ function makeCreeps(role: CreepRole, city: string, unhealthyStore=false, creepWa
         e.reportError(new Error(`Error making ${role.name} in ${city}: ${result}`))
         return false
     }
-    if (boosted) {
-        roomU.requestBoosterFill(Game.spawns[city], role.boosts)
+    if (boostTier > 0) {
+        const boostsNeeded = boosts.getBoostsForRank(role.actions, boostTier)
+        roomU.requestBoosterFill(Game.spawns[city], boostsNeeded)
     }
     Game.creeps[name].memory.role = role.name
     Game.creeps[name].memory.mode = role.target
     Game.creeps[name].memory.target = role.target as unknown as Id<RoomObject>
     Game.creeps[name].memory.city = city
-    Game.creeps[name].memory.needBoost = boosted
+    Game.creeps[name].memory.needBoost = boostTier > 0 //TODO: remove
+    Game.creeps[name].memory.boostTier = boostTier
     Game.creeps[name].memory.flag = flag
     return true
 }
@@ -469,11 +471,7 @@ function updateDefender(spawn: StructureSpawn, rcl, creeps) {
     }
     const room = spawn.room
     if(spawn.memory.towersActive){
-        if(rcl < 6){
-            spawn.memory[rD.name] = Math.ceil(room.find(FIND_HOSTILE_CREEPS).length/2)
-            return
-        }
-        const hostiles = _.filter(room.find(FIND_HOSTILE_CREEPS), hostile => _(hostile.body).find(part => part.boost) && 
+        const hostiles = _.filter(room.find(FIND_HOSTILE_CREEPS), hostile => (_(hostile.body).find(part => part.boost) || rcl < 7) && 
             (hostile.getActiveBodyparts(TOUGH) > 0 || hostile.body.length == 50 || rcl < 8)).length
         if(hostiles > 3){
             //request quad from nearest ally
@@ -483,8 +481,6 @@ function updateDefender(spawn: StructureSpawn, rcl, creeps) {
         } else {
             cU.scheduleIfNeeded(rD.name, Math.min(Math.floor(hostiles/2), 4), true, spawn, creeps)
         }
-    } else {
-        spawn.memory[rD.name] = 0
     }
     if((rcl <= 2 || room.controller.safeModeCooldown) && !room.controller.safeMode)
         requestSupport(spawn, 1, rcl)
@@ -591,7 +587,7 @@ function updateUpgrader(city: string, controller: StructureController, memory: S
                 storedEnergy += c.store.energy
         }
         const energyMultiplier = rcl > 2 ? 2 : 4
-        const needed = room.storage ? Math.floor(Math.pow((money/capacity) * 4, 3)) : Math.floor((storedEnergy*energyMultiplier/capacity))
+        const needed = room.storage ? Math.floor(Math.pow((money/capacity) * 4, 8)) : Math.floor((storedEnergy*energyMultiplier/capacity))
         Log.info(`City ${city}: stored energy: ${storedEnergy}, upgraders requested: ${needed}`)
         const maxUpgraders = 7 - builders.length
         cU.scheduleIfNeeded(cN.UPGRADER_NAME, Math.min(needed, maxUpgraders), rcl >= 6, Game.spawns[city], creeps)

@@ -3,6 +3,7 @@ import sq = require("./spawnQueue")
 import rU = require("./roomUtils")
 import a = require("./actions")
 import { cN } from "../lib/creepNames"
+import { CreepActions } from "./boosts"
 
 const cU = {
 
@@ -99,7 +100,7 @@ const cU = {
     getGoodPickups: function(creep: Creep) {
         const city = creep.memory.city
         const localCreeps = u.splitCreepsByCity()
-        const miners = _.filter(localCreeps[city], lcreep => lcreep.memory.role == "remoteMiner")
+        const miners = _.filter(localCreeps[city], lcreep => lcreep.memory.role == "remoteMiner" || lcreep.memory.role == "transporter")
         const drops: (AnyStoreStructure | Resource)[] = _.flatten(_.map(miners, miner => _.filter(miner.room.find(FIND_DROPPED_RESOURCES),d => d.resourceType == RESOURCE_ENERGY)))
         const containers = _.map(miners, miner => _.find(miner.pos.lookFor(LOOK_STRUCTURES), struct => struct.structureType == STRUCTURE_CONTAINER)) as StructureContainer[]
         let hostileStorageStructures = []
@@ -163,9 +164,9 @@ const cU = {
         }
     },
 
-    maybeBoost(creep: Creep){
+    maybeBoost(creep: Creep, creepActions: CreepActions[], rank: number){
         if(creep.memory.needBoost && !creep.memory.boosted){
-            a.getBoosted(creep)
+            a.getBoosted(creep, creepActions, rank)
             return true
         }
         return false

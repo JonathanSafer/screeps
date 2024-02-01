@@ -4,6 +4,7 @@ import motion = require("../lib/motion")
 import cU = require("../lib/creepUtils")
 import u = require("../lib/utils")
 import { cN, BodyType } from "../lib/creepNames"
+import { CreepActions as cA } from "../lib/boosts"
 
 
 const rU = {
@@ -11,6 +12,7 @@ const rU = {
     type: BodyType.normal,
     target: 0,
     boosts: [RESOURCE_CATALYZED_GHODIUM_ACID],
+    actions: [cA.UPGRADE],
 
     /** @param {Creep} creep **/
     run: function(creep: Creep) {

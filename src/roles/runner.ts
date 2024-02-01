@@ -18,10 +18,14 @@ const rR = {
             rR.runPower(creep)
             return
         }
-        if(creep.memory.juicer && rR.runController(creep)){
+        if (creep.memory.flag && Game.rooms[creep.memory.flag] && Game.rooms[creep.memory.flag].storage){
+            rR.runDelivery(creep)
             return
         }
-        if(creep.memory.tug){
+        if (creep.memory.juicer && rR.runController(creep)){
+            return
+        }
+        if (creep.memory.tug){
             rR.runTug(creep)
             return
         }
@@ -65,6 +69,39 @@ const rR = {
             creep.memory.tug = true
             creep.memory.pullee = pullee.id
             pullee.memory.paired = creep.id
+        }
+    },
+
+    runDelivery: function(creep: Creep) {
+        // deliver a resource to an allied room
+        // if you have a resource, deliver it
+        // else pick up a resource from home room
+        if (!creep.memory.resource) {
+            return
+        }
+        if (creep.store.getUsedCapacity() > 0) {
+            if (creep.memory.resource == RESOURCE_GHODIUM && creep.store.getUsedCapacity() >= SAFE_MODE_COST) {
+                if (creep.generateSafeMode(Game.rooms[creep.memory.flag].controller) == ERR_NOT_IN_RANGE) {
+                    motion.newMove(creep, Game.rooms[creep.memory.flag].controller.pos, 1)
+                }
+            } else {
+                actions.charge(creep, Game.rooms[creep.memory.flag].storage)
+            }
+        } else if (creep.room.name == creep.memory.flag) {
+            if (creep.room.controller.my) {
+                creep.memory.city = creep.room.name + "0"
+                creep.memory.flag = null
+                creep.memory.resource = null
+            } else {
+                const recycleSpawn = _.find(creep.room.find(FIND_MY_SPAWNS))
+                if (recycleSpawn && recycleSpawn.recycleCreep(creep) == ERR_NOT_IN_RANGE) {
+                    motion.newMove(creep, recycleSpawn.pos, 1)
+                } else if (!recycleSpawn) {
+                    creep.suicide()
+                }
+            }
+        } else {
+            actions.withdraw(creep, Game.spawns[creep.memory.city].room.terminal, creep.memory.resource)
         }
     },
 

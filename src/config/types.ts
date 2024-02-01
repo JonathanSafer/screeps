@@ -1,9 +1,12 @@
 import motion = require("../lib/motion")
 import { BodyType } from "../screeps"
 
-function getRecipe(type: BodyType, energyAvailable: number, room: Room, boosted = false, flagName?: string){
+function getRecipe(type: BodyType, energyAvailable: number, room: Room, boostTier?: number, flagName?: string){
     const energy = energyAvailable || 0
     const rcl = room.controller.level
+
+    //TODO remove once boostTier is fully implemented
+    const boosted = boostTier > 0
 
     switch (type) {
     case BodyType.brick:
@@ -15,7 +18,7 @@ function getRecipe(type: BodyType, energyAvailable: number, room: Room, boosted 
     case BodyType.quad:
         return quadBody(energy, rcl, room, boosted)
     case BodyType.runner:
-        return runnerBody(energy, rcl)
+        return runnerBody(energy, rcl, flagName)
     case BodyType.miner:
         return minerBody(energy, rcl, room, flagName as Id<Source>)
     case BodyType.normal:
@@ -41,9 +44,9 @@ function getRecipe(type: BodyType, energyAvailable: number, room: Room, boosted 
     case BodyType.ferry:
         return scalingBody([2, 1], [CARRY, MOVE], energy, 30)
     case BodyType.breaker:
-        return breakerBody(energy, rcl, boosted)
+        return breakerBody(energy, rcl, boostTier)
     case BodyType.medic:
-        return medicBody(energy, rcl, boosted)
+        return medicBody(energy, rcl, boostTier)
     case BodyType.sKguard:
         return body([1, 23, 16, 1, 5, 1, 2, 1], [ATTACK, MOVE, ATTACK, RANGED_ATTACK, HEAL, RANGED_ATTACK, MOVE, HEAL])
     case BodyType.powerMiner:
@@ -99,8 +102,10 @@ function mineralMinerBody(rcl: number) {
     return rcl > 6 ? body([20, 10, 15], [WORK, CARRY, MOVE]) : body([12, 6, 9], [WORK, CARRY, MOVE])
 }
 
-function runnerBody(energy: number, rcl: number){
-    return rcl == 1 ? scalingBody([1, 1], [CARRY, MOVE], energy) : scalingBody([2, 1], [CARRY, MOVE], energy)
+function runnerBody(energy: number, rcl: number, flagName: string){
+    return rcl == 1 || (Game.rooms[flagName] && Game.rooms[flagName].controller && Game.rooms[flagName].controller.my) 
+        ? scalingBody([1, 1], [CARRY, MOVE], energy) 
+        : scalingBody([2, 1], [CARRY, MOVE], energy)
 }
 
 function depositMinerBody(workTime, harvested, boosted, baseBody) {
@@ -302,22 +307,46 @@ function harasserBody(energyAvailable, boosted, rcl){
     return scalingBody([4, 5, 1], [RANGED_ATTACK, MOVE, HEAL], energyAvailable)
 }
 
-function breakerBody(energyAvailable, rcl, boosted){
-    if(!boosted){
+function breakerBody(energyAvailable, rcl, boostTier){
+    if(!boostTier || rcl < 7){
         return scalingBody([1 , 1], [WORK, MOVE], energyAvailable)
     }
-    if(rcl == 8)
-        return body([16, 24, 10], [TOUGH, WORK, MOVE])
-    return scalingBody([1, 3, 1], [TOUGH, WORK, MOVE], energyAvailable)
+    switch (boostTier) {
+    case 1:
+        return body([6, 27, 17], [TOUGH, WORK, MOVE])
+    case 2:
+        return body([7, 30, 13], [TOUGH, WORK, MOVE])
+    case 3:
+        if(rcl == 8)
+            return body([16, 24, 10], [TOUGH, WORK, MOVE])
+        return scalingBody([1, 3, 1], [TOUGH, WORK, MOVE], energyAvailable)
+    default:
+        Log.error(`Invalid boostTier ${boostTier} for breakerBody`)
+        return body([1, 1], [WORK, MOVE])
+    }
 }
 
-function medicBody(energyAvailable, rcl, boosted){
-    if(!boosted){
+function medicBody(energyAvailable, rcl, boostTier){
+    if(!boostTier || rcl < 7){
         return scalingBody([1 , 1], [HEAL, MOVE], energyAvailable)
     }
-    if(rcl == 8)
-        return body([16, 24, 10], [TOUGH, HEAL, MOVE])
-    return scalingBody([1, 3, 1], [TOUGH, HEAL, MOVE], energyAvailable)
+    switch (boostTier) {
+    case 1:
+        if (rcl == 8)
+            return body([10, 23, 17], [TOUGH, HEAL, MOVE])
+        return body([9, 19, 14], [TOUGH, HEAL, MOVE])
+    case 2:
+        if(rcl == 8)
+            return body([10, 27, 13], [TOUGH, HEAL, MOVE])
+        return scalingBody([1, 2, 1], [TOUGH, HEAL, MOVE], energyAvailable)
+    case 3:
+        if(rcl == 8)
+            return body([16, 24, 10], [TOUGH, HEAL, MOVE])
+        return scalingBody([1, 3, 1], [TOUGH, HEAL, MOVE], energyAvailable)
+    default:
+        Log.error(`Invalid boostTier ${boostTier} for medicBody`)
+        return body([1, 1], [HEAL, MOVE])
+    }
 }
 
 function repairerBody(energyAvailable){

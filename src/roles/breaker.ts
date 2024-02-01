@@ -6,17 +6,19 @@ import motion = require("../lib/motion")
 import actions = require("../lib/actions")
 import rQ = require("./quad")
 import { cN, BodyType } from "../lib/creepNames"
+import { CreepActions as cA } from "../lib/boosts"
 
 const rBr = {
     name: cN.BREAKER_NAME,
     type: BodyType.breaker,
     boosts: [RESOURCE_CATALYZED_GHODIUM_ALKALIDE,
         RESOURCE_CATALYZED_ZYNTHIUM_ALKALIDE, RESOURCE_CATALYZED_ZYNTHIUM_ACID],
+    actions: [cA.TOUGH, cA.DISMANTLE, cA.MOVE],
 
     /** @param {Creep} creep **/
     run: function(creep) {
-        if(creep.memory.needBoost && !creep.memory.boosted){
-            return actions.getBoosted(creep)
+        if(creep.memory.boostTier > 0 && !creep.memory.boosted){
+            return actions.getBoosted(creep, rBr.actions, creep.memory.boostTier)
         }
         cU.updateCheckpoints(creep)
         rBr.init(creep)
@@ -74,9 +76,12 @@ const rBr = {
         const creeps = creep.room.find(FIND_MY_CREEPS)
         let medic
         if(creep.memory.boosted && creep.memory.role == rBr.name){
-            medic = _.find(creeps, c => c.memory.role == rMe.name && !c.memory.partner && c.memory.boosted)
+            medic = _.find(creeps, c => c.memory.role == rMe.name 
+                                    && !c.memory.partner 
+                                    && c.memory.boosted 
+                                    && c.memory.boostTier == creep.memory.boostTier)
         } else {
-            medic = _.find(creeps, c => c.memory.role == rMe.name && !c.memory.partner && !c.memory.needBoost)
+            medic = _.find(creeps, c => c.memory.role == rMe.name && !c.memory.partner && !c.memory.boostTier)
         }
         if(medic){
             medic.memory.partner = creep.id

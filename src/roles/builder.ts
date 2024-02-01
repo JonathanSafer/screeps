@@ -6,11 +6,13 @@ import template = require("../config/template")
 import rD = require("./defender")
 import motion = require("../lib/motion")
 import { cN, BodyType } from "../lib/creepNames"
+import { CreepActions as cA } from "../lib/boosts"
 
 const rB = {
     name: cN.BUILDER_NAME,
     type: BodyType.builder,
     boosts: [RESOURCE_CATALYZED_LEMERGIUM_ACID],
+    actions: [cA.REPAIR],
 
     /** @param {Creep} creep **/
     run: function(creep) {

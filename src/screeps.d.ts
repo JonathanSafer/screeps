@@ -1,6 +1,7 @@
 /* eslint-disable no-shadow */
 import _ = require("lodash")
 import { BodyType } from "./lib/creepNames"
+import { CreepActions } from "./lib/boosts"
 export { BodyType } from "./lib/creepNames"
 
 
@@ -9,7 +10,8 @@ declare global {
     interface CreepRole {
         type?: BodyType
         name?: string
-        boosts?: string
+        boosts?: string[]
+        actions?: CreepActions[]
         target?: number
     }
 
@@ -158,6 +160,7 @@ declare global {
         medic?: Id<Creep>
         boosted?: number | boolean // overused
         needBoost?: boolean
+        boostTier?: number // TODO: replaces needBoost
         bankInfo?: {
             summonHits?: number
             runnersNeeded?: number

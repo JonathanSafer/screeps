@@ -80,10 +80,11 @@ const markets = {
         }
         if(!_.find(myCities, city => city.controller.level == 8)){
             //focus first city to rcl8
-            
             const target = _.min(myCities, city => city.controller.progressTotal - city.controller.progress).name
+            if (!target) return
+            const targetStore = Game.rooms[target].storage ? Game.rooms[target].storage.store.energy : Game.rooms[target].terminal.store.energy
             for (const city of myCities){
-                if (city.name != target && city.storage && city.storage.store.energy > Game.rooms[target].storage.store.energy - 80000){
+                if (city.name != target && city.storage && city.storage.store.energy > targetStore - 80000){
                     const memory = Game.spawns[city.memory.city].memory
                     if(memory.ferryInfo && memory.ferryInfo.comSend){
                         memory.ferryInfo.comSend.push([RESOURCE_ENERGY, 25000, target])
@@ -467,7 +468,7 @@ const markets = {
                     //distribute to allies in need
                     for (const ally in simpleAllies.allyRequestMap){
                         const requests = simpleAllies.allyRequestMap[ally]
-                        if (requests.resource && requests.resource.length) {
+                        if (requests && requests.resource && requests.resource.length) {
                             for (const request of requests.resource){
                                 if (request.resourceType == resource){
                                     city.terminal.send(resource, sellAmount, request.roomName)

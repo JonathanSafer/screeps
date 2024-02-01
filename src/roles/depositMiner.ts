@@ -5,12 +5,14 @@ import u = require("../lib/utils")
 import cU = require("../lib/creepUtils")
 import rPM = require("./powerMiner")
 import { cN, BodyType } from "../lib/creepNames"
+import { CreepActions as cA } from "../lib/boosts"
 
 const rDM = {
     name: cN.DEPOSIT_MINER_NAME,
     type: BodyType.depositMiner,
     target: 0,
     boosts: [RESOURCE_CATALYZED_UTRIUM_ALKALIDE, RESOURCE_CATALYZED_KEANIUM_ACID],
+    actions: [cA.CARRY, cA.HARVEST],
 
     // Keep track of how much is mined for stats. Stat object will clear this when it's recorded
     mined: 0,

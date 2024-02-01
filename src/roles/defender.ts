@@ -3,6 +3,7 @@ import motion = require("../lib/motion")
 import rH = require("./harasser")
 import u = require("../lib/utils")
 import { cN, BodyType } from "../lib/creepNames"
+import { CreepActions as cA } from "../lib/boosts"
 
 const CreepState = {
     START: 1,
@@ -18,6 +19,7 @@ const rD = {
     boosts: [RESOURCE_CATALYZED_GHODIUM_ALKALIDE,
         RESOURCE_CATALYZED_ZYNTHIUM_ALKALIDE, RESOURCE_CATALYZED_LEMERGIUM_ALKALIDE, 
         RESOURCE_CATALYZED_KEANIUM_ALKALIDE],
+    actions: [cA.TOUGH, cA.MOVE, cA.HEAL, cA.RANGED_ATTACK],
    
     /** @param {Creep} creep **/
     run: function(creep) {//modified harasser
@@ -83,7 +85,7 @@ const rD = {
             creep.memory.state = CS.ENGAGE
             return
         }
-        a.getBoosted(creep)
+        a.getBoosted(creep, rD.actions, creep.memory.boostTier)
         return
         //get boosted, may get boosted using same method as offensive creeps
     },

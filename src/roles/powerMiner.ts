@@ -3,11 +3,13 @@ import u = require("../lib/utils")
 import cU = require("../lib/creepUtils")
 import rBr = require("./breaker")
 import { cN, BodyType } from "../lib/creepNames"
+import { CreepActions as cA } from "../lib/boosts"
 
 const rPM = {
     name: cN.POWER_MINER_NAME,
     type: BodyType.powerMiner,
     boosts: [RESOURCE_CATALYZED_GHODIUM_ALKALIDE, RESOURCE_CATALYZED_UTRIUM_ACID],
+    actions: [cA.TOUGH, cA.ATTACK],
 
     run: function(creep: Creep) {
         cU.checkRoom(creep)//check if in hostile room
