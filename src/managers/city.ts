@@ -295,10 +295,11 @@ function updateDefender(spawn: StructureSpawn, rcl, creeps) {
     }
     const room = spawn.room
     if(spawn.memory.towersActive){
-        const hostiles = _.filter(room.find(FIND_HOSTILE_CREEPS), hostile => (_(hostile.body).find(part => part.boost) || rcl < 7) && 
+        const hostiles = _.filter(u.findHostileCreeps(room), hostile => hostile instanceof PowerCreep || (_(hostile.body).find(part => part.boost) || rcl < 7) && 
             (hostile.getActiveBodyparts(TOUGH) > 0 || hostile.body.length == 50 || rcl < 8)).length
         if(hostiles > 3){
             //request quad from nearest ally
+            Log.info(`City ${spawn.name}: requesting quad from nearest ally`)
             requestSupport(spawn, Math.floor(hostiles/4), rcl)
             if(Game.time % 1500 == 0 && spawn.memory.wallMultiplier)
                 spawn.memory.wallMultiplier = Math.min(spawn.memory.wallMultiplier + .1, 20)

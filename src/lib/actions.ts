@@ -192,7 +192,6 @@ const actions = {
             creep.memory.boosted++
             return
         }
-        console.log(`boosting ${creep.name} to rank ${rank} with actions ${creepActions}`)
 
         //const boostsNeeded = boosts.getBoostsForRank(creepActions, rank)
         //{"move": "XZHO2", "tough": "XGHO2", "work": "XZH2O", "heal": "XLHO2", "ranged_attack": "XKHO2"}
