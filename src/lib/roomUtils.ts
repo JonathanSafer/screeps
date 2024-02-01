@@ -135,6 +135,31 @@ const rU = {
                 }
             })
         }
+    },
+
+    isPositionBlocked: function(roomPos: RoomPosition){
+        const look = roomPos.look()
+        for(const lookObject of look){
+            if((lookObject.type == LOOK_TERRAIN 
+                && lookObject[LOOK_TERRAIN] == "wall")//no constant for wall atm
+                || (lookObject.type == LOOK_STRUCTURES
+                && OBSTACLE_OBJECT_TYPES[lookObject[LOOK_STRUCTURES].structureType])) {
+                return true
+            }
+        }
+        return false
+    },
+
+    countMiningSpots: function(pos: RoomPosition) {
+        let spots = 0
+        for (let x = -1; x <= 1; x++) {
+            for (let y = -1; y <= 1; y++) {
+                if (!rU.isPositionBlocked(new RoomPosition(pos.x + x, pos.y + y, pos.roomName))) {
+                    spots++
+                }
+            }
+        }
+        return spots
     }
 }
 

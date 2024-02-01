@@ -1,7 +1,7 @@
 import a = require("../lib/actions")
 import motion = require("../lib/motion")
 import settings = require("../config/settings")
-import cU = require("../lib/creepUtils")
+import { MoveStatus , cU } from "../lib/creepUtils"
 import u = require("../lib/utils")
 import { cN, BodyType } from "../lib/creepNames"
 import roomU = require("../lib/roomUtils")
@@ -23,7 +23,7 @@ const rM = {
             return
         }
         const source = Game.getObjectById(creep.memory.source) as Source
-        rM.setMoveStatus(creep)
+        cU.setMoveStatus(creep)
         rM.maybeMove(creep, source)
         if(!source)
             return
@@ -141,7 +141,7 @@ const rM = {
     },
 
     maybeMove: function(creep: Creep, source: Source){
-        if(creep.memory.moveStatus == "static"){
+        if(creep.memory.moveStatus == MoveStatus.STATIC){
             if(!source){
                 creep.memory.destination = creep.memory.sourcePos
                 return
@@ -169,7 +169,7 @@ const rM = {
         for(let i = link.pos.x - 1; i <= link.pos.x + 1; i++){
             for(let j = link.pos.y - 1; j <= link.pos.y + 1; j++){
                 const testPos = new RoomPosition(i, j, link.pos.roomName)
-                if(testPos.isNearTo(source) && !rM.isPositionBlocked(testPos))
+                if(testPos.isNearTo(source) && !rM.isPositionBlockedMiner(testPos))
                     return testPos
             }
         }
@@ -202,7 +202,7 @@ const rM = {
         //look for empty space to mine
         for(let i = source.pos.x - 1; i <= source.pos.x + 1; i++){
             for(let j = source.pos.y - 1;j <= source.pos.y + 1; j++){
-                if(!rM.isPositionBlocked(new RoomPosition(i, j, source.pos.roomName)))
+                if(!rM.isPositionBlockedMiner(new RoomPosition(i, j, source.pos.roomName)))
                     return new RoomPosition(i, j, source.pos.roomName)
             }
         }
@@ -224,22 +224,20 @@ const rM = {
         return null
     },
 
-    isPositionBlocked: function(roomPos){
+    isPositionBlockedMiner: function(roomPos: RoomPosition){
         const look = roomPos.look()
         for(const lookObject of look){
             if((lookObject.type == LOOK_TERRAIN 
                 && lookObject[LOOK_TERRAIN] == "wall")//no constant for wall atm
                 || (lookObject.type == LOOK_STRUCTURES
-                && OBSTACLE_OBJECT_TYPES[lookObject[LOOK_STRUCTURES].structureType])) {
+                && OBSTACLE_OBJECT_TYPES[lookObject[LOOK_STRUCTURES].structureType])
+                || (lookObject.type == LOOK_CREEPS
+                    && (!lookObject[LOOK_CREEPS].my 
+                        || (lookObject[LOOK_CREEPS].memory.role == cN.REMOTE_MINER_NAME) && lookObject[LOOK_CREEPS].ticksToLive > 100))) {
                 return true
             }
         }
         return false
-    },
-
-    setMoveStatus: function(creep) {
-        if(!creep.memory.moveStatus)
-            creep.memory.moveStatus = creep.getActiveBodyparts(MOVE) ? "mobile" : "static"
     },
 
     canCarry: function(creep){

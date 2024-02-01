@@ -1,7 +1,7 @@
 import { boosts } from "../lib/boosts"
 import types = require("../config/types")
 import roomU = require("../lib/roomUtils")
-import cU = require("../lib/creepUtils")
+import { cU } from "../lib/creepUtils"
 import e = require("../operations/error")
 import rM = require("../roles/remoteMiner")
 import rT = require("../roles/transporter")

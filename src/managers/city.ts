@@ -1,6 +1,6 @@
 import { cN, BodyType } from "../lib/creepNames"
 import centralSpawn = require("../buildings/spawn")
-import cU = require("../lib/creepUtils")
+import { cU } from "../lib/creepUtils"
 import fact = require("../buildings/factory")
 import labsLib = require("../buildings/labs")
 import link = require("../buildings/link")
@@ -602,12 +602,22 @@ function runEarlyGame(){
     }
     const sources = spawn.room.find(FIND_SOURCES)
 
+    // find closest source to spawn
+    const closestSource = spawn.pos.findClosestByPath(sources)
+    const otherSource = _.find(sources, source => source.id != closestSource.id)
 
+
+    sq.schedule(spawn, cN.RUNNER_NAME, false, null, 100, -7)
+    sq.schedule(spawn, cN.REMOTE_MINER_NAME, false, closestSource.id, 200, -6)
     sq.schedule(spawn, cN.RUNNER_NAME, false, null, 100, -5)
-    sq.schedule(spawn, cN.REMOTE_MINER_NAME, false, sources[0].id, 200, -4)
-    sq.schedule(spawn, cN.RUNNER_NAME, false, null, 100, -3)
-    sq.schedule(spawn, cN.UPGRADER_NAME, false, null, 200, -2)
-    sq.schedule(spawn, cN.REMOTE_MINER_NAME, false, sources[1].id, 300, -1)
+    sq.schedule(spawn, cN.UPGRADER_NAME, false, null, 200, -4)
+    if(roomU.countMiningSpots(closestSource.pos) > 1){
+        sq.schedule(spawn, cN.REMOTE_MINER_NAME, false, closestSource.id, 300, -3)
+    }
+    sq.schedule(spawn, cN.REMOTE_MINER_NAME, false, otherSource.id, 300, -2)
+    if(roomU.countMiningSpots(otherSource.pos) > 1){
+        sq.schedule(spawn, cN.REMOTE_MINER_NAME, false, otherSource.id, 200, -1)
+    }
     Memory.gameState = 1
 }
 

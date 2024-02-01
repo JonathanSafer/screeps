@@ -158,11 +158,19 @@ const RoomPosition = class {
         return []
     }
 
+    look() {
+        return []
+    }
+
     createConstructionSite() {
         return 0
     }
 
     findClosestByRange() {
+        return Object.values(Game.spawns)[0]
+    }
+
+    findClosestByPath() {
         return Object.values(Game.spawns)[0]
     }
 

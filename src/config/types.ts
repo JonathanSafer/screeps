@@ -177,7 +177,10 @@ function minerBody(energyAvailable: number, rcl: number, room: Room, flag: Id<So
     let works = Math.floor((energyAvailable) / BODYPART_COST[WORK])
     let pc = null
     const source = Game.getObjectById(flag)
-    if(rcl == 8){
+    if (rcl < 3 && source && source.room.name != room.name) {
+        return body([3], [WORK])
+    }
+    if (rcl == 8){
         if(source && source.room.name == room.name){
             pc = room.find(FIND_MY_POWER_CREEPS, { filter: c => c.powers[PWR_REGEN_SOURCE] }).length
             if(Game.cpu.bucket < 9500)
@@ -206,6 +209,13 @@ function minerBody(energyAvailable: number, rcl: number, room: Room, flag: Id<So
 
 function upgraderBody(energyAvailable, rcl, room) {
     const controller = room.controller
+    if (rcl > 2 && rcl < 6) {
+        if (controller.progressTotal - controller.progress > 40000) {
+            //make a static upgrader
+            const works = Math.floor((energyAvailable - BODYPART_COST[CARRY]) / BODYPART_COST[WORK])
+            return body([works, 1], [WORK, CARRY])
+        }
+    }
     const isBoosted = controller.effects && controller.effects.length > 0
     const boost = isBoosted ? 
         POWER_INFO[PWR_OPERATE_CONTROLLER].effect[controller.effects[0].level - 1] : 0

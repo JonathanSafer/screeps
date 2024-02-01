@@ -5,7 +5,16 @@ import a = require("./actions")
 import { cN } from "../lib/creepNames"
 import { CreepActions } from "./boosts"
 
-const cU = {
+export const enum MoveStatus {
+    STATIC = "static",
+    MOBILE = "mobile"
+}
+
+export const cU = {
+    setMoveStatus: function(creep) {
+        if(!creep.memory.moveStatus)
+            creep.memory.moveStatus = creep.getActiveBodyparts(MOVE) ? MoveStatus.MOBILE : MoveStatus.STATIC
+    },
 
     getNextLocation: function(current: number, locations) {
         return (current + 1) % locations.length
@@ -172,5 +181,3 @@ const cU = {
         return false
     }
 }
-
-export = cU

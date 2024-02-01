@@ -1,6 +1,6 @@
 import u = require("../lib/utils")
 import rU = require("../lib/roomUtils")
-import cU = require("../lib/creepUtils")
+import { cU } from "../lib/creepUtils"
 import rMe = require("./medic")
 import motion = require("../lib/motion")
 import actions = require("../lib/actions")

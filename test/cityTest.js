@@ -14,7 +14,7 @@ describe("city", function () {
         Memory.reset()
     })
     // var c = require("../built/managers/city")
-    const cU = require("../built/lib/creepUtils")
+    const cU = import("../built/lib/creepUtils")
     describe("#scheduleIfNeeded()", function () {
         const sq = require("../built/lib/spawnQueue")
         const rT = require("../built/roles/transporter")

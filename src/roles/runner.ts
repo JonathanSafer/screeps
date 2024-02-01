@@ -1,7 +1,7 @@
 import actions = require("../lib/actions")
 import u = require("../lib/utils")
 import roomU = require("../lib/roomUtils")
-import cU = require("../lib/creepUtils")
+import { cU } from "../lib/creepUtils"
 import motion = require("../lib/motion")
 import rU = require("./upgrader")
 import { cN, BodyType } from "../lib/creepNames"
@@ -225,7 +225,7 @@ const rR = {
         } else if(creep.ticksToLive == 1){
             pullee.memory.paired = null
         }
-        const range = new RoomPosition(destination.x, destination.y, destination.roomName).isEqualTo(pullee.memory.sourcePos.x, pullee.memory.sourcePos.y)  ? 1 : 0
+        const range = pullee.memory.sourcePos && new RoomPosition(destination.x, destination.y, destination.roomName).isEqualTo(pullee.memory.sourcePos.x, pullee.memory.sourcePos.y)  ? 1 : 0
         motion.newMove(creep, destination, range)
         creep.pull(pullee)
         pullee.move(creep)
