@@ -1,4 +1,5 @@
 import settings = require("../config/settings")
+import template = require("../config/template")
 import u = require("../lib/utils")
 
 const labs = {
@@ -207,6 +208,63 @@ const labs = {
             })
         })
         return result
+    },
+
+    initLabInfo: function(memory){
+        if(!memory.ferryInfo){
+            memory.ferryInfo = {}
+        }
+        if(!memory.ferryInfo.labInfo){
+            memory.ferryInfo.labInfo = {}
+            memory.ferryInfo.labInfo.receivers = {}
+            memory.ferryInfo.labInfo.reactors = {}
+        }
+    },
+
+    checkLabs: function(city){
+        const spawn = Game.spawns[city]
+        const labStructures = _.filter(spawn.room.find(FIND_MY_STRUCTURES), structure => structure.structureType === STRUCTURE_LAB)
+        if (labStructures.length < 3){
+            return
+        }
+        labs.initLabInfo(spawn.memory)
+        //check if we need to do a rescan
+        let rescan = false
+        const receivers = Object.keys(spawn.memory.ferryInfo.labInfo.receivers)
+        const reactors = Object.keys(spawn.memory.ferryInfo.labInfo.reactors)
+        for(let i = 0; i < receivers.length; i++){
+            if(!Game.getObjectById(receivers[i])){
+                rescan = true
+                delete(spawn.memory.ferryInfo.labInfo.receivers[receivers[i]])
+            }
+        }
+        for(let i = 0; i < reactors.length; i++){
+            if(!Game.getObjectById(reactors[i])){
+                rescan = true
+                delete(spawn.memory.ferryInfo.labInfo.reactors[reactors[i]])
+            }
+        }
+        if(labStructures.length > receivers.length + reactors.length){
+            rescan = true
+        }
+        if(!rescan){
+            return
+        }
+    
+        //now we need a rescan, but we must make sure not to overwrite any labInfo that already exists
+        const unassignedLabs = _.filter(labStructures, lab => !receivers.includes(lab.id) && !reactors.includes(lab.id))
+        const plan = spawn.room.memory.plan
+        for(let i = 0; i < unassignedLabs.length; i++){
+            const templatePos = {"x": unassignedLabs[i].pos.x + template.offset.x - plan.x, "y": unassignedLabs[i].pos.y + template.offset.y - plan.y}
+            if((templatePos.x == template.buildings.lab.pos[0].x && templatePos.y == template.buildings.lab.pos[0].y) 
+                ||(templatePos.x == template.buildings.lab.pos[1].x && templatePos.y == template.buildings.lab.pos[1].y)){
+                //lab is a reactor
+                spawn.memory.ferryInfo.labInfo.reactors[unassignedLabs[i].id] = {}
+            } else {
+                //lab is a receiver
+                spawn.memory.ferryInfo.labInfo.receivers[unassignedLabs[i].id] = {}
+            }
+        }
     }
 }
 export = labs

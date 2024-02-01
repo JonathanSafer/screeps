@@ -1,77 +1,20 @@
-import rDM = require("../roles/depositMiner")
-import rH = require("../roles/harasser")
-import rSB = require("../roles/spawnBuilder")
-import rC = require("../roles/claimer")
-import rUC = require("../roles/unclaimer")
-import rF = require("../roles/ferry")
-import rU = require("../roles/upgrader")
-import rB = require("../roles/builder")
-import rR = require("../roles/runner")
-import rT = require("../roles/transporter")
-import rM = require("../roles/remoteMiner")
-import rD = require("../roles/defender")
-import rPM = require("../roles/powerMiner")
-import rr = require("../roles/roles")
-import types = require("../config/types")
-import settings = require("../config/settings")
-import template = require("../config/template")
-import u = require("../lib/utils")
-import roomU = require("../lib/roomUtils")
+import { cN, BodyType } from "../lib/creepNames"
+import centralSpawn = require("../buildings/spawn")
 import cU = require("../lib/creepUtils")
+import fact = require("../buildings/factory")
+import labsLib = require("../buildings/labs")
+import link = require("../buildings/link")
+import motion = require("../lib/motion")
+import pSpawn = require("../buildings/powerSpawn")
+import roomU = require("../lib/roomUtils")
+import rp = require("./roomplan")
+import rr = require("../roles/roles")
+import settings = require("../config/settings")
 import sq = require("../lib/spawnQueue")
 import t = require("../buildings/tower")
-import labsLib = require("../buildings/labs")
-import fact = require("../buildings/factory")
-import link = require("../buildings/link")
-import e = require("../operations/error")
-import rQr = require("../roles/qrCode")
-import rp = require("./roomplan")
-import rRe = require("../roles/repairer")
-import motion = require("../lib/motion")
-import { cN, BodyType } from "../lib/creepNames"
-import { boosts } from "../lib/boosts"
-
-
-function makeCreeps(role: CreepRole, city: string, unhealthyStore=false, creepWantsBoosts=false, flag = null, budget = null) {
-    const room = Game.spawns[city].room
-    if(Memory.flags.claim && Memory.flags.claim.roomName == room.name)
-        return true
-   
-    const energyToSpend = budget || 
-        (unhealthyStore ? room.energyAvailable : room.energyCapacityAvailable)
-
-    const boostTier = creepWantsBoosts ? boosts.getBoostRank(role.actions, room) : 0
-
-    const recipe = types.getRecipe(role.type, energyToSpend, room, boostTier, flag)
-    const spawns = room.find(FIND_MY_SPAWNS)
-    if(!Memory.counter){
-        Memory.counter = 0
-    }
-    const name = cU.generateCreepName(Memory.counter.toString(), role.name)
-    if (types.cost(recipe) > room.energyAvailable) return false
-
-    const spawn = roomU.getAvailableSpawn(spawns)
-    if (!spawn) return false
-
-    Memory.counter++
-    const result = spawn.spawnCreep(recipe, name)
-    if (result) { // don't spawn and throw an error at the end of the tick
-        e.reportError(new Error(`Error making ${role.name} in ${city}: ${result}`))
-        return false
-    }
-    if (boostTier > 0) {
-        const boostsNeeded = boosts.getBoostsForRank(role.actions, boostTier)
-        roomU.requestBoosterFill(Game.spawns[city], boostsNeeded)
-    }
-    Game.creeps[name].memory.role = role.name
-    Game.creeps[name].memory.mode = role.target
-    Game.creeps[name].memory.target = role.target as unknown as Id<RoomObject>
-    Game.creeps[name].memory.city = city
-    Game.creeps[name].memory.needBoost = boostTier > 0 //TODO: remove
-    Game.creeps[name].memory.boostTier = boostTier
-    Game.creeps[name].memory.flag = flag
-    return true
-}
+import template = require("../config/template")
+import types = require("../config/types")
+import u = require("../lib/utils")
 
 //runCity function
 function runCity(city, creeps: Creep[]){
@@ -116,7 +59,7 @@ function runCity(city, creeps: Creep[]){
     }
     
     if (nextRole) {
-        if(makeCreeps(nextRole, city, unhealthyStore, nextRoleInfo.boosted, 
+        if(centralSpawn.makeNextCreep(nextRole, city, unhealthyStore, nextRoleInfo.boosted, 
             nextRoleInfo.flag, nextRoleInfo.budget) && usedQueue) {
             sq.removeNextRole(spawn)
         }
@@ -129,7 +72,7 @@ function runCity(city, creeps: Creep[]){
     })
     
     link.run(room)
-    runPowerSpawn(city)
+    pSpawn.run(city)
     labsLib.run(city)
     fact.runFactory(city)
     checkNukes(room)
@@ -159,7 +102,7 @@ function updateCountsCity(city, creeps, rooms, claimRoom, unclaimRoom) {
         const structures = spawn.room.find(FIND_STRUCTURES)
         const extensions = _.filter(structures, structure => structure.structureType == STRUCTURE_EXTENSION).length
         updateRunner(creeps, spawn, extensions, memory, rcl, emergencyTime)
-        updateFerry(spawn, memory, rcl)
+        updateFerry(spawn, rcl)
         updateMiner(creeps, rcl8, memory, spawn)
         updateBuilder(rcl, memory, spawn, creeps)
         updateRepairer(spawn, memory, creeps)
@@ -168,13 +111,13 @@ function updateCountsCity(city, creeps, rooms, claimRoom, unclaimRoom) {
     
         if (Game.time % 500 === 0) {
             runNuker(city)
-            checkLabs(city)
-            updateColonizers(city, memory, claimRoom, unclaimRoom)
+            labsLib.checkLabs(city)
+            updateColonizers(city, claimRoom, unclaimRoom)
             updateMineralMiner(rcl, structures, spawn, creeps)
-            updatePowerSpawn(city, memory)
+            pSpawn.update(city, memory)
             updateStorageLink(spawn, memory, structures)
         }
-        makeEmergencyCreeps(extensions, creeps, city, rcl8, emergencyTime) 
+        centralSpawn.makeEmergencyCreeps(extensions, creeps, city, rcl8, emergencyTime) 
     }
 }
 
@@ -188,35 +131,12 @@ function checkNukes(room){
     }
 }
 
-function makeEmergencyCreeps(extensions, creeps: Creep[], city, rcl8, emergency) {
-    const checkTime = rcl8 ? 200 : 50
-    const memory = Game.spawns[city].memory
-
-    if (emergency || Game.time % checkTime == 0 && extensions >= 1) {
-        if (_.filter(creeps, creep => creep.memory.role == rM.name).length < 1 && memory[rM.name] > 0){
-            Log.info(`Making Emergency Miner in ${city}`)
-            makeCreeps(rM, city, true)
-        }
-
-        if (_.filter(creeps, creep => creep.memory.role == rT.name).length < 1){
-            Log.info(`Making Emergency Transporter in ${city}`)
-            makeCreeps(rT, city, true)
-        }
-
-        // TODO disable if links are present (not rcl8!! links may be missing for rcl8)
-        if ((emergency || !rcl8) && _.filter(creeps, creep => creep.memory.role == rR.name).length < 1 && memory[rR.name] > 0) {
-            Log.info(`Making Emergency Runner in ${city}`)
-            makeCreeps(rR, city, true)
-        }
-    }
-}
-
 function updateQR(spawn, creeps){
     if(Game.time % 100 == 5){
         const flag = spawn.name + "qrCode"
         if(Memory.flags[flag]){
             const creepsNeeded = _.sum(template.qrCoords, elem => elem.length)
-            cU.scheduleIfNeeded(rQr.name, creepsNeeded, false, spawn, creeps, flag)
+            cU.scheduleIfNeeded(cN.QR_CODE_NAME, creepsNeeded, false, spawn, creeps, flag)
         }
     }
 }
@@ -309,99 +229,9 @@ function maybeSafeMode(city: string, hostiles: Array<Creep | PowerCreep>){
     }
 }
 
-//Run the powerSpawn
-function runPowerSpawn(city){
-    if(Game.spawns[city]){
-        if (!Game.spawns[city].memory.powerSpawn){
-            return
-        }
-        const powerSpawn = Game.getObjectById(Game.spawns[city].memory.powerSpawn)
-        if (Game.time % 20 === 0){
-            if (!Game.spawns[city].memory.ferryInfo){
-                Game.spawns[city].memory.ferryInfo = {}
-            }
-            if(powerSpawn && powerSpawn.power < 30){
-                Game.spawns[city].memory.ferryInfo.needPower = true
-            } else {
-                Game.spawns[city].memory.ferryInfo.needPower = false
-            }
-        }
-        if(settings.processPower && powerSpawn && powerSpawn.energy >= 50 && powerSpawn.power > 0 && powerSpawn.room.storage.store.energy > settings.energy.processPower && Game.cpu.bucket > settings.bucket.processPower){
-            powerSpawn.processPower()
-        }
-    }
-}
-
-function updatePowerSpawn(city, memory) {
-    if (!memory.ferryInfo){
-        memory.ferryInfo = {}
-    }
-    const powerSpawn = _.find(Game.structures, (structure) => structure.structureType == STRUCTURE_POWER_SPAWN && structure.room.memory.city == city)
-    if (powerSpawn){
-        memory.powerSpawn = powerSpawn.id
-    }
-}
-
-function initLabInfo(memory){
-    if(!memory.ferryInfo){
-        memory.ferryInfo = {}
-    }
-    if(!memory.ferryInfo.labInfo){
-        memory.ferryInfo.labInfo = {}
-        memory.ferryInfo.labInfo.receivers = {}
-        memory.ferryInfo.labInfo.reactors = {}
-    }
-}
-
-function checkLabs(city){
-    const spawn = Game.spawns[city]
-    const labs = _.filter(spawn.room.find(FIND_MY_STRUCTURES), structure => structure.structureType === STRUCTURE_LAB)
-    if (labs.length < 3){
-        return
-    }
-    initLabInfo(spawn.memory)
-    //check if we need to do a rescan
-    let rescan = false
-    const receivers = Object.keys(spawn.memory.ferryInfo.labInfo.receivers)
-    const reactors = Object.keys(spawn.memory.ferryInfo.labInfo.reactors)
-    for(let i = 0; i < receivers.length; i++){
-        if(!Game.getObjectById(receivers[i])){
-            rescan = true
-            delete(spawn.memory.ferryInfo.labInfo.receivers[receivers[i]])
-        }
-    }
-    for(let i = 0; i < reactors.length; i++){
-        if(!Game.getObjectById(reactors[i])){
-            rescan = true
-            delete(spawn.memory.ferryInfo.labInfo.reactors[reactors[i]])
-        }
-    }
-    if(labs.length > receivers.length + reactors.length){
-        rescan = true
-    }
-    if(!rescan){
-        return
-    }
-
-    //now we need a rescan, but we must make sure not to overwrite any labInfo that already exists
-    const unassignedLabs = _.filter(labs, lab => !receivers.includes(lab.id) && !reactors.includes(lab.id))
-    const plan = spawn.room.memory.plan
-    for(let i = 0; i < unassignedLabs.length; i++){
-        const templatePos = {"x": unassignedLabs[i].pos.x + template.offset.x - plan.x, "y": unassignedLabs[i].pos.y + template.offset.y - plan.y}
-        if((templatePos.x == template.buildings.lab.pos[0].x && templatePos.y == template.buildings.lab.pos[0].y) 
-            ||(templatePos.x == template.buildings.lab.pos[1].x && templatePos.y == template.buildings.lab.pos[1].y)){
-            //lab is a reactor
-            spawn.memory.ferryInfo.labInfo.reactors[unassignedLabs[i].id] = {}
-        } else {
-            //lab is a receiver
-            spawn.memory.ferryInfo.labInfo.receivers[unassignedLabs[i].id] = {}
-        }
-    }
-}
-
 function updateMilitary(city: string, memory, rooms, spawn, creeps) {
     const flags = ["harass", "powerMine", "deposit"]
-    const roles = [rH.name, rPM.name, rDM.name]
+    const roles = [cN.HARASSER_NAME, cN.POWER_MINER_NAME, cN.DEPOSIT_MINER_NAME]
     for (let i = 0; i < flags.length; i++) {
         const flagName = city + flags[i]
         const role = roles[i]
@@ -431,7 +261,7 @@ function chooseClosestRoom(myCities: Room[], flag){
     return closestRoomPos.roomName
 }
 
-function updateColonizers(city, memory, claimRoom, unclaimRoom) {
+function updateColonizers(city, claimRoom, unclaimRoom) {
     //claimer and spawnBuilder reset
     // TODO only make a claimer if city is close
     const roomName = Game.spawns[city].room.name
@@ -443,25 +273,19 @@ function updateColonizers(city, memory, claimRoom, unclaimRoom) {
             Memory.flags[harassFlagName].boosted = true
         }
         if(Game.spawns[city].room.controller.level < 7){
-            memory[rSB.name] = 4
-        } else if (flag && Game.rooms[flag.roomName] && Game.rooms[flag.roomName].controller && Game.rooms[flag.roomName].controller.level > 6) {
-            memory[rSB.name] = 4
+            cU.scheduleIfNeeded(cN.SPAWN_BUILDER_NAME, 4, true, Game.spawns[city], u.splitCreepsByCity()[city])
+        } else if (flag && Game.rooms[flag.roomName] && Game.rooms[flag.roomName].terminal) {
+            cU.scheduleIfNeeded(cN.SPAWN_BUILDER_NAME, 4, true, Game.spawns[city], u.splitCreepsByCity()[city])
         } else {
-            memory[rSB.name] = 2
+            cU.scheduleIfNeeded(cN.SPAWN_BUILDER_NAME, 2, true, Game.spawns[city], u.splitCreepsByCity()[city])
         }
-        if(flag && Game.rooms[flag.roomName] && Game.rooms[flag.roomName].controller.my){
-            memory[rC.name] = 0
-        } else {
-            memory[rC.name] = flag ? 1 : 0
+        if(flag && !Game.rooms[flag.roomName] || !Game.rooms[flag.roomName].controller.my){
+            cU.scheduleIfNeeded(cN.CLAIMER_NAME, 1, false, Game.spawns[city], u.splitCreepsByCity()[city])
         }
-    } else {
-        memory[rSB.name] = 0
-        memory[rC.name] = 0
     }
     if (roomName == unclaimRoom && Game.time % 1000 == 0) {
-        sq.schedule(Game.spawns[city], rUC.name)
+        sq.schedule(Game.spawns[city], cN.UNCLAIMER_NAME)
     }
-    //memory[rRo.name] = 0;
 }
 
 // Automated defender count for defense
@@ -479,7 +303,7 @@ function updateDefender(spawn: StructureSpawn, rcl, creeps) {
             if(Game.time % 1500 == 0 && spawn.memory.wallMultiplier)
                 spawn.memory.wallMultiplier = Math.min(spawn.memory.wallMultiplier + .1, 20)
         } else {
-            cU.scheduleIfNeeded(rD.name, Math.min(Math.floor(hostiles/2), 4), true, spawn, creeps)
+            cU.scheduleIfNeeded(cN.DEFENDER_NAME, Math.min(Math.floor(hostiles/2), 4), true, spawn, creeps)
         }
     }
     if((rcl <= 2 || room.controller.safeModeCooldown) && !room.controller.safeMode)
@@ -495,7 +319,7 @@ function requestSupport(spawn, quadsNeeded, rcl){
     const reinforceCity = closestRoom + "0"
     const reinforcingSpawn = Game.spawns[reinforceCity]
     const creeps = u.splitCreepsByCity()[reinforceCity]
-    cU.scheduleIfNeeded(rT.name, 2, false, reinforcingSpawn, creeps)
+    cU.scheduleIfNeeded(cN.TRANSPORTER_NAME, 2, false, reinforcingSpawn, creeps)
     cU.scheduleIfNeeded(cN.QUAD_NAME, 4 * quadsNeeded, true, reinforcingSpawn, creeps, spawn.room.name, 400)
 }
 
@@ -508,7 +332,6 @@ function updateMiner(creeps: Creep[], rcl8: boolean, memory: SpawnMemory, spawn:
     const flag = Memory.flags.claim
     if(flag && flag.roomName === spawn.pos.roomName &&
         Game.rooms[flag.roomName].controller.level < 6){
-        memory[rM.name] = 0
         return
     }
     roomU.initializeSources(spawn)
@@ -518,8 +341,7 @@ function updateMiner(creeps: Creep[], rcl8: boolean, memory: SpawnMemory, spawn:
     if(powerCreep || (spawn.room.storage && spawn.room.storage.store[RESOURCE_ENERGY] < settings.energy.processPower)){
         bucketThreshold -= settings.bucket.range/2
     }
-    if (spawn.memory.towersActive || (Game.cpu.bucket < bucketThreshold && rcl8) || Game.time < 500) {
-        memory[rM.name] = 0
+    if (spawn.memory.towersActive || (Game.cpu.bucket < bucketThreshold && rcl8) || Game.time < 100) {
         return
     }
     for(const sourceId in memory.sources){
@@ -548,14 +370,16 @@ function updateMineralMiner(rcl, buildings: Structure[], spawn, creeps) {
 }
 
 function updateTransporter(extensions, memory, creeps, structures: Structure[], spawn) {
+    let transportersNeeded = 0
     if (extensions < 1 && !_.find(structures, struct => struct.structureType == STRUCTURE_CONTAINER)){
-        memory[rT.name] = 0
+        return
     } else if (extensions < 5 || creeps.length < 9){
-        memory[rT.name] = 1
+        transportersNeeded = 1
     } else {//arbitrary 'load' on transporters
-        memory[rT.name] = settings.max.transporters
+        transportersNeeded = settings.max.transporters
     }
-    cU.scheduleIfNeeded(rT.name, memory[rT.name], false, spawn, creeps)
+    cU.scheduleIfNeeded(cN.TRANSPORTER_NAME, transportersNeeded, false, spawn, creeps, null, 200)
+    memory[cN.TRANSPORTER_NAME] = 0 //TODO: remove
 }
 
 function updateUpgrader(city: string, controller: StructureController, memory: SpawnMemory, rcl8: boolean, creeps: Creep[], rcl: number) {
@@ -565,7 +389,7 @@ function updateUpgrader(city: string, controller: StructureController, memory: S
         const haveEnoughCpu = Game.cpu.bucket > bucketThreshold
         if (controller.ticksToDowngrade < CONTROLLER_DOWNGRADE[rcl]/2 
             || (controller.room.storage.store.energy > settings.energy.rcl8upgrade && haveEnoughCpu && settings.rcl8upgrade)){
-            cU.scheduleIfNeeded(rU.name, 1, true, Game.spawns[city], creeps)
+            cU.scheduleIfNeeded(cN.UPGRADER_NAME, 1, true, Game.spawns[city], creeps)
         }
     } else {
         const builders = _.filter(creeps, c => c.memory.role == cN.BUILDER_NAME)
@@ -612,7 +436,7 @@ function updateRepairer(spawn, memory: SpawnMemory, creeps){
     if(csites > 0)
         repairersNeeded++
     repairersNeeded += Math.floor(damagedRoads/20)
-    cU.scheduleIfNeeded(rRe.name, repairersNeeded, false, spawn, creeps)
+    cU.scheduleIfNeeded(cN.REPAIRER_NAME, repairersNeeded, false, spawn, creeps)
 }
 
 function updateBuilder(rcl, memory, spawn: StructureSpawn, creeps: [Creep]) {
@@ -637,12 +461,10 @@ function updateBuilder(rcl, memory, spawn: StructureSpawn, creeps: [Creep]) {
             const upgraders = _.filter(creeps, c => c.memory.role == cN.UPGRADER_NAME).length
             const buildersNeeded = Math.max(Math.floor(energyStore*2/CONTAINER_CAPACITY) - upgraders, 3)
             Log.info(`City ${spawn.name}: stored energy: ${energyStore}, builders requested: ${buildersNeeded}`)
-            cU.scheduleIfNeeded(rB.name, buildersNeeded, rcl >= 6, spawn, creeps)
+            cU.scheduleIfNeeded(cN.BUILDER_NAME, buildersNeeded, rcl >= 6, spawn, creeps)
         } else {
-            cU.scheduleIfNeeded(rB.name, settings.max.builders, rcl >= 6, spawn, creeps)
+            cU.scheduleIfNeeded(cN.BUILDER_NAME, settings.max.builders, rcl >= 6, spawn, creeps)
         }
-    } else {
-        memory[rB.name] = 0
     }
     if(rcl >= 4 && Game.cpu.bucket > settings.bucket.repair + settings.bucket.range * cityFraction(room.name) && spawn.room.storage && spawn.room.storage.store[RESOURCE_ENERGY] > settings.energy.repair){
         const walls = _.filter(spawn.room.find(FIND_STRUCTURES), 
@@ -658,7 +480,7 @@ function updateBuilder(rcl, memory, spawn: StructureSpawn, creeps: [Creep]) {
             const defenseMode = !spawn.room.controller.safeMode && spawn.room.controller.safeModeCooldown
             const wallHeight = Game.gcl.level < 3 ? settings.wallHeight[Math.min(rcl - 1, 3)] : settings.wallHeight[rcl - 1] *  spawn.memory.wallMultiplier
             if(minHits < wallHeight || defenseMode){
-                cU.scheduleIfNeeded(rB.name, 3, rcl >= 6, spawn, creeps)
+                cU.scheduleIfNeeded(cN.BUILDER_NAME, 3, rcl >= 6, spawn, creeps)
                 return
             }
         }
@@ -682,7 +504,7 @@ function updateBuilder(rcl, memory, spawn: StructureSpawn, creeps: [Creep]) {
                 if(!rampart){
                     structure.pos.createConstructionSite(STRUCTURE_RAMPART)
                 } else if(rampart.hits < rampartHeightNeeded + 30000){
-                    sq.schedule(spawn, rB.name, rcl >= 7)
+                    sq.schedule(spawn, cN.BUILDER_NAME, rcl >= 7)
                     return
                 }
             }
@@ -692,10 +514,9 @@ function updateBuilder(rcl, memory, spawn: StructureSpawn, creeps: [Creep]) {
 
 function updateRunner(creeps: Creep[], spawn, extensions, memory, rcl, emergencyTime) {
     if (rcl == 8 && !emergencyTime && Game.cpu.bucket < settings.bucket.mineralMining) {
-        memory[rR.name] = 0
         return
     }
-    const miners = _.filter(creeps, creep => creep.memory.role == rM.name && !creep.memory.link)
+    const miners = _.filter(creeps, creep => creep.memory.role == cN.REMOTE_MINER_NAME && !creep.memory.link)
     const minRunners = rcl < 7 ? 2 : 0
     const distances = _.map(miners, miner => PathFinder.search(spawn.pos, miner.pos).cost)
     let totalDistance = _.sum(distances)
@@ -703,19 +524,17 @@ function updateRunner(creeps: Creep[], spawn, extensions, memory, rcl, emergency
     const minerEnergyPerTick = SOURCE_ENERGY_CAPACITY/ENERGY_REGEN_TIME
     const energyProduced = 2 * totalDistance * minerEnergyPerTick
     const energyCarried = types.store(types.getRecipe(BodyType.runner, spawn.room.energyCapacityAvailable, spawn.room))
-    memory[rR.name] = Math.min(settings.max.runners, Math.max(Math.ceil(energyProduced / energyCarried), minRunners))
-    const upgraders = _.filter(creeps, creep => creep.memory.role == rU.name).length
-    const bonusRunners = Math.floor(upgraders/4)
-    memory[rR.name] += bonusRunners
-    cU.scheduleIfNeeded(rR.name, memory[rR.name], false, spawn, creeps)
+    let runnersNeeded = Math.min(settings.max.runners, Math.max(Math.ceil(energyProduced / energyCarried), minRunners))
+    const upgraders = _.filter(creeps, creep => creep.memory.role == cN.UPGRADER_NAME).length
+    runnersNeeded += Math.floor(upgraders/4)
+    cU.scheduleIfNeeded(cN.RUNNER_NAME, runnersNeeded, false, spawn, creeps)
+    memory[cN.RUNNER_NAME] = 0 //TODO: remove
 }
 
-function updateFerry(spawn, memory, rcl) {
+function updateFerry(spawn, rcl) {
     if (rcl >= 5) {
-        memory[rF.name] = 1
-        return
+        cU.scheduleIfNeeded(cN.FERRY_NAME, 1, false, spawn, u.splitCreepsByCity()[spawn.name])
     }
-    memory[rF.name] = 0
 }
 
 function updateStorageLink(spawn, memory, structures: Structure[]) {
@@ -783,11 +602,11 @@ function runEarlyGame(){
     const sources = spawn.room.find(FIND_SOURCES)
 
 
-    sq.schedule(spawn, rR.name, false, null, 100, -5)
-    sq.schedule(spawn, rM.name, false, sources[0].id, 200, -4)
-    sq.schedule(spawn, rR.name, false, null, 100, -3)
-    sq.schedule(spawn, rU.name, false, null, 200, -2)
-    sq.schedule(spawn, rM.name, false, sources[1].id, 300, -1)
+    sq.schedule(spawn, cN.RUNNER_NAME, false, null, 100, -5)
+    sq.schedule(spawn, cN.REMOTE_MINER_NAME, false, sources[0].id, 200, -4)
+    sq.schedule(spawn, cN.RUNNER_NAME, false, null, 100, -3)
+    sq.schedule(spawn, cN.UPGRADER_NAME, false, null, 200, -2)
+    sq.schedule(spawn, cN.REMOTE_MINER_NAME, false, sources[1].id, 300, -1)
     Memory.gameState = 1
 }
 
@@ -818,7 +637,7 @@ function updateRemotes(city: string){
         }
     }
     if(Game.time % 10 == 3){
-        const harasserRecipe = types.getRecipe(rH.type, Game.spawns[city].room.energyCapacityAvailable, Game.spawns[city].room)
+        const harasserRecipe = types.getRecipe(BodyType.harasser, Game.spawns[city].room.energyCapacityAvailable, Game.spawns[city].room)
         const harasserSize = harasserRecipe.length
         for(let i = 0; i < remotes.length; i++){
             if(remotes[i] == spawn.room.name)
@@ -944,7 +763,6 @@ export = {
     runCity: runCity,
     updateCountsCity: updateCountsCity,
     runTowers: runTowers,
-    runPowerSpawn: runPowerSpawn,
     setGameState: setGameState,
     runEarlyGame: runEarlyGame,
 }
