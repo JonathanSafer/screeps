@@ -24,7 +24,7 @@ function getRecipe(type: BodyType, energyAvailable: number, room: Room, boostTie
     case BodyType.normal:
         return upgraderBody(energy, rcl, room)
     case BodyType.transporter:
-        return scalingBody([2, 1], [CARRY, MOVE], energy, 30)
+        return transporterBody(energy, rcl)
     case BodyType.builder:
         return builderBody(energy, rcl)
     case BodyType.defender:
@@ -209,11 +209,12 @@ function minerBody(energyAvailable: number, rcl: number, room: Room, flag: Id<So
 
 function upgraderBody(energyAvailable, rcl, room) {
     const controller = room.controller
-    if (rcl > 2 && rcl < 6) {
+    if (rcl > 2 && rcl < 8) {
         if (controller.progressTotal - controller.progress > 40000) {
             //make a static upgrader
-            const works = Math.floor((energyAvailable - BODYPART_COST[CARRY]) / BODYPART_COST[WORK])
-            return body([works, 1], [WORK, CARRY])
+            const carries = rcl == 7 ? 2 : 1
+            const works = Math.floor((energyAvailable - (BODYPART_COST[CARRY] * carries)) / BODYPART_COST[WORK])
+            return body([works, carries], [WORK, CARRY])
         }
     }
     const isBoosted = controller.effects && controller.effects.length > 0
@@ -247,6 +248,12 @@ function builderBody(energyAvailable, rcl) {
 
 function reserverBody(energyAvailable) {
     return scalingBody([1,1], [MOVE, CLAIM], energyAvailable, 12)
+}
+
+function transporterBody(energyAvailable, rcl) {
+    if (rcl >= 7)
+        return scalingBody([2, 1], [CARRY, MOVE], energyAvailable, 30)
+    return scalingBody([2, 1], [CARRY, MOVE], energyAvailable, 15)
 }
 
 function quadBody(energyAvailable, rcl, room, boosted){

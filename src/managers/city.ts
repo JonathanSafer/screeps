@@ -694,8 +694,13 @@ function updateRemotes(city: string){
                 }
                 const reserverCost = 650
                 const controller = Game.rooms[remotes[i]].controller
-                if(spawn.room.energyCapacityAvailable >= reserverCost && controller && !controller.owner && (!controller.reservation || controller.reservation.ticksToEnd < 2000 || controller.reservation.username != settings.username)){
-                    const reserversNeeded = spawn.room.energyCapacityAvailable >= reserverCost * 2 ? 1 : 2
+                if(spawn.room.energyCapacityAvailable >= reserverCost 
+                    && controller 
+                    && !controller.owner 
+                    && (!controller.reservation 
+                        || controller.reservation.ticksToEnd < 2000 
+                        || controller.reservation.username != settings.username)){
+                    const reserversNeeded = spawn.room.energyCapacityAvailable >= reserverCost * 2 || roomU.countMiningSpots(controller.pos) < 2 ? 1 : 2
                     cU.scheduleIfNeeded(cN.RESERVER_NAME, reserversNeeded, false, spawn, myCreeps, remotes[i], 100)
                 }
             }

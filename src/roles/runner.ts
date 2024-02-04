@@ -125,7 +125,7 @@ const rR = {
                     const runnerRecipe = types.getRecipe(rR.type, spawnRoom.energyCapacityAvailable, spawnRoom)
                     const runnerCarry = runnerRecipe.filter(part => part == CARRY).length * CARRY_CAPACITY
                     Tmp[spawnRoom.name].juicers = _.filter(creep.room.find(FIND_MY_CREEPS), c => c.memory.role == rR.name && c.memory.juicer).length
-                    Tmp[spawnRoom.name].juicersNeeded = Math.ceil((freeSpace - LINK_CAPACITY)/runnerCarry) + Math.floor(upgraders/3)
+                    Tmp[spawnRoom.name].juicersNeeded = Math.ceil((freeSpace - LINK_CAPACITY)/runnerCarry) + Math.floor(upgraders/2)
                 }
                 if(Tmp[spawnRoom.name].juicers < Tmp[spawnRoom.name].juicersNeeded || (creep.saying == "*" && Tmp[spawnRoom.name].juicersNeeded > 0)){
                     creep.memory.juicer = true
