@@ -15,7 +15,7 @@ import "./lib/globals"
 import rr = require("./roles/roles")
 import data = require("./operations/data")
 import rU = require("./lib/roomUtils")
-import { cN } from "./lib/creepNames"
+import { cN } from "./lib/creepNames"jjj
 
 //Code to manually profile:
 //Game.profiler.profile(1000);
