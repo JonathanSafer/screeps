@@ -18,7 +18,7 @@ const centralSpawn = {
     
         const boostTier = creepWantsBoosts ? boosts.getBoostRank(role.actions, room) : 0
     
-        const recipe = types.getRecipe(role.type, energyToSpend, room, boostTier, flag)
+        const recipe = types.getRecipe(role.name, energyToSpend, room, boostTier, flag)
         const spawns = room.find(FIND_MY_SPAWNS)
         if(!Memory.counter){
             Memory.counter = 0
@@ -46,6 +46,8 @@ const centralSpawn = {
         Game.creeps[name].memory.needBoost = boostTier > 0 //TODO: remove
         Game.creeps[name].memory.boostTier = boostTier
         Game.creeps[name].memory.flag = flag
+        Game.creeps[name].memory.spawnTime = recipe.length * CREEP_SPAWN_TIME
+        Game.creeps[name].memory.spawnTick = Game.time
         return true
     },
 

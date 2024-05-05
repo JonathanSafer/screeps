@@ -1,16 +1,14 @@
 /* eslint-disable no-shadow */
 import _ = require("lodash")
-import { BodyType } from "./lib/creepNames"
+import { cN, BodyType } from "./lib/creepNames"
 import { CreepActions } from "./lib/boosts"
-export { BodyType } from "./lib/creepNames"
 
 
 // memory types for our memory structure
 declare global {
     interface CreepRole {
-        type?: BodyType
-        name?: string
-        boosts?: string[]
+        name?: cN
+        boosts?: MineralBoostConstant[]
         actions?: CreepActions[]
         target?: number
     }
@@ -116,6 +114,8 @@ declare global {
         }
      }
     interface CreepMemory {
+        spawnTime: number
+        spawnTick: number
         notify?: boolean
         building?: boolean
         hasRally?: boolean
@@ -173,7 +173,7 @@ declare global {
         flagRoom?: string
         location?: Id<AnyStoreStructure>
         upgradeLink?: Id<StructureLink>
-        role?: string
+        role?: cN
         destination?: RoomPosition
         sourcePos?: RoomPosition
         tug?: boolean
@@ -252,11 +252,12 @@ declare global {
         city?: string
     }
     interface QueuedCreep {
-        role: string
+        role: cN
         boosted?: boolean
         flag?: string,
         budget?: number
         priority?: number
+        spawnTime?: number
     }
     interface SourceMemory {
         roomName?: string
@@ -280,6 +281,7 @@ declare global {
     type Tmp = TmpDict & { 
         roomsByCity?: _.Dictionary<Room[]>
         creepsByCity?: _.Dictionary<Creep[]>
+        creepMemByCity?: _.Dictionary<CreepMemory[]>
         myCities?: Room[]
         nuked?: boolean
     }

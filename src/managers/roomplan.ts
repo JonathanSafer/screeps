@@ -1,11 +1,6 @@
 import u = require("../lib/utils")
 import template = require("../config/template")
-import rM = require("../roles/remoteMiner")
-import rU = require("../roles/upgrader")
-import rR = require("../roles/runner")
-import rH = require("../roles/harasser")
-import rQ = require("../roles/quad")
-import rSK = require("../roles/sKguard")
+import { cN } from "../lib/creepNames"
 import settings = require("../config/settings")
 import types = require("../config/types")
 
@@ -257,7 +252,7 @@ const p = {
             const resourcesNeeded = p.calcSpawnTimeNeeded(remote.roomName, spawn)
             const spawnTimeNeeded = resourcesNeeded.time
             const profitMargin = resourcesNeeded.profit
-            Log.info(`Remote found at ${remote.roomName} with spawn time of ${spawnTimeNeeded} and profit of ${profitMargin}`)
+            Log.info(`Remote ${remote.roomName}: profit: ${profitMargin}, spawn time: ${spawnTimeNeeded}, e/spawn: ${profitMargin/spawnTimeNeeded}`)
             if(spawnFreeTime - spawnTimeNeeded < settings.spawnFreeTime || profitMargin < 3)
                 return null
         }
@@ -364,8 +359,8 @@ const p = {
     calcSpawnTimeNeeded: function(roomName, spawn){
         //return 3 for invalid (no room can handle 3 spawns worth of spawn time)
         //reserver = 2 body parts every lifetime - distance from controller to spawn
-        let totalTime = 0
-        let totalCost = 0//cost per tick
+        let totalTime = 0 //spawn time cost per tick
+        let totalCost = 0 //cost per tick
         const roomInfo = Cache.roomData[roomName]
         if(roomInfo.ctrlP){
             const controllerPos = u.unpackPos(roomInfo.ctrlP, roomName)
@@ -379,22 +374,22 @@ const p = {
             totalCost += types.cost([MOVE, CLAIM])/ (CREEP_CLAIM_LIFE_TIME - path.cost)
         }
 
-        const minerBody = types.getRecipe(rM.type, spawn.room.energyCapacityAvailable, spawn.room)
+        const minerBody = types.getRecipe(cN.REMOTE_MINER_NAME, spawn.room.energyCapacityAvailable, spawn.room, 0, roomName)
         const minerCost = types.cost(minerBody)
         const minerSize = minerBody.length   
-        const runnerBody = types.getRecipe(rR.type, spawn.room.energyCapacityAvailable, spawn.room)
+        const runnerBody = types.getRecipe(cN.RUNNER_NAME, spawn.room.energyCapacityAvailable, spawn.room)
         const runnerCost = types.cost(runnerBody)
         const runnerSize = runnerBody.length
         const energyCarried = types.store(runnerBody)
-        const harasserBody = types.getRecipe(rH.type, spawn.room.energyCapacityAvailable, spawn.room)
+        const harasserBody = types.getRecipe(cN.HARASSER_NAME, spawn.room.energyCapacityAvailable, spawn.room)
         const harasserCost = types.cost(harasserBody)
         const harasserSize = harasserBody.length
-        const quadBody = types.getRecipe(rQ.type, spawn.room.energyCapacityAvailable, spawn.room)
+        const quadBody = types.getRecipe(cN.QUAD_NAME, spawn.room.energyCapacityAvailable, spawn.room)
         const quadCost = types.cost(quadBody) * 4
         const quadSize = quadBody.length * 4
         const roadUpkeep = ROAD_DECAY_AMOUNT/ROAD_DECAY_TIME * REPAIR_COST
         const sourceEnergy = roomInfo.ctrlP ? SOURCE_ENERGY_CAPACITY : SOURCE_ENERGY_KEEPER_CAPACITY
-        const sKGuardBody = types.getRecipe(rSK.type, spawn.room.energyCapacityAvailable, spawn.room)
+        const sKGuardBody = types.getRecipe(cN.SK_GUARD_NAME, spawn.room.energyCapacityAvailable, spawn.room)
         const sKGuardCost = types.cost(sKGuardBody)
         const sKGuardSize = sKGuardBody.length
 
@@ -412,6 +407,10 @@ const p = {
             }
         }
 
+        let energyProduced = 0
+        let localCost = 0
+        const containerCost = CONTAINER_DECAY/CONTAINER_DECAY_TIME * REPAIR_COST
+
         for(const source in roomInfo.src){
             const sourcePos = u.unpackPos(roomInfo.src[source], roomName)
             const result = PathFinder.search(spawn.pos, {pos: sourcePos, range: 1}, {
@@ -420,17 +419,20 @@ const p = {
                 maxOps: 10000
             })
             if(result.incomplete) return {profit: 0, time: 3}
-            const energyProduced = 2 * result.cost * sourceEnergy/ENERGY_REGEN_TIME
-            const runnersNeeded = energyProduced / energyCarried
-            totalTime += ((minerSize * CREEP_SPAWN_TIME)/ (CREEP_LIFE_TIME - result.cost)) + (runnersNeeded * runnerSize * CREEP_SPAWN_TIME/CREEP_LIFE_TIME)
-            totalCost += (minerCost/ (CREEP_LIFE_TIME - result.cost)) + (roadUpkeep * result.cost) + (runnersNeeded * runnerCost/CREEP_LIFE_TIME)
+
+            // this is how much energy is mined from the source in the time that a runner can move to the source and back
+            energyProduced += 2 * result.cost * sourceEnergy/ENERGY_REGEN_TIME 
+            totalTime += (minerSize * CREEP_SPAWN_TIME)/ (CREEP_LIFE_TIME - result.cost)
+            totalCost += (minerCost/ (CREEP_LIFE_TIME - result.cost)) + (roadUpkeep * result.cost)
+            localCost += containerCost + (roadUpkeep * result.cost)
         }
+
+        const runnersNeeded = (energyProduced - localCost) / energyCarried
+        totalTime += (runnersNeeded * runnerSize * CREEP_SPAWN_TIME/CREEP_LIFE_TIME)
+        totalCost += (runnersNeeded * runnerCost/CREEP_LIFE_TIME)
 
         const revenue = sourceEnergy * Object.keys(roomInfo.src).length/ENERGY_REGEN_TIME
         const profit = revenue - totalCost
-        if (!roomInfo.ctrlP) {
-            Log.info(`Room ${roomName} has a profit of ${profit} and a spawn time of ${totalTime} ticks`)
-        }
         return {profit: profit, time: totalTime}
     },
 
@@ -671,7 +673,7 @@ const p = {
             return
         }
         const creeps = room.controller.pos.findInRange(FIND_MY_CREEPS, 3)
-        const upgrader = _.find(creeps, c => c.memory.role == rU.name)
+        const upgrader = _.find(creeps, c => c.memory.role == cN.UPGRADER_NAME)
         if(!upgrader)
             return
         let location = null
@@ -738,7 +740,7 @@ const p = {
                     let go = true
                     for(const item of look){
                         if(item.type == LOOK_STRUCTURES 
-                            || (item.type == LOOK_CREEPS && item[LOOK_CREEPS].memory.role == rM.name)
+                            || (item.type == LOOK_CREEPS && item[LOOK_CREEPS].memory.role == cN.REMOTE_MINER_NAME)
                             || (item.type == LOOK_TERRAIN && item[LOOK_TERRAIN] == "wall"))
                             go = false
                     }

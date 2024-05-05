@@ -50,10 +50,10 @@ const rU = {
         if (creep.memory.destination || creep.memory.moveStatus != MoveStatus.STATIC) {
             return
         }
-        const link = rU.getUpgradeLink(creep) as StructureLink | StructureContainer
+        const linkPos = linkLib.getUpgradeLinkPos(creep.room)
         let location
-        if (link) {
-            location = rU.findFreeSpot(creep, link.pos)
+        if (linkPos) {
+            location = rU.findFreeSpot(creep, linkPos)
         }
         if (!location) {
             Log.error(`No free spot for upgrader at ${creep.pos}`)
@@ -62,7 +62,7 @@ const rU = {
     },
 
     findFreeSpot: function(creep, pos: RoomPosition) {
-        const otherUpgraders = _.filter(creep.room.find(FIND_MY_CREEPS) as [Creep], c => c.memory.role == cN.UPGRADER_NAME && c.id != creep.id)
+        const otherUpgraders = _.filter(u.splitCreepsByCity()[creep.memory.city], c => c.memory.role == cN.UPGRADER_NAME && c.id != creep.id)
         for (let x = -1; x < 2; x++) {
             for (let y = -1; y < 2; y++) {
                 const newPos = new RoomPosition(pos.x + x, pos.y + y, pos.roomName)

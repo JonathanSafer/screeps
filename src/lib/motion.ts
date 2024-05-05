@@ -375,11 +375,11 @@ const m = {
         const roomDataCache = Cache.roomData
         const route = Game.map.findRoute(start, finish, {
             routeCallback: function(roomName){
-                if(u.isHighway(roomName)){
-                    return 1
-                }
                 if(Game.map.getRoomStatus(roomName).status != "normal") {
                     return Infinity
+                }
+                if(u.isHighway(roomName)){
+                    return 1
                 }
                 const roomData = u.getsetd(roomDataCache, roomName, {})
                 if(roomData.own && !Memory.settings.allies.includes(roomData.own) && roomData.rcl && CONTROLLER_STRUCTURES[STRUCTURE_TOWER][roomData.rcl] && avoidEnemies){

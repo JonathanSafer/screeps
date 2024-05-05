@@ -1,4 +1,4 @@
-import { cN, BodyType } from "../lib/creepNames"
+import { cN } from "../lib/creepNames"
 import centralSpawn = require("../buildings/spawn")
 import { cU } from "../lib/creepUtils"
 import fact = require("../buildings/factory")
@@ -15,6 +15,7 @@ import t = require("../buildings/tower")
 import template = require("../config/template")
 import types = require("../config/types")
 import u = require("../lib/utils")
+import rR = require("../roles/runner")
 
 //runCity function
 function runCity(city, creeps: Creep[]){
@@ -50,7 +51,7 @@ function runCity(city, creeps: Creep[]){
     let usedQueue = true
     const nextRoleInfo = sq.peekNextRole(spawn) || {} as QueuedCreep
     const spawnQueueRoleName = nextRoleInfo.role
-    let nextRole = spawnQueueRoleName ? nameToRole[spawnQueueRoleName][0] : undefined
+    let nextRole = spawnQueueRoleName ? nameToRole[spawnQueueRoleName][0] : null
 
     if (!nextRole) {
         nextRole = _.find(roles, role => (typeof counts[role.name] == "undefined" && 
@@ -76,7 +77,7 @@ function runCity(city, creeps: Creep[]){
     labsLib.run(city)
     fact.runFactory(city)
     checkNukes(room)
-    updateRemotes(city)
+    updateRemotes(city, creeps)
 }
 
 //updateCountsCity function
@@ -393,8 +394,7 @@ function updateUpgrader(city: string, controller: StructureController, memory: S
             cU.scheduleIfNeeded(cN.UPGRADER_NAME, 1, true, Game.spawns[city], creeps)
         }
     } else {
-        const builders = _.filter(creeps, c => c.memory.role == cN.BUILDER_NAME)
-        if(builders.length > 3) return
+        const builders = _.filter(creeps, c => c.memory.role == cN.BUILDER_NAME).length + (sq.getCounts(Game.spawns[city])[cN.BUILDER_NAME] || 0)
         const bank = roomU.getStorage(room) as StructureStorage
         if(!bank) return
         let money = bank.store[RESOURCE_ENERGY]
@@ -402,7 +402,7 @@ function updateUpgrader(city: string, controller: StructureController, memory: S
         if(rcl < 6 && Game.gcl.level <= 2)//keep us from saving energy in early game
             money += capacity * 0.2
         if(capacity < CONTAINER_CAPACITY){
-            if(!builders.length)
+            if(!builders)
                 cU.scheduleIfNeeded(cN.UPGRADER_NAME,1, false, Game.spawns[city], creeps)
             return
         }
@@ -412,10 +412,20 @@ function updateUpgrader(city: string, controller: StructureController, memory: S
                 storedEnergy += c.store.energy
         }
         const energyMultiplier = rcl > 2 ? 2 : 4
-        const needed = room.storage ? Math.floor(Math.pow((money/capacity) * 4, 8)) : Math.floor((storedEnergy*energyMultiplier/capacity))
-        Log.info(`City ${city}: stored energy: ${storedEnergy}, upgraders requested: ${needed}`)
-        const maxUpgraders = 7 - builders.length
-        cU.scheduleIfNeeded(cN.UPGRADER_NAME, Math.min(needed, maxUpgraders), rcl >= 6, Game.spawns[city], creeps)
+        const upgradersRequested = room.storage ? Math.floor(Math.pow((money/capacity) * 4, 8)) : Math.floor((storedEnergy*energyMultiplier/capacity))
+        Log.info(`City ${city}: stored energy: ${storedEnergy}, upgraders requested: ${upgradersRequested}`)
+        const upgradeLinkPos = link.getUpgradeLinkPos(room) || controller.pos
+        let upgraderSpots = 0
+        for (let i = -1; i <= 1; i++) {
+            for (let j = -1; j <= 1; j++) {
+                const testPos = new RoomPosition(upgradeLinkPos.x + i, upgradeLinkPos.y + j, upgradeLinkPos.roomName)
+                if (!roomU.isPositionBlocked(testPos) && testPos.inRangeTo(controller.pos, 3)) {
+                    upgraderSpots++
+                }
+            }
+        }
+        const upgradersNeeded = Math.min(upgradersRequested - builders, upgraderSpots)
+        cU.scheduleIfNeeded(cN.UPGRADER_NAME, upgradersNeeded, rcl >= 6, Game.spawns[city], creeps)
         if (controller.ticksToDowngrade < CONTROLLER_DOWNGRADE[rcl]/2){
             cU.scheduleIfNeeded(cN.UPGRADER_NAME, 1, rcl >= 6, Game.spawns[city], creeps)
         }
@@ -479,7 +489,7 @@ function updateBuilder(rcl, memory, spawn: StructureSpawn, creeps: [Creep]) {
                 spawn.memory.wallMultiplier = Math.min(spawn.memory.wallMultiplier + .1, 10)
             const minHits = _.min(walls, wall => wall.hits).hits
             const defenseMode = !spawn.room.controller.safeMode && spawn.room.controller.safeModeCooldown
-            const wallHeight = Game.gcl.level < 3 ? settings.wallHeight[Math.min(rcl - 1, 3)] : settings.wallHeight[rcl - 1] *  spawn.memory.wallMultiplier
+            const wallHeight = Game.gcl.level < settings.wallHeightGCL ? settings.wallHeight[Math.min(rcl - 1, 3)] : settings.wallHeight[rcl - 1] *  spawn.memory.wallMultiplier
             if(minHits < wallHeight || defenseMode){
                 cU.scheduleIfNeeded(cN.BUILDER_NAME, 3, rcl >= 6, spawn, creeps)
                 return
@@ -524,10 +534,9 @@ function updateRunner(creeps: Creep[], spawn, extensions, memory, rcl, emergency
     if(extensions < 10 && Object.keys(Game.rooms).length == 1) totalDistance = totalDistance * 0.8//for when there are no reservers
     const minerEnergyPerTick = SOURCE_ENERGY_CAPACITY/ENERGY_REGEN_TIME
     const energyProduced = 2 * totalDistance * minerEnergyPerTick
-    const energyCarried = types.store(types.getRecipe(BodyType.runner, spawn.room.energyCapacityAvailable, spawn.room))
+    const energyCarried = types.store(types.getRecipe(cN.RUNNER_NAME, spawn.room.energyCapacityAvailable, spawn.room))
     let runnersNeeded = Math.min(settings.max.runners, Math.max(Math.ceil(energyProduced / energyCarried), minRunners))
-    const upgraders = _.filter(creeps, creep => creep.memory.role == cN.UPGRADER_NAME).length
-    runnersNeeded += Math.floor(upgraders/4)
+    runnersNeeded += rR.getControllerRunnersNeeded(spawn)
     cU.scheduleIfNeeded(cN.RUNNER_NAME, runnersNeeded, false, spawn, creeps)
     memory[cN.RUNNER_NAME] = 0 //TODO: remove
 }
@@ -554,7 +563,7 @@ function updateStorageLink(spawn, memory, structures: Structure[]) {
     }
 }
 
-function updateHighwayCreep(flagName: string, spawn: StructureSpawn, creeps: Creep[], role: string) {
+function updateHighwayCreep(flagName: string, spawn: StructureSpawn, creeps: Creep[], role: cN) {
     const flagNames = _.filter(Object.keys(Memory.flags), flag => flag.includes(flagName))
     for(const flag of flagNames){
         const boosted = role != cN.HARASSER_NAME || Memory.flags[flag].boosted && PServ
@@ -624,12 +633,32 @@ function runEarlyGame(){
 function updateSpawnStress(spawn: StructureSpawn){
     const room = spawn.room
     const memory = spawn.memory
-    if(!memory.spawnAvailability) memory.spawnAvailability = 1//start out with expected RCL1 use
-    const freeSpawns = memory.sq && memory.sq.length ? 0 : _.filter(room.find(FIND_MY_SPAWNS), s => !s.spawning).length
-    memory.spawnAvailability = (memory.spawnAvailability * .9993) + (freeSpawns * 0.0007)
+    if(!memory.spawnAvailability && memory.spawnAvailability != 0) memory.spawnAvailability = 1//start out with expected RCL1 use
+
+    if (Game.time % 37 == 0) {
+        const spawns = room.find(FIND_MY_SPAWNS)
+        //TODO: spawnAttempt errors could be tracked separately.
+
+        const remainingSpawnTime = _.sum(spawns, s => s.spawning ? s.spawning.remainingTime : 0)
+        const queueTime = sq.getTime(spawn) + remainingSpawnTime
+        const windowOffset = Math.ceil(queueTime / spawns.length) // time until we deplete the queue
+        const windowStartTime = Game.time + windowOffset - CREEP_LIFE_TIME
+
+        // find all localCreeps that were spawned during our window
+        const localCreepMem = u.splitCreepMemByCity()[spawn.name] // array of creep memories instead of creeps
+
+        // whatever is less: creep spawn time, time between current time and birth, time between birth and window start
+        const pastSpawnedTime = _.sum(localCreepMem, mem => Math.min(Math.max(mem.spawnTime - Math.max(windowStartTime - mem.spawnTick,
+            0),
+        0),
+        Game.time - mem.spawnTick))
+
+        const creepSpawnTime = pastSpawnedTime + queueTime
+        memory.spawnAvailability= spawns.length - (creepSpawnTime / CREEP_LIFE_TIME)
+    }
 }
 
-function updateRemotes(city: string){
+function updateRemotes(city: string, myCreeps: Creep[]){
     if(Game.cpu.bucket < settings.bucket.mineralMining){
         return
     }
@@ -648,7 +677,7 @@ function updateRemotes(city: string){
         }
     }
     if(Game.time % 10 == 3){
-        const harasserRecipe = types.getRecipe(BodyType.harasser, Game.spawns[city].room.energyCapacityAvailable, Game.spawns[city].room)
+        const harasserRecipe = types.getRecipe(cN.HARASSER_NAME, Game.spawns[city].room.energyCapacityAvailable, Game.spawns[city].room)
         const harasserSize = harasserRecipe.length
         for(let i = 0; i < remotes.length; i++){
             if(remotes[i] == spawn.room.name)
@@ -659,7 +688,7 @@ function updateRemotes(city: string){
                 rp.removeRemote(remotes[i], spawn.room.name)
                 continue
             }
-            if(Game.time % 100 == 3 && Game.rooms[remotes[i]]) {
+            if(Game.time % 100 == 3 && Game.rooms[remotes[i]] && Memory.data.lastReset < Game.time - 5) {
                 // ensure that we can still safely path all sources in the remote
                 // find all sources
                 let droppedRemote = false
@@ -677,13 +706,18 @@ function updateRemotes(city: string){
                     continue
                 }
             }
-            const myCreeps = u.splitCreepsByCity()[city]
             if (u.isSKRoom(remotes[i])){
                 //if room is under rcl7 spawn a quad
                 if (spawn.room.controller.level < 7){
                     cU.scheduleIfNeeded(cN.QUAD_NAME, 1, false, spawn, myCreeps, remotes[i], 300)
                 } else {
                     cU.scheduleIfNeeded(cN.SK_GUARD_NAME, 1, false, spawn, myCreeps, remotes[i], 300)
+                    if (Game.rooms[remotes[i]]) {
+                        const mineral = Game.rooms[remotes[i]].find(FIND_MINERALS)[0]
+                        if (mineral.mineralAmount > 0 && spawn.room.terminal && spawn.room.terminal.store[mineral.mineralType] < 6000) {
+                            cU.scheduleIfNeeded(cN.MINERAL_MINER_NAME, 1, false, spawn, myCreeps, remotes[i], 300)
+                        }
+                    }
                 }
             }
             if(Game.rooms[remotes[i]]){

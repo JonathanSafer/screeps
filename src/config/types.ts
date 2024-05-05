@@ -1,7 +1,9 @@
 import motion = require("../lib/motion")
-import { BodyType } from "../screeps"
+import { cN } from "../lib/creepNames"
+import roomU = require("../lib/roomUtils")
+import settings = require("./settings")
 
-function getRecipe(type: BodyType, energyAvailable: number, room: Room, boostTier?: number, flagName?: string){
+function getRecipe(type: cN, energyAvailable: number, room: Room, boostTier?: number, flagName?: string){
     const energy = energyAvailable || 0
     const rcl = room.controller.level
 
@@ -9,51 +11,52 @@ function getRecipe(type: BodyType, energyAvailable: number, room: Room, boostTie
     const boosted = boostTier > 0
 
     switch (type) {
-    case BodyType.brick:
+    case cN.BRICK_NAME:
         return scalingBody([1,1], [ATTACK, MOVE], energy, 20)
-    case BodyType.reserver:
+    case cN.RESERVER_NAME:
         return reserverBody(energyAvailable)
-    case BodyType.scout:
+    case cN.SCOUT_NAME:
+    case cN.QR_CODE_NAME:
         return [MOVE]
-    case BodyType.quad:
+    case cN.QUAD_NAME:
         return quadBody(energy, rcl, room, boosted)
-    case BodyType.runner:
+    case cN.RUNNER_NAME:
         return runnerBody(energy, rcl, flagName)
-    case BodyType.miner:
+    case cN.REMOTE_MINER_NAME:
         return minerBody(energy, rcl, room, flagName as Id<Source>)
-    case BodyType.normal:
+    case cN.UPGRADER_NAME:
         return upgraderBody(energy, rcl, room)
-    case BodyType.transporter:
+    case cN.TRANSPORTER_NAME:
         return transporterBody(energy, rcl)
-    case BodyType.builder:
+    case cN.BUILDER_NAME:
         return builderBody(energy, rcl)
-    case BodyType.defender:
+    case cN.DEFENDER_NAME:
         return defenderBody(energy, rcl, boosted)
-    case BodyType.claimer:
+    case cN.CLAIMER_NAME:
         return body([5, 1], [MOVE, CLAIM])
-    case BodyType.unclaimer:
+    case cN.UNCLAIMER_NAME:
         return scalingBody([2, 1], [MOVE, CLAIM], energy)
-    case BodyType.harasser:
+    case cN.HARASSER_NAME:
         return harasserBody(energy, boosted, rcl)
-    case BodyType.repairer:
+    case cN.REPAIRER_NAME:
         return repairerBody(energy)
-    case BodyType.robber:
+    case cN.ROBBER_NAME:
         return scalingBody([1, 1], [CARRY, MOVE], energy)
-    case BodyType.spawnBuilder:
+    case cN.SPAWN_BUILDER_NAME:
         return scalingBody([2, 3, 5], [WORK, CARRY, MOVE], energy)
-    case BodyType.ferry:
+    case cN.FERRY_NAME:
         return scalingBody([2, 1], [CARRY, MOVE], energy, 30)
-    case BodyType.breaker:
+    case cN.BREAKER_NAME:
         return breakerBody(energy, rcl, boostTier)
-    case BodyType.medic:
+    case cN.MEDIC_NAME:
         return medicBody(energy, rcl, boostTier)
-    case BodyType.sKguard:
+    case cN.SK_GUARD_NAME:
         return body([1, 23, 16, 1, 5, 1, 2, 1], [ATTACK, MOVE, ATTACK, RANGED_ATTACK, HEAL, RANGED_ATTACK, MOVE, HEAL])
-    case BodyType.powerMiner:
+    case cN.POWER_MINER_NAME:
         return pMinerBody(boosted)
-    case BodyType.mineralMiner:
+    case cN.MINERAL_MINER_NAME:
         return mineralMinerBody(rcl)
-    case BodyType.depositMiner:
+    case cN.DEPOSIT_MINER_NAME:
         return body(dMinerCalc(room, boosted, flagName), [WORK, CARRY, MOVE])
     }
     Log.error(`No recipe found for ${type} in ${room.name} with ${energy} energy`)
@@ -171,26 +174,26 @@ function pMinerBody(boosted){
     return body([20, 20], [MOVE, ATTACK])
 }
 
-function minerBody(energyAvailable: number, rcl: number, room: Room, flag: Id<Source>) {
+function minerBody(energyAvailable: number, rcl: number, room: Room, flag: Id<Source> | string) {
     if(Game.time > 15000)
         energyAvailable = Math.max(energyAvailable, 300)
     let works = Math.floor((energyAvailable) / BODYPART_COST[WORK])
     let pc = null
-    const source = Game.getObjectById(flag)
-    if (rcl < 3 && source && source.room.name != room.name) {
+    const roomType = roomU.getMiningRoomType(flag)
+    if (rcl < 3 && roomType != roomU.miningRoomType.LOCAL) {
         return body([3], [WORK])
     }
     if (rcl == 8){
-        if(source && source.room.name == room.name){
+        if(roomType == roomU.miningRoomType.LOCAL){
             pc = room.find(FIND_MY_POWER_CREEPS, { filter: c => c.powers[PWR_REGEN_SOURCE] }).length
             if(Game.cpu.bucket < 9500)
                 pc++ //pc is used when there is EITHER a PC or low cpu
         }
     }
-    const maxWorks = pc ? 25 : source && source.room.controller ? 6 : 10
+    const maxWorks = pc && roomType == roomU.miningRoomType.LOCAL ? 25 : roomType == roomU.miningRoomType.SK ? 10 : 6
     works = Math.min(works, maxWorks)
     const energyAfterWorks = energyAvailable - works * BODYPART_COST[WORK]
-    const moves = rcl >= 6 ? Math.floor(Math.min(Math.ceil(works / 2), Math.max(1, energyAfterWorks / BODYPART_COST[MOVE]))): 0
+    const moves = rcl >= 6 ? Math.floor(Math.min(Math.ceil(works / 2), Math.max(1, energyAfterWorks / BODYPART_COST[MOVE]))) : 0
     const energyAfterMoves = energyAfterWorks - moves * BODYPART_COST[MOVE]
     const minCarries = energyAfterMoves/BODYPART_COST[CARRY] >= 1 ? 1 : 0
     
@@ -202,7 +205,7 @@ function minerBody(energyAvailable: number, rcl: number, room: Room, flag: Id<So
         .filter(c => c <= energyAfterMoves / BODYPART_COST[CARRY])  // how many can we afford?
         .filter(c => works + c + moves <= MAX_CREEP_SIZE)
     let carries = rcl >= 6 ? Math.max(...storeChoices, minCarries) : minCarries
-    if(source && source.room.name != room.name)
+    if(roomType != roomU.miningRoomType.LOCAL)
         carries = Math.min(carries, 1)
     return body([works, carries, moves], [WORK, CARRY, MOVE])
 }
@@ -213,7 +216,7 @@ function upgraderBody(energyAvailable, rcl, room) {
         if (controller.progressTotal - controller.progress > 40000) {
             //make a static upgrader
             const carries = rcl == 7 ? 2 : 1
-            const works = Math.floor((energyAvailable - (BODYPART_COST[CARRY] * carries)) / BODYPART_COST[WORK])
+            const works = Math.min(Math.floor((energyAvailable - (BODYPART_COST[CARRY] * carries)) / BODYPART_COST[WORK]), MAX_CREEP_SIZE - carries)
             return body([works, carries], [WORK, CARRY])
         }
     }
@@ -227,7 +230,10 @@ function upgraderBody(energyAvailable, rcl, room) {
     } else if (isBoosted) {
         return scalingBody([4, 1, 1], types, energyAvailable, Math.min(maxWorks * 1.5, MAX_CREEP_SIZE))
     } else if (rcl == 8) {// don't go over 15 work for rcl8
-        return scalingBody([5, 1, 2], types, energyAvailable, 24)
+        if (settings.rcl8upgrade) {
+            return scalingBody([5, 1, 2], types, energyAvailable, 24)
+        }
+        return body([1, 1, 1], types)
     } else if (energyAvailable >= 400) {
         return scalingBody([3, 1, 1], types, energyAvailable)
     } else {

@@ -160,6 +160,29 @@ const rU = {
             }
         }
         return spots
+    },
+
+    miningRoomType: {
+        LOCAL: "local",
+        REMOTE: "remote",
+        SK: "sourceKeeper"
+    },
+
+    getMiningRoomType: function(roomNameOrSourceId: Id<Source> | string) {
+        let roomName = null
+        const source = Game.getObjectById(roomNameOrSourceId as Id<Source>)
+        if (source) {
+            roomName = source.room.name
+        } else if (Game.rooms[roomNameOrSourceId] || Cache.roomData[roomNameOrSourceId]) {
+            roomName = roomNameOrSourceId
+        }
+        if (!roomName || u.isSKRoom(roomName)) {
+            return rU.miningRoomType.SK
+        } else if (Game.rooms[roomName] && Game.rooms[roomName].controller && Game.rooms[roomName].controller.my) {
+            return rU.miningRoomType.LOCAL
+        } else {
+            return rU.miningRoomType.REMOTE
+        }
     }
 }
 

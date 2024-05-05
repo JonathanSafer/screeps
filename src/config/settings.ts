@@ -33,12 +33,13 @@ const settings = {
     boostsNeeded: 6000, // boost needed per city for us to boost creeps
     boostAmount: 5000, // threshold to stop producing boosts (add ~8000 to this and ghodium amount since this does not include ready to go boosts in terminal)
     wallHeight: [0, 0, 0, 30000, 100000, 500000, 2000000, 5000000],
+    wallHeightGCL: 3, // GCL threshold to start building walls to `wallHeight` level
     flagCleanup: 2000, //interval to update old flags
     depositFlagRemoveTime: 100000, //ticks after deposit flag is placed after which it should be removed regardless of deposit status
     addRemote: 0.7,
     removeRemote: 0.9, // TODO: move this to bucket
-    spawnFreeTime: 0.25, //amount of spawn time to be left open for miscellaneous activity
-    spawnFreeTimeBuffer: 0.15,
+    spawnFreeTime: 0.15, //amount of spawn time to be left open for miscellaneous activity
+    spawnFreeTimeBuffer: 0.1,
     bucket: {//minimum bucket thresholds
         resourceMining: 1000,
         repair: 1500, //repairing walls in a room
@@ -100,8 +101,11 @@ if(!Game.shard.name.includes("shard") || Game.shard.name == "shardSeason"){
     settings.allies = [username]
     settings.processPower = false
     settings.rcl8upgrade = false
-    settings.powerMiningRange = 4 //manhattan distance that we can powermine (in rooms)
-    settings.militaryBoosts = ["XKHO2", "XGHO2", "XZHO2", "XLHO2", "XZH2O", "G"]
+    settings.powerMiningRange = 0 //manhattan distance that we can powermine (in rooms)
+    settings.militaryBoosts = ["XZHO2", "XZH2O", "XLHO2", "XKHO2", "XGHO2"]
+    settings.civBoosts = ["XLH2O", "XGH2O"]
+    settings.wallHeightGCL = 5
+    settings.wallHeight[7] = 2000000
 }
 
 if (!Memory.settings) {
