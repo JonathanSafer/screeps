@@ -158,11 +158,19 @@ const RoomPosition = class {
         return []
     }
 
+    look() {
+        return []
+    }
+
     createConstructionSite() {
         return 0
     }
 
     findClosestByRange() {
+        return Object.values(Game.spawns)[0]
+    }
+
+    findClosestByPath() {
         return Object.values(Game.spawns)[0]
     }
 
@@ -321,7 +329,7 @@ global.StructureController = class extends Structure {
     constructor(room, level, my) {
         super(room, STRUCTURE_CONTROLLER)
         room.controller = this
-        this.level = level || 8
+        this.level = level >= 0 ? level : 8
         this.my = my || true
     }
 }

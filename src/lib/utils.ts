@@ -67,6 +67,13 @@ const u = {
             Tmp.creepsByCity = _.groupBy(Game.creeps, creep => creep.memory.city)
         return Tmp.creepsByCity
     },
+
+    splitCreepMemByCity: function(){
+        if(!Tmp.creepMemByCity){
+            Tmp.creepMemByCity = _.groupBy(Memory.creeps, c => c.city)
+        }
+        return Tmp.creepMemByCity
+    },
     
     splitRoomsByCity: function(){
         if(!Tmp.roomsByCity){

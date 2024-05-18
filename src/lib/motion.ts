@@ -1,5 +1,6 @@
 import u = require("./utils")
 import rU = require("./roomUtils")
+import { MoveStatus } from "./creepUtils"
 import settings = require("../config/settings")
 import template = require("../config/template")
 
@@ -63,7 +64,7 @@ const m = {
                 const nextPos = ccache.path[0]
                 if(Game.rooms[nextPos.roomName]){
                     const creeps = nextPos.lookFor(LOOK_CREEPS).concat(nextPos.lookFor(LOOK_POWER_CREEPS))
-                    if(creeps.length && creeps[0].my && creeps[0].memory.moveStatus != "static"){
+                    if(creeps.length && creeps[0].my && creeps[0].memory.moveStatus != MoveStatus.STATIC){
                         const scache = u.getCreepCache(creeps[0].id)
                         if(!scache.lastMove || scache.lastMove < (Game.time - 1)){
                             creeps[0].move(creeps[0].pos.getDirectionTo(creep.pos))
@@ -312,7 +313,7 @@ const m = {
                 room.find(FIND_CREEPS).forEach(function(c) {
                     const ccache = u.getCreepCache(c.id)
                     if(!ccache.lastMove || ccache.lastMove < (Game.time - 1)){
-                        if(!creep.my || creep.memory.moveStatus == "static"){
+                        if(!creep.my || creep.memory.moveStatus == MoveStatus.STATIC){
                             costs.set(c.pos.x, c.pos.y, 0xff)
                         } else {
                             costs.set(c.pos.x, c.pos.y, 30)
@@ -374,11 +375,11 @@ const m = {
         const roomDataCache = Cache.roomData
         const route = Game.map.findRoute(start, finish, {
             routeCallback: function(roomName){
-                if(u.isHighway(roomName)){
-                    return 1
-                }
                 if(Game.map.getRoomStatus(roomName).status != "normal") {
                     return Infinity
+                }
+                if(u.isHighway(roomName)){
+                    return 1
                 }
                 const roomData = u.getsetd(roomDataCache, roomName, {})
                 if(roomData.own && !Memory.settings.allies.includes(roomData.own) && roomData.rcl && CONTROLLER_STRUCTURES[STRUCTURE_TOWER][roomData.rcl] && avoidEnemies){

@@ -135,6 +135,54 @@ const rU = {
                 }
             })
         }
+    },
+
+    isPositionBlocked: function(roomPos: RoomPosition){
+        const look = roomPos.look()
+        for(const lookObject of look){
+            if((lookObject.type == LOOK_TERRAIN 
+                && lookObject[LOOK_TERRAIN] == "wall")//no constant for wall atm
+                || (lookObject.type == LOOK_STRUCTURES
+                && _.contains(OBSTACLE_OBJECT_TYPES, lookObject[LOOK_STRUCTURES].structureType))) {
+                return true
+            }
+        }
+        return false
+    },
+
+    countMiningSpots: function(pos: RoomPosition) {
+        let spots = 0
+        for (let x = -1; x <= 1; x++) {
+            for (let y = -1; y <= 1; y++) {
+                if (!rU.isPositionBlocked(new RoomPosition(pos.x + x, pos.y + y, pos.roomName))) {
+                    spots++
+                }
+            }
+        }
+        return spots
+    },
+
+    miningRoomType: {
+        LOCAL: "local",
+        REMOTE: "remote",
+        SK: "sourceKeeper"
+    },
+
+    getMiningRoomType: function(roomNameOrSourceId: Id<Source> | string) {
+        let roomName = null
+        const source = Game.getObjectById(roomNameOrSourceId as Id<Source>)
+        if (source) {
+            roomName = source.room.name
+        } else if (Game.rooms[roomNameOrSourceId] || Cache.roomData[roomNameOrSourceId]) {
+            roomName = roomNameOrSourceId
+        }
+        if (!roomName || u.isSKRoom(roomName)) {
+            return rU.miningRoomType.SK
+        } else if (Game.rooms[roomName] && Game.rooms[roomName].controller && Game.rooms[roomName].controller.my) {
+            return rU.miningRoomType.LOCAL
+        } else {
+            return rU.miningRoomType.REMOTE
+        }
     }
 }
 

@@ -2,17 +2,16 @@ var assert = require("assert")
 require("./lib")
 
 function testRoom(rcl) {
-    return {
-        controller: {
-            level: rcl
-        }
-    }
+    room = new Room("test")
+    room.controller = new StructureController(room, rcl)
+    return room
 }
 
 describe("types", function () {
     beforeEach(function() {
         Game.reset()
         Memory.reset()
+        Cache.roomData = {}
     })
     var t = require("../built/config/types.js")
     describe("#depositMinerBody()", function () {
@@ -36,9 +35,9 @@ describe("types", function () {
             const rM = require("../built/roles/remoteMiner.js")
             Game.cpu.bucket = 10000 // Full bucket at low rcl
             const sourceMaxEnergy = 300
-            const b0 = t.getRecipe(rM.type, sourceMaxEnergy, testRoom(0))
-            const b1 = t.getRecipe(rM.type, sourceMaxEnergy, testRoom(1))
-            const b2 = t.getRecipe(rM.type, sourceMaxEnergy, testRoom(2))
+            const b0 = t.getRecipe(rM.name, sourceMaxEnergy, testRoom(0))
+            const b1 = t.getRecipe(rM.name, sourceMaxEnergy, testRoom(1))
+            const b2 = t.getRecipe(rM.name, sourceMaxEnergy, testRoom(2))
             assert(t.cost(b0) <= sourceMaxEnergy)
             assert(t.cost(b1) <= sourceMaxEnergy)
             assert(t.cost(b2) <= sourceMaxEnergy)
@@ -48,9 +47,9 @@ describe("types", function () {
             const rR = require("../built/roles/runner.js")
             Game.cpu.bucket = 10000 // Full bucket at low rcl
             const sourceMaxEnergy = 300
-            const b0 = t.getRecipe(rR.type, sourceMaxEnergy, testRoom(0))
-            const b1 = t.getRecipe(rR.type, sourceMaxEnergy, testRoom(1))
-            const b2 = t.getRecipe(rR.type, sourceMaxEnergy, testRoom(2))
+            const b0 = t.getRecipe(rR.name, sourceMaxEnergy, testRoom(0))
+            const b1 = t.getRecipe(rR.name, sourceMaxEnergy, testRoom(1))
+            const b2 = t.getRecipe(rR.name, sourceMaxEnergy, testRoom(2))
             assert(t.cost(b0) <= sourceMaxEnergy)
             assert(t.cost(b1) <= sourceMaxEnergy)
             assert(t.cost(b2) <= sourceMaxEnergy)
@@ -60,9 +59,9 @@ describe("types", function () {
             const rU = require("../built/roles/upgrader.js")
             Game.cpu.bucket = 10000 // Full bucket at low rcl
             const sourceMaxEnergy = 300
-            const b0 = t.getRecipe(rU.type, sourceMaxEnergy, testRoom(0))
-            const b1 = t.getRecipe(rU.type, sourceMaxEnergy, testRoom(1))
-            const b2 = t.getRecipe(rU.type, sourceMaxEnergy, testRoom(2))
+            const b0 = t.getRecipe(rU.name, sourceMaxEnergy, testRoom(0))
+            const b1 = t.getRecipe(rU.name, sourceMaxEnergy, testRoom(1))
+            const b2 = t.getRecipe(rU.name, sourceMaxEnergy, testRoom(2))
             assert(t.cost(b0) <= sourceMaxEnergy)
             assert(t.cost(b1) <= sourceMaxEnergy)
             assert(t.cost(b2) <= sourceMaxEnergy)
@@ -72,9 +71,9 @@ describe("types", function () {
             const rT = require("../built/roles/transporter.js")
             Game.cpu.bucket = 10000 // Full bucket at low rcl
             const sourceMaxEnergy = 300
-            const b0 = t.getRecipe(rT.type, sourceMaxEnergy, testRoom(0))
-            const b1 = t.getRecipe(rT.type, sourceMaxEnergy, testRoom(1))
-            const b2 = t.getRecipe(rT.type, sourceMaxEnergy, testRoom(2))
+            const b0 = t.getRecipe(rT.name, sourceMaxEnergy, testRoom(0))
+            const b1 = t.getRecipe(rT.name, sourceMaxEnergy, testRoom(1))
+            const b2 = t.getRecipe(rT.name, sourceMaxEnergy, testRoom(2))
             assert(t.cost(b0) <= sourceMaxEnergy)
             assert(t.cost(b1) <= sourceMaxEnergy)
             assert(t.cost(b2) <= sourceMaxEnergy)

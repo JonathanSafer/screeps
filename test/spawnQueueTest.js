@@ -17,6 +17,7 @@ describe("spawnQueue", function () {
         it("sort urgent spawns first", function () {
             const city = new Room("test")
             const spawn = new StructureSpawn(city, "spawn0", {})
+            new StructureController(city)
             sq.schedule(spawn, rMe.name)
             sq.schedule(spawn, rT.name)
             sq.schedule(spawn, rR.name)

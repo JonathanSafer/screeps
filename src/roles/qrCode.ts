@@ -23,7 +23,7 @@ const rQr = {
                 }
             }
             if(freeRow === null){
-                const targetPos = new RoomPosition(Math.max(flag.x - 2,0), Math.max(flag.x - 2,0), flag.roomName)
+                const targetPos = new RoomPosition(Math.max(flag.x - 2,0), Math.max(flag.y - 2,0), flag.roomName)
                 if(!creep.pos.isEqualTo(targetPos))
                     motion.newMove(creep, targetPos)
                 return

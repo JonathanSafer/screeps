@@ -1,6 +1,6 @@
 import motion = require("../lib/motion")
 import u = require("../lib/utils")
-import cU = require("../lib/creepUtils")
+import { cU } from "../lib/creepUtils"
 import rBr = require("./breaker")
 import { cN, BodyType } from "../lib/creepNames"
 import { CreepActions as cA } from "../lib/boosts"

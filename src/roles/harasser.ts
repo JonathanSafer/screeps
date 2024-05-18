@@ -1,7 +1,7 @@
 import motion = require("../lib/motion")
 import sq = require("../lib/spawnQueue")
 import u = require("../lib/utils")
-import cU = require("../lib/creepUtils")
+import { cU } from "../lib/creepUtils"
 import military = require("../managers/military")
 import { cN, BodyType } from "../lib/creepNames"
 import { CreepActions as cA } from "../lib/boosts"

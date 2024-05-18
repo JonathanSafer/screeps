@@ -187,7 +187,7 @@ class SimpleAllies {
         const allies = _.without(Memory.settings.allies, settings.username)
         if (!allies.length) {
             if (Game.time % 1000 === 0)
-                Log.error("Failed to find an ally for simpleAllies, you probably have none :(")
+                Log.warning("Failed to find an ally for simpleAllies, you probably have none :(")
             return
         }
 

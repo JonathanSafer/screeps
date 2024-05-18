@@ -5,7 +5,16 @@ import a = require("./actions")
 import { cN } from "../lib/creepNames"
 import { CreepActions } from "./boosts"
 
-const cU = {
+export const enum MoveStatus {
+    STATIC = "static",
+    MOBILE = "mobile"
+}
+
+export const cU = {
+    setMoveStatus: function(creep) {
+        if(!creep.memory.moveStatus)
+            creep.memory.moveStatus = creep.getActiveBodyparts(MOVE) ? MoveStatus.MOBILE : MoveStatus.STATIC
+    },
 
     getNextLocation: function(current: number, locations) {
         return (current + 1) % locations.length
@@ -147,7 +156,7 @@ const cU = {
     /// param currentCreeps: creeps currently in the field (not including spawn queue)
     /// param flag: operation flag used to further filter creeps
     /// param tickOffset: number of ticks of overlap to provide between creeps (i.e if offset is 50, creeps will be scheduled to spawn 50 ticks before the current ones die)
-    scheduleIfNeeded: function(role: string, count: number, boosted: boolean, spawn: StructureSpawn, currentCreeps: Creep[], flag: string = null, tickOffset = 0) {
+    scheduleIfNeeded: function(role: cN, count: number, boosted: boolean, spawn: StructureSpawn, currentCreeps: Creep[], flag: string = null, tickOffset = 0) {
         const creepsInField = cU.getCreepsByRole(currentCreeps, role)
         const creepsOnOperation = _.filter(creepsInField, creep => creep.memory.flag == flag && !(creep.ticksToLive < tickOffset)).length
         const queued = sq.countByInfo(spawn, role, flag)
@@ -172,5 +181,3 @@ const cU = {
         return false
     }
 }
-
-export = cU

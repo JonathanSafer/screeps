@@ -1,6 +1,6 @@
 import a = require("../lib/actions")
 import roomU = require("../lib/roomUtils")
-import cU = require("../lib/creepUtils")
+import { cU } from "../lib/creepUtils"
 import rU = require("./upgrader")
 import template = require("../config/template")
 import rD = require("./defender")

@@ -81,18 +81,26 @@ const rL = {
     },
 
     getUpgradeLink: function(room: Room) {
-        if (!room.controller) return false
-        const spawn = Game.spawns[room.memory.city]
-        if(!spawn) return false
-        const linkPos = spawn.memory.upgradeLinkPos
+        const linkPos = rL.getUpgradeLinkPos(room)
         if(linkPos){
-            const look = room.lookForAt(LOOK_STRUCTURES, Math.floor(linkPos/50), linkPos%50)
+            const look = room.lookForAt(LOOK_STRUCTURES, linkPos)
             for(const result of look){
                 if(result.structureType == STRUCTURE_LINK || result.structureType == STRUCTURE_CONTAINER)
                     return result as StructureLink
             }
         }
         return false
+    },
+
+    getUpgradeLinkPos: function(room: Room) {
+        if (!room.controller) return null
+        const spawn = Game.spawns[room.memory.city]
+        if(!spawn) return null
+        const linkPos = spawn.memory.upgradeLinkPos
+        if(linkPos){
+            return new RoomPosition(Math.floor(linkPos/50), linkPos%50, room.name)
+        }
+        return null
     },
 
     readyForLinkTransfer(sender, receiver) {

@@ -1,9 +1,12 @@
-import { cN } from "./creepNames"
+import { cN, rolePriorities } from "./creepNames"
+import types = require("../config/types")
 
 const sq = {
-    schedule: function(spawn: StructureSpawn, role: string, boosted = false, flag = null, budget = null, priority = null) {
+    schedule: function(spawn: StructureSpawn, role: cN, boosted = false, flag = null, budget = null, priority = null) {
         sq.initialize(spawn)
-        spawn.memory.sq.push({role: role, boosted: boosted, flag: flag, budget: budget, priority: priority})
+        const boostTier = boosted ? 3 : 0
+        const spawnTime = types.getRecipe(role, spawn.room.energyCapacityAvailable, spawn.room, boostTier, flag).length * CREEP_SPAWN_TIME
+        spawn.memory.sq.push({role: role, boosted: boosted, flag: flag, budget: budget, priority: priority, spawnTime: spawnTime})
     },
 
     peekNextRole: function(spawn: StructureSpawn) {
@@ -40,9 +43,14 @@ const sq = {
     },
 
     sort: function(spawn: StructureSpawn) {
-        const priorities = cN.getRolePriorities()
+        const priorities = rolePriorities()
         const sortFn = (item: QueuedCreep) => item.priority || priorities[item.role]
         spawn.memory.sq = _.sortBy(spawn.memory.sq, sortFn)
+    },
+
+    getTime: function(spawn: StructureSpawn) {
+        sq.initialize(spawn)
+        return _.sum(spawn.memory.sq, creep => creep.spawnTime)
     }
 }
 export = sq

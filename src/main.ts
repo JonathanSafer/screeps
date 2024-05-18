@@ -15,6 +15,7 @@ import "./lib/globals"
 import rr = require("./roles/roles")
 import data = require("./operations/data")
 import rU = require("./lib/roomUtils")
+import { cN } from "./lib/creepNames"
 
 //Code to manually profile:
 //Game.profiler.profile(1000);
@@ -108,7 +109,7 @@ export function loop() {
         if(Game.time % 50 == 1){
             _.forEach(Game.creeps, function(creep) {
                 if(!creep.memory.role){
-                    creep.memory.role = creep.name.split("-")[0]
+                    creep.memory.role = creep.name.split("-")[0] as cN
                 }
                 if(!creep.memory.city){
                     creep.memory.city = "homeless"
@@ -129,7 +130,8 @@ export function loop() {
         //clear old creeps
         if (Game.time % 100 === 0) {
             for (const name in Memory.creeps) {
-                if (!Game.creeps[name]) {
+                if (!Game.creeps[name] && (!Memory.creeps[name].spawnTick 
+                                           || Memory.creeps[name].spawnTick < Game.time - (CREEP_LIFE_TIME * 2))) {
                     delete Memory.creeps[name]
                 }
             }

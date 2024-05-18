@@ -1,6 +1,8 @@
 import military = require("../managers/military")
 import sq = require("./spawnQueue")
 import rp = require("../managers/roomplan")
+import u = require("./utils")
+import { cN } from "./creepNames"
 import { simpleAllies } from "../managers/swcTrading"
 
 global.Tmp = {}
@@ -47,8 +49,8 @@ global.SpawnBreaker = function(city, boosted){
         return -1
     }
     sq.initialize(Game.spawns[city])
-    sq.schedule(Game.spawns[city], "medic", boosted)
-    sq.schedule(Game.spawns[city], "breaker", boosted)
+    sq.schedule(Game.spawns[city], cN.MEDIC_NAME, boosted)
+    sq.schedule(Game.spawns[city], cN.BREAKER_NAME, boosted)
     return Log.console(`Spawning Breaker and Medic from ${city}`)
 }
 global.SpawnRole = function(role, city, boosted, flagName){
@@ -189,4 +191,8 @@ global.CleanCities = function(){
             }
         }
     }
+}
+global.SearchForRemote = function() {
+    const cities = u.getMyCities()
+    rp.searchForRemote(cities)
 }

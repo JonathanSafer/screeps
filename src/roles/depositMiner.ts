@@ -2,7 +2,7 @@ import actions = require("../lib/actions")
 import settings = require("../config/settings")
 import motion = require("../lib/motion")
 import u = require("../lib/utils")
-import cU = require("../lib/creepUtils")
+import { cU } from "../lib/creepUtils"
 import rPM = require("./powerMiner")
 import { cN, BodyType } from "../lib/creepNames"
 import { CreepActions as cA } from "../lib/boosts"

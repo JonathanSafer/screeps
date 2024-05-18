@@ -1,11 +1,12 @@
 import actions = require("../lib/actions")
 import u = require("../lib/utils")
 import roomU = require("../lib/roomUtils")
-import cU = require("../lib/creepUtils")
+import { cU } from "../lib/creepUtils"
 import motion = require("../lib/motion")
 import rU = require("./upgrader")
 import { cN, BodyType } from "../lib/creepNames"
 import types = require("../config/types")
+import linkLib = require("../buildings/link")
 
 const rR = {
     name: cN.RUNNER_NAME,
@@ -106,36 +107,52 @@ const rR = {
     },
 
     runController: function(creep: Creep){
-        if(creep.saying == "*" && creep.store.energy == 0){
+        const link = rU.getUpgradeLink(creep)
+
+        // short circuits
+        if(!link) return false
+        if(!creep.memory.juicer && (link.store.getFreeCapacity(RESOURCE_ENERGY) == 0 || creep.room.name != link.room.name)) return false
+
+        const tempMem = u.getsetd(Tmp, Game.spawns[creep.memory.city].room.name, {})
+
+        if(creep.saying == "*" && creep.store.energy == 0){ //successful deposit, remove juicer tag but still reassess
+            creep.memory.juicer = false
+        }
+        const creeps = u.splitCreepsByCity()[creep.memory.city]
+        let juicersNeeded = rR.getControllerRunnersNeeded(Game.spawns[creep.memory.city])
+
+        // if a creep has energy, it should be considered for drafting
+        // if it has no energy, start by checking for juicers close to the link
+        // if there are no juicers near the link, empty runners should be considered for the draft as well
+        if (!creep.memory.juicer && creep.store.getUsedCapacity() == 0 
+            && _.filter(creeps, c => c.memory.juicer && c.pos.inRangeTo(link.pos, 3)).length > juicersNeeded - 2) {
+            return false
+        }
+
+        if (creep.store.getFreeCapacity() == 0 && link.store.getFreeCapacity() as number > creep.store.getUsedCapacity()) {
+            juicersNeeded += Math.floor(link.store.getFreeCapacity() as number/creep.store.getUsedCapacity())
+        }
+
+        if (juicersNeeded == 0) {
             creep.memory.juicer = false
             return false
         }
-        const link = rU.getUpgradeLink(creep)
-        if(!link) return false
-        if(!creep.memory.juicer && (link.store.getFreeCapacity(RESOURCE_ENERGY) == 0 || creep.room.name != link.room.name)) return false
-        if(creep.store.energy > 0){
-            if(!creep.memory.juicer || creep.saying == "*"){
-                const spawnRoom = Game.spawns[creep.memory.city].room
-                if(!Tmp[spawnRoom.name]){
-                    Tmp[spawnRoom.name] = {}
-                }
-                if(!Tmp[spawnRoom.name].juicers && Tmp[spawnRoom.name].juicers != 0){
-                    const freeSpace = link.store.getFreeCapacity(RESOURCE_ENERGY)
-                    const upgraders = _.filter(spawnRoom.find(FIND_MY_CREEPS), c => c.memory.role == rU.name).length
-                    const runnerRecipe = types.getRecipe(rR.type, spawnRoom.energyCapacityAvailable, spawnRoom)
-                    const runnerCarry = runnerRecipe.filter(part => part == CARRY).length * CARRY_CAPACITY
-                    Tmp[spawnRoom.name].juicers = _.filter(creep.room.find(FIND_MY_CREEPS), c => c.memory.role == rR.name && c.memory.juicer).length
-                    Tmp[spawnRoom.name].juicersNeeded = Math.ceil((freeSpace - LINK_CAPACITY)/runnerCarry) + Math.floor(upgraders/3)
-                }
-                if(Tmp[spawnRoom.name].juicers < Tmp[spawnRoom.name].juicersNeeded || (creep.saying == "*" && Tmp[spawnRoom.name].juicersNeeded > 0)){
-                    creep.memory.juicer = true
-                    if(creep.saying != "*")
-                        Tmp[spawnRoom.name].juicers++
-                } else {
-                    creep.memory.juicer = false
-                    return false
-                }
+
+        // draft
+        if (!creep.memory.juicer) {
+            if (!tempMem.juicers) {
+                tempMem.juicers = _.filter(creeps, c => c.memory.juicer).length
             }
+            if (tempMem.juicers < juicersNeeded) {
+                creep.memory.juicer = true
+                tempMem.juicers++
+            } else {
+                return false
+            }
+        }
+
+        // do juicer things
+        if (creep.store.energy > 0) {
             if (actions.charge(creep, link) == 1) {
                 creep.say("*")
             }
@@ -144,7 +161,9 @@ const rR = {
                 creep.memory.location =  (roomU.getStorage(Game.spawns[creep.memory.city].room) as StructureStorage).id
             const target = Game.getObjectById(creep.memory.location)
             if(target.store.energy < 1500) return false
-            actions.withdraw(creep, target)
+            if ( actions.withdraw(creep, target) == 1) {
+                motion.newMove(creep, link.pos, 1)
+            }
         }
         return true
     },
@@ -204,6 +223,9 @@ const rR = {
             creep.memory.tug = false
             return
         }
+        if(creep.ticksToLive == 1){
+            pullee.memory.paired = null
+        }
         if(creep.fatigue)
             return
         const destination = new RoomPosition(pullee.memory.destination.x, pullee.memory.destination.y, pullee.memory.destination.roomName)
@@ -222,10 +244,8 @@ const rR = {
             creep.memory.tug = false
             pullee.memory.paired = pullee.id
             return
-        } else if(creep.ticksToLive == 1){
-            pullee.memory.paired = null
         }
-        const range = new RoomPosition(destination.x, destination.y, destination.roomName).isEqualTo(pullee.memory.sourcePos.x, pullee.memory.sourcePos.y)  ? 1 : 0
+        const range = pullee.memory.sourcePos && new RoomPosition(destination.x, destination.y, destination.roomName).isEqualTo(pullee.memory.sourcePos.x, pullee.memory.sourcePos.y)  ? 1 : 0
         motion.newMove(creep, destination, range)
         creep.pull(pullee)
         pullee.move(creep)
@@ -348,6 +368,32 @@ const rR = {
         }
         if (Game.time % 50 == 0)
             creep.memory.flag = null
+    },
+
+    getControllerRunnersNeeded: function(spawn: StructureSpawn){
+        const roomCache = u.getRoomCache(spawn.room.name)
+        const controllerRunnersNeeded = u.getsetd(roomCache, "cRunners", [0, 0])
+        if (Game.time > controllerRunnersNeeded[1]) {
+            controllerRunnersNeeded[0] = rR.updateControllerRunnersNeeded(spawn)
+            controllerRunnersNeeded[1] = Game.time + 36
+        }
+        return controllerRunnersNeeded[0]
+    },
+
+    updateControllerRunnersNeeded: function(spawn: StructureSpawn){
+        const upgraders = _.filter(u.splitCreepsByCity()[spawn.name], c => c.memory.role == cN.UPGRADER_NAME).length
+        const upgraderBody = types.getRecipe(cN.UPGRADER_NAME, spawn.room.energyCapacityAvailable, spawn.room)
+        const totalWorks = upgraders * upgraderBody.filter(part => part == WORK).length
+
+        const runnerBody = types.getRecipe(cN.RUNNER_NAME, spawn.room.energyCapacityAvailable, spawn.room)
+        const runnerCarryCapacity = runnerBody.filter(part => part == CARRY).length * CARRY_CAPACITY
+
+        const controllerPos = linkLib.getUpgradeLinkPos(spawn.room) || spawn.room.controller.pos
+
+        const distance = PathFinder.search(spawn.pos, {pos: controllerPos, range: 2}, {swampCost: 1}).cost
+        const energyNeeded = totalWorks * distance * 2
+
+        return Math.ceil(energyNeeded/runnerCarryCapacity)
     }
     
 }

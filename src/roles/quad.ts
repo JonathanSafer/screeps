@@ -1,7 +1,7 @@
 //const sq = require("./spawnQueue"); sq.initialize(Game.spawns['E8N60']); sq.schedule(Game.spawns['E8N60'], 'quad')
 import u = require("../lib/utils")
 import rU = require("../lib/roomUtils")
-import cU = require("../lib/creepUtils")
+import { cU } from "../lib/creepUtils"
 import a = require("../lib/actions")
 import T = require("../buildings/tower")
 import motion = require("../lib/motion")

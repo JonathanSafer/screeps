@@ -2,6 +2,7 @@ import a = require("../lib/actions")
 import roomU = require("../lib/roomUtils")
 import { cN, BodyType } from "../lib/creepNames"
 import motion = require("../lib/motion")
+import u = require("../lib/utils")
 
 const rMM = {
     name: cN.MINERAL_MINER_NAME,
@@ -13,9 +14,12 @@ const rMM = {
         rMM.getMineral(creep)
 
         if (rMM.canMine(creep)){
+            if (creep.room.name != Game.spawns[creep.memory.city].room.name && rMM.maybeRetreat(creep)) {
+                return
+            }
             rMM.harvestMineral(creep)
         } else {
-            const bucket = roomU.getStorage(creep.room)
+            const bucket = roomU.getStorage(Game.spawns[creep.memory.city].room)
             a.charge(creep, bucket)
         }
     },
@@ -25,7 +29,7 @@ const rMM = {
         if(creep.memory.source) return
         const targetRoom = creep.memory.flag || creep.pos.roomName
         if (Game.rooms[targetRoom]) {
-            const extractor = _.find(creep.room.find(FIND_STRUCTURES), s => s.structureType == STRUCTURE_EXTRACTOR)
+            const extractor = _.find(Game.rooms[targetRoom].find(FIND_STRUCTURES), s => s.structureType == STRUCTURE_EXTRACTOR)
             const mineral = extractor && _.find(extractor.pos.lookFor(LOOK_MINERALS))
             creep.memory.source = mineral && mineral.id
         }
@@ -66,7 +70,16 @@ const rMM = {
             Log.error(`MineralMiner at ${creep.pos} unable to find target`)
         }
     },
-
-
+    
+    maybeRetreat: function (creep: Creep) {
+        const hostiles = u.findHostileCreeps(creep.room)
+        const skLair = _.find(creep.room.find(FIND_HOSTILE_STRUCTURES), s => s.structureType == STRUCTURE_KEEPER_LAIR 
+                                && s.pos.inRangeTo(creep.pos, 5) && s.ticksToSpawn < 4)
+        if (skLair || _.find(hostiles, h => h.pos.inRangeTo(creep.pos, 7))) {
+            motion.retreat(creep, hostiles)
+            return true
+        }
+        return false
+    }
 }
 export = rMM
