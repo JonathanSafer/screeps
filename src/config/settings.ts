@@ -38,8 +38,8 @@ const settings = {
     depositFlagRemoveTime: 100000, //ticks after deposit flag is placed after which it should be removed regardless of deposit status
     addRemote: 0.7,
     removeRemote: 0.9, // TODO: move this to bucket
-    spawnFreeTime: 0.15, //amount of spawn time to be left open for miscellaneous activity
-    spawnFreeTimeBuffer: 0.1,
+    spawnFreeTime: 0.08, //amount of spawn time to be left open for miscellaneous activity
+    spawnFreeTimeBuffer: 0.05,
     bucket: {//minimum bucket thresholds
         resourceMining: 1000,
         repair: 1500, //repairing walls in a room
@@ -104,8 +104,6 @@ if(!Game.shard.name.includes("shard") || Game.shard.name == "shardSeason"){
     settings.powerMiningRange = 0 //manhattan distance that we can powermine (in rooms)
     settings.militaryBoosts = ["XZHO2", "XZH2O", "XLHO2", "XKHO2", "XGHO2"]
     settings.civBoosts = ["XLH2O", "XGH2O"]
-    settings.wallHeightGCL = 5
-    settings.wallHeight[7] = 2000000
 }
 
 if (!Memory.settings) {
