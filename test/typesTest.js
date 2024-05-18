@@ -2,17 +2,16 @@ var assert = require("assert")
 require("./lib")
 
 function testRoom(rcl) {
-    return {
-        controller: {
-            level: rcl
-        }
-    }
+    room = new Room("test")
+    room.controller = new StructureController(room, rcl)
+    return room
 }
 
 describe("types", function () {
     beforeEach(function() {
         Game.reset()
         Memory.reset()
+        Cache.roomData = {}
     })
     var t = require("../built/config/types.js")
     describe("#depositMinerBody()", function () {

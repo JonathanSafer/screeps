@@ -193,7 +193,7 @@ function minerBody(energyAvailable: number, rcl: number, room: Room, flag: Id<So
     const maxWorks = pc && roomType == roomU.miningRoomType.LOCAL ? 25 : roomType == roomU.miningRoomType.SK ? 10 : 6
     works = Math.min(works, maxWorks)
     const energyAfterWorks = energyAvailable - works * BODYPART_COST[WORK]
-    const moves = rcl >= 6 ? Math.floor(Math.min(Math.ceil(works / 2), Math.max(1, energyAfterWorks / BODYPART_COST[MOVE]))) : 0
+    const moves = rcl >= 6 ? Math.floor(Math.min(Math.ceil(works / 2), Math.max(0, energyAfterWorks / BODYPART_COST[MOVE]))) : 0
     const energyAfterMoves = energyAfterWorks - moves * BODYPART_COST[MOVE]
     const minCarries = energyAfterMoves/BODYPART_COST[CARRY] >= 1 ? 1 : 0
     
